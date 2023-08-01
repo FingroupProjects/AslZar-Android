@@ -8,6 +8,6 @@
         android:icon="@drawable/ic_home"/>
     <item
         android:id="@+id/mainCartFragment"
-        android:title="Главная"
+        android:title="Корзина"
         android:icon="@drawable/ic_cart"/>
 </menu>
