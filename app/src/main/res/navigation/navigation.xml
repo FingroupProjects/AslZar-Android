@@ -2,4 +2,41 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/navigation" />
+    android:id="@+id/navigation"
+    app:startDestination="@id/mainFragment">
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.fin_group.aslzar.ui.fragments.main.MainFragment"
+        android:label="fragment_main"
+        tools:layout="@layout/fragment_main" />
+    <fragment
+        android:id="@+id/mainCartFragment"
+        android:name="com.fin_group.aslzar.ui.fragments.cartMain.MainCartFragment"
+        android:label="fragment_main_cart"
+        tools:layout="@layout/fragment_main_cart" />
+    <fragment
+        android:id="@+id/barCodeScannerFragment"
+        android:name="com.fin_group.aslzar.ui.fragments.barCode.BarCodeScannerFragment"
+        android:label="fragment_bar_code_scanner"
+        tools:layout="@layout/fragment_bar_code_scanner" />
+    <fragment
+        android:id="@+id/calculatorFragment"
+        android:name="com.fin_group.aslzar.ui.fragments.cartMain.calculator.CalculatorFragment"
+        android:label="fragment_calculator"
+        tools:layout="@layout/fragment_calculator" />
+    <fragment
+        android:id="@+id/cartFragment"
+        android:name="com.fin_group.aslzar.ui.fragments.cartMain.cart.CartFragment"
+        android:label="fragment_cart"
+        tools:layout="@layout/fragment_cart" />
+    <fragment
+        android:id="@+id/dataProductFragment"
+        android:name="com.fin_group.aslzar.ui.fragments.dataProduct.DataProductFragment"
+        android:label="fragment_data_product"
+        tools:layout="@layout/fragment_data_product" />
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.fin_group.aslzar.ui.fragments.profile.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" />
+</navigation>
