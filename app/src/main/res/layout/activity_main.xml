@@ -7,11 +7,18 @@
     tools:context=".MainActivity">
 
     <TextView
+        android:id="@+id/sss"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+
         android:text="АССАЛОМ)"
         android:textColor="@color/black"
         android:textSize="50sp"
+
+        
+        android:text="Hello World!"
+        android:background="@drawable/bg_for_btn_2"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
