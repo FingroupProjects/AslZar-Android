@@ -1,7 +1,9 @@
-package com.fin_group.aslzar
+package com.fin_group.aslzar.ui.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.fin_group.aslzar.ui.fragments.login.FragmentLogin
+import com.fin_group.aslzar.R
 import com.fin_group.aslzar.databinding.ActivityLoginBinding
 
 class LoginActivity : AppCompatActivity() {

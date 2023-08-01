@@ -1,4 +1,4 @@
-package com.fin_group.aslzar
+package com.fin_group.aslzar.ui.activities
 
 import android.annotation.SuppressLint
 import android.content.Intent
