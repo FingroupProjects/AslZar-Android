@@ -7,7 +7,7 @@
     <fragment
         android:id="@+id/mainFragment"
         android:name="com.fin_group.aslzar.ui.fragments.main.MainFragment"
-        android:label="fragment_main"
+        android:label="Главная"
         tools:layout="@layout/fragment_main" />
     <fragment
         android:id="@+id/mainCartFragment"

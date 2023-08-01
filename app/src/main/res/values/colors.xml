@@ -13,6 +13,7 @@
 
     <color name="background_view_1">@color/primary_color_1</color>
     <color name="background_view_2">@color/primary_color_6</color>
+    <color name="background_view_3">#FEF7F5</color>
 
     <color name="text_color_1">@color/primary_color_2</color>
     <color name="text_color_2">@color/primary_color_3</color>
