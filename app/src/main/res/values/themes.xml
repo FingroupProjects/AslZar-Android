@@ -3,7 +3,78 @@
     <style name="Base.Theme.AslZar" parent="Theme.Material3.Light.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/primary_color_1</item>
+        <item name="colorPrimaryVariant">@color/primary_color_6</item>
+        <item name="colorOnPrimary">@color/white</item>
+
+        <item name="android:statusBarColor">@color/primary_color_1</item>
+        <item name="android:windowLightStatusBar">true</item>
+
+        <item name="fontFamily">@font/palanquin</item>
     </style>
+
+    <style name="forTextView">
+        <item name="android:textColor">@color/text_color_1</item>
+    </style>
+
+    <style name="forTextView2">
+        <item name="android:textColor">@color/text_color_2</item>
+    </style>
+
+    <style name="forTextView.10">
+        <item name="android:textSize">10sp</item>
+    </style>
+
+    <style name="forTextView.12">
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="forTextView.14">
+        <item name="android:textSize">14sp</item>
+        <item name="android:paddingHorizontal">5dp</item>
+        <item name="android:paddingVertical">2.5dp</item>
+    </style>
+
+    <style name="forTextView.16">
+        <item name="android:textSize">16sp</item>
+        <item name="android:paddingHorizontal">5dp</item>
+        <item name="android:paddingVertical">5dp</item>
+    </style>
+
+    <style name="forTextView.18">
+        <item name="android:textSize">18sp</item>
+        <item name="android:paddingHorizontal">10dp</item>
+        <item name="android:paddingVertical">10dp</item>
+    </style>
+
+    <style name="forTextView2.10">
+        <item name="android:textSize">10sp</item>
+    </style>
+
+    <style name="forTextView2.12">
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="forTextView2.14">
+        <item name="android:textSize">14sp</item>
+        <item name="android:paddingHorizontal">5dp</item>
+        <item name="android:paddingVertical">2.5dp</item>
+    </style>
+
+    <style name="forTextView2.16">
+        <item name="android:textSize">16sp</item>
+        <item name="android:paddingHorizontal">5dp</item>
+        <item name="android:paddingVertical">5dp</item>
+    </style>
+
+    <style name="forTextView2.18">
+        <item name="android:textSize">18sp</item>
+        <item name="android:paddingHorizontal">10dp</item>
+        <item name="android:paddingVertical">10dp</item>
+    </style>
+
+
+
 
     <style name="Theme.AslZar" parent="Base.Theme.AslZar" />
 </resources>

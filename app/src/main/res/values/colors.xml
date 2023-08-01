@@ -9,6 +9,7 @@
     <color name="primary_color_4">#8f7263</color>
     <color name="primary_color_5">#7f7f7f</color>
     <color name="primary_color_6">#f0d7cc</color>
+    <color name="primary_color_7">#836353</color>
 
     <color name="background_view_1">@color/primary_color_1</color>
     <color name="background_view_2">@color/primary_color_6</color>
@@ -16,6 +17,7 @@
     <color name="text_color_1">@color/primary_color_2</color>
     <color name="text_color_2">@color/primary_color_3</color>
     <color name="text_color_3">@color/primary_color_4</color>
+    <color name="text_color_4">@color/primary_color_7</color>
 
     <color name="background_disable">@color/primary_color_5</color>
     <color name="background_enable">@color/primary_color_2</color>
@@ -26,8 +28,6 @@
     <color name="background_1">@color/primary_color_1</color>
     <color name="background_2">@color/primary_color_2</color>
     <color name="background_3">#e4d1c9</color>
-
-
-
-
+    <color name="background_4">#943E12</color>
+    <color name="background_5">@color/primary_color_1</color>
 </resources>
