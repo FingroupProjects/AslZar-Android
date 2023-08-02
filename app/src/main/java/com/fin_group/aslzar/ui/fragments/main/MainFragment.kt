@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.navigation.fragment.findNavController
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.databinding.FragmentMainBinding
 import com.google.android.material.appbar.MaterialToolbar
@@ -60,7 +61,7 @@ class MainFragment : Fragment() {
                 Toast.makeText(requireContext(), "Barcode Scanner", Toast.LENGTH_SHORT).show()
             }
             R.id.profile_item -> {
-                Toast.makeText(requireContext(), "Profile", Toast.LENGTH_SHORT).show()
+                findNavController().navigate(R.id.action_mainFragment_to_profileFragment)
             }
         }
 
