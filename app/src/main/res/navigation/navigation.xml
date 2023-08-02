@@ -16,7 +16,7 @@
             android:id="@+id/action_mainFragment_to_dataProductFragment"
             app:destination="@id/dataProductFragment" />
         <action
-            android:id="@+id/action_mainFragment_to_barCodeScannerFragment2"
+            android:id="@+id/action_mainFragment_to_barCodeScannerFragment"
             app:destination="@id/barCodeScannerFragment" />
     </fragment>
     <fragment
