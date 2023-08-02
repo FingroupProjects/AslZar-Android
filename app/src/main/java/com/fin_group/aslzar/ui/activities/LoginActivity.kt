@@ -17,10 +17,7 @@ class LoginActivity : AppCompatActivity() {
 
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragmentLogin, FragmentLogin())
-                
             .addToBackStack(null)
             .commit()
-
-
     }
 }
