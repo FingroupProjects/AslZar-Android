@@ -65,7 +65,7 @@ class MainFragment : Fragment() {
                 findNavController().navigate(action)
             }
             R.id.profile_item -> {
-                Toast.makeText(requireContext(), "Profile", Toast.LENGTH_SHORT).show()
+                findNavController().navigate(R.id.action_mainFragment_to_profileFragment)
             }
         }
 
