@@ -31,4 +31,5 @@
     <color name="background_3">#e4d1c9</color>
     <color name="background_4">#943E12</color>
     <color name="background_5">@color/primary_color_1</color>
+    <color name="background_6">#2D4D1F08</color>
 </resources>

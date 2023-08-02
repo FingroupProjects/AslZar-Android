@@ -42,6 +42,7 @@
         app:itemIconTint="@drawable/bottom_navigation_item_color"
         app:itemTextColor="@drawable/bottom_navigation_item_text_color"
         app:labelVisibilityMode="labeled"
+        app:itemActiveIndicatorStyle="@style/App.Custom.Indicator"
         android:background="@color/background_1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
