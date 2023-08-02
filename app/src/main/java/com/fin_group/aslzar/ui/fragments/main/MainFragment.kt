@@ -11,8 +11,10 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.navigation.fragment.findNavController
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.databinding.FragmentMainBinding
+import com.fin_group.aslzar.ui.activities.MainActivity
 import com.google.android.material.appbar.MaterialToolbar
 
 
@@ -30,6 +32,8 @@ class MainFragment : Fragment() {
     ): View {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
         setHasOptionsMenu(true)
+//        val mainActivity = activity as MainActivity
+//        mainActivity.showComponents()
 //        toolbar = binding.toolbar
 //        toolbar.title = "Главная"
 //        (requireActivity() as AppCompatActivity).setSupportActionBar(toolbar)
@@ -57,7 +61,8 @@ class MainFragment : Fragment() {
                 Toast.makeText(requireContext(), "Filter", Toast.LENGTH_SHORT).show()
             }
             R.id.barcode_item -> {
-                Toast.makeText(requireContext(), "Barcode Scanner", Toast.LENGTH_SHORT).show()
+                val action = MainFragmentDirections.actionMainFragmentToBarCodeScannerFragment()
+                findNavController().navigate(action)
             }
             R.id.profile_item -> {
                 Toast.makeText(requireContext(), "Profile", Toast.LENGTH_SHORT).show()
