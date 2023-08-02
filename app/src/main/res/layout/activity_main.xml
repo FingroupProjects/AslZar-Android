@@ -43,7 +43,7 @@
         app:itemTextColor="@drawable/bottom_navigation_item_text_color"
         app:labelVisibilityMode="labeled"
         app:itemActiveIndicatorStyle="@style/App.Custom.Indicator"
-        android:background="@color/background_1"
+        android:background="@drawable/bg_bottom_nav_view"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
