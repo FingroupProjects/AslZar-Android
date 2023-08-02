@@ -12,11 +12,12 @@
         <action
             android:id="@+id/action_mainFragment_to_profileFragment"
             app:destination="@id/profileFragment" />
-            android:id="@+id/action_mainFragment_to_barCodeScannerFragment"
-            app:destination="@id/barCodeScannerFragment" />
         <action
             android:id="@+id/action_mainFragment_to_dataProductFragment"
             app:destination="@id/dataProductFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_barCodeScannerFragment2"
+            app:destination="@id/barCodeScannerFragment" />
     </fragment>
     <fragment
         android:id="@+id/mainCartFragment"
@@ -26,8 +27,6 @@
     <fragment
         android:id="@+id/barCodeScannerFragment"
         android:name="com.fin_group.aslzar.ui.fragments.barCode.BarCodeScannerFragment"
-        android:label="Сканнер"
-        tools:layout="@layout/fragment_bar_code_scanner" />
         android:label="Штрих-код сканнер"
         tools:layout="@layout/fragment_bar_code_scanner" >
         <action
