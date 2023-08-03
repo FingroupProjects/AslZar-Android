@@ -12,6 +12,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.fragment.findNavController
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.databinding.FragmentProfileBinding
 import com.fin_group.aslzar.ui.activities.LoginActivity
@@ -30,6 +31,11 @@ class ProfileFragment : Fragment() {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
 
        // setHasOptionsMenu(true)
+
+
+        binding.btnChangeData.setOnClickListener {
+            findNavController().navigate(R.id.action_profileFragment_to_changeDataProfileDialogFragment)
+        }
 
 
 

@@ -7,16 +7,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import com.fin_group.aslzar.R
+import com.fin_group.aslzar.databinding.FragmentDialogChangeDataProfileBinding
 
 class ChangeDataProfileDialogFragment : DialogFragment() {
 
+    private var _binding: FragmentDialogChangeDataProfileBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_dialog_change_data_profile, container, false)
+        _binding = FragmentDialogChangeDataProfileBinding.inflate(inflater, container, false)
+        return binding.root
     }
-
 }
