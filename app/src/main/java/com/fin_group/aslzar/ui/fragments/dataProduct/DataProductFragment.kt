@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.databinding.FragmentDataProductBinding
 import com.fin_group.aslzar.databinding.FragmentMainCartBinding
+import com.fin_group.aslzar.util.hideBottomNav
+import com.fin_group.aslzar.util.showBottomNav
 
 class DataProductFragment : Fragment() {
 
@@ -19,12 +21,14 @@ class DataProductFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentDataProductBinding.inflate(inflater, container, false)
+        hideBottomNav()
         return binding.root
     }
-
+    
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        showBottomNav()
     }
 
 }

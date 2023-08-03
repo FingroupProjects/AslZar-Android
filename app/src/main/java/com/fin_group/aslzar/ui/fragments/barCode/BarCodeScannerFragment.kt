@@ -17,6 +17,7 @@ import androidx.navigation.fragment.findNavController
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.databinding.FragmentBarCodeScannerBinding
 import com.fin_group.aslzar.ui.activities.MainActivity
+import com.fin_group.aslzar.ui.fragments.main.MainFragmentDirections
 import com.fin_group.aslzar.util.hideBottomNav
 import com.fin_group.aslzar.util.showBottomNav
 import com.google.android.gms.vision.CameraSource
@@ -119,7 +120,8 @@ class BarCodeScannerFragment : Fragment() {
                     activity?.runOnUiThread {
                         cameraSource.stop()
                         Toast.makeText(requireContext(), "value- $scannedValue", Toast.LENGTH_SHORT).show()
-                        findNavController().popBackStack()
+                        val action = BarCodeScannerFragmentDirections.actionBarCodeScannerFragmentToDataProductFragment(scannedValue)
+                        findNavController().navigate(action)
                     }
                 }else
                 {
