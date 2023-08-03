@@ -47,7 +47,11 @@
         android:id="@+id/dataProductFragment"
         android:name="com.fin_group.aslzar.ui.fragments.dataProduct.DataProductFragment"
         android:label="fragment_data_product"
-        tools:layout="@layout/fragment_data_product" />
+        tools:layout="@layout/fragment_data_product" >
+        <argument
+            android:name="barcodeProduct"
+            app:argType="string" />
+    </fragment>
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.fin_group.aslzar.ui.fragments.profile.ProfileFragment"
