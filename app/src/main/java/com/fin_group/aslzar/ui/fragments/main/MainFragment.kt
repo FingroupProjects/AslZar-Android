@@ -58,7 +58,6 @@ class MainFragment : Fragment(), ProductOnClickListener {
         )
 
         fetchRV(allProducts)
-
     }
 
     @SuppressLint("NotifyDataSetChanged")
