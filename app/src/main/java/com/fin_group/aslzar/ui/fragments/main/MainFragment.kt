@@ -1,5 +1,6 @@
 package com.fin_group.aslzar.ui.fragments.main
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -12,19 +13,26 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
 import com.fin_group.aslzar.R
+import com.fin_group.aslzar.adapter.ProductsAdapter
 import com.fin_group.aslzar.databinding.FragmentMainBinding
+import com.fin_group.aslzar.models.Product
 import com.fin_group.aslzar.ui.activities.MainActivity
+import com.fin_group.aslzar.util.ProductOnClickListener
 import com.google.android.material.appbar.MaterialToolbar
 
 
 @Suppress("DEPRECATION")
-class MainFragment : Fragment() {
+class MainFragment : Fragment(), ProductOnClickListener {
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var toolbar: MaterialToolbar
+
+    private var allProducts: List<Product> = emptyList()
+    private lateinit var myAdapter: ProductsAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,18 +40,34 @@ class MainFragment : Fragment() {
     ): View {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
         setHasOptionsMenu(true)
-//        val mainActivity = activity as MainActivity
-//        mainActivity.showComponents()
-//        toolbar = binding.toolbar
-//        toolbar.title = "Главная"
-//        (requireActivity() as AppCompatActivity).setSupportActionBar(toolbar)
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        allProducts = listOf(
+            Product(1, "Серьги золотые с бриллиантами", "", "2.7.5.1.066.1_1,6_0", 0),
+            Product(2, "Серьги золотые с бриллиантами", "", "2.7.3.1.096.1_7,8_0", 15),
+            Product(3, "Серьги золотые с бриллиантами", "", "2.7.2.1.096.1_5,9_0", 10),
+            Product(4, "Серьги золотые с бриллиантами", "", "2.7.2.1.096.1_7,2_0", 18),
+            Product(5, "Серьги золотые с бриллиантами", "", "2.7.5.1.066.1_1,6_0", 0),
+            Product(6, "Серьги золотые с бриллиантами", "", "2.7.3.1.096.1_7,8_0", 15),
+            Product(7, "Серьги золотые с бриллиантами", "", "2.7.2.1.096.1_5,9_0", 10),
+            Product(8, "Серьги золотые с бриллиантами", "", "2.7.2.1.096.1_7,2_0", 18)
+        )
+
+        fetchRV(allProducts)
+
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun fetchRV(productList: List<Product>){
+        val recyclerView = binding.mainRecyclerView
+        recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
+        myAdapter = ProductsAdapter(allProducts, this)
+        recyclerView.adapter = myAdapter
+        myAdapter.notifyDataSetChanged()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -68,12 +92,19 @@ class MainFragment : Fragment() {
                 findNavController().navigate(R.id.action_mainFragment_to_profileFragment)
             }
         }
-
         return super.onOptionsItemSelected(item)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun addToCart(product: Product) {
+        Toast.makeText(requireContext(), "Добавление в корзину ${product.code}", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun inStock(product: Product) {
+        Toast.makeText(requireContext(), "В наличии ${product.code}", Toast.LENGTH_SHORT).show()
     }
 }

@@ -19,8 +19,6 @@ class ChangeDataProfileDialogFragment : DialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentDialogChangeDataProfileBinding.inflate(inflater, container, false)
-
         return binding.root
     }
-
 }
