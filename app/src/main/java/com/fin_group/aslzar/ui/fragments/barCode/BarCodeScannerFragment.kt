@@ -3,6 +3,7 @@ package com.fin_group.aslzar.ui.fragments.barCode
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.SurfaceHolder
@@ -25,6 +26,7 @@ import com.google.android.gms.vision.Detector
 import com.google.android.gms.vision.barcode.Barcode
 import com.google.android.gms.vision.barcode.BarcodeDetector
 import java.io.IOException
+import kotlin.math.log
 
 
 @Suppress("DEPRECATION")
@@ -58,7 +60,6 @@ class BarCodeScannerFragment : Fragment() {
         } else {
             setupControls()
         }
-
         val aniSlide: Animation =
             AnimationUtils.loadAnimation(requireContext(), R.anim.scanner_animation)
         binding.barcodeLine.startAnimation(aniSlide)
@@ -104,32 +105,35 @@ class BarCodeScannerFragment : Fragment() {
         })
 
 
-        barcodeDetector.setProcessor(object : Detector.Processor<Barcode> {
-            override fun release() {
-                Toast.makeText(requireContext(), "Scanner has been closed", Toast.LENGTH_SHORT)
-                    .show()
-            }
-
-            override fun receiveDetections(detections: Detector.Detections<Barcode>) {
-                val barcodes = detections.detectedItems
-                if (barcodes.size() == 1) {
-                    scannedValue = barcodes.valueAt(0).rawValue
-
-
-                    //Don't forget to add this line printing value or finishing activity must run on main thread
-                    activity?.runOnUiThread {
-                        cameraSource.stop()
-                        Toast.makeText(requireContext(), "value- $scannedValue", Toast.LENGTH_SHORT).show()
-                        val action = BarCodeScannerFragmentDirections.actionBarCodeScannerFragmentToDataProductFragment(scannedValue)
-                        findNavController().navigate(action)
-                    }
-                }else
-                {
-                    Toast.makeText(requireContext(), "value- else", Toast.LENGTH_SHORT).show()
-
+        try {
+            barcodeDetector.setProcessor(object : Detector.Processor<Barcode> {
+                override fun release() {
+                    Log.d("TAG", "release: Scanner has been closed")
                 }
-            }
-        })
+                override fun receiveDetections(detections: Detector.Detections<Barcode>) {
+                    val barcodes = detections.detectedItems
+                    if (barcodes.size() == 1) {
+                        scannedValue = barcodes.valueAt(0).rawValue
+                        try {
+                            activity?.runOnUiThread {
+                                cameraSource.stop()
+                                val action =
+                                    BarCodeScannerFragmentDirections.actionBarCodeScannerFragmentToDataProductFragment(
+                                        scannedValue.toString()
+                                    )
+                                findNavController().navigate(action)
+                            }
+                        }catch (e: Exception){
+                            Log.d("TAG", "receiveDetections: ${e.message}")
+                        }
+                    } else {
+                        Log.d("TAG", "receiveDetections: Values not detected")
+                    }
+                }
+            })
+        }catch (e: Exception){
+            Log.d("TAG", "setupControls: ${e.message}")
+        }
     }
 
     private fun askForCameraPermission() {
@@ -155,14 +159,14 @@ class BarCodeScannerFragment : Fragment() {
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-        showBottomNav()
+    override fun onStart() {
+        super.onStart()
+        hideBottomNav()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         cameraSource.stop()
+        _binding = null
     }
 }

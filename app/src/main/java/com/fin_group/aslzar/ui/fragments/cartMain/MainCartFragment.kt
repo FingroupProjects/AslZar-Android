@@ -24,13 +24,11 @@ class MainCartFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMainCartBinding.inflate(inflater, container, false)
-        hideToolBar()
         return binding.root
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        showToolBar()
         _binding = null
     }
 }

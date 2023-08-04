@@ -13,11 +13,11 @@
             android:id="@+id/action_mainFragment_to_profileFragment"
             app:destination="@id/profileFragment" />
         <action
-            android:id="@+id/action_mainFragment_to_dataProductFragment"
-            app:destination="@id/dataProductFragment" />
-        <action
             android:id="@+id/action_mainFragment_to_barCodeScannerFragment"
             app:destination="@id/barCodeScannerFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_dataProductFragment"
+            app:destination="@id/dataProductFragment" />
     </fragment>
     <fragment
         android:id="@+id/mainCartFragment"
@@ -31,7 +31,8 @@
         tools:layout="@layout/fragment_bar_code_scanner" >
         <action
             android:id="@+id/action_barCodeScannerFragment_to_dataProductFragment"
-            app:destination="@id/dataProductFragment" />
+            app:destination="@id/dataProductFragment"
+            app:popUpTo="@id/mainFragment" />
     </fragment>
     <fragment
         android:id="@+id/calculatorFragment"
@@ -49,7 +50,7 @@
         android:label="fragment_data_product"
         tools:layout="@layout/fragment_data_product" >
         <argument
-            android:name="barcodeProduct"
+            android:name="productId"
             app:argType="string" />
     </fragment>
     <fragment

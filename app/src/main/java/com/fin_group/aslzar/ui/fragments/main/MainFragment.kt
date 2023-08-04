@@ -20,6 +20,7 @@ import com.fin_group.aslzar.databinding.FragmentMainBinding
 import com.fin_group.aslzar.models.Product
 import com.fin_group.aslzar.ui.activities.MainActivity
 import com.fin_group.aslzar.util.ProductOnClickListener
+import com.fin_group.aslzar.util.showBottomNav
 import com.google.android.material.appbar.MaterialToolbar
 
 
@@ -64,7 +65,7 @@ class MainFragment : Fragment(), ProductOnClickListener {
     private fun fetchRV(productList: List<Product>){
         val recyclerView = binding.mainRecyclerView
         recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
-        myAdapter = ProductsAdapter(allProducts, this)
+        myAdapter = ProductsAdapter(productList, this)
         recyclerView.adapter = myAdapter
         myAdapter.notifyDataSetChanged()
     }
@@ -92,6 +93,11 @@ class MainFragment : Fragment(), ProductOnClickListener {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        showBottomNav()
     }
 
     override fun onDestroyView() {
