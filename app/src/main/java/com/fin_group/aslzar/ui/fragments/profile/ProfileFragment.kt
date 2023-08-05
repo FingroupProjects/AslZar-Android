@@ -1,22 +1,18 @@
 package com.fin_group.aslzar.ui.fragments.profile
 
-import android.app.AlertDialog
-import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.fragment.findNavController
-import com.fin_group.aslzar.R
+
+import androidx.fragment.app.FragmentTransaction
+import androidx.fragment.app.FragmentManager
+
+
 import com.fin_group.aslzar.databinding.FragmentProfileBinding
-import com.fin_group.aslzar.ui.activities.LoginActivity
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.fin_group.aslzar.ui.dialogs.ChangeDataProfileDialogFragment
+import com.fin_group.aslzar.ui.dialogs.ChangePasswordProfileFragmentDialog
 
 @Suppress("DEPRECATION")
 class ProfileFragment : Fragment() {
@@ -32,16 +28,36 @@ class ProfileFragment : Fragment() {
 
        // setHasOptionsMenu(true)
 
-
-        binding.btnChangeData.setOnClickListener {
-            findNavController().navigate(R.id.action_profileFragment_to_changeDataProfileDialogFragment)
-        }
-
+        goToChangePasswordDialog()
 
 
 
         return binding.root
     }
+
+
+    private fun goToChangePasswordDialog() {
+//        binding.btnChangeData.setOnClickListener {
+//            val changeDataDialog = ChangeDataProfileDialogFragment()
+//            val fragmentManager: FragmentManager? = activity?.supportFragmentManager
+//            fragmentManager?.let {
+//                val transaction: FragmentTransaction = it.beginTransaction()
+//                transaction.addToBackStack(null) // Это добавит текущий фрагмент в стек обратного перехода
+//                changeDataDialog.show(transaction, "ChangeDataProfileDialogFragment")
+//            }
+//        }
+
+        binding.btnChangePassword.setOnClickListener {
+            val changeDataPassword = ChangePasswordProfileFragmentDialog()
+            val fragmentManager: FragmentManager? = activity?.supportFragmentManager
+            fragmentManager?.let {
+                val transaction: FragmentTransaction = it.beginTransaction()
+                transaction.addToBackStack(null) // Это добавит текущий фрагмент в стек обратного перехода
+                changeDataPassword.show(transaction, "ChangePasswordProfileDialogFragment")
+            }
+        }
+    }
+
 
 //    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
 //        inflater.inflate(R.menu.profile_fragment_menu, menu)
