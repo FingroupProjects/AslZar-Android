@@ -2,6 +2,7 @@ package com.fin_group.aslzar.ui.fragments.main
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.Menu
@@ -13,21 +14,22 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.ProductsAdapter
 import com.fin_group.aslzar.databinding.FragmentMainBinding
+import com.fin_group.aslzar.models.Category
 import com.fin_group.aslzar.models.Product
-import com.fin_group.aslzar.ui.activities.MainActivity
+import com.fin_group.aslzar.ui.dialogs.CheckCategoryFragmentDialog
+import com.fin_group.aslzar.util.CategoryClickListener
 import com.fin_group.aslzar.util.ProductOnClickListener
 import com.fin_group.aslzar.util.showBottomNav
 import com.google.android.material.appbar.MaterialToolbar
 
 
 @Suppress("DEPRECATION")
-class MainFragment : Fragment(), ProductOnClickListener {
+class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
@@ -35,6 +37,7 @@ class MainFragment : Fragment(), ProductOnClickListener {
     private lateinit var toolbar: MaterialToolbar
 
     private var allProducts: List<Product> = emptyList()
+    private var allCategories: List<Product> = emptyList()
     private lateinit var myAdapter: ProductsAdapter
 
     override fun onCreateView(
@@ -50,14 +53,14 @@ class MainFragment : Fragment(), ProductOnClickListener {
         super.onViewCreated(view, savedInstanceState)
 
         allProducts = listOf(
-            Product(1, "Серьги золотые с бриллиантами", "", "2.7.5.1.066.1_1,6_0", 0),
-            Product(2, "Серьги золотые с бриллиантами", "", "2.7.3.1.096.1_7,8_0", 15),
-            Product(3, "Серьги золотые с бриллиантами", "", "2.7.2.1.096.1_5,9_0", 10),
-            Product(4, "Серьги золотые с бриллиантами", "", "2.7.2.1.096.1_7,2_0", 18),
-            Product(5, "Серьги золотые с бриллиантами", "", "2.7.5.1.066.1_1,6_0", 0),
-            Product(6, "Серьги золотые с бриллиантами", "", "2.7.3.1.096.1_7,8_0", 15),
-            Product(7, "Серьги золотые с бриллиантами", "", "2.7.2.1.096.1_5,9_0", 10),
-            Product(8, "Серьги золотые с бриллиантами", "", "2.7.2.1.096.1_7,2_0", 18)
+            Product(1, "Серьги золотые с бриллиантами", "", "2.7.5.1.066.1_1,6_0", 0, "00001"),
+            Product(2, "Серьги золотые с бриллиантами", "", "2.7.3.1.096.1_7,8_0", 15, "00001"),
+            Product(3, "Серьги золотые с бриллиантами", "", "2.7.2.1.096.1_5,9_0", 10, "00001"),
+            Product(4, "Серьги золотые с бриллиантами", "", "2.7.2.1.096.1_7,2_0", 18, "00001"),
+            Product(5, "Серьги золотые с бриллиантами", "", "2.7.5.1.066.1_1,6_0", 0, "00001"),
+            Product(6, "Серьги золотые с бриллиантами", "", "2.7.3.1.096.1_7,8_0", 15, "00001"),
+            Product(7, "Серьги золотые с бриллиантами", "", "2.7.2.1.096.1_5,9_0", 10, "00001"),
+            Product(8, "Серьги золотые с бриллиантами", "", "2.7.2.1.096.1_7,2_0", 18, "00001")
         )
         fetchRV(allProducts)
     }
@@ -88,7 +91,7 @@ class MainFragment : Fragment(), ProductOnClickListener {
                 }
             }
             R.id.filter_item -> {
-                Toast.makeText(requireContext(), "Filter", Toast.LENGTH_SHORT).show()
+                categoryDialog()
             }
             R.id.barcode_item -> {
                 val action = MainFragmentDirections.actionMainFragmentToBarCodeScannerFragment()
@@ -106,6 +109,18 @@ class MainFragment : Fragment(), ProductOnClickListener {
         return viewSearch.visibility != VISIBLE
     }
 
+    private fun categoryDialog(){
+        val categoryDialog = CheckCategoryFragmentDialog()
+        categoryDialog.show(activity?.supportFragmentManager!!, "category check dialog")
+    }
+
+
+    override fun onCategorySelected(selectedCategory: Category) {
+        Toast.makeText(requireContext(), selectedCategory.name, Toast.LENGTH_SHORT).show()
+        Log.d("TAG", "onCategorySelected: $selectedCategory")
+        // Обработка выбранной категории в вашем MainFragment
+        // Используйте выбранную категорию по своему усмотрению
+    }
 
     override fun onStart() {
         super.onStart()

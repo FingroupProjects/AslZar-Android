@@ -7,4 +7,7 @@
     android:background="@drawable/bg_for_tv"
     android:paddingHorizontal="5dp"
     android:paddingVertical="10dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackgroundBorderless"
     android:textSize="14sp" />
