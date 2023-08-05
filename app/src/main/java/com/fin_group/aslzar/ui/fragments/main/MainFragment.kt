@@ -8,6 +8,8 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -57,7 +59,6 @@ class MainFragment : Fragment(), ProductOnClickListener {
             Product(7, "Серьги золотые с бриллиантами", "", "2.7.2.1.096.1_5,9_0", 10),
             Product(8, "Серьги золотые с бриллиантами", "", "2.7.2.1.096.1_7,2_0", 18)
         )
-
         fetchRV(allProducts)
     }
 
@@ -79,7 +80,12 @@ class MainFragment : Fragment(), ProductOnClickListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             R.id.search_item -> {
-                Toast.makeText(requireContext(), "Search", Toast.LENGTH_SHORT).show()
+                val viewSearch = binding.viewSearch
+                if (searchBarChecked()) {
+                    viewSearch.visibility = VISIBLE
+                } else {
+                    viewSearch.visibility = GONE
+                }
             }
             R.id.filter_item -> {
                 Toast.makeText(requireContext(), "Filter", Toast.LENGTH_SHORT).show()
@@ -94,6 +100,12 @@ class MainFragment : Fragment(), ProductOnClickListener {
         }
         return super.onOptionsItemSelected(item)
     }
+
+    private fun searchBarChecked(): Boolean{
+        val viewSearch = binding.viewSearch
+        return viewSearch.visibility != VISIBLE
+    }
+
 
     override fun onStart() {
         super.onStart()
