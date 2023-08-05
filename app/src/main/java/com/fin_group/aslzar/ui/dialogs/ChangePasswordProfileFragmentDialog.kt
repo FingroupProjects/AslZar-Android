@@ -7,9 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import com.fin_group.aslzar.R
+import com.fin_group.aslzar.util.BaseDialogFragment
 
 
-class ChangePasswordProfileFragmentDialog : DialogFragment() {
+class ChangePasswordProfileFragmentDialog : BaseDialogFragment() {
 
 
     override fun onCreateView(
