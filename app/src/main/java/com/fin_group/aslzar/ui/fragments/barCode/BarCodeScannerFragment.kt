@@ -14,6 +14,7 @@ import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.databinding.FragmentBarCodeScannerBinding
@@ -121,7 +122,7 @@ class BarCodeScannerFragment : Fragment() {
                                     BarCodeScannerFragmentDirections.actionBarCodeScannerFragmentToDataProductFragment(
                                         scannedValue.toString()
                                     )
-                                findNavController().navigate(action)
+                                Navigation.findNavController(binding.root).navigate(action)
                             }
                         }catch (e: Exception){
                             Log.d("TAG", "receiveDetections: ${e.message}")
