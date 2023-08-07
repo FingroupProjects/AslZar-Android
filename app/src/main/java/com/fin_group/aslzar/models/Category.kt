@@ -1,7 +1,7 @@
 package com.fin_group.aslzar.models
 
 data class Category (
-    val id: String,
+    var id: String,
     val name: String
 )
 

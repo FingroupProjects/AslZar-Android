@@ -14,6 +14,8 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.fin_group.aslzar.R
@@ -25,7 +27,10 @@ import com.fin_group.aslzar.ui.dialogs.CheckCategoryFragmentDialog
 import com.fin_group.aslzar.util.CategoryClickListener
 import com.fin_group.aslzar.util.ProductOnClickListener
 import com.fin_group.aslzar.util.callCategoryDialog
+import com.fin_group.aslzar.util.filterFun
+import com.fin_group.aslzar.util.filterProducts
 import com.fin_group.aslzar.util.searchBarChecked
+import com.fin_group.aslzar.util.searchViewFun
 import com.fin_group.aslzar.util.showBottomNav
 import com.google.android.material.appbar.MaterialToolbar
 
@@ -37,10 +42,19 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
     private val binding get() = _binding!!
 
     private lateinit var toolbar: MaterialToolbar
+    lateinit var viewSearch: ConstraintLayout
+    lateinit var viewCheckedCategory: ConstraintLayout
 
-    private var allProducts: List<Product> = emptyList()
+    var allProducts: List<Product> = emptyList()
+    var filteredProducts: List<Product> = emptyList()
     private var allCategories: List<Product> = emptyList()
-    private lateinit var myAdapter: ProductsAdapter
+
+    var selectCategory: Category? = null
+
+    var searchText: String = ""
+    lateinit var searchView: SearchView
+
+    lateinit var myAdapter: ProductsAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,20 +62,43 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
     ): View {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
         setHasOptionsMenu(true)
+        viewSearch = binding.viewSearch
+        viewCheckedCategory = binding.viewCheckedCategory
+
+        binding.fabClearSearch.setOnClickListener {
+
+            searchText = ""
+            viewSearch.visibility = GONE
+        }
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        searchView = binding.searchViewMain
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                searchText = newText.toString()
+                filterProducts()
+                return true
+            }
+        })
+
 
         allProducts = listOf(
-            Product(1, "Серьги золотые с бриллиантами", "", "2.7.5.1.066.1_1,6_0", 0, "00001"),
-            Product(2, "Серьги золотые с бриллиантами", "", "2.7.3.1.096.1_7,8_0", 15, "00001"),
-            Product(3, "Серьги золотые с бриллиантами", "", "2.7.2.1.096.1_5,9_0", 10, "00001"),
-            Product(4, "Серьги золотые с бриллиантами", "", "2.7.2.1.096.1_7,2_0", 18, "00001"),
-            Product(5, "Серьги золотые с бриллиантами", "", "2.7.5.1.066.1_1,6_0", 0, "00001"),
-            Product(6, "Серьги золотые с бриллиантами", "", "2.7.3.1.096.1_7,8_0", 15, "00001"),
-            Product(7, "Серьги золотые с бриллиантами", "", "2.7.2.1.096.1_5,9_0", 10, "00001"),
+            Product(1, "Серьги золотые с золотом", "", "2.7.5.1.066.1_1,6_0", 0, "00001"),
+            Product(2, "Серьги золотые с печеньками", "", "2.7.3.1.096.1_7,8_0", 15, "00002"),
+            Product(3, "Серьги золотые с кошками", "https://cdn2.thecatapi.com/images/9gg.jpg", "2.7.2.1.096.1_5,9_0", 10, "00002"),
+            Product(4, "Серьги золотые с водичкой", "", "2.7.2.1.096.1_7,2_0", 18, "00001"),
+            Product(5, "Серьги золотые с собой", "", "2.7.5.1.066.1_1,6_0", 0, "00003"),
+            Product(6, "Серьги золотые с компом", "", "2.7.3.1.096.1_7,8_0", 15, "00003"),
+            Product(7, "Серьги золотые с кольцом", "", "2.7.2.1.096.1_5,9_0", 10, "00001"),
             Product(8, "Серьги золотые с бриллиантами", "", "2.7.2.1.096.1_7,2_0", 18, "00001")
         )
         fetchRV(allProducts)
@@ -85,15 +122,10 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             R.id.search_item -> {
-                val viewSearch = binding.viewSearch
-                if (searchBarChecked(viewSearch)) {
-                    viewSearch.visibility = VISIBLE
-                } else {
-                    viewSearch.visibility = GONE
-                }
+                searchViewFun()
             }
             R.id.filter_item -> {
-                callCategoryDialog(this)
+                filterFun()
             }
             R.id.barcode_item -> {
                 val action = MainFragmentDirections.actionMainFragmentToBarCodeScannerFragment()
@@ -105,8 +137,6 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         }
         return super.onOptionsItemSelected(item)
     }
-
-
 
     private fun categoryDialog(){
         val categoryDialog = CheckCategoryFragmentDialog()
@@ -133,14 +163,27 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
     }
 
     override fun onCategorySelected(selectedCategory: Category) {
-//        val viewCategory = binding.viewCheckedCategory
-//        viewCategory.visibility = VISIBLE
-//        binding.apply {
-//            checkedCategoryTv.text = selectedCategory.name
-//
-//        }
+        selectCategory = selectedCategory
+        binding.apply {
+            if (!searchBarChecked(viewSearch)){
+                viewSearch.visibility = GONE
+            }
+            materialCardViewCategory.setOnClickListener {
+                categoryDialog()
+            }
+            if (selectedCategory.id == "all"){
+                viewCheckedCategory.visibility = GONE
+            }
+            fabClearCategory.setOnClickListener {
+                viewCheckedCategory.visibility = GONE
+                selectCategory = null
+                filterProducts()
+            }
+            viewCheckedCategory.visibility = VISIBLE
+            checkedCategoryTv.text = selectedCategory.name
+        }
+        filterProducts()
 
-        Toast.makeText(requireContext(), selectedCategory.name, Toast.LENGTH_SHORT).show()
         Log.d("TAG", "onCategorySelected: $selectedCategory")
     }
 }
