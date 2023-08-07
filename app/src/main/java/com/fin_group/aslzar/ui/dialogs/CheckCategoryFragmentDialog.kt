@@ -32,6 +32,7 @@ class CheckCategoryFragmentDialog : BaseDialogFragment() {
         _binding = FragmentDialogCheckCategoryBinding.inflate(inflater, container, false)
 
         categories = listOf(
+            Category("all", "Все"),
             Category("00001", "Кольца"),
             Category("00002", "Серьги"),
             Category("00003", "Ожерелья"),
@@ -39,14 +40,12 @@ class CheckCategoryFragmentDialog : BaseDialogFragment() {
             Category("00005", "Подвески"),
             Category("00006", "Часы"),
         )
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setWidthPercent(90)
-
+        setWidthPercent(80)
 
         val recyclerView = binding.rvCategories
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -59,6 +58,4 @@ class CheckCategoryFragmentDialog : BaseDialogFragment() {
     fun setCategoryClickListener(listener: CategoryClickListener) {
         categoryClickListener = listener
     }
-
-
 }

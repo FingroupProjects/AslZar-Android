@@ -14,7 +14,7 @@ import com.fin_group.aslzar.ui.fragments.main.MainFragmentDirections
 import com.fin_group.aslzar.util.ProductOnClickListener
 
 class ProductsAdapter(
-    val productList: List<Product>,
+    var productList: List<Product>,
     val listener: ProductOnClickListener,
 ): RecyclerView.Adapter<ProductsAdapter.ViewHolder>() {
 
@@ -72,6 +72,11 @@ class ProductsAdapter(
                 listener.inStock(product)
             }
         }
+    }
+
+    fun updateProducts(newProducts: List<Product>) {
+        productList = newProducts
+        notifyDataSetChanged()
     }
 
     override fun getItemCount(): Int {
