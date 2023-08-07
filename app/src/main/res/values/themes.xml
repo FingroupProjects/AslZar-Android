@@ -92,7 +92,6 @@
 
     <style name="DialogFragmentStyle" parent="Theme.MaterialComponents.Light.Dialog.Alert">
         <item name="android:background">@drawable/shape_dialog_background</item>
-        <item name="android:layout_gravity">center</item>
     </style>
 
     <style name="Theme.AslZar" parent="Base.Theme.AslZar" />

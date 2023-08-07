@@ -24,6 +24,8 @@ import com.fin_group.aslzar.models.Product
 import com.fin_group.aslzar.ui.dialogs.CheckCategoryFragmentDialog
 import com.fin_group.aslzar.util.CategoryClickListener
 import com.fin_group.aslzar.util.ProductOnClickListener
+import com.fin_group.aslzar.util.callCategoryDialog
+import com.fin_group.aslzar.util.searchBarChecked
 import com.fin_group.aslzar.util.showBottomNav
 import com.google.android.material.appbar.MaterialToolbar
 
@@ -84,14 +86,14 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         when(item.itemId){
             R.id.search_item -> {
                 val viewSearch = binding.viewSearch
-                if (searchBarChecked()) {
+                if (searchBarChecked(viewSearch)) {
                     viewSearch.visibility = VISIBLE
                 } else {
                     viewSearch.visibility = GONE
                 }
             }
             R.id.filter_item -> {
-                categoryDialog()
+                callCategoryDialog(this)
             }
             R.id.barcode_item -> {
                 val action = MainFragmentDirections.actionMainFragmentToBarCodeScannerFragment()
@@ -104,22 +106,12 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun searchBarChecked(): Boolean{
-        val viewSearch = binding.viewSearch
-        return viewSearch.visibility != VISIBLE
-    }
+
 
     private fun categoryDialog(){
         val categoryDialog = CheckCategoryFragmentDialog()
+        categoryDialog.setCategoryClickListener(this)
         categoryDialog.show(activity?.supportFragmentManager!!, "category check dialog")
-    }
-
-
-    override fun onCategorySelected(selectedCategory: Category) {
-        Toast.makeText(requireContext(), selectedCategory.name, Toast.LENGTH_SHORT).show()
-        Log.d("TAG", "onCategorySelected: $selectedCategory")
-        // Обработка выбранной категории в вашем MainFragment
-        // Используйте выбранную категорию по своему усмотрению
     }
 
     override fun onStart() {
@@ -138,5 +130,17 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
 
     override fun inStock(product: Product) {
         Toast.makeText(requireContext(), "В наличии ${product.code}", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onCategorySelected(selectedCategory: Category) {
+//        val viewCategory = binding.viewCheckedCategory
+//        viewCategory.visibility = VISIBLE
+//        binding.apply {
+//            checkedCategoryTv.text = selectedCategory.name
+//
+//        }
+
+        Toast.makeText(requireContext(), selectedCategory.name, Toast.LENGTH_SHORT).show()
+        Log.d("TAG", "onCategorySelected: $selectedCategory")
     }
 }

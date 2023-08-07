@@ -16,7 +16,6 @@ import com.fin_group.aslzar.util.CategoryClickListener
 import com.fin_group.aslzar.util.setWidthPercent
 
 
-@Suppress("DEPRECATION")
 class CheckCategoryFragmentDialog : BaseDialogFragment() {
 
     private var _binding: FragmentDialogCheckCategoryBinding? = null
@@ -24,12 +23,13 @@ class CheckCategoryFragmentDialog : BaseDialogFragment() {
 
     private var categories: List<Category> = emptyList()
 
+    private var categoryClickListener: CategoryClickListener? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentDialogCheckCategoryBinding.inflate(inflater, container, false)
-        setWidthPercent(90)
 
         categories = listOf(
             Category("00001", "Кольца"),
@@ -45,17 +45,20 @@ class CheckCategoryFragmentDialog : BaseDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setWidthPercent(90)
 
 
         val recyclerView = binding.rvCategories
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = CategoryAdapter(categories) { selectedCategory ->
-            val listener = targetFragment as? CategoryClickListener
-            listener?.onCategorySelected(selectedCategory)
+            categoryClickListener?.onCategorySelected(selectedCategory)
             dismiss()
         }
     }
 
+    fun setCategoryClickListener(listener: CategoryClickListener) {
+        categoryClickListener = listener
+    }
 
 
 }

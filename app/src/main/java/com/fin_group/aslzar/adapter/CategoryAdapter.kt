@@ -8,10 +8,11 @@ import com.fin_group.aslzar.databinding.RowItemCategoryCheckBinding
 import com.fin_group.aslzar.databinding.RowItemProductBinding
 import com.fin_group.aslzar.models.Category
 
-class CategoryAdapter(private val categories: List<Category>, private val onCategoryClickListener: (Category) -> Unit) :
-    RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
+class CategoryAdapter(
+    private val categories: List<Category>, private val onCategoryClickListener: (Category) -> Unit
+): RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
 
-    inner class CategoryViewHolder(binding: RowItemCategoryCheckBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class CategoryViewHolder(binding: RowItemCategoryCheckBinding): RecyclerView.ViewHolder(binding.root) {
         private val title = binding.spinnerTv
 
         fun bind(category: Category) {
