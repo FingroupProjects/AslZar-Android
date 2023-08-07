@@ -27,27 +27,58 @@ class FragmentLogin : Fragment() {
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
 
         binding.btnLogin.setOnClickListener {
-            val i = Intent(requireActivity(), MainActivity::class.java)
-            startActivity(i)
-            requireActivity().finish()
+            val login = "123456789"
+            val password = "987654321"
+            val logIn = binding.login
+            val passWord = binding.password
+            val loginText = logIn.editText?.text.toString()
+            val passwordText = passWord.editText?.text.toString()
+
+            if (loginText == login && passwordText == password) {
+                val i = Intent(requireActivity(), MainActivity::class.java)
+                startActivity(i)
+                requireActivity().finish()
+            } else if (loginText.isEmpty()) {
+                binding.login.error = "Введите логин"
+                binding.login.requestFocus()
+                return@setOnClickListener
+            } else if (passwordText.isEmpty()) {
+                binding.password.error = "Введите пароль"
+                binding.password.requestFocus()
+                return@setOnClickListener
+            } else if (loginText != login) {
+                binding.login.error = "Неверный логин"
+                binding.login.requestFocus()
+                return@setOnClickListener
+            } else {
+                binding.password.error = "Неверный пароль"
+                binding.password.requestFocus()
+                return@setOnClickListener
+            }
+
         }
 
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                if (doubleBackToExitPressedOnce) {
-                    requireActivity().finish()
-                } else {
-                    Toast.makeText(requireContext(), "Нажмите еще раз \"Назад\" для выхода", Toast.LENGTH_SHORT).show()
-                    doubleBackToExitPressedOnce = true
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (doubleBackToExitPressedOnce) {
+                        requireActivity().finish()
+                    } else {
+                        Toast.makeText(
+                            requireContext(),
+                            "Нажмите еще раз \"Назад\" для выхода",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        doubleBackToExitPressedOnce = true
 
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        doubleBackToExitPressedOnce = false
-                    }, 2000)
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            doubleBackToExitPressedOnce = false
+                        }, 2000)
+                    }
                 }
-            }
-        })
+            })
 
         return binding.root
     }
-
 }
