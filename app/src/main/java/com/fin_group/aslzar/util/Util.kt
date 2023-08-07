@@ -10,6 +10,7 @@ import android.net.NetworkCapabilities
 import android.os.Build
 import android.text.InputType
 import android.util.Base64
+import android.view.Gravity
 import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
@@ -154,5 +155,7 @@ fun DialogFragment.setWidthPercent(percentage: Int) {
     val dm = Resources.getSystem().displayMetrics
     val rect = dm.run { Rect(0, 0, widthPixels, heightPixels) }
     val percentWidth = rect.width() * percent
+
     dialog?.window?.setLayout(percentWidth.toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
+    dialog?.window?.setGravity(Gravity.CENTER)
 }

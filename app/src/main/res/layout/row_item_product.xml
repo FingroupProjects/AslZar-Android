@@ -52,7 +52,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/item_product_bottom_btn"
-            android:contentDescription="@string/checing_product"
+            android:contentDescription="@string/checking_product"
             android:padding="7.5dp"
             android:clickable="true"
             android:focusable="true"

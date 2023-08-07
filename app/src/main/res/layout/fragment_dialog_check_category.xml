@@ -20,26 +20,27 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:text="Выберите каталог"
+            android:text="@string/select_catalog"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/floatingActionButton"
+            app:layout_constraintBottom_toBottomOf="@+id/btnClose"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/floatingActionButton" />
+            app:layout_constraintTop_toTopOf="@+id/btnClose" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/floatingActionButton"
+            android:id="@+id/btnClose"
             style="?attr/floatingActionButtonSmallStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:layout_marginEnd="10dp"
+            android:layout_marginEnd="5dp"
             android:clickable="true"
             android:src="@drawable/ic_clear"
             app:backgroundTint="@color/white"
             app:elevation="0dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/background_2" />
+            app:tint="@color/background_2"
+            tools:ignore="ContentDescription,SpeakableTextPresentCheck" />
 
         <View
             android:id="@+id/view"
@@ -50,7 +51,7 @@
             android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/floatingActionButton" />
+            app:layout_constraintTop_toBottomOf="@+id/btnClose" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvCategories"
