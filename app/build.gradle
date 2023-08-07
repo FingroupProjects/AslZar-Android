@@ -108,4 +108,7 @@ dependencies {
     //for progressBar add by Toxa
     implementation "com.airbnb.android:lottie:3.4.0"
 
+    //for lvl password add by Toxa
+    implementation 'com.nulab-inc:zxcvbn:1.5.1'
+
 }
