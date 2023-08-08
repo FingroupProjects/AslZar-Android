@@ -28,7 +28,7 @@ class WarningNoHaveProductFragmentDialog : BaseDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setWidthPercent(80)
+        setWidthPercent(90)
 
         binding.apply {
             actionClose.setOnClickListener { dismiss() }

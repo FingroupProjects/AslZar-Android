@@ -36,6 +36,7 @@ import com.fin_group.aslzar.util.searchBarChecked
 import com.fin_group.aslzar.util.searchViewFun
 import com.fin_group.aslzar.util.showBottomNav
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 
 @Suppress("DEPRECATION")
@@ -69,7 +70,6 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         viewCheckedCategory = binding.viewCheckedCategory
 
         binding.fabClearSearch.setOnClickListener {
-
             searchText = ""
             viewSearch.visibility = GONE
         }
@@ -92,7 +92,6 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
                 return true
             }
         })
-
 
         allProducts = listOf(
             Product(1, "Серьги золотые с золотом", "", "2.7.5.1.066.1_1,6_0", 0, "00001"),
@@ -166,6 +165,18 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
             callInStockDialog()
         } else {
             callOutStock()
+
+//            val dialog = MaterialAlertDialogBuilder(requireContext())
+//            dialog.setTitle("Предупреждение")
+//            dialog.setMessage(R.string.request_to_give_product)
+//
+//            dialog.setPositiveButton("Да", {_, _ ->
+//
+//                Toast.makeText(requireContext(), "Запрос на получение товара отправлен", Toast.LENGTH_SHORT).show()
+//            })
+//            dialog.setNegativeButton("Нет", null)
+//            dialog.setCancelable(true)
+//            dialog.show()
         }
     }
 

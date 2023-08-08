@@ -7,6 +7,6 @@
     <string name="add_to_cart">Добавление в корзину</string>
     <string name="checking_product">Проверка есть ли в наличии</string>
     <string name="select_catalog">Выберите каталог</string>
-    <string name="request_to_give_product">Такого товара нет в наличии. \n Хотите отправить запрос на получение?</string>
+    <string name="request_to_give_product">Такого товара нет в наличии.\nХотите отправить запрос на получение?</string>
 
 </resources>
