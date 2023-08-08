@@ -3,20 +3,28 @@ package com.fin_group.aslzar.ui.fragments.dataProduct
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.RecyclerView
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.databinding.FragmentDataProductBinding
+import com.fin_group.aslzar.ui.fragments.dataProduct.functions.callInStockDialog
 import com.fin_group.aslzar.util.hideBottomNav
 import com.google.android.material.appbar.MaterialToolbar
 
+@Suppress("DEPRECATION")
 class DataProductFragment : Fragment() {
 
     private var _binding: FragmentDataProductBinding? = null
     private val binding get() = _binding!!
 
     private val args by navArgs<DataProductFragmentArgs>()
+    lateinit var recyclerView: RecyclerView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -24,6 +32,7 @@ class DataProductFragment : Fragment() {
     ): View {
         _binding = FragmentDataProductBinding.inflate(inflater, container, false)
         hideBottomNav()
+        setHasOptionsMenu(true)
         val toolbar = requireActivity().findViewById<MaterialToolbar>(R.id.toolbar)
 
         return binding.root
@@ -33,6 +42,23 @@ class DataProductFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.textView6.text = args.productId
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.product_data_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.product_set_item){
+            Toast.makeText(requireContext(), "В комплекте", Toast.LENGTH_SHORT).show()
+        }
+        if (item.itemId == R.id.product_in_stock_item){
+            callInStockDialog()
+        }
+
+        return super.onOptionsItemSelected(item)
+
     }
 
     override fun onStart() {

@@ -47,7 +47,7 @@
     <fragment
         android:id="@+id/dataProductFragment"
         android:name="com.fin_group.aslzar.ui.fragments.dataProduct.DataProductFragment"
-        android:label="fragment_data_product"
+        android:label="Данные товара"
         tools:layout="@layout/fragment_data_product" >
         <argument
             android:name="productId"

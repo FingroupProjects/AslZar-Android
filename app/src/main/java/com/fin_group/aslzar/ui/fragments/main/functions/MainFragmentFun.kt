@@ -1,15 +1,14 @@
-package com.fin_group.aslzar.util
+package com.fin_group.aslzar.ui.fragments.main.functions
 
 import android.util.Log
-import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.constraintlayout.widget.ConstraintLayout
-import com.fin_group.aslzar.models.Product
 import com.fin_group.aslzar.ui.dialogs.CheckCategoryFragmentDialog
 import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.WarningNoHaveProductFragmentDialog
 import com.fin_group.aslzar.ui.fragments.main.MainFragment
+import com.fin_group.aslzar.util.CategoryClickListener
 
 fun MainFragment.callCategoryDialog(listener: CategoryClickListener) {
     val categoryDialog = CheckCategoryFragmentDialog()
