@@ -30,6 +30,8 @@ import androidx.navigation.fragment.findNavController
 import com.fin_group.aslzar.R
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import java.text.DecimalFormat
@@ -158,4 +160,15 @@ fun DialogFragment.setWidthPercent(percentage: Int) {
 
     dialog?.window?.setLayout(percentWidth.toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
     dialog?.window?.setGravity(Gravity.CENTER)
+}
+
+fun BottomSheetDialogFragment.setDialogHeightPercent(percentage: Int) {
+    val percent = percentage.toFloat() / 100
+    val dm = Resources.getSystem().displayMetrics
+    val rect = dm.run { Rect(0, 0, widthPixels, heightPixels) }
+    val percentHeight = rect.height() * percent
+    dialog?.window?.setLayout(
+        ViewGroup.LayoutParams.MATCH_PARENT,
+        percentHeight.toInt()
+    )
 }

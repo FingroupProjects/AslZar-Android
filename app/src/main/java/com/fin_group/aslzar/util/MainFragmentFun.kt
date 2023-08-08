@@ -7,12 +7,24 @@ import android.view.View.VISIBLE
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.fin_group.aslzar.models.Product
 import com.fin_group.aslzar.ui.dialogs.CheckCategoryFragmentDialog
+import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
+import com.fin_group.aslzar.ui.dialogs.WarningNoHaveProductFragmentDialog
 import com.fin_group.aslzar.ui.fragments.main.MainFragment
 
 fun MainFragment.callCategoryDialog(listener: CategoryClickListener) {
     val categoryDialog = CheckCategoryFragmentDialog()
     categoryDialog.setCategoryClickListener(listener)
     categoryDialog.show(activity?.supportFragmentManager!!, "category check dialog")
+}
+
+fun MainFragment.callInStockDialog(){
+    val inStockDialog = InStockBottomSheetDialogFragment()
+    inStockDialog.show(activity?.supportFragmentManager!!, "Product in stock Dialog")
+}
+
+fun MainFragment.callOutStock(){
+    val noHave = WarningNoHaveProductFragmentDialog()
+    noHave.show(activity?.supportFragmentManager!!, "Product no have dialog")
 }
 
 fun MainFragment.searchBarChecked(view: ConstraintLayout): Boolean {

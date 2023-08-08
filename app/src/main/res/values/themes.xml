@@ -11,6 +11,7 @@
         <item name="android:windowLightStatusBar">true</item>
 
         <item name="alertDialogTheme">@style/DialogFragmentTheme</item>
+        <item name="bottomSheetDialogTheme">@style/BottomSheetDialogTheme</item>
         <item name="fontFamily">@font/palanquin</item>
     </style>
 
@@ -92,6 +93,19 @@
 
     <style name="DialogFragmentStyle" parent="Theme.MaterialComponents.Light.Dialog.Alert">
         <item name="android:background">@drawable/shape_dialog_background</item>
+    </style>
+
+    <style name="BottomSheetDialogTheme" parent="ThemeOverlay.Material3.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/BottomSheetDialogStyle</item>
+        <item name="android:windowSoftInputMode">adjustResize</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:backgroundDimEnabled">true</item>
+    </style>
+
+    <style name="BottomSheetDialogStyle" parent="Widget.MaterialComponents.BottomSheet">
+        <item name="android:background">@drawable/shape_bottom_sheet_background</item>
     </style>
 
     <style name="Theme.AslZar" parent="Base.Theme.AslZar" />
