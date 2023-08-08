@@ -24,9 +24,12 @@ import com.fin_group.aslzar.databinding.FragmentMainBinding
 import com.fin_group.aslzar.models.Category
 import com.fin_group.aslzar.models.Product
 import com.fin_group.aslzar.ui.dialogs.CheckCategoryFragmentDialog
+import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
 import com.fin_group.aslzar.util.CategoryClickListener
 import com.fin_group.aslzar.util.ProductOnClickListener
 import com.fin_group.aslzar.util.callCategoryDialog
+import com.fin_group.aslzar.util.callInStockDialog
+import com.fin_group.aslzar.util.callOutStock
 import com.fin_group.aslzar.util.filterFun
 import com.fin_group.aslzar.util.filterProducts
 import com.fin_group.aslzar.util.searchBarChecked
@@ -159,7 +162,11 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
     }
 
     override fun inStock(product: Product) {
-        Toast.makeText(requireContext(), "В наличии ${product.code}", Toast.LENGTH_SHORT).show()
+        if (product.count > 0) {
+            callInStockDialog()
+        } else {
+            callOutStock()
+        }
     }
 
     override fun onCategorySelected(selectedCategory: Category) {
