@@ -24,19 +24,16 @@ import com.fin_group.aslzar.databinding.FragmentMainBinding
 import com.fin_group.aslzar.models.Category
 import com.fin_group.aslzar.models.Product
 import com.fin_group.aslzar.ui.dialogs.CheckCategoryFragmentDialog
-import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
 import com.fin_group.aslzar.util.CategoryClickListener
 import com.fin_group.aslzar.util.ProductOnClickListener
-import com.fin_group.aslzar.util.callCategoryDialog
-import com.fin_group.aslzar.util.callInStockDialog
-import com.fin_group.aslzar.util.callOutStock
-import com.fin_group.aslzar.util.filterFun
-import com.fin_group.aslzar.util.filterProducts
-import com.fin_group.aslzar.util.searchBarChecked
-import com.fin_group.aslzar.util.searchViewFun
+import com.fin_group.aslzar.ui.fragments.main.functions.callInStockDialog
+import com.fin_group.aslzar.ui.fragments.main.functions.callOutStock
+import com.fin_group.aslzar.ui.fragments.main.functions.filterFun
+import com.fin_group.aslzar.ui.fragments.main.functions.filterProducts
+import com.fin_group.aslzar.ui.fragments.main.functions.searchBarChecked
+import com.fin_group.aslzar.ui.fragments.main.functions.searchViewFun
 import com.fin_group.aslzar.util.showBottomNav
 import com.google.android.material.appbar.MaterialToolbar
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 
 @Suppress("DEPRECATION")
@@ -165,18 +162,6 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
             callInStockDialog()
         } else {
             callOutStock()
-
-//            val dialog = MaterialAlertDialogBuilder(requireContext())
-//            dialog.setTitle("Предупреждение")
-//            dialog.setMessage(R.string.request_to_give_product)
-//
-//            dialog.setPositiveButton("Да", {_, _ ->
-//
-//                Toast.makeText(requireContext(), "Запрос на получение товара отправлен", Toast.LENGTH_SHORT).show()
-//            })
-//            dialog.setNegativeButton("Нет", null)
-//            dialog.setCancelable(true)
-//            dialog.show()
         }
     }
 

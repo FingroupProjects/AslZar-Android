@@ -22,6 +22,7 @@ import com.fin_group.aslzar.ui.activities.LoginActivity
 import com.fin_group.aslzar.ui.dialogs.ChangeDataProfileDialogFragment
 import com.fin_group.aslzar.ui.dialogs.ChangePasswordProfileFragmentDialog
 import com.fin_group.aslzar.util.hideBottomNav
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 @Suppress("DEPRECATION")
 class ProfileFragment : Fragment() {
@@ -66,7 +67,7 @@ class ProfileFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.exit) {
-            val dialog = AlertDialog.Builder(requireContext())
+            val dialog = MaterialAlertDialogBuilder(requireContext())
             dialog.setMessage("Вы уверены что хотите выйте?")
             dialog.setPositiveButton("Да") { _, _ ->
                 val i = Intent(context, LoginActivity::class.java)
