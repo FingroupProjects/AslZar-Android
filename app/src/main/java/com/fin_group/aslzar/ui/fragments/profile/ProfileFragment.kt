@@ -39,9 +39,7 @@ class ProfileFragment : Fragment() {
         setHasOptionsMenu(true)
 
         goToChangePasswordDialog()
-
-
-
+        
         return binding.root
     }
 
@@ -58,11 +56,9 @@ class ProfileFragment : Fragment() {
         }
     }
 
-
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.profile_fragment_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
-        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

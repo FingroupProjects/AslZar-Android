@@ -33,7 +33,6 @@ class DataProductFragment : Fragment() {
         _binding = FragmentDataProductBinding.inflate(inflater, container, false)
         hideBottomNav()
         setHasOptionsMenu(true)
-        val toolbar = requireActivity().findViewById<MaterialToolbar>(R.id.toolbar)
 
         return binding.root
     }
@@ -56,9 +55,7 @@ class DataProductFragment : Fragment() {
         if (item.itemId == R.id.product_in_stock_item){
             callInStockDialog()
         }
-
         return super.onOptionsItemSelected(item)
-
     }
 
     override fun onStart() {

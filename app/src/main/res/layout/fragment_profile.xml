@@ -60,6 +60,7 @@
         android:text="ФИО"
         android:textColor="@color/text_color_1"
         android:textSize="14sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cardView" />
 
@@ -71,22 +72,25 @@
         android:layout_marginTop="2dp"
         android:layout_marginEnd="16dp"
         android:background="@drawable/bg_text_view"
-        android:text="Шахобов Нуриддин Фаррухович"
+        android:elevation="2dp"
+        android:padding="10dp"
+        android:text="Шарифов Тохирчон Толибович"
         android:textColor="@color/text_color_1"
         android:textSize="16sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/name" />
 
     <TextView
         android:id="@+id/login"
+        style="@style/forTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:text="Логин"
-        android:textColor="@color/text_color_1"
-        android:textSize="14sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editName" />
 
@@ -98,22 +102,25 @@
         android:layout_marginTop="2dp"
         android:layout_marginEnd="16dp"
         android:background="@drawable/bg_text_view_2"
-        android:text="nuriddin"
+        android:elevation="2dp"
+        android:padding="10dp"
+        android:text="tohirjon"
         android:textColor="@color/text_color_1"
         android:textSize="16sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/login" />
 
     <TextView
         android:id="@+id/filial"
+        style="@style/forTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:text="Филиал"
-        android:textColor="@color/text_color_1"
-        android:textSize="14sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editLogin" />
 
@@ -125,22 +132,29 @@
         android:layout_marginTop="2dp"
         android:layout_marginEnd="16dp"
         android:background="@drawable/bg_text_view_2"
+        android:elevation="2dp"
+        android:padding="10dp"
         android:text="Намангон"
         android:textColor="@color/text_color_1"
         android:textSize="16sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/filial" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnChangePassword"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
-        android:backgroundTint="@color/text_color_1"
+        android:background="@drawable/bg_for_btn"
+        android:backgroundTint="@color/primary_color_2"
+        android:padding="10dp"
         android:text="Изменить пароль"
+        android:textColor="@color/white"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editFilial" />
