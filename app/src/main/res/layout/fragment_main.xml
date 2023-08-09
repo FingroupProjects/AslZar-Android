@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/background_view_1"
     tools:context=".ui.fragments.main.MainFragment">
 
     <androidx.recyclerview.widget.RecyclerView
@@ -28,7 +28,6 @@
             android:id="@+id/view_search"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_constraint"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -86,7 +85,6 @@
             android:id="@+id/view_checked_category"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_constraint"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

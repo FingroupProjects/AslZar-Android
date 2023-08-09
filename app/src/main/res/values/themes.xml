@@ -76,7 +76,7 @@
     </style>
 
     <style name="App.Custom.Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
-        <item name="android:color">@color/background_6</item>
+        <item name="android:color">@android:color/transparent</item>
     </style>
 
     <style name="DialogFragmentTheme" parent="ThemeOverlay.Material3.Dialog">

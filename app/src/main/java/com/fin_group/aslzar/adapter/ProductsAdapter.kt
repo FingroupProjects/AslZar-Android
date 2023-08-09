@@ -49,18 +49,18 @@ class ProductsAdapter(
             title.text = product.name
             code.text = product.code
 
-            if (product.image != ""){
-                Glide.with(itemView.context)
-                    .load(product.image)
-                    .override(100, 100)
-                    .centerCrop()
-                    .into(image)
-            } else {
-                image.setImageResource(R.drawable.ic_no_image)
-            }
+//            if (product.image != ""){
+//                Glide.with(itemView.context)
+//                    .load(product.image)
+//                    .override(100, 100)
+//                    .centerCrop()
+//                    .into(image)
+//            } else {
+//                image.setImageResource(R.drawable.ic_no_image)
+//            }
             if (product.count <= 0){
-                btnCheckingInStock.setImageResource(R.drawable.ic_no_have)
-                btnCheckingInStock.background = context.resources.getDrawable(R.drawable.item_product_bottom_btn_2)
+                btnCheckingInStock.setImageResource(R.drawable.ic_clear_white)
+//                btnCheckingInStock.background = context.resources.getDrawable(R.drawable.item_product_bottom_btn_2)
             } else {
                 btnCheckingInStock.setImageResource(R.drawable.ic_check)
                 btnCheckingInStock.background = context.resources.getDrawable(R.drawable.item_product_bottom_btn)
