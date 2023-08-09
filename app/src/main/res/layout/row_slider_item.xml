@@ -4,33 +4,21 @@
     android:id="@+id/card_view"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="16dp"
     android:background="@color/primary_color_1"
-    card_view:cardCornerRadius="8dp"
+    card_view:cardCornerRadius="10dp"
     card_view:cardUseCompatPadding="true">
 
     <LinearLayout
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:orientation="vertical">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imageView"
-            android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:scaleType="centerCrop"
-            android:src="@mipmap/ic_launcher_round" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:padding="8dp"
-            android:backgroundTint="@android:color/transparent"
-            android:text="@string/app_name"
-            android:textColor="#000000"
-            android:textSize="16sp" />
+            android:src="@drawable/earrings" />
 
     </LinearLayout>
 

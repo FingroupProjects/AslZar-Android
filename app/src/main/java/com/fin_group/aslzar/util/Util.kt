@@ -45,6 +45,10 @@ interface OnFriendAddedListener {
     fun onFriendAddedSuccessfully(success: Boolean)
 }
 
+interface OnImageClickListener{
+    fun setImage(image: Int)
+}
+
 fun Fragment.showAction() {
     (activity as AppCompatActivity).supportActionBar?.show()
 }
