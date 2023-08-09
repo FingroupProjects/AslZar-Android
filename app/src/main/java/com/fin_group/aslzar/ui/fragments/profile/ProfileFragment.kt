@@ -43,7 +43,6 @@ class ProfileFragment : Fragment() {
         return binding.root
     }
 
-
     private fun goToChangePasswordDialog() {
         binding.btnChangePassword.setOnClickListener {
             val changeDataPassword = ChangePasswordProfileFragmentDialog()

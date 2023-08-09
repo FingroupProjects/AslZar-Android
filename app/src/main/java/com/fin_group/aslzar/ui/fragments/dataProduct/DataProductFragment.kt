@@ -1,24 +1,28 @@
 package com.fin_group.aslzar.ui.fragments.dataProduct
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.databinding.FragmentDataProductBinding
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.callInStockDialog
+import com.fin_group.aslzar.ui.fragments.dataProduct.functions.displayList
+import com.fin_group.aslzar.util.OnImageClickListener
 import com.fin_group.aslzar.util.hideBottomNav
-import com.google.android.material.appbar.MaterialToolbar
+
 
 @Suppress("DEPRECATION")
-class DataProductFragment : Fragment() {
+class DataProductFragment : Fragment(), OnImageClickListener {
 
     private var _binding: FragmentDataProductBinding? = null
     private val binding get() = _binding!!
@@ -33,6 +37,8 @@ class DataProductFragment : Fragment() {
         _binding = FragmentDataProductBinding.inflate(inflater, container, false)
         hideBottomNav()
         setHasOptionsMenu(true)
+        recyclerView = binding.otherImgRv
+        displayList(this)
 
         return binding.root
     }
@@ -50,6 +56,7 @@ class DataProductFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.product_set_item){
+
             Toast.makeText(requireContext(), "В комплекте", Toast.LENGTH_SHORT).show()
         }
         if (item.itemId == R.id.product_in_stock_item){
@@ -61,5 +68,15 @@ class DataProductFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         hideBottomNav()
+    }
+
+    override fun setImage(image: Int) {
+
+        binding.imageView2.setImageResource(image)
+
+//        val uri = "@drawable/myresource" // where myresource (without the extension) is the file
+//
+//
+//        Glide.with(requireContext()).load(image).into(binding.imageView2)
     }
 }
