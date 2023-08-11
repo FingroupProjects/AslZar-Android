@@ -7,14 +7,14 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.fin_group.aslzar.R
+import com.fin_group.aslzar.adapter.ProductSomeImagesAdapter
 import com.fin_group.aslzar.databinding.FragmentDataProductBinding
+import com.fin_group.aslzar.models.ImageDataModel
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.callInStockDialog
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.displayList
 import com.fin_group.aslzar.util.OnImageClickListener
@@ -29,6 +29,11 @@ class DataProductFragment : Fragment(), OnImageClickListener {
 
     private val args by navArgs<DataProductFragmentArgs>()
     lateinit var recyclerView: RecyclerView
+
+    private var currentSelectedPosition = RecyclerView.NO_POSITION
+    var imageList: List<ImageDataModel> = emptyList()
+    lateinit var productSomeImagesAdapter: ProductSomeImagesAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -37,6 +42,10 @@ class DataProductFragment : Fragment(), OnImageClickListener {
         hideBottomNav()
         setHasOptionsMenu(true)
         recyclerView = binding.otherImgRv
+
+        productSomeImagesAdapter = ProductSomeImagesAdapter(imageList, this)
+        productSomeImagesAdapter.setSelectedPosition(0)
+
         displayList(this)
 
         return binding.root
@@ -69,12 +78,12 @@ class DataProductFragment : Fragment(), OnImageClickListener {
     }
 
     override fun setImage(image: Int) {
-
+        currentSelectedPosition = imageList.indexOfFirst { it.image == image }
+        productSomeImagesAdapter.setSelectedPosition(currentSelectedPosition)
+//        viewAdapter.notifyItemChanged(currentSelectedPosition)
+//        Toast.makeText(requireContext(), currentSelectedPosition, Toast.LENGTH_SHORT).show()
         binding.imageView2.setImageResource(image)
 
-//        val uri = "@drawable/myresource" // where myresource (without the extension) is the file
-//
-//
 //        Glide.with(requireContext()).load(image).into(binding.imageView2)
     }
 }
