@@ -31,4 +31,3 @@ fun DataProductFragment.displayList(listener: OnImageClickListener) {
     recyclerView.adapter = productSomeImagesAdapter
     productSomeImagesAdapter.updateList(imageList)
 }
-
