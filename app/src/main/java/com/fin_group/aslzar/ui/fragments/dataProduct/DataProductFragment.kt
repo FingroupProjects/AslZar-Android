@@ -35,8 +35,8 @@ class DataProductFragment : Fragment(), OnImageClickListener {
     private val binding get() = _binding!!
 
     private val args by navArgs<DataProductFragmentArgs>()
-
     lateinit var recyclerViewSomeImages: RecyclerView
+
     private var currentSelectedPosition = RecyclerView.NO_POSITION
     var imageList: List<ImageDataModel> = emptyList()
     lateinit var productSomeImagesAdapter: ProductSomeImagesAdapter
@@ -128,7 +128,7 @@ class DataProductFragment : Fragment(), OnImageClickListener {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.product_set_item){
-            Toast.makeText(requireContext(), "В комплекте", Toast.LENGTH_SHORT).show()
+
         }
         if (item.itemId == R.id.product_in_stock_item){
             callInStockDialog()
