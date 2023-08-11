@@ -35,4 +35,3 @@ fun DataProductFragment.displayList(listener: OnImageClickListener) {
     recyclerView.layoutManager = LinearLayoutManager(requireContext(), HORIZONTAL, false)
     recyclerView.adapter = ViewAdapter(imageList, listener)
 }
-
