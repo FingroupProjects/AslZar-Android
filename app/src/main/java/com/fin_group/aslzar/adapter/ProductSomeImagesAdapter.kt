@@ -4,14 +4,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.models.ImageDataModel
 import com.fin_group.aslzar.util.OnImageClickListener
 
-class ViewAdapter(val imageDataModelList: ArrayList<ImageDataModel>, private val listener: OnImageClickListener) : RecyclerView.Adapter<ViewAdapter.ViewHolder>() {
+class ProductSomeImagesAdapter(var imageDataModelList: List<ImageDataModel>, private val listener: OnImageClickListener) : RecyclerView.Adapter<ProductSomeImagesAdapter.ViewHolder>() {
 
     var selectedItemPosition = RecyclerView.NO_POSITION
 
@@ -25,16 +23,24 @@ class ViewAdapter(val imageDataModelList: ArrayList<ImageDataModel>, private val
 
         holder.bindItems(product, isSelected)
 
-
         holder.itemView.setOnClickListener {
             selectedItemPosition = position
-            notifyDataSetChanged()
             listener.setImage(product.image)
         }
     }
 
+    fun updateList(newList: List<ImageDataModel>) {
+        imageDataModelList = newList
+        notifyDataSetChanged()
+    }
+
     override fun getItemCount(): Int {
         return imageDataModelList.size
+    }
+
+    fun setSelectedPosition(position: Int) {
+        selectedItemPosition = position
+        notifyDataSetChanged()
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
