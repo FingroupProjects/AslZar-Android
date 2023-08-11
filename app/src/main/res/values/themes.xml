@@ -108,5 +108,12 @@
         <item name="android:background">@drawable/shape_bottom_sheet_background</item>
     </style>
 
+    <style name="ChipStyle" parent="Widget.MaterialComponents.Chip.Choice">
+        <item name="chipBackgroundColor">@drawable/chip_selected_background_color</item> <!-- Ссылка на ваш файл с состояниями фона -->
+        <item name="android:textColor">@color/text_color_1</item> <!-- Ссылка на ваш файл с состояниями текста -->
+        <item name="chipStrokeWidth">2dp</item>
+        <item name="chipStrokeColor">@color/border_color_1</item>
+    </style>
+
     <style name="Theme.AslZar" parent="Base.Theme.AslZar" />
 </resources>
