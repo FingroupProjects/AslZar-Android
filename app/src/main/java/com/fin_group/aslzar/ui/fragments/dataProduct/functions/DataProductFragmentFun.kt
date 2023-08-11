@@ -27,8 +27,10 @@ fun DataProductFragment.displayList(listener: OnImageClickListener) {
         ImageDataModel(R.drawable.ring_6, "Test"),
         ImageDataModel(R.drawable.ring_7, "Test")
     )
-    recyclerView.layoutManager = LinearLayoutManager(requireContext(), HORIZONTAL, false)
-    recyclerView.adapter = productSomeImagesAdapter
+    recyclerViewSomeImages.layoutManager = LinearLayoutManager(requireContext(), HORIZONTAL, false)
+    recyclerViewSomeImages.adapter = productSomeImagesAdapter
     productSomeImagesAdapter.updateList(imageList)
 }
+
+
 
