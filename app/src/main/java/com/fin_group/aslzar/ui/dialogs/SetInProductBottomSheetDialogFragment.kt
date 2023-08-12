@@ -9,7 +9,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fin_group.aslzar.R
-import com.fin_group.aslzar.adapter.ViewAdapter
+import com.fin_group.aslzar.adapter.BottomSheetItemAdapter
+import com.fin_group.aslzar.adapter.ProductSomeImagesAdapter
 import com.fin_group.aslzar.databinding.FragmentSheetDialogSetInProductBottomBinding
 import com.fin_group.aslzar.models.ImageDataModel
 import com.fin_group.aslzar.ui.fragments.dataProduct.DataProductFragment
@@ -25,6 +26,10 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnIma
 
     lateinit var recyclerView: RecyclerView
 
+    private var currentSelectedPosition = RecyclerView.NO_POSITION
+    var imageList: List<ImageDataModel> = emptyList()
+    lateinit var setProduct: BottomSheetItemAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -32,10 +37,10 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnIma
         hideBottomNav()
         recyclerView = binding.rclView
 
-        setProductBottomSheets(this)
+        setProduct = BottomSheetItemAdapter(imageList, this)
+        setProduct.setSelectedPositions(0)
 
-
-
+        setProduct(this)
 
         return binding.root
     }
@@ -50,21 +55,34 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnIma
         _binding = null
     }
 
-    private fun setProductBottomSheets(listener: OnImageClickListener) {
-        val imageList = ArrayList<ImageDataModel>()
-        imageList.clear()
-        imageList.add(ImageDataModel(R.drawable.earrings, "Test"))
-        imageList.add(ImageDataModel(R.drawable.ring_2, "Test"))
-        imageList.add(ImageDataModel(R.drawable.ring_3, "Test"))
-        imageList.add(ImageDataModel(R.drawable.ring_4, "Test"))
-        imageList.add(ImageDataModel(R.drawable.ring_6, "Test"))
-        imageList.add(ImageDataModel(R.drawable.ring_7, "Test"))
-        recyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        recyclerView.adapter = ViewAdapter(imageList, listener)
+
+    private fun setProduct(listener: OnImageClickListener) {
+        imageList = listOf(
+            ImageDataModel(R.drawable.ring_2, "Test"),
+            ImageDataModel(R.drawable.ring_3, "Test"),
+            ImageDataModel(R.drawable.ring_4, "Test"),
+            ImageDataModel(R.drawable.ring_6, "Test"),
+            ImageDataModel(R.drawable.ring_7, "Test"),
+            ImageDataModel(R.drawable.ring_2, "Test"),
+            ImageDataModel(R.drawable.ring_3, "Test"),
+            ImageDataModel(R.drawable.ring_4, "Test"),
+            ImageDataModel(R.drawable.ring_6, "Test"),
+            ImageDataModel(R.drawable.ring_7, "Test")
+        )
+        recyclerView.layoutManager = LinearLayoutManager(requireContext(),
+            LinearLayoutManager.HORIZONTAL, false)
+        recyclerView.adapter = setProduct
+        setProduct.updateList(imageList)
     }
 
     override fun setImage(image: Int) {
-        TODO("Not yet implemented")
+        currentSelectedPosition = imageList.indexOfFirst { it.image == image }
+        setProduct.setSelectedPositions(currentSelectedPosition)
+//        viewAdapter.notifyItemChanged(currentSelectedPosition)
+//        Toast.makeText(requireContext(), currentSelectedPosition, Toast.LENGTH_SHORT).show()
+        binding.mainImageView.setImageResource(image)
+
+//        Glide.with(requireContext()).load(image).into(binding.imageView2)
     }
 
 }

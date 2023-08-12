@@ -1,5 +1,6 @@
 package com.fin_group.aslzar.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +12,7 @@ import com.fin_group.aslzar.R
 import com.fin_group.aslzar.models.ImageDataModel
 import com.fin_group.aslzar.util.OnImageClickListener
 
-class BottomSheetItemAdapter(private var mList:ArrayList<ImageDataModel>, private val listener: OnImageClickListener): RecyclerView.Adapter<BottomSheetItemAdapter.ViewHolder>() {
+class BottomSheetItemAdapter(var mList:List<ImageDataModel>, private val listener: OnImageClickListener): RecyclerView.Adapter<BottomSheetItemAdapter.ViewHolder>() {
 
     var selectedItemPosition = RecyclerView.NO_POSITION
 
@@ -26,25 +27,33 @@ class BottomSheetItemAdapter(private var mList:ArrayList<ImageDataModel>, privat
 
     override fun onBindViewHolder(holder:ViewHolder, position: Int) {
         val item = mList[position]
-        //holder.item.text = item
         val isSelected = position == selectedItemPosition
 
-        holder.bindItems(item, isSelected)
-
+        holder.bindSetProductItems(item, isSelected)
 
         holder.itemView.setOnClickListener {
             selectedItemPosition = position
-            notifyDataSetChanged()
             listener.setImage(item.image)
         }
 
     }
 
-    class ViewHolder(ItemView: View): RecyclerView.ViewHolder(ItemView){
-        val item: TextView = ItemView.findViewById(R.id.tvItem)
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateList(newList: List<ImageDataModel>) {
+        mList = newList
+        notifyDataSetChanged()
+    }
 
-        fun bindItems(imageDataModel: ImageDataModel, isSelected: Boolean) {
-            val imageView = itemView.findViewById<ImageView>(R.id.tvItemm)
+    @SuppressLint("NotifyDataSetChanged")
+    fun setSelectedPositions(position: Int) {
+        selectedItemPosition = position
+        notifyDataSetChanged()
+    }
+
+    class ViewHolder(ItemView: View): RecyclerView.ViewHolder(ItemView){
+
+        fun bindSetProductItems(imageDataModel: ImageDataModel, isSelected: Boolean) {
+            val imageView = itemView.findViewById<ImageView>(R.id.image)
 //            val textView = itemView.findViewById<TextView>(R.id.tvName)
 //            textView.text = imageDataModel.name
 //            Glide.with(itemView.context).load(imageDataModel.image).into(imageView)

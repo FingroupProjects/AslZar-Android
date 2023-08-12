@@ -17,6 +17,10 @@ class ProductSomeImagesAdapter(var imageDataModelList: List<ImageDataModel>, pri
         return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.row_slider_item, parent, false))
     }
 
+    override fun getItemCount(): Int {
+        return imageDataModelList.size
+    }
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val product = imageDataModelList[position]
         val isSelected = position == selectedItemPosition
@@ -34,9 +38,6 @@ class ProductSomeImagesAdapter(var imageDataModelList: List<ImageDataModel>, pri
         notifyDataSetChanged()
     }
 
-    override fun getItemCount(): Int {
-        return imageDataModelList.size
-    }
 
     fun setSelectedPosition(position: Int) {
         selectedItemPosition = position
