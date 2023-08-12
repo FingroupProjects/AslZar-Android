@@ -21,6 +21,7 @@ import com.fin_group.aslzar.databinding.FragmentProfileBinding
 import com.fin_group.aslzar.ui.activities.LoginActivity
 import com.fin_group.aslzar.ui.dialogs.ChangeDataProfileDialogFragment
 import com.fin_group.aslzar.ui.dialogs.ChangePasswordProfileFragmentDialog
+import com.fin_group.aslzar.ui.dialogs.SignOutProfileFragmentDialog
 import com.fin_group.aslzar.util.hideBottomNav
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
@@ -49,7 +50,7 @@ class ProfileFragment : Fragment() {
             val fragmentManager: FragmentManager? = activity?.supportFragmentManager
             fragmentManager?.let {
                 val transaction: FragmentTransaction = it.beginTransaction()
-                transaction.addToBackStack(null) // Это добавит текущий фрагмент в стек обратного перехода
+                transaction.addToBackStack(null)
                 changeDataPassword.show(transaction, "ChangePasswordProfileDialogFragment")
             }
         }
@@ -62,16 +63,10 @@ class ProfileFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.exit) {
-            val dialog = MaterialAlertDialogBuilder(requireContext())
-            dialog.setMessage("Вы уверены что хотите выйте?")
-            dialog.setPositiveButton("Да") { _, _ ->
-                val i = Intent(context, LoginActivity::class.java)
-                startActivity(i)
-                activity?.finish()
-            }
-            dialog.setNegativeButton("Нет", null)
-            dialog.setCancelable(true)
-            dialog.show()
+            val signOutDialog = SignOutProfileFragmentDialog()
+            signOutDialog.show(childFragmentManager, "sign_out_dialog")
+            return true
+
         }
         return super.onOptionsItemSelected(item)
     }

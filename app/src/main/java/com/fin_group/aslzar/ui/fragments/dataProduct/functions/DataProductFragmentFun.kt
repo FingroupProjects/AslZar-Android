@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.models.ImageDataModel
 import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
+import com.fin_group.aslzar.ui.dialogs.SetInProductBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.WarningNoHaveProductFragmentDialog
 import com.fin_group.aslzar.ui.fragments.dataProduct.DataProductFragment
 import com.fin_group.aslzar.util.OnImageClickListener
@@ -18,6 +19,13 @@ fun DataProductFragment.callOutStock() {
     val noHave = WarningNoHaveProductFragmentDialog()
     noHave.show(activity?.supportFragmentManager!!, "Product no have dialog")
 }
+
+fun DataProductFragment.callSetInProduct(){
+
+    val setProductBottomSheet = SetInProductBottomSheetDialogFragment()
+    setProductBottomSheet.show(activity?.supportFragmentManager!!, "Set product in bottom sheet")
+}
+
 
 fun DataProductFragment.displayList(listener: OnImageClickListener) {
     imageList = listOf(

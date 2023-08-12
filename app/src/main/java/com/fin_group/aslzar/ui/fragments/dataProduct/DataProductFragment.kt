@@ -19,6 +19,7 @@ import com.fin_group.aslzar.adapter.ProductSomeImagesAdapter
 import com.fin_group.aslzar.databinding.FragmentDataProductBinding
 import com.fin_group.aslzar.models.ImageDataModel
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.callInStockDialog
+import com.fin_group.aslzar.ui.fragments.dataProduct.functions.callSetInProduct
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.displayList
 import com.fin_group.aslzar.util.OnImageClickListener
 import com.fin_group.aslzar.util.hideBottomNav
@@ -128,7 +129,7 @@ class DataProductFragment : Fragment(), OnImageClickListener {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.product_set_item){
-
+            callSetInProduct()
         }
         if (item.itemId == R.id.product_in_stock_item){
             callInStockDialog()
