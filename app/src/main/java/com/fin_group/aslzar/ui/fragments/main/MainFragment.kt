@@ -34,6 +34,7 @@ import com.fin_group.aslzar.ui.fragments.main.functions.searchBarChecked
 import com.fin_group.aslzar.ui.fragments.main.functions.searchViewFun
 import com.fin_group.aslzar.util.showBottomNav
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
 @Suppress("DEPRECATION")
@@ -56,6 +57,12 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
     lateinit var searchView: SearchView
 
     lateinit var myAdapter: ProductsAdapter
+
+    //add Toxa
+
+    private lateinit var notificationBadge: View
+    private var count = 1
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -156,7 +163,6 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
     override fun addToCart(product: Product) {
         Toast.makeText(requireContext(), "Добавление в корзину ${product.code}", Toast.LENGTH_SHORT).show()
     }
-
     override fun inStock(product: Product) {
         if (product.count > 0) {
             callInStockDialog()

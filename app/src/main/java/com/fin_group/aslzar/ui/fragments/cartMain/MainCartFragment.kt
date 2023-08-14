@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.databinding.FragmentCartBinding
 import com.fin_group.aslzar.databinding.FragmentMainCartBinding
+import androidx.navigation.fragment.findNavController
+
 import com.fin_group.aslzar.util.hideToolBar
 import com.fin_group.aslzar.util.showToolBar
 import com.google.android.material.appbar.MaterialToolbar
@@ -26,6 +28,25 @@ class MainCartFragment : Fragment() {
         _binding = FragmentMainCartBinding.inflate(inflater, container, false)
         return binding.root
     }
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        binding.cart.setOnClickListener {
+            // Переход на CartFragment
+            findNavController().navigate(R.id.action_mainCartFragment_to_cartFragment)
+        }
+
+        binding.calculator.setOnClickListener {
+            // Переход на CalculatorFragment
+            findNavController().navigate(R.id.action_mainCartFragment_to_calculatorFragment)
+        }
+    }
+
+
+
+
 
     override fun onDestroyView() {
         super.onDestroyView()
