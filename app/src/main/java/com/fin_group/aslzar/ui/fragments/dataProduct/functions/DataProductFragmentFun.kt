@@ -40,5 +40,3 @@ fun DataProductFragment.displayList(listener: OnImageClickListener) {
     productSomeImagesAdapter.updateList(imageList)
 }
 
-}
-
