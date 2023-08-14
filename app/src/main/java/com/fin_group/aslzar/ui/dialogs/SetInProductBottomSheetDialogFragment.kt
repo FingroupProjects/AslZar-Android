@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fin_group.aslzar.R
@@ -39,7 +41,7 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnIma
 
         setProduct = BottomSheetItemAdapter(imageList, this)
         setProduct.setSelectedPositions(0)
-
+        setProductBottomSheet()
         setProduct(this)
 
         return binding.root
@@ -69,8 +71,10 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnIma
             ImageDataModel(R.drawable.ring_6, "Test"),
             ImageDataModel(R.drawable.ring_7, "Test")
         )
-        recyclerView.layoutManager = LinearLayoutManager(requireContext(),
-            LinearLayoutManager.HORIZONTAL, false)
+        recyclerView.layoutManager = LinearLayoutManager(
+            requireContext(),
+            LinearLayoutManager.HORIZONTAL, false
+        )
         recyclerView.adapter = setProduct
         setProduct.updateList(imageList)
     }
@@ -83,6 +87,18 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnIma
         binding.mainImageView.setImageResource(image)
 
 //        Glide.with(requireContext()).load(image).into(binding.imageView2)
+    }
+
+    private fun setProductBottomSheet() {
+        binding.apply {
+            goTo.setOnClickListener {
+                Toast.makeText(requireContext(), "Информация о продукте", Toast.LENGTH_SHORT).show()
+
+            }
+            add.setOnClickListener {
+                Toast.makeText(requireContext(), "Добавление в корзину", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
 }
