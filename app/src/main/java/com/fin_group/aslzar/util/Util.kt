@@ -49,6 +49,10 @@ interface OnImageClickListener{
     fun setImage(image: Int)
 }
 
+interface OnAlikeProductClickListener{
+    fun callBottomDialog(id: String)
+}
+
 fun Fragment.showAction() {
     (activity as AppCompatActivity).supportActionBar?.show()
 }

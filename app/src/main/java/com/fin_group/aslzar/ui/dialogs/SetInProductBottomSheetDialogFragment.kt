@@ -36,13 +36,12 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnIma
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentSheetDialogSetInProductBottomBinding.inflate(inflater, container, false)
-        hideBottomNav()
-        recyclerView = binding.rclView
+        recyclerView = binding.spSomeImagesRv
 
         setProduct = BottomSheetItemAdapter(imageList, this)
         setProduct.setSelectedPositions(0)
         setProductBottomSheet()
-        setProduct(this)
+        setProduct()
 
         return binding.root
     }
@@ -58,7 +57,7 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnIma
     }
 
 
-    private fun setProduct(listener: OnImageClickListener) {
+    private fun setProduct() {
         imageList = listOf(
             ImageDataModel(R.drawable.ring_2, "Test"),
             ImageDataModel(R.drawable.ring_3, "Test"),
@@ -71,10 +70,7 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnIma
             ImageDataModel(R.drawable.ring_6, "Test"),
             ImageDataModel(R.drawable.ring_7, "Test")
         )
-        recyclerView.layoutManager = LinearLayoutManager(
-            requireContext(),
-            LinearLayoutManager.HORIZONTAL, false
-        )
+        recyclerView.layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL, false)
         recyclerView.adapter = setProduct
         setProduct.updateList(imageList)
     }

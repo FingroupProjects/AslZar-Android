@@ -47,6 +47,7 @@ class CheckCategoryFragmentDialog : BaseDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         setWidthPercent(80)
 
+        binding.btnClose.setOnClickListener { dismiss() }
         val recyclerView = binding.rvCategories
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = CategoryAdapter(categories) { selectedCategory ->
