@@ -38,18 +38,18 @@ class ChangePasswordProfileFragmentDialog : BaseDialogFragment() {
         newPasswordInputLayout = binding.newPasswordChange
         newPasswordEditText = binding.editNewPasswordChange
 
-        passwordCheck()
+        //passwordCheck()
 
-        newPasswordEditText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-
-            override fun afterTextChanged(s: Editable?) {
-                val newPassword = s?.toString() ?: ""
-                updateProgressBar(newPassword)
-            }
-        })
+//        newPasswordEditText.addTextChangedListener(object : TextWatcher {
+//            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+//
+//            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+//
+//            override fun afterTextChanged(s: Editable?) {
+//                val newPassword = s?.toString() ?: ""
+//                updateProgressBar(newPassword)
+//            }
+//        })
 
         return binding.root
     }

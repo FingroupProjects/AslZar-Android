@@ -192,7 +192,5 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
             checkedCategoryTv.text = selectedCategory.name
         }
         filterProducts()
-
-        Log.d("TAG", "onCategorySelected: $selectedCategory")
     }
 }

@@ -13,6 +13,9 @@
         <item name="alertDialogTheme">@style/DialogFragmentTheme</item>
         <item name="bottomSheetDialogTheme">@style/BottomSheetDialogTheme</item>
         <item name="fontFamily">@font/palanquin</item>
+
+        <item name="chipStyle">@style/Widget.App.Chip</item>
+
     </style>
 
     <style name="forTextView">
@@ -108,11 +111,11 @@
         <item name="android:background">@drawable/shape_bottom_sheet_background</item>
     </style>
 
-    <style name="ChipStyle" parent="Widget.MaterialComponents.Chip.Choice">
-        <item name="chipBackgroundColor">@drawable/chip_selected_background_color</item> <!-- Ссылка на ваш файл с состояниями фона -->
-        <item name="android:textColor">@color/text_color_1</item> <!-- Ссылка на ваш файл с состояниями текста -->
+    <style name="Widget.App.Chip" parent="Widget.Material3.Chip.Suggestion">
+        <item name="chipIconTint">@color/background_3</item>
+        <item name="chipBackgroundColor">@color/background_view_1</item>
         <item name="chipStrokeWidth">2dp</item>
-        <item name="chipStrokeColor">@color/border_color_1</item>
+        <item name="chipStrokeColor">@color/stroke_tint</item>
     </style>
 
     <style name="Theme.AslZar" parent="Base.Theme.AslZar" />
