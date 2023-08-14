@@ -116,4 +116,11 @@
     </style>
 
     <style name="Theme.AslZar" parent="Base.Theme.AslZar" />
+
+    //for TabLayout
+    <style name="MyTabTextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/text_color_1</item>
+        <item name="android:textStyle">bold</item>
+    </style>
 </resources>
