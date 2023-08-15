@@ -20,12 +20,27 @@ class InStockBottomSheetDialogFragment : BaseBottomSheetDialogFragment() {
     private val binding get() = _binding!!
 
     var inStockList: List<InStockProduct> = emptyList()
+    private var inStockProductId: String = ""
+
+    companion object {
+        fun newInstance(inStockProductId: String): InStockBottomSheetDialogFragment {
+            val dialog = InStockBottomSheetDialogFragment()
+            val args = Bundle()
+            args.putString("inStockProductId", inStockProductId)
+            dialog.arguments = args
+            return dialog
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentBottomSheetDialogInStockBinding.inflate(inflater, container, false)
+
+        arguments?.let {
+            inStockProductId = it.getString("inStockProductId", "")
+        }
 
         inStockList = listOf(
             InStockProduct("Магазин 1", "Витрина 3", 8),

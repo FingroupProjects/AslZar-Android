@@ -1,7 +1,7 @@
 package com.fin_group.aslzar.models
 
 data class Product(
-    val id: Int,
+    val id: String,
     val name: String,
     val image: String,
     val code: String,

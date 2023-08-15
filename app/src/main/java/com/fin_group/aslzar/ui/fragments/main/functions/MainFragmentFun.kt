@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.fin_group.aslzar.ui.fragments.main.functions
 
 import android.util.Log
@@ -16,14 +18,26 @@ fun MainFragment.callCategoryDialog(listener: CategoryClickListener) {
     categoryDialog.show(activity?.supportFragmentManager!!, "category check dialog")
 }
 
-fun MainFragment.callInStockDialog(){
-    val inStockDialog = InStockBottomSheetDialogFragment()
-    inStockDialog.show(activity?.supportFragmentManager!!, "Product in stock Dialog")
+fun MainFragment.callInStockDialog(id: String){
+    val fragmentManager = requireFragmentManager()
+    val tag = "Product in stock Dialog"
+    val existingFragment = fragmentManager.findFragmentByTag(tag)
+
+    if (existingFragment == null) {
+        val bottomSheetFragment = InStockBottomSheetDialogFragment.newInstance(id)
+        bottomSheetFragment.show(fragmentManager, tag)
+    }
 }
 
-fun MainFragment.callOutStock(){
-    val noHave = WarningNoHaveProductFragmentDialog()
-    noHave.show(activity?.supportFragmentManager!!, "Product no have dialog")
+fun MainFragment.callOutStock(id: String){
+    val fragmentManager = requireFragmentManager()
+    val tag = "Product no have dialog"
+    val existingFragment = fragmentManager.findFragmentByTag(tag)
+
+    if (existingFragment == null) {
+        val bottomSheetFragment = WarningNoHaveProductFragmentDialog.newInstance(id)
+        bottomSheetFragment.show(fragmentManager, tag)
+    }
 }
 
 fun MainFragment.searchBarChecked(view: ConstraintLayout): Boolean {

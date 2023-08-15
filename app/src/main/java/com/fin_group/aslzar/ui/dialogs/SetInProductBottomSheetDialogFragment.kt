@@ -32,11 +32,29 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnIma
     var imageList: List<ImageDataModel> = emptyList()
     lateinit var setProduct: BottomSheetItemAdapter
 
+    private var setInProductId: String = ""
+
+
+    companion object {
+        fun newInstance(setInProductId: String): SetInProductBottomSheetDialogFragment {
+            val dialog = SetInProductBottomSheetDialogFragment()
+            val args = Bundle()
+            args.putString("setInProductId", setInProductId)
+            dialog.arguments = args
+            return dialog
+        }
+    }
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentSheetDialogSetInProductBottomBinding.inflate(inflater, container, false)
         recyclerView = binding.spSomeImagesRv
+
+        arguments?.let {
+            setInProductId = it.getString("setInProductId", "")
+        }
 
         setProduct = BottomSheetItemAdapter(imageList, this)
         setProduct.setSelectedPositions(0)

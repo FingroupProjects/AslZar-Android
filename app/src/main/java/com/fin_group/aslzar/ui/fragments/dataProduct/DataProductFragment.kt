@@ -93,10 +93,10 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.product_set_item){
-            callSetInProduct()
+            callSetInProduct(args.productId)
         }
         if (item.itemId == R.id.product_in_stock_item){
-            callInStockDialog()
+            callInStockDialog(args.productId)
         }
         return super.onOptionsItemSelected(item)
     }
