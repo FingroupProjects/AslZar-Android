@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import com.fin_group.aslzar.databinding.FragmentMainCartBinding
 import androidx.viewpager2.widget.ViewPager2
 import com.fin_group.aslzar.adapter.TabLayoutAdapter
+import com.fin_group.aslzar.util.hideToolBar
 import com.google.android.material.tabs.TabLayout
 
 class MainCartFragment : Fragment() {
@@ -27,6 +28,7 @@ class MainCartFragment : Fragment() {
 
         tableLayout = binding.tabLayout
         viewPager2 = binding.viewPager2
+        hideToolBar()
 
         tableLayout.addTab(tableLayout.newTab().setText("Корзина"))
         tableLayout.addTab(tableLayout.newTab().setText("Калькулятор"))

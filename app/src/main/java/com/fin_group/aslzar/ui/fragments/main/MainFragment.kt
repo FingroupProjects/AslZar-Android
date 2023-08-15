@@ -33,6 +33,7 @@ import com.fin_group.aslzar.ui.fragments.main.functions.filterProducts
 import com.fin_group.aslzar.ui.fragments.main.functions.searchBarChecked
 import com.fin_group.aslzar.ui.fragments.main.functions.searchViewFun
 import com.fin_group.aslzar.util.showBottomNav
+import com.fin_group.aslzar.util.showToolBar
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
@@ -152,6 +153,7 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
 
     override fun onStart() {
         super.onStart()
+        showToolBar()
         showBottomNav()
     }
 

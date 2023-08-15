@@ -40,12 +40,12 @@
 
             <TextView
                 android:id="@+id/textView10"
+                style="@style/forTextView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:text="Товары"
-                android:textColor="@color/text_color_2"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView3" />
@@ -65,10 +65,10 @@
             <View
                 android:id="@+id/firstDivided"
                 android:layout_width="0dp"
-                android:layout_height="4dp"
+                android:layout_height="3dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                android:background="@color/primary_color_1"
+                android:background="@drawable/bg_for_et"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView10" />
@@ -81,7 +81,6 @@
                 android:layout_marginTop="8dp"
                 android:text="Скидка"
                 android:textColor="@color/text_color_2"
-
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/firstDivided" />
@@ -92,7 +91,6 @@
                 android:layout_marginEnd="16dp"
                 android:text="-221215 UZB"
                 android:textColor="@color/text_color_2"
-
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/textView22"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -101,10 +99,10 @@
             <View
                 android:id="@+id/secondDivided"
                 android:layout_width="0dp"
-                android:layout_height="4dp"
+                android:layout_height="3dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                android:background="@color/primary_color_1"
+                android:background="@drawable/bg_for_et"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView22" />
@@ -117,7 +115,6 @@
                 android:layout_marginTop="8dp"
                 android:text="Цена"
                 android:textColor="@color/text_color_2"
-
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/secondDivided" />
@@ -128,7 +125,6 @@
                 android:layout_marginEnd="16dp"
                 android:text="5221215 UZB"
                 android:textColor="@color/text_color_2"
-
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/textView23"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -137,10 +133,10 @@
             <View
                 android:id="@+id/thirdDivided"
                 android:layout_width="0dp"
-                android:layout_height="4dp"
+                android:layout_height="3dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                android:background="@color/primary_color_1"
+                android:background="@drawable/bg_for_et"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView23" />
@@ -173,10 +169,10 @@
             <View
                 android:id="@+id/fourthDivided"
                 android:layout_width="0dp"
-                android:layout_height="4dp"
+                android:layout_height="3dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                android:background="@color/primary_color_2"
+                android:background="@drawable/bg_for_btn"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView24" />
