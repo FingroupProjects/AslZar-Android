@@ -17,12 +17,30 @@ class WarningNoHaveProductFragmentDialog : BaseDialogFragment() {
 
     private var _binding: FragmentDialogWarningNoHaveProductBinding? = null
     private val binding get() = _binding!!
+    private var requestToPurchaseID: String = ""
+
+
+    companion object {
+        fun newInstance(requestToPurchaseID: String): WarningNoHaveProductFragmentDialog {
+            val dialog = WarningNoHaveProductFragmentDialog()
+            val args = Bundle()
+            args.putString("requestToPurchaseID", requestToPurchaseID)
+            dialog.arguments = args
+            return dialog
+        }
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentDialogWarningNoHaveProductBinding.inflate(inflater, container, false)
+
+        arguments?.let {
+            requestToPurchaseID = it.getString("requestToPurchaseID", "")
+        }
+
         return binding.root
     }
 

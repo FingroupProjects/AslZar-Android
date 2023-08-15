@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.models.ImageDataModel
 import com.fin_group.aslzar.models.ImageDataModel2
+import com.fin_group.aslzar.ui.dialogs.AlikeProductBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.SetInProductBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.WarningNoHaveProductFragmentDialog
@@ -17,20 +18,40 @@ import com.fin_group.aslzar.ui.fragments.dataProduct.DataProductFragment
 import com.fin_group.aslzar.util.OnImageClickListener
 import com.google.android.material.chip.Chip
 
-fun DataProductFragment.callInStockDialog() {
-    val inStockDialog = InStockBottomSheetDialogFragment()
-    inStockDialog.show(activity?.supportFragmentManager!!, "Product in stock Dialog")
+fun DataProductFragment.callInStockDialog(id: String) {
+    val fragmentManager = requireFragmentManager()
+    val tag = "Product in stock Dialog"
+    val existingFragment = fragmentManager.findFragmentByTag(tag)
+
+    if (existingFragment == null) {
+        val bottomSheetFragment = InStockBottomSheetDialogFragment.newInstance(id)
+        bottomSheetFragment.show(fragmentManager, tag)
+    }
 }
 
-fun DataProductFragment.callOutStock() {
-    val noHave = WarningNoHaveProductFragmentDialog()
-    noHave.show(activity?.supportFragmentManager!!, "Product no have dialog")
+fun DataProductFragment.callOutStock(id: String) {
+//    val noHave = WarningNoHaveProductFragmentDialog()
+//    noHave.show(activity?.supportFragmentManager!!, "Product no have dialog")
+
+    val fragmentManager = requireFragmentManager()
+    val tag = "Product no have dialog"
+    val existingFragment = fragmentManager.findFragmentByTag(tag)
+
+    if (existingFragment == null) {
+        val bottomSheetFragment = WarningNoHaveProductFragmentDialog.newInstance(id)
+        bottomSheetFragment.show(fragmentManager, tag)
+    }
 }
 
-fun DataProductFragment.callSetInProduct(){
+fun DataProductFragment.callSetInProduct(id: String){
+    val fragmentManager = requireFragmentManager()
+    val tag = "Set product in bottom sheet"
+    val existingFragment = fragmentManager.findFragmentByTag(tag)
 
-    val setProductBottomSheet = SetInProductBottomSheetDialogFragment()
-    setProductBottomSheet.show(activity?.supportFragmentManager!!, "Set product in bottom sheet")
+    if (existingFragment == null) {
+        val bottomSheetFragment = SetInProductBottomSheetDialogFragment.newInstance(id)
+        bottomSheetFragment.show(fragmentManager, tag)
+    }
 }
 
 @SuppressLint("UseCompatLoadingForColorStateLists")
