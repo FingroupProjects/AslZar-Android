@@ -24,8 +24,6 @@
         app:tabTextAppearance="@style/MyTabTextAppearance"
         app:tabUnboundedRipple="false" />
 
-
-
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager2"
         android:layout_width="0dp"

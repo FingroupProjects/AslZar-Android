@@ -5,12 +5,20 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.viewpager.widget.ViewPager
 import com.fin_group.aslzar.databinding.FragmentMainCartBinding
 import androidx.viewpager2.widget.ViewPager2
+import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.TabLayoutAdapter
+import com.fin_group.aslzar.adapter.ViewPagerAdapter
+import com.fin_group.aslzar.ui.fragments.cartMain.calculator.CalculatorFragment
+import com.fin_group.aslzar.ui.fragments.cartMain.cart.CartFragment
+import com.fin_group.aslzar.ui.fragments.cartMain.functions.removeBadges
 import com.fin_group.aslzar.util.hideToolBar
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.tabs.TabLayout
 
+@Suppress("DEPRECATION")
 class MainCartFragment : Fragment() {
 
     private var _binding: FragmentMainCartBinding? = null
@@ -20,15 +28,29 @@ class MainCartFragment : Fragment() {
     private lateinit var viewPager2: ViewPager2
     private lateinit var adapter : TabLayoutAdapter
 
+    private lateinit var bottomNavigationView: BottomNavigationView
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMainCartBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         tableLayout = binding.tabLayout
         viewPager2 = binding.viewPager2
         hideToolBar()
+        bottomNavigationView = requireActivity().findViewById(R.id.bottomNavigationView)
+
+//        val viewPagerAdapter = ViewPagerAdapter(requireFragmentManager())
+//        viewPagerAdapter.addFragment(CartFragment(), "Корзина")
+//        viewPagerAdapter.addFragment(CalculatorFragment(), "Калькулятор")
+//        viewPager2.adapter = viewPagerAdapter
+//        tableLayout.setupWithViewPager(viewPager2)
+
 
         tableLayout.addTab(tableLayout.newTab().setText("Корзина"))
         tableLayout.addTab(tableLayout.newTab().setText("Калькулятор"))
@@ -43,9 +65,7 @@ class MainCartFragment : Fragment() {
                     viewPager2.currentItem = tab.position
                 }
             }
-
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
-
             override fun onTabReselected(tab: TabLayout.Tab?) {}
         })
 
@@ -55,7 +75,14 @@ class MainCartFragment : Fragment() {
                 tableLayout.selectTab(tableLayout.getTabAt(position))
             }
         })
-        return binding.root
+
+        removeBadges(bottomNavigationView)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        bottomNavigationView = requireActivity().findViewById(R.id.bottomNavigationView)
+
     }
 
     override fun onDestroyView() {

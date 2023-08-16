@@ -34,7 +34,6 @@ class ChangePasswordProfileFragmentDialog : BaseDialogFragment() {
     ): View? {
         _binding = FragmentDialogChangePasswordProfileBinding.inflate(inflater, container, false)
 
-        progressBar = binding.progressBar2
         newPasswordInputLayout = binding.newPasswordChange
         newPasswordEditText = binding.editNewPasswordChange
 
