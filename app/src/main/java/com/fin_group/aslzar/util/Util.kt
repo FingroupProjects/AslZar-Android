@@ -28,6 +28,7 @@ import androidx.navigation.NavDirections
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.fin_group.aslzar.R
+import com.fin_group.aslzar.models.ProductInCart
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -48,7 +49,10 @@ interface OnFriendAddedListener {
 interface OnImageClickListener{
     fun setImage(image: Int)
 }
-
+interface EditProductInCart{
+    fun plusProductInCart(productInCart: ProductInCart)
+    fun minusProductInCart(productInCart: ProductInCart)
+}
 interface OnAlikeProductClickListener{
     fun callBottomDialog(id: String)
 }
