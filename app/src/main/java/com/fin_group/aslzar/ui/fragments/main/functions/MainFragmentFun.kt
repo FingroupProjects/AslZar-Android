@@ -6,11 +6,13 @@ import android.util.Log
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.fin_group.aslzar.R
 import com.fin_group.aslzar.ui.dialogs.CheckCategoryFragmentDialog
 import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.WarningNoHaveProductFragmentDialog
 import com.fin_group.aslzar.ui.fragments.main.MainFragment
 import com.fin_group.aslzar.util.CategoryClickListener
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 fun MainFragment.callCategoryDialog(listener: CategoryClickListener) {
     val categoryDialog = CheckCategoryFragmentDialog()
@@ -74,10 +76,18 @@ fun MainFragment.searchViewFun(){
 
 fun MainFragment.filterFun(){
     if (searchBarChecked(viewSearch)) {
-        searchText = ""
+        if (searchText != ""){
+            searchView.setQuery("", false)
+        }
         viewSearch.visibility = GONE
     }
     callCategoryDialog(this)
+}
+
+fun MainFragment.addProductToCart(bottomNavView: BottomNavigationView){
+    val badge = bottomNavView.getOrCreateBadge(R.id.mainCartFragment)
+    badge.isVisible = true
+    badge.number = badge.number + 1
 }
 
 fun MainFragment.filterProducts() {

@@ -23,7 +23,9 @@ import com.fin_group.aslzar.adapter.ProductsAdapter
 import com.fin_group.aslzar.databinding.FragmentMainBinding
 import com.fin_group.aslzar.models.Category
 import com.fin_group.aslzar.models.Product
+import com.fin_group.aslzar.ui.activities.MainActivity
 import com.fin_group.aslzar.ui.dialogs.CheckCategoryFragmentDialog
+import com.fin_group.aslzar.ui.fragments.main.functions.addProductToCart
 import com.fin_group.aslzar.util.CategoryClickListener
 import com.fin_group.aslzar.util.ProductOnClickListener
 import com.fin_group.aslzar.ui.fragments.main.functions.callInStockDialog
@@ -62,8 +64,11 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
     //add Toxa
 
     private lateinit var notificationBadge: View
-    private var count = 1
 
+    private var count = 1
+    lateinit var mainActivity: MainActivity
+
+    lateinit var bottomNavigationView: BottomNavigationView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -73,9 +78,12 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         setHasOptionsMenu(true)
         viewSearch = binding.viewSearch
         viewCheckedCategory = binding.viewCheckedCategory
+//        bottomNavigationView = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView)
 
         binding.fabClearSearch.setOnClickListener {
-            searchText = ""
+            if (searchText != ""){
+                searchView.setQuery("", false)
+            }
             viewSearch.visibility = GONE
         }
 
@@ -86,11 +94,12 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         super.onViewCreated(view, savedInstanceState)
         searchView = binding.searchViewMain
 
+        mainActivity = activity as MainActivity
+
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return true
             }
-
             override fun onQueryTextChange(newText: String?): Boolean {
                 searchText = newText.toString()
                 filterProducts()
@@ -162,8 +171,13 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         _binding = null
     }
 
+    override fun onResume() {
+        super.onResume()
+        bottomNavigationView = mainActivity.findViewById(R.id.bottomNavigationView)
+    }
+
     override fun addToCart(product: Product) {
-        Toast.makeText(requireContext(), "Добавление в корзину ${product.code}", Toast.LENGTH_SHORT).show()
+        addProductToCart(bottomNavigationView)
     }
     override fun inStock(product: Product) {
         if (product.count > 0) {
