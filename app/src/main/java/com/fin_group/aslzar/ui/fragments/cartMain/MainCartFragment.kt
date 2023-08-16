@@ -5,14 +5,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.viewpager.widget.ViewPager
 import com.fin_group.aslzar.databinding.FragmentMainCartBinding
 import androidx.viewpager2.widget.ViewPager2
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.TabLayoutAdapter
-import com.fin_group.aslzar.adapter.ViewPagerAdapter
-import com.fin_group.aslzar.ui.fragments.cartMain.calculator.CalculatorFragment
-import com.fin_group.aslzar.ui.fragments.cartMain.cart.CartFragment
 import com.fin_group.aslzar.ui.fragments.cartMain.functions.removeBadges
 import com.fin_group.aslzar.util.hideToolBar
 import com.google.android.material.bottomnavigation.BottomNavigationView
