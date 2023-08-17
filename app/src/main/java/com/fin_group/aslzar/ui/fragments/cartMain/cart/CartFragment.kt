@@ -54,12 +54,14 @@ class CartFragment : Fragment(), EditProductInCart {
 
     override fun plusProductInCart(productInCart: ProductInCart) {
         Cart.plusProduct(productInCart.id, requireContext())
-        myAdapter.notifyDataSetChanged()
+        allProducts = Cart.getAllProducts()
+        myAdapter.updateList(allProducts)
     }
 
     override fun minusProductInCart(productInCart: ProductInCart) {
         Cart.minusProduct(productInCart.id, requireContext())
-        myAdapter.notifyDataSetChanged()
+        allProducts = Cart.getAllProducts()
+        myAdapter.updateList(allProducts)
     }
 
     override fun onStart() {
