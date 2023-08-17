@@ -2,6 +2,7 @@ package com.fin_group.aslzar.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.navigation.findNavController
@@ -55,6 +56,7 @@ class ProductInCartAdapter(private val productInCart: List<ProductInCart>, priva
             count.text = product.count.toString()
 
             btnPlus.setOnClickListener {
+
                 listener.plusProductInCart(product)
             }
             btnMinus.setOnClickListener {

@@ -81,10 +81,15 @@ class CartFragment : Fragment(), EditProductInCart {
     }
 
     override fun plusProductInCart(productInCart: ProductInCart) {
-
+        Log.d("TAG", "bind: ${productInCart}")
+        var a = productInCart.count
+        a += 1
+        Log.d("TAG count", "bind: ${a}")
     }
 
     override fun minusProductInCart(productInCart: ProductInCart) {
         TODO("Not yet implemented")
     }
+
+
 }
