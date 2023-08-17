@@ -3,10 +3,9 @@ package com.fin_group.aslzar.cart
 import android.content.Context
 import android.widget.Toast
 import com.fin_group.aslzar.models.ProductInCart
-import com.fin_group.aslzar.ui.activities.MainActivity
 import com.google.gson.Gson
 
-object ShoppingCart {
+object Cart {
     private val products: MutableList<ProductInCart> = mutableListOf()
     private const val PREFS_NAME = "my_app_prefs"
     private const val CART_KEY = "cart"

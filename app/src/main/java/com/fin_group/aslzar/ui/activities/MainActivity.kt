@@ -2,21 +2,16 @@ package com.fin_group.aslzar.ui.activities
 
 import android.os.Bundle
 import android.view.Menu
-import android.view.View
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import androidx.appcompat.widget.Toolbar
 import com.fin_group.aslzar.R
-import com.fin_group.aslzar.cart.ShoppingCart
+import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.ActivityMainBinding
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.badge.BadgeDrawable
-import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
@@ -76,11 +71,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        ShoppingCart.loadCartFromPrefs(this)
+        Cart.loadCartFromPrefs(this)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        ShoppingCart.saveCartToPrefs(this)
+        Cart.saveCartToPrefs(this)
     }
 }

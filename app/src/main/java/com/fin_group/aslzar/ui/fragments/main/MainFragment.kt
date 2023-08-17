@@ -18,7 +18,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.ProductsAdapter
-import com.fin_group.aslzar.cart.ShoppingCart
 import com.fin_group.aslzar.databinding.FragmentMainBinding
 import com.fin_group.aslzar.models.Category
 import com.fin_group.aslzar.models.ProductV2

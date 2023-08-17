@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.fin_group.aslzar.R
@@ -35,8 +36,7 @@ class ProductInCartAdapter(private val productInCart: List<ProductInCart>, priva
         holder.bind(product)
 
         binding.root.setOnClickListener {
-            val action = MainFragmentDirections.actionMainFragmentToDataProductFragment(product.code)
-            holder.itemView.findNavController().navigate(action)
+            Toast.makeText(context, product.name, Toast.LENGTH_SHORT).show()
         }
 
     }

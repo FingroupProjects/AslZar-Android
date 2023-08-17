@@ -9,12 +9,12 @@ import com.fin_group.aslzar.databinding.FragmentMainCartBinding
 import androidx.viewpager2.widget.ViewPager2
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.TabLayoutAdapter
+import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.ui.fragments.cartMain.functions.removeBadges
 import com.fin_group.aslzar.util.hideToolBar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.tabs.TabLayout
 
-@Suppress("DEPRECATION")
 class MainCartFragment : Fragment() {
 
     private var _binding: FragmentMainCartBinding? = null
@@ -25,9 +25,6 @@ class MainCartFragment : Fragment() {
     private lateinit var adapter : TabLayoutAdapter
 
     private lateinit var bottomNavigationView: BottomNavigationView
-
-    val database = AslZar.instance.database
-    val cartProductDao = database.cartProductDao()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -81,11 +78,11 @@ class MainCartFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         bottomNavigationView = requireActivity().findViewById(R.id.bottomNavigationView)
-
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        Cart.saveCartToPrefs(requireContext())
     }
 }

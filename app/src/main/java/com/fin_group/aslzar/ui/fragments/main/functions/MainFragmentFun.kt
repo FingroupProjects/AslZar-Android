@@ -7,7 +7,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.fin_group.aslzar.R
-import com.fin_group.aslzar.cart.ShoppingCart
+import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.models.ProductInCart
 import com.fin_group.aslzar.models.ProductV2
 import com.fin_group.aslzar.ui.dialogs.CheckCategoryFragmentDialog
@@ -97,7 +97,7 @@ fun MainFragment.addProductToCart(bottomNavView: BottomNavigationView, product: 
         product.sale,
         product.price
     )
-    ShoppingCart.addProduct(cartProduct, requireContext())
+    Cart.addProduct(cartProduct, requireContext())
 
     val badge = bottomNavView.getOrCreateBadge(R.id.mainCartFragment)
     badge.isVisible = true
