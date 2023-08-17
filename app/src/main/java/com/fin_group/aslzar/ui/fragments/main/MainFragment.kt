@@ -2,7 +2,6 @@ package com.fin_group.aslzar.ui.fragments.main
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.Menu
@@ -12,7 +11,6 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -20,9 +18,10 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.ProductsAdapter
+import com.fin_group.aslzar.cart.ShoppingCart
 import com.fin_group.aslzar.databinding.FragmentMainBinding
 import com.fin_group.aslzar.models.Category
-import com.fin_group.aslzar.models.Product
+import com.fin_group.aslzar.models.ProductV2
 import com.fin_group.aslzar.ui.activities.MainActivity
 import com.fin_group.aslzar.ui.dialogs.CheckCategoryFragmentDialog
 import com.fin_group.aslzar.ui.fragments.main.functions.addProductToCart
@@ -50,9 +49,9 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
     lateinit var viewSearch: ConstraintLayout
     lateinit var viewCheckedCategory: ConstraintLayout
 
-    var allProducts: List<Product> = emptyList()
-    var filteredProducts: List<Product> = emptyList()
-    private var allCategories: List<Product> = emptyList()
+    var allProducts: List<ProductV2> = emptyList()
+    var filteredProducts: List<ProductV2> = emptyList()
+    private var allCategories: List<ProductV2> = emptyList()
 
     var selectCategory: Category? = null
 
@@ -108,20 +107,16 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         })
 
         allProducts = listOf(
-            Product("1", "Серьги золотые с золотом", "", "2.7.5.1.066.1_1,6_0", 0, "00001"),
-            Product("2", "Серьги золотые с печеньками", "", "2.7.3.1.096.1_7,8_0", 15, "00002"),
-            Product("3", "Серьги золотые с кошками", "https://cdn2.thecatapi.com/images/9gg.jpg", "2.7.2.1.096.1_5,9_0", 10, "00002"),
-            Product("4", "Серьги золотые с водичкой", "", "2.7.2.1.096.1_7,2_0", 18, "00001"),
-            Product("5", "Серьги золотые с собой", "", "2.7.5.1.066.1_1,6_0", 0, "00003"),
-            Product("6", "Серьги золотые с компом", "", "2.7.3.1.096.1_7,8_0", 15, "00003"),
-            Product("7", "Серьги золотые с кольцом", "", "2.7.2.1.096.1_5,9_0", 10, "00001"),
-            Product("8", "Серьги золотые с бриллиантами", "", "2.7.2.1.096.1_7,2_0", 18, "00001")
+            ProductV2("00-00000001", "Кольцо золотое с бриллиантом", 893, listOf<String>("hello", "hi"), "2.7.5.4.012.1_1,6_0", "00001", 22.9,"Hello", 1225.0 ),
+            ProductV2("00-00000002", "Кольцо золотое с фианитом", 433, listOf<String>("hello", "hi"), "2.7.5.2.045.4_1,6_0", "00001", 22.9,"Hello", 1225.0 ),
+            ProductV2("00-00000003", "Кольцо золотое с бриллиантом", 753, listOf<String>("hello", "hi"), "2.7.5.6.056.3_1,6_0", "00001", 22.9,"Hello", 1225.0 ),
+            ProductV2("00-00000004", "Кольцо золотое с бриллиантом", 823, listOf<String>("hello", "hi"), "2.7.5.1.022.2_1,6_0", "00001", 22.9,"Hello", 1225.0 ),
         )
         fetchRV(allProducts)
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private fun fetchRV(productList: List<Product>){
+    private fun fetchRV(productList: List<ProductV2>){
         val recyclerView = binding.mainRecyclerView
         recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
         myAdapter = ProductsAdapter(productList, this)
@@ -176,10 +171,10 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         bottomNavigationView = mainActivity.findViewById(R.id.bottomNavigationView)
     }
 
-    override fun addToCart(product: Product) {
-        addProductToCart(bottomNavigationView)
+    override fun addToCart(product: ProductV2) {
+        addProductToCart(bottomNavigationView, product)
     }
-    override fun inStock(product: Product) {
+    override fun inStock(product: ProductV2) {
         if (product.count > 0) {
             callInStockDialog(product.id)
         } else {

@@ -7,6 +7,9 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.fin_group.aslzar.R
+import com.fin_group.aslzar.cart.ShoppingCart
+import com.fin_group.aslzar.models.ProductInCart
+import com.fin_group.aslzar.models.ProductV2
 import com.fin_group.aslzar.ui.dialogs.CheckCategoryFragmentDialog
 import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.WarningNoHaveProductFragmentDialog
@@ -84,7 +87,18 @@ fun MainFragment.filterFun(){
     callCategoryDialog(this)
 }
 
-fun MainFragment.addProductToCart(bottomNavView: BottomNavigationView){
+fun MainFragment.addProductToCart(bottomNavView: BottomNavigationView, product: ProductV2){
+    val cartProduct = ProductInCart(
+        product.id,
+        product.name,
+        product.image,
+        product.barcode,
+        1,
+        product.sale,
+        product.price
+    )
+    ShoppingCart.addProduct(cartProduct, requireContext())
+
     val badge = bottomNavView.getOrCreateBadge(R.id.mainCartFragment)
     badge.isVisible = true
     badge.number = badge.number + 1
@@ -93,14 +107,14 @@ fun MainFragment.addProductToCart(bottomNavView: BottomNavigationView){
 fun MainFragment.filterProducts() {
     filteredProducts = if (searchText.isNotEmpty()){
         allProducts.filter { product ->
-            product.name.contains(searchText, ignoreCase = true) || product.code.contains(searchText, ignoreCase = true)
+            product.name.contains(searchText, ignoreCase = true) || product.barcode.contains(searchText, ignoreCase = true)
         }
     } else {
         if (selectCategory?.id == "all" || selectCategory == null) {
             allProducts
         } else {
             allProducts.filter { product ->
-                product.category == selectCategory?.id
+                product.category_id == selectCategory?.id
             }
         }
     }
