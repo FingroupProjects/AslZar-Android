@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.fin_group.aslzar.R
+import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentCalculatorBinding
 
 class CalculatorFragment : Fragment() {
@@ -21,8 +22,14 @@ class CalculatorFragment : Fragment() {
         return binding.root
     }
 
+    override fun onStart() {
+        super.onStart()
+        Cart.loadCartFromPrefs(requireContext())
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        Cart.saveCartToPrefs(requireContext())
     }
 }
