@@ -46,7 +46,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/dp_code"
                 app:sv_indicator="KiteIndicator"
                 app:sv_indicatorColor="#000000"
-                app:sv_indicatorLightColor="#BB0000FF"
+                app:sv_indicatorLightColor="#5E39393A"
                 app:sv_maxSpeed="100"
                 app:sv_minSpeed="0"
                 app:sv_withTremble="false"
