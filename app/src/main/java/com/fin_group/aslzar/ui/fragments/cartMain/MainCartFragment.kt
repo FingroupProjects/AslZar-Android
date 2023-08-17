@@ -26,6 +26,9 @@ class MainCartFragment : Fragment() {
 
     private lateinit var bottomNavigationView: BottomNavigationView
 
+    val database = AslZar.instance.database
+    val cartProductDao = database.cartProductDao()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
