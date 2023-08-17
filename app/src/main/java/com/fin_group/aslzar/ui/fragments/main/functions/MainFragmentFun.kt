@@ -15,6 +15,7 @@ import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.WarningNoHaveProductFragmentDialog
 import com.fin_group.aslzar.ui.fragments.main.MainFragment
 import com.fin_group.aslzar.util.CategoryClickListener
+import com.fin_group.aslzar.util.EditProductInCart
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 fun MainFragment.callCategoryDialog(listener: CategoryClickListener) {
@@ -102,6 +103,9 @@ fun MainFragment.addProductToCart(bottomNavView: BottomNavigationView, product: 
     val badge = bottomNavView.getOrCreateBadge(R.id.mainCartFragment)
     badge.isVisible = true
     badge.number = badge.number + 1
+
+    val cartFragment = parentFragment as? EditProductInCart
+    cartFragment?.onProductAddedToCart(cartProduct)
 }
 
 fun MainFragment.filterProducts() {

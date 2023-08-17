@@ -41,25 +41,15 @@ class MainCartFragment : Fragment() {
         hideToolBar()
         bottomNavigationView = requireActivity().findViewById(R.id.bottomNavigationView)
 
-//        val viewPagerAdapter = ViewPagerAdapter(requireFragmentManager())
-//        viewPagerAdapter.addFragment(CartFragment(), "Корзина")
-//        viewPagerAdapter.addFragment(CalculatorFragment(), "Калькулятор")
-//        viewPager2.adapter = viewPagerAdapter
-//        tableLayout.setupWithViewPager(viewPager2)
-
-
         tableLayout.addTab(tableLayout.newTab().setText("Корзина"))
         tableLayout.addTab(tableLayout.newTab().setText("Калькулятор"))
 
         adapter = TabLayoutAdapter(requireActivity().supportFragmentManager, lifecycle)
         viewPager2.adapter = adapter
 
-
         tableLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener{
             override fun onTabSelected(tab: TabLayout.Tab?) {
-                if (tab != null){
-                    viewPager2.currentItem = tab.position
-                }
+                if (tab != null){ viewPager2.currentItem = tab.position }
             }
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
             override fun onTabReselected(tab: TabLayout.Tab?) {}
@@ -71,8 +61,6 @@ class MainCartFragment : Fragment() {
                 tableLayout.selectTab(tableLayout.getTabAt(position))
             }
         })
-
-        removeBadges(bottomNavigationView)
     }
 
     override fun onResume() {
