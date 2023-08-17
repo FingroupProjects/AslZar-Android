@@ -8,16 +8,21 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.fin_group.aslzar.R
+import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentDeleteAllProductFromCartDialogBinding
 import com.fin_group.aslzar.databinding.FragmentSignOutProfileDialogBinding
 import com.fin_group.aslzar.ui.activities.LoginActivity
 import com.fin_group.aslzar.util.BaseDialogFragment
+import com.fin_group.aslzar.util.EditProductInCart
 import com.fin_group.aslzar.util.setWidthPercent
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class DeleteAllProductFromCartFragmentDialog : BaseDialogFragment() {
 
     private var _binding : FragmentDeleteAllProductFromCartDialogBinding? = null
     private val binding get() = _binding!!
+
+    private lateinit var bottomNavigationView: BottomNavigationView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -30,11 +35,18 @@ class DeleteAllProductFromCartFragmentDialog : BaseDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setWidthPercent(90)
+        bottomNavigationView = requireActivity().findViewById(R.id.bottomNavigationView)
 
         binding.apply {
             actionClose.setOnClickListener { dismiss() }
             actionYesBtn.setOnClickListener {
                 Toast.makeText(requireContext(), "Ваша корзина успешно очищена!", Toast.LENGTH_SHORT).show()
+                bottomNavigationView.removeBadge(R.id.mainCartFragment)
+                Cart.clearAllProducts(requireContext())
+
+                val cartFragment = parentFragment as? EditProductInCart
+                cartFragment?.onCartCleared()
+
                 dismiss()
             }
             actionNoBtn.setOnClickListener { dismiss() }

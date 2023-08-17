@@ -52,10 +52,14 @@ interface OnImageClickListener{
 interface EditProductInCart{
     fun plusProductInCart(productInCart: ProductInCart)
     fun minusProductInCart(productInCart: ProductInCart)
+
+    fun onProductAddedToCart(product: ProductInCart)
+    fun onCartCleared()
 }
 interface OnAlikeProductClickListener{
     fun callBottomDialog(id: String)
 }
+
 
 fun Fragment.showAction() {
     (activity as AppCompatActivity).supportActionBar?.show()

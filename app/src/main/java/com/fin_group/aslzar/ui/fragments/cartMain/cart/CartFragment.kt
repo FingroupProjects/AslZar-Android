@@ -2,16 +2,22 @@ package com.fin_group.aslzar.ui.fragments.cartMain.cart
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageButton
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.fin_group.aslzar.adapter.ProductInCartAdapter
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentCartBinding
 import com.fin_group.aslzar.models.ProductInCart
 import com.fin_group.aslzar.ui.dialogs.DeleteAllProductFromCartFragmentDialog
+import com.fin_group.aslzar.ui.fragments.cartMain.cart.functions.deleteAllProductFromCart
+import com.fin_group.aslzar.ui.fragments.cartMain.cart.functions.fetchRV
 import com.fin_group.aslzar.util.EditProductInCart
 
 
@@ -22,34 +28,25 @@ class CartFragment : Fragment(), EditProductInCart {
 
     lateinit var myAdapter: ProductInCartAdapter
     var allProducts: List<ProductInCart> = emptyList()
+    lateinit var recyclerView: RecyclerView
+    lateinit var btnDeleteAllProducts: ImageButton
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentCartBinding.inflate(inflater, container, false)
-
-        deleteAllProductFromCart()
+        recyclerView = binding.recyclerViewCart
         allProducts = Cart.getAllProducts()
-        fetchRV(allProducts)
+        btnDeleteAllProducts = binding.delete
 
         return binding.root
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    private fun fetchRV(productInCartList: List<ProductInCart>){
-        val recyclerView = binding.recyclerViewCart
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        myAdapter = ProductInCartAdapter(productInCartList, this)
-        recyclerView.adapter = myAdapter
-        myAdapter.notifyDataSetChanged()
-    }
-
-    private fun deleteAllProductFromCart(){
-        binding.delete.setOnClickListener {
-            val delete = DeleteAllProductFromCartFragmentDialog()
-            delete.show(childFragmentManager, "delete_all_product_from_cart")
-        }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        fetchRV(allProducts)
+        deleteAllProductFromCart()
     }
 
     override fun plusProductInCart(productInCart: ProductInCart) {
@@ -57,9 +54,19 @@ class CartFragment : Fragment(), EditProductInCart {
         allProducts = Cart.getAllProducts()
         myAdapter.updateList(allProducts)
     }
-
     override fun minusProductInCart(productInCart: ProductInCart) {
         Cart.minusProduct(productInCart.id, requireContext())
+        allProducts = Cart.getAllProducts()
+        myAdapter.updateList(allProducts)
+    }
+    override fun onProductAddedToCart(product: ProductInCart) {
+        allProducts = Cart.getAllProducts()
+        myAdapter.updateList(allProducts)
+
+        Log.d("TAG", "addProductToCart: $product")
+        Log.d("TAG", "addProductToCart: $allProducts")
+    }
+    override fun onCartCleared() {
         allProducts = Cart.getAllProducts()
         myAdapter.updateList(allProducts)
     }
