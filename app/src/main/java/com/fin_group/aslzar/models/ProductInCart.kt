@@ -1,12 +1,11 @@
 package com.fin_group.aslzar.models
 
 data class ProductInCart (
-    var id: Int,
+    var id: String,
     val name: String,
-    val image: String,
+    val image: List<String>,
     val code: String,
-    val count: Int,
-    val salle: String,
-    val price: String
+    var count: Int,
+    val sale: Double,
+    val price: Double
 )
-

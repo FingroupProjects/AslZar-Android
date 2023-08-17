@@ -10,11 +10,12 @@ import com.bumptech.glide.Glide
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.databinding.RowItemProductBinding
 import com.fin_group.aslzar.models.Product
+import com.fin_group.aslzar.models.ProductV2
 import com.fin_group.aslzar.ui.fragments.main.MainFragmentDirections
 import com.fin_group.aslzar.util.ProductOnClickListener
 
 class ProductsAdapter(
-    var productList: List<Product>,
+    var productList: List<ProductV2>,
     val listener: ProductOnClickListener,
 ): RecyclerView.Adapter<ProductsAdapter.ViewHolder>() {
 
@@ -32,7 +33,7 @@ class ProductsAdapter(
         holder.bind(product)
 
         binding.root.setOnClickListener {
-            val action = MainFragmentDirections.actionMainFragmentToDataProductFragment(product.code)
+            val action = MainFragmentDirections.actionMainFragmentToDataProductFragment(product.barcode)
             holder.itemView.findNavController().navigate(action)
         }
     }
@@ -45,9 +46,9 @@ class ProductsAdapter(
         val btnAddToCart = binding.ibAddToBasket
 
         @SuppressLint("UseCompatLoadingForDrawables")
-        fun bind(product: Product){
+        fun bind(product: ProductV2){
             title.text = product.name
-            code.text = product.code
+            code.text = product.barcode
 
 //            if (product.image != ""){
 //                Glide.with(itemView.context)
@@ -74,7 +75,7 @@ class ProductsAdapter(
         }
     }
 
-    fun updateProducts(newProducts: List<Product>) {
+    fun updateProducts(newProducts: List<ProductV2>) {
         productList = newProducts
         notifyDataSetChanged()
     }
