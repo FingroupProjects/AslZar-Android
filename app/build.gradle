@@ -106,8 +106,9 @@ dependencies {
 
     //for progressBar add by Toxa
     implementation "com.airbnb.android:lottie:3.4.0"
-
     //for lvl password add by Toxa
     implementation 'com.nulab-inc:zxcvbn:1.5.1'
 
+    //progress bar speedometer
+    implementation 'com.github.anastr:speedviewlib:1.6.1'
 }

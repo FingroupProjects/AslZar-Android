@@ -77,4 +77,6 @@ class CartFragment : Fragment(), EditProductInCart {
         Cart.saveCartToPrefs(requireContext())
         _binding = null
     }
+
+
 }
