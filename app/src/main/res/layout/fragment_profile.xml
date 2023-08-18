@@ -49,7 +49,6 @@
                 app:sv_indicatorLightColor="#5E39393A"
                 app:sv_maxSpeed="100"
                 app:sv_minSpeed="0"
-                app:sv_withTremble="false"
                 app:sv_speedTextColor="@color/text_color_1"
                 app:sv_speedTextFormat="FLOAT"
                 app:sv_speedTextPosition="BOTTOM_CENTER"
@@ -58,11 +57,12 @@
                 app:sv_unit="%"
                 app:sv_unitTextColor="@color/text_color_2"
                 app:sv_unitTextSize="30sp"
-                app:sv_withIndicatorLight="true" />
+                app:sv_withIndicatorLight="true"
+                app:sv_withTremble="false" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.google.android.material.card.MaterialCardView>
 
+    </com.google.android.material.card.MaterialCardView>
 
     <TextView
         android:id="@+id/name"
@@ -171,6 +171,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editFilial" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
