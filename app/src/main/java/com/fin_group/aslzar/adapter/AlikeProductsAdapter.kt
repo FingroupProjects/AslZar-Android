@@ -1,10 +1,10 @@
 package com.fin_group.aslzar.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.fin_group.aslzar.databinding.RowSliderItem2Binding
-import com.fin_group.aslzar.models.ImageDataModel
 import com.fin_group.aslzar.models.ImageDataModel2
 import com.fin_group.aslzar.util.OnAlikeProductClickListener
 
@@ -16,9 +16,7 @@ class AlikeProductsAdapter(
         val binding = RowSliderItem2Binding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
-
     override fun getItemCount() = alikeProductsList.size
-
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val alikeProduct = alikeProductsList[position]
         holder.bindItems(alikeProduct)
@@ -27,14 +25,13 @@ class AlikeProductsAdapter(
             listener.callBottomDialog(alikeProduct.id)
         }
     }
-
     inner class ViewHolder(binding: RowSliderItem2Binding) : RecyclerView.ViewHolder(binding.root) {
         val imageView = binding.imageView
-        fun bindItems(likeProduct: ImageDataModel2){
+        fun bindItems(likeProduct: ImageDataModel2) {
             imageView.setImageResource(likeProduct.image)
         }
     }
-
+    @SuppressLint("NotifyDataSetChanged")
     fun updateList(newList: List<ImageDataModel2>) {
         alikeProductsList = newList
         notifyDataSetChanged()
