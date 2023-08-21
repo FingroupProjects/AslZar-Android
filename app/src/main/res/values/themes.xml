@@ -135,7 +135,4 @@
         <item name="cardElevation">3dp</item>
         <item name="strokeColor">@android:color/transparent</item>
     </style>
-
-
-
 </resources>
