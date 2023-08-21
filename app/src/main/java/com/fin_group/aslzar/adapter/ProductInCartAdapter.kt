@@ -54,7 +54,6 @@ class ProductInCartAdapter(private var listProductInCart: List<ProductInCart>, p
             count.text = product.count.toString()
 
             btnPlus.setOnClickListener {
-
                 listener.plusProductInCart(product)
             }
             btnMinus.setOnClickListener {

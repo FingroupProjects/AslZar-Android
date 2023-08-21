@@ -48,8 +48,8 @@
 
     <style name="forTextView.18">
         <item name="android:textSize">18sp</item>
-        <item name="android:paddingHorizontal">10dp</item>
-        <item name="android:paddingVertical">10dp</item>
+        <item name="android:paddingHorizontal">5dp</item>
+        <item name="android:paddingVertical">5dp</item>
     </style>
 
     <style name="forTextView2.10">

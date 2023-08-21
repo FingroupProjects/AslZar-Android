@@ -8,6 +8,7 @@ import android.widget.Toast
 import com.fin_group.aslzar.databinding.FragmentDialogChangePasswordProfileBinding
 import com.fin_group.aslzar.util.BaseDialogFragment
 import com.fin_group.aslzar.util.hideBottomNav
+import com.fin_group.aslzar.util.setWidthPercent
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 
@@ -24,14 +25,23 @@ class ChangePasswordProfileFragmentDialog : BaseDialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentDialogChangePasswordProfileBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setWidthPercent(90)
 
         newPasswordInputLayout = binding.newPasswordChange
         newPasswordEditText = binding.editNewPasswordChange
-
         passwordCheck()
 
-        return binding.root
+
+
+        binding.floatingActionButton.setOnClickListener {
+            dismiss()
+        }
     }
+
     private fun passwordCheck() {
 
         val oldPassword = binding.oldPasswordChange
@@ -71,12 +81,7 @@ class ChangePasswordProfileFragmentDialog : BaseDialogFragment() {
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        binding.floatingActionButton.setOnClickListener {
-            dismiss()
-        }
-    }
+
 
     override fun onStart() {
         super.onStart()

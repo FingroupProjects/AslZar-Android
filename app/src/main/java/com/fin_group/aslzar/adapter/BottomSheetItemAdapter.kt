@@ -8,9 +8,10 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.models.ImageDataModel
+import com.fin_group.aslzar.models.ImageDataModel2
 import com.fin_group.aslzar.util.OnImageClickListener
 
-class BottomSheetItemAdapter(var mList: List<ImageDataModel>, private val listener: OnImageClickListener)
+class BottomSheetItemAdapter(var mList: List<ImageDataModel2>, private val listener: OnImageClickListener)
     : RecyclerView.Adapter<BottomSheetItemAdapter.ViewHolder>() {
 
     var selectedItemPosition = RecyclerView.NO_POSITION
@@ -31,7 +32,7 @@ class BottomSheetItemAdapter(var mList: List<ImageDataModel>, private val listen
         }
     }
     @SuppressLint("NotifyDataSetChanged")
-    fun updateList(newList: List<ImageDataModel>) {
+    fun updateList(newList: List<ImageDataModel2>) {
         mList = newList
         notifyDataSetChanged()
     }
@@ -41,7 +42,7 @@ class BottomSheetItemAdapter(var mList: List<ImageDataModel>, private val listen
         notifyDataSetChanged()
     }
     class ViewHolder(ItemView: View) : RecyclerView.ViewHolder(ItemView) {
-        fun bindSetProductItems(imageDataModel: ImageDataModel, isSelected: Boolean) {
+        fun bindSetProductItems(imageDataModel: ImageDataModel2, isSelected: Boolean) {
             val imageView = itemView.findViewById<ImageView>(R.id.image)
 //            val textView = itemView.findViewById<TextView>(R.id.tvName)
 //            textView.text = imageDataModel.name

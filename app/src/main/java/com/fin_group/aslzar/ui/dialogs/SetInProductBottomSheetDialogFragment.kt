@@ -15,6 +15,7 @@ import com.fin_group.aslzar.adapter.BottomSheetItemAdapter
 import com.fin_group.aslzar.adapter.ProductSomeImagesAdapter
 import com.fin_group.aslzar.databinding.FragmentSheetDialogSetInProductBottomBinding
 import com.fin_group.aslzar.models.ImageDataModel
+import com.fin_group.aslzar.models.ImageDataModel2
 import com.fin_group.aslzar.ui.fragments.dataProduct.DataProductFragment
 import com.fin_group.aslzar.util.OnImageClickListener
 import com.fin_group.aslzar.util.hideBottomNav
@@ -29,11 +30,10 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnIma
     lateinit var recyclerView: RecyclerView
 
     private var currentSelectedPosition = RecyclerView.NO_POSITION
-    var imageList: List<ImageDataModel> = emptyList()
+    var imageList: List<ImageDataModel2> = emptyList()
     lateinit var setProduct: BottomSheetItemAdapter
 
     private var setInProductId: String = ""
-
 
     companion object {
         fun newInstance(setInProductId: String): SetInProductBottomSheetDialogFragment {
@@ -45,7 +45,6 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnIma
         }
     }
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -55,18 +54,16 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnIma
         arguments?.let {
             setInProductId = it.getString("setInProductId", "")
         }
-
-        setProduct = BottomSheetItemAdapter(imageList, this)
-        setProduct.setSelectedPositions(0)
-        setProductBottomSheet()
-        setProduct()
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setProduct = BottomSheetItemAdapter(imageList, this)
+        setProduct.setSelectedPositions(0)
+        setProductBottomSheet()
+        setProduct()
     }
 
     override fun onDestroyView() {
@@ -77,16 +74,11 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnIma
 
     private fun setProduct() {
         imageList = listOf(
-            ImageDataModel(R.drawable.ring_2, "Test"),
-            ImageDataModel(R.drawable.ring_3, "Test"),
-            ImageDataModel(R.drawable.ring_4, "Test"),
-            ImageDataModel(R.drawable.ring_6, "Test"),
-            ImageDataModel(R.drawable.ring_7, "Test"),
-            ImageDataModel(R.drawable.ring_2, "Test"),
-            ImageDataModel(R.drawable.ring_3, "Test"),
-            ImageDataModel(R.drawable.ring_4, "Test"),
-            ImageDataModel(R.drawable.ring_6, "Test"),
-            ImageDataModel(R.drawable.ring_7, "Test")
+            ImageDataModel2("00011", R.drawable.ring_2, "Кольцо 11"),
+            ImageDataModel2("00012", R.drawable.ring_3, "Кольцо 12"),
+            ImageDataModel2("00013", R.drawable.ring_7, "Кольцо 13"),
+            ImageDataModel2("00014", R.drawable.ring_4, "Кольцо 14"),
+            ImageDataModel2("00015", R.drawable.ring_6, "Кольцо 15"),
         )
         recyclerView.layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL, false)
         recyclerView.adapter = setProduct
@@ -96,10 +88,8 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnIma
     override fun setImage(image: Int) {
         currentSelectedPosition = imageList.indexOfFirst { it.image == image }
         setProduct.setSelectedPositions(currentSelectedPosition)
-//        viewAdapter.notifyItemChanged(currentSelectedPosition)
-//        Toast.makeText(requireContext(), currentSelectedPosition, Toast.LENGTH_SHORT).show()
         binding.mainImageView.setImageResource(image)
-
+//        viewAdapter.notifyItemChanged(currentSelectedPosition)
 //        Glide.with(requireContext()).load(image).into(binding.imageView2)
     }
 
@@ -107,10 +97,10 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnIma
         binding.apply {
             goTo.setOnClickListener {
                 Toast.makeText(requireContext(), "Информация о продукте", Toast.LENGTH_SHORT).show()
-
             }
             add.setOnClickListener {
                 Toast.makeText(requireContext(), "Добавление в корзину", Toast.LENGTH_SHORT).show()
+
             }
         }
     }

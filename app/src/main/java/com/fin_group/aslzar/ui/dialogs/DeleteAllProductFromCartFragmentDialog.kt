@@ -2,6 +2,7 @@ package com.fin_group.aslzar.ui.dialogs
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -46,6 +47,8 @@ class DeleteAllProductFromCartFragmentDialog : BaseDialogFragment() {
 
                 val cartFragment = parentFragment as? EditProductInCart
                 cartFragment?.onCartCleared()
+                Log.d("TAG", "onViewCreated: $cartFragment")
+                Log.d("TAG", "onViewCreated: ${cartFragment?.onCartCleared()}")
 
                 dismiss()
             }

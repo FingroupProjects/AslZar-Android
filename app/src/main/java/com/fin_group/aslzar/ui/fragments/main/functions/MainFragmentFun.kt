@@ -13,9 +13,12 @@ import com.fin_group.aslzar.models.ProductV2
 import com.fin_group.aslzar.ui.dialogs.CheckCategoryFragmentDialog
 import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.WarningNoHaveProductFragmentDialog
+import com.fin_group.aslzar.ui.fragments.cartMain.MainCartFragment
+import com.fin_group.aslzar.ui.fragments.cartMain.cart.CartFragment
 import com.fin_group.aslzar.ui.fragments.main.MainFragment
 import com.fin_group.aslzar.util.CategoryClickListener
 import com.fin_group.aslzar.util.EditProductInCart
+import com.fin_group.aslzar.util.OnProductAddedToCartListener
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 fun MainFragment.callCategoryDialog(listener: CategoryClickListener) {
@@ -104,8 +107,16 @@ fun MainFragment.addProductToCart(bottomNavView: BottomNavigationView, product: 
     badge.isVisible = true
     badge.number = badge.number + 1
 
-    val cartFragment = parentFragment as? EditProductInCart
-    cartFragment?.onProductAddedToCart(cartProduct)
+//    val activity = requireActivity() as? OnProductAddedToCartListener
+//    activity?.onProductAddedToCart(cartProduct)
+
+
+
+    sharedViewModel.onProductAddedToCart(cartProduct)
+
+//    Log.d("TAG", "addProductToCart: hello")
+//    Log.d("TAG", "addProductToCart: activity $activity")
+//    Log.d("TAG", "addProductToCart: activity2  ${activity?.onProductAddedToCart(cartProduct)}")
 }
 
 fun MainFragment.filterProducts() {
