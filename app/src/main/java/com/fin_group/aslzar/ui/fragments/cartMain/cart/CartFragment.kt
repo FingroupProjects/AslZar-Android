@@ -9,42 +9,60 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fin_group.aslzar.adapter.ProductInCartAdapter
 import com.fin_group.aslzar.cart.Cart
+import com.fin_group.aslzar.cart.CartObserver
 import com.fin_group.aslzar.databinding.FragmentCartBinding
 import com.fin_group.aslzar.models.ProductInCart
 import com.fin_group.aslzar.ui.dialogs.DeleteAllProductFromCartFragmentDialog
 import com.fin_group.aslzar.ui.fragments.cartMain.cart.functions.deleteAllProductFromCart
 import com.fin_group.aslzar.ui.fragments.cartMain.cart.functions.fetchRV
 import com.fin_group.aslzar.util.EditProductInCart
+import com.fin_group.aslzar.util.OnProductAddedToCartListener
+import com.fin_group.aslzar.viewmodel.SharedViewModel
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 
-class CartFragment : Fragment(), EditProductInCart {
+class CartFragment : Fragment(), EditProductInCart, OnProductAddedToCartListener {
 
     private var _binding: FragmentCartBinding? = null
     private val binding get() = _binding!!
 
-    lateinit var myAdapter: ProductInCartAdapter
+//    lateinit var myAdapter: ProductInCartAdapter
+    var myAdapter = ProductInCartAdapter(emptyList(), this)
+
     var allProducts: List<ProductInCart> = emptyList()
     lateinit var recyclerView: RecyclerView
-    lateinit var btnDeleteAllProducts: ImageButton
+    lateinit var btnDeleteAllProducts: FloatingActionButton
+
+    lateinit var cartObserver: CartObserver
+
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentCartBinding.inflate(inflater, container, false)
-        recyclerView = binding.recyclerViewCart
+        recyclerView = binding.cartRvItemsInCart
         allProducts = Cart.getAllProducts()
-        btnDeleteAllProducts = binding.delete
+        btnDeleteAllProducts = binding.btnDelete
 
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        sharedViewModel.productAdded.observe(viewLifecycleOwner) { product ->
+            onProductAddedToCart(product)
+        }
+
+        val totalPrice= binding.cartTvTotalPriceWithoutSale
+
         fetchRV(allProducts)
         deleteAllProductFromCart()
     }
@@ -53,26 +71,38 @@ class CartFragment : Fragment(), EditProductInCart {
         Cart.plusProduct(productInCart.id, requireContext())
         allProducts = Cart.getAllProducts()
         myAdapter.updateList(allProducts)
+        Cart.notifyObservers()
+
     }
     override fun minusProductInCart(productInCart: ProductInCart) {
         Cart.minusProduct(productInCart.id, requireContext())
         allProducts = Cart.getAllProducts()
         myAdapter.updateList(allProducts)
+        Cart.notifyObservers()
     }
     override fun onProductAddedToCart(product: ProductInCart) {
         allProducts = Cart.getAllProducts()
         myAdapter.updateList(allProducts)
+        Cart.notifyObservers()
 
         Log.d("TAG", "addProductToCart: $product")
         Log.d("TAG", "addProductToCart: $allProducts")
+
+        Log.d("TAG", "onProductAddedToCart a: $allProducts")
+        Log.d("TAG", "onProductAddedToCart b: ${myAdapter.updateList(allProducts)}")
     }
     override fun onCartCleared() {
         allProducts = Cart.getAllProducts()
         myAdapter.updateList(allProducts)
+        Cart.notifyObservers()
     }
 
     override fun onStart() {
         super.onStart()
+        allProducts = Cart.getAllProducts()
+        myAdapter.updateList(allProducts)
+        Log.d("TAG", "onStart: $allProducts")
+        Log.d("TAG", "onStart: ${myAdapter.updateList(allProducts)}")
         Cart.loadCartFromPrefs(requireContext())
     }
     override fun onPause() {
@@ -84,6 +114,5 @@ class CartFragment : Fragment(), EditProductInCart {
         Cart.saveCartToPrefs(requireContext())
         _binding = null
     }
-
 
 }

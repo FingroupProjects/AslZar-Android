@@ -59,6 +59,9 @@ class ProductsAdapter(
 //            } else {
 //                image.setImageResource(R.drawable.ic_no_image)
 //            }
+
+
+
             if (product.count <= 0){
                 btnCheckingInStock.setImageResource(R.drawable.ic_clear_white)
 //                btnCheckingInStock.background = context.resources.getDrawable(R.drawable.item_product_bottom_btn_2)

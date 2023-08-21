@@ -14,12 +14,14 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.ProductsAdapter
 import com.fin_group.aslzar.databinding.FragmentMainBinding
 import com.fin_group.aslzar.models.Category
+import com.fin_group.aslzar.models.ProductInCart
 import com.fin_group.aslzar.models.ProductV2
 import com.fin_group.aslzar.ui.activities.MainActivity
 import com.fin_group.aslzar.ui.dialogs.CheckCategoryFragmentDialog
@@ -34,6 +36,7 @@ import com.fin_group.aslzar.ui.fragments.main.functions.searchBarChecked
 import com.fin_group.aslzar.ui.fragments.main.functions.searchViewFun
 import com.fin_group.aslzar.util.showBottomNav
 import com.fin_group.aslzar.util.showToolBar
+import com.fin_group.aslzar.viewmodel.SharedViewModel
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
@@ -44,26 +47,24 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var toolbar: MaterialToolbar
+    val sharedViewModel: SharedViewModel by activityViewModels()
+
     lateinit var viewSearch: ConstraintLayout
-    lateinit var viewCheckedCategory: ConstraintLayout
-
-    var allProducts: List<ProductV2> = emptyList()
-    var filteredProducts: List<ProductV2> = emptyList()
-    private var allCategories: List<ProductV2> = emptyList()
-
-    var selectCategory: Category? = null
-
     var searchText: String = ""
     lateinit var searchView: SearchView
 
+    var allProducts: List<ProductV2> = emptyList()
+    var filteredProducts: List<ProductV2> = emptyList()
     lateinit var myAdapter: ProductsAdapter
+
+    lateinit var viewCheckedCategory: ConstraintLayout
+    private var allCategories: List<ProductV2> = emptyList()
+    var selectCategory: Category? = null
 
     //add Toxa
 
     private lateinit var notificationBadge: View
 
-    private var count = 1
     lateinit var mainActivity: MainActivity
 
     lateinit var bottomNavigationView: BottomNavigationView
@@ -168,6 +169,10 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
     override fun onResume() {
         super.onResume()
         bottomNavigationView = mainActivity.findViewById(R.id.bottomNavigationView)
+    }
+
+    private fun onProductAddedToCart(product: ProductInCart) {
+        sharedViewModel.onProductAddedToCart(product)
     }
 
     override fun addToCart(product: ProductV2) {
