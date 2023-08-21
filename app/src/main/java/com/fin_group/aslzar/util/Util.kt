@@ -53,9 +53,14 @@ interface EditProductInCart{
     fun plusProductInCart(productInCart: ProductInCart)
     fun minusProductInCart(productInCart: ProductInCart)
 
-    fun onProductAddedToCart(product: ProductInCart)
     fun onCartCleared()
 }
+
+interface OnProductAddedToCartListener {
+    fun onProductAddedToCart(product: ProductInCart)
+}
+
+
 interface OnAlikeProductClickListener{
     fun callBottomDialog(id: String)
 }

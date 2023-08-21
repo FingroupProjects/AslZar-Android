@@ -49,11 +49,11 @@ object Cart {
 
         if (existingProduct == null){
             products.add(product)
-            Toast.makeText(context, "Товар добавлен в корзину", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(context, "Товар добавлен в корзину", Toast.LENGTH_SHORT).show()
             saveCartToPrefs(context)
         } else {
             plusProduct(product.id, context)
-            Toast.makeText(context, "Товар увеличен на 1", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(context, "Товар увеличен на 1", Toast.LENGTH_SHORT).show()
             saveCartToPrefs(context)
         }
     }
