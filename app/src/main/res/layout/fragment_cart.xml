@@ -6,9 +6,9 @@
     android:layout_height="match_parent"
     android:id="@+id/cartFragment"
     tools:context=".ui.fragments.cartMain.cart.CartFragment">
-
+    
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/materialCardViewCart"
+        android:id="@+id/materialCardView2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="-15dp"
@@ -20,15 +20,11 @@
         app:strokeColor="@null">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_marginTop="15dp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="15dp">
+            android:layout_height="match_parent">
 
             <TextView
-
-                android:id="@+id/checkCart"
-                android:layout_width="wrap_content"
-
                 android:id="@+id/textView3"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -44,9 +40,6 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-
-                android:id="@+id/productInCart"
-                android:layout_width="wrap_content"
                 android:id="@+id/textView10"
                 style="@style/forTextView2"
                 android:layout_width="0dp"
@@ -55,16 +48,12 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="2dp"
                 android:text="Товары"
-                android:textColor="@color/text_color_2"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toStartOf="@+id/cartTvCountProduct"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/checkCart" />
+                app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
             <TextView
-                android:id="@+id/tvProductInCart"
-                android:layout_width="wrap_content"
-
                 android:id="@+id/textView22"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -73,9 +62,6 @@
                 android:text="Скидка"
                 android:textColor="@color/text_color_2"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/productInCart"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/productInCart" />
                 app:layout_constraintEnd_toStartOf="@+id/cartTvTotalSale"
                 app:layout_constraintStart_toStartOf="@+id/textView10"
                 app:layout_constraintTop_toBottomOf="@+id/firstDivided" />
@@ -83,17 +69,6 @@
             <TextView
                 android:id="@+id/textView23"
                 android:layout_width="0dp"
-                android:layout_height="3dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:background="@drawable/bg_for_et"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/productInCart" />
-
-            <TextView
-                android:id="@+id/saleCart"
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="2dp"
@@ -118,16 +93,6 @@
                 app:layout_constraintTop_toBottomOf="@+id/thirdDivided" />
 
             <TextView
-                android:id="@+id/tvSaleCart"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:text="-221215 UZS"
-                android:textColor="@color/text_color_2"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/saleCart"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/saleCart" />
                 android:id="@+id/textView18"
                 style="@style/forTextView.18"
                 android:layout_width="0dp"
@@ -152,31 +117,6 @@
                 android:background="@drawable/bg_for_et"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/saleCart" />
-
-            <TextView
-                android:id="@+id/price"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:text="Цена"
-                android:textColor="@color/text_color_2"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/secondDivided" />
-
-            <TextView
-                android:id="@+id/tvPrice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:text="5221215 UZS"
-                android:textColor="@color/text_color_2"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/price"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/price" />
                 app:layout_constraintTop_toBottomOf="@+id/textView10" />
 
             <View
@@ -199,7 +139,7 @@
                 android:background="@drawable/bg_for_et"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/price" />
+                app:layout_constraintTop_toBottomOf="@+id/textView23" />
 
             <View
                 android:id="@+id/fourthDivided"
@@ -213,17 +153,12 @@
                 app:layout_constraintTop_toBottomOf="@+id/textView24" />
 
             <TextView
-                android:id="@+id/delivery"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:text="Доставка"
                 android:id="@+id/cartTvCountProduct"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
                 android:text="6262 шт."
+
                 android:textColor="@color/text_color_2"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/textView10"
@@ -231,16 +166,6 @@
                 app:layout_constraintTop_toTopOf="@+id/textView10" />
 
             <TextView
-                android:id="@+id/tvDelivery"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:text="0 UZS"
-                android:textColor="@color/text_color_2"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/delivery"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/delivery" />
                 android:id="@+id/cartTvTotalSale"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -262,11 +187,6 @@
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/textView23"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/delivery" />
-
-            <TextView
-                android:id="@+id/total"
                 app:layout_constraintTop_toTopOf="@+id/textView23" />
 
             <TextView
@@ -283,19 +203,12 @@
                 app:layout_constraintTop_toTopOf="@+id/textView24" />
 
             <TextView
-                android:id="@+id/tvTotal"
                 android:id="@+id/cartTvTotalPrice"
                 style="@style/forTextView.18"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
                 android:text="5000000 UZS"
-                android:textColor="@color/text_color_1"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/total"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/total" />
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/textView18"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -304,6 +217,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.google.android.material.card.MaterialCardView>
+
 
     <TextView
         android:id="@+id/textView26"
@@ -316,7 +230,7 @@
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/materialCardViewCart" />
+        app:layout_constraintTop_toBottomOf="@+id/materialCardView2" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnDelete"
@@ -324,8 +238,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:backgroundTint="@android:color/transparent"
-        android:src="@drawable/ic_deleta"
         android:src="@drawable/ic_deleta"
         app:backgroundTint="@color/background_view_1"
         app:elevation="0dp"
