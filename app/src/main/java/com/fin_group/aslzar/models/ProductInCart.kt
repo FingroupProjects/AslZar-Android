@@ -6,6 +6,6 @@ data class ProductInCart (
     val image: List<String>,
     val code: String,
     var count: Int,
-    val sale: Double,
-    val price: Double
+    val sale: Number,
+    val price: Number
 )

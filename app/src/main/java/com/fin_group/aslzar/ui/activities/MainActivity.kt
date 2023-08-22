@@ -15,6 +15,7 @@ import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.ActivityMainBinding
 import com.fin_group.aslzar.models.ProductInCart
 import com.fin_group.aslzar.ui.fragments.cartMain.cart.CartFragment
+import com.fin_group.aslzar.util.BadgeManager
 import com.fin_group.aslzar.util.OnProductAddedToCartListener
 import com.fin_group.aslzar.viewmodel.SharedViewModel
 import com.google.android.material.appbar.MaterialToolbar
@@ -29,6 +30,8 @@ class MainActivity : AppCompatActivity(), OnProductAddedToCartListener {
     private lateinit var bottomNavBar: BottomNavigationView
 
     private val badgeMap: MutableMap<Int, BadgeDrawable> = mutableMapOf()
+    private lateinit var badgeManager: BadgeManager
+
 
     private val sharedViewModel: SharedViewModel by viewModels()
 
@@ -39,6 +42,8 @@ class MainActivity : AppCompatActivity(), OnProductAddedToCartListener {
         toolbar = binding.toolbar
 
         setSupportActionBar(toolbar)
+        badgeManager = BadgeManager(this)
+
 
         bottomNavBar = binding.bottomNavigationView
         val navController =findNavController(R.id.fragmentMain)
@@ -86,6 +91,9 @@ class MainActivity : AppCompatActivity(), OnProductAddedToCartListener {
     override fun onDestroy() {
         super.onDestroy()
         Cart.saveCartToPrefs(this)
+
+        val badge = bottomNavBar.getOrCreateBadge(R.id.mainCartFragment)
+        badgeManager.saveBadgeCount(badge.number)
     }
 
     override fun onProductAddedToCart(product: ProductInCart) {

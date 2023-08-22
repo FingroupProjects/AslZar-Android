@@ -8,6 +8,5 @@ data class ProductV2(
     val barcode: String,
     val category_id: String,
     val sale: Double,
-    val description: String,
     val price: Double
 )

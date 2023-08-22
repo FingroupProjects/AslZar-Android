@@ -1,24 +1,19 @@
 package com.fin_group.aslzar.ui.dialogs
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.BottomSheetItemAdapter
-import com.fin_group.aslzar.adapter.ProductSomeImagesAdapter
 import com.fin_group.aslzar.databinding.FragmentSheetDialogSetInProductBottomBinding
-import com.fin_group.aslzar.models.ImageDataModel
 import com.fin_group.aslzar.models.ImageDataModel2
-import com.fin_group.aslzar.ui.fragments.dataProduct.DataProductFragment
+import com.fin_group.aslzar.response.InStock
+import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.util.OnImageClickListener
-import com.fin_group.aslzar.util.hideBottomNav
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 
@@ -34,6 +29,7 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnIma
     lateinit var setProduct: BottomSheetItemAdapter
 
     private var setInProductId: String = ""
+    var allProducts: List<Product> = emptyList()
 
     companion object {
         fun newInstance(setInProductId: String): SetInProductBottomSheetDialogFragment {
@@ -80,7 +76,62 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnIma
             ImageDataModel2("00014", R.drawable.ring_4, "Кольцо 14"),
             ImageDataModel2("00015", R.drawable.ring_6, "Кольцо 15"),
         )
-        recyclerView.layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL, false)
+
+        val inStockList = listOf(
+            InStock("Магазин 1", "Витрина 3", 8),
+            InStock("Магазин 2", "Витрина 8", 8),
+            InStock("Магазин 12", "Витрина 7", 8),
+            InStock("Магазин 5", "Витрина 6", 8)
+        )
+
+        allProducts = listOf(
+            Product(
+                id = "0000022",
+                full_name = "Кольцо",
+                name = "Серьги с аметистом",
+                price = 120.0,
+                category_id = "jewelry",
+                barcode = "123456789",
+                sale = 0.2,
+                color = "фиолетовый",
+                stone_type = "аметист",
+                metal = "серебро",
+                content = "Серьги с натуральным аметистом",
+                size = "малый",
+                weight = "5 г",
+                country_of_origin = "Индия",
+                provider = "Украшения Востока",
+                counts = inStockList,
+                img = listOf(
+                    "https://cdn2.thecatapi.com/images/2n3.jpg",
+                    "https://cdn2.thecatapi.com/images/2qo.jpg"
+                )
+            ),
+            Product(
+                id = "0000021",
+                full_name = "Кольцо",
+                name = "Серьги с аметистом",
+                price = 1200,
+                category_id = "jewelry",
+                barcode = "123456789",
+                sale = 10,
+                color = "фиолетовый",
+                stone_type = "аметист",
+                metal = "серебро",
+                content = "Серьги с натуральным аметистом",
+                size = "17 мм",
+                weight = "5 г",
+                country_of_origin = "Индия",
+                provider = "Украшения Востока",
+                counts = inStockList,
+                img = listOf(
+                    "https://cdn2.thecatapi.com/images/as2.jpg",
+                    "https://cdn2.thecatapi.com/images/bbg.jpg"
+                )
+            )
+        )
+        recyclerView.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         recyclerView.adapter = setProduct
         setProduct.updateList(imageList)
     }
@@ -99,9 +150,11 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnIma
                 Toast.makeText(requireContext(), "Информация о продукте", Toast.LENGTH_SHORT).show()
             }
             add.setOnClickListener {
-                Toast.makeText(requireContext(), "Добавление в корзину", Toast.LENGTH_SHORT).show()
 
+
+                Toast.makeText(requireContext(), "Добавление в корзину", Toast.LENGTH_SHORT).show()
             }
+            close.setOnClickListener { dismiss() }
         }
     }
 

@@ -1,6 +1,7 @@
 package com.fin_group.aslzar.ui.fragments.main
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -34,6 +35,8 @@ import com.fin_group.aslzar.ui.fragments.main.functions.filterFun
 import com.fin_group.aslzar.ui.fragments.main.functions.filterProducts
 import com.fin_group.aslzar.ui.fragments.main.functions.searchBarChecked
 import com.fin_group.aslzar.ui.fragments.main.functions.searchViewFun
+import com.fin_group.aslzar.ui.fragments.main.functions.updateBadge
+import com.fin_group.aslzar.util.BadgeManager
 import com.fin_group.aslzar.util.showBottomNav
 import com.fin_group.aslzar.util.showToolBar
 import com.fin_group.aslzar.viewmodel.SharedViewModel
@@ -61,13 +64,10 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
     private var allCategories: List<ProductV2> = emptyList()
     var selectCategory: Category? = null
 
-    //add Toxa
-
-    private lateinit var notificationBadge: View
-
     lateinit var mainActivity: MainActivity
-
     lateinit var bottomNavigationView: BottomNavigationView
+
+    lateinit var badgeManager: BadgeManager
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -93,7 +93,9 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         super.onViewCreated(view, savedInstanceState)
         searchView = binding.searchViewMain
 
-        mainActivity = activity as MainActivity
+        mainActivity = activity as? MainActivity ?: throw IllegalStateException("Activity is not MainActivity")
+//        bottomNavigationView = view.findViewById(R.id.bottomNavigationView)
+        //updateBadge()
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -107,10 +109,14 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         })
 
         allProducts = listOf(
-            ProductV2("00-00000001", "Кольцо золотое с бриллиантом", 893, listOf<String>("hello", "hi"), "2.7.5.4.012.1_1,6_0", "00001", 22.9,"Hello", 1225.0 ),
-            ProductV2("00-00000002", "Кольцо золотое с фианитом", 433, listOf<String>("hello", "hi"), "2.7.5.2.045.4_1,6_0", "00001", 22.9,"Hello", 1225.0 ),
-            ProductV2("00-00000003", "Кольцо золотое с бриллиантом", 753, listOf<String>("hello", "hi"), "2.7.5.6.056.3_1,6_0", "00001", 22.9,"Hello", 1225.0 ),
-            ProductV2("00-00000004", "Кольцо золотое с бриллиантом", 823, listOf<String>("hello", "hi"), "2.7.5.1.022.2_1,6_0", "00001", 22.9,"Hello", 1225.0 ),
+            ProductV2("00-00000001", "Кольцо золотое с бриллиантом 3", 893, listOf<String>("hello", "hi"), "2.7.5.4.012.1_1,6_0", "00001", 22.9, 1225.0 ),
+            ProductV2("00-00000002", "Кольцо золотое с фианитом", 433, listOf<String>("hello", "hi"), "2.7.5.2.045.4_1,6_0", "00001", 22.9,1225.0 ),
+            ProductV2("00-00000003", "Кольцо золотое с бриллиантом 2", 753, listOf<String>("hello", "hi"), "2.7.5.6.056.3_1,6_0", "00001", 22.9, 1225.0 ),
+            ProductV2("00-00000004", "Кольцо золотое с бриллиантом 1", 0, listOf<String>("hello", "hi"), "2.7.5.1.022.2_1,6_0", "00001", 22.9,1225.0 ),
+            ProductV2("00-00000005", "Кольцо золотое с бриллиантом 4", 823, listOf<String>("hello", "hi"), "2.7.5.1.022.2_1,6_0", "00001", 22.9,1225.0 ),
+            ProductV2("00-00000006", "Кольцо золотое с бриллиантом 5", 823, listOf<String>("hello", "hi"), "2.7.5.1.022.2_1,6_0", "00001", 22.9,1225.0 ),
+            ProductV2("00-00000007", "Кольцо золотое с бриллиантом 6", 823, listOf<String>("hello", "hi"), "2.7.5.1.022.2_1,6_0", "00001", 22.9,1225.0 ),
+            ProductV2("00-00000008", "Кольцо золотое с бриллиантом 7", 823, listOf<String>("hello", "hi"), "2.7.5.1.022.2_1,6_0", "00001", 22.9,1225.0 ),
         )
         fetchRV(allProducts)
     }
@@ -161,6 +167,11 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         showBottomNav()
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        badgeManager = BadgeManager(requireContext())
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -169,6 +180,7 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
     override fun onResume() {
         super.onResume()
         bottomNavigationView = mainActivity.findViewById(R.id.bottomNavigationView)
+        updateBadge()
     }
 
     private fun onProductAddedToCart(product: ProductInCart) {

@@ -29,7 +29,7 @@ object Cart {
     }
 
     fun getTotalPrice(): Double {
-        return products.sumOf { it.price * it.count }
+        return products.sumOf { it.price.toDouble() * it.count }
     }
 
     fun getTotalCount(): Int {
@@ -116,5 +116,16 @@ object Cart {
         val cartJson = Gson().toJson(products.toTypedArray())
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         prefs.edit().putString(CART_KEY, cartJson).apply()
+    }
+
+    fun getUniqueProductTypesCount(): Int {
+        val cartProducts = Cart.getAllProducts()
+        val uniqueProductsIds = HashSet<String>()
+
+        for (product in cartProducts){
+            uniqueProductsIds.add(product.id)
+        }
+
+        return uniqueProductsIds.size
     }
 }
