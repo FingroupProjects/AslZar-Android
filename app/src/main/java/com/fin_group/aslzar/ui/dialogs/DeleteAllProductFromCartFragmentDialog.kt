@@ -28,7 +28,7 @@ class DeleteAllProductFromCartFragmentDialog : BaseDialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentDeleteAllProductFromCartDialogBinding.inflate(inflater,container, false)
         return binding.root
     }
@@ -41,15 +41,12 @@ class DeleteAllProductFromCartFragmentDialog : BaseDialogFragment() {
         binding.apply {
             actionClose.setOnClickListener { dismiss() }
             actionYesBtn.setOnClickListener {
-                Toast.makeText(requireContext(), "Ваша корзина успешно очищена!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Корзина успешно очищена!", Toast.LENGTH_SHORT).show()
                 bottomNavigationView.removeBadge(R.id.mainCartFragment)
                 Cart.clearAllProducts(requireContext())
 
                 val cartFragment = parentFragment as? EditProductInCart
                 cartFragment?.onCartCleared()
-                Log.d("TAG", "onViewCreated: $cartFragment")
-                Log.d("TAG", "onViewCreated: ${cartFragment?.onCartCleared()}")
-
                 dismiss()
             }
             actionNoBtn.setOnClickListener { dismiss() }

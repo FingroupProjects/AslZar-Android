@@ -1,0 +1,33 @@
+package com.fin_group.aslzar.response
+
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+import java.io.Serializable
+
+@Parcelize
+data class Product(
+    val id: String,
+    val full_name: String,
+    val name: String,
+    val price: Number,
+    val category_id: String,
+    val barcode: String,
+    val sale: Number,
+    val color: String,
+    val stone_type: String,
+    val metal: String,
+    val content: String,
+    val size: String,
+    val weight: String,
+    val country_of_origin: String,
+    val provider: String,
+    val counts: List<InStock>,
+    val img: List<String>
+) : Parcelable, Serializable
+
+@Parcelize
+data class InStock(
+    val store_house: String,
+    val subsidiary: String,
+    val count: Number
+) : Parcelable, Serializable

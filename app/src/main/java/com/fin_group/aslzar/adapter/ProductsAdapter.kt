@@ -6,10 +6,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.databinding.RowItemProductBinding
-import com.fin_group.aslzar.models.Product
 import com.fin_group.aslzar.models.ProductV2
 import com.fin_group.aslzar.ui.fragments.main.MainFragmentDirections
 import com.fin_group.aslzar.util.ProductOnClickListener
@@ -67,7 +65,7 @@ class ProductsAdapter(
 //                btnCheckingInStock.background = context.resources.getDrawable(R.drawable.item_product_bottom_btn_2)
             } else {
                 btnCheckingInStock.setImageResource(R.drawable.ic_check)
-                btnCheckingInStock.background = context.resources.getDrawable(R.drawable.item_product_bottom_btn)
+                btnCheckingInStock.background = context.resources.getDrawable(R.drawable.ripple_effect_bottom_btn)
             }
             btnAddToCart.setOnClickListener {
                 listener.addToCart(product)

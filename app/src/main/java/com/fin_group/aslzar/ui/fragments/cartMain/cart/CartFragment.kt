@@ -84,12 +84,6 @@ class CartFragment : Fragment(), EditProductInCart, OnProductAddedToCartListener
         allProducts = Cart.getAllProducts()
         myAdapter.updateList(allProducts)
         Cart.notifyObservers()
-
-        Log.d("TAG", "addProductToCart: $product")
-        Log.d("TAG", "addProductToCart: $allProducts")
-
-        Log.d("TAG", "onProductAddedToCart a: $allProducts")
-        Log.d("TAG", "onProductAddedToCart b: ${myAdapter.updateList(allProducts)}")
     }
     override fun onCartCleared() {
         allProducts = Cart.getAllProducts()
