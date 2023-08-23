@@ -11,6 +11,7 @@ import android.widget.TextView
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentCalculatorBinding
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.calculator
+import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.fetViews
 import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -20,7 +21,6 @@ class CalculatorFragment : Fragment() {
 
     private var _binding: FragmentCalculatorBinding? = null
     private val binding get() = _binding!!
-
     lateinit var typeClient: AutoCompleteTextView
     lateinit var typePay: AutoCompleteTextView
     lateinit var checkBox: MaterialCheckBox
@@ -40,27 +40,8 @@ class CalculatorFragment : Fragment() {
     lateinit var summa: TextView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-
         _binding = FragmentCalculatorBinding.inflate(inflater, container, false)
-
-        typeClient = binding.spinnerClientType
-        typePay = binding.spinnerPayType
-        checkBox = binding.checkbox
-        firstPayCalculator = binding.firstPayCalculator
-        checkboxForBonus = binding.checkboxForBonus
-        bonus = binding.bonus
-        tableSale = binding.tableSale
-        tvTableSale = binding.tvTableSale
-
-        bonusClient = binding.tvBonusForClient
-        firstPay = binding.tvFirstPay
-        sale = binding.tvSale
-        payWithBonus = binding.tvPayWithBonus
-
-        tvFirstPayCalculator = binding.tvFirstPayCalculator
-
-        summa = binding.summa
-
+        fetViews(binding)
         return binding.root
     }
 

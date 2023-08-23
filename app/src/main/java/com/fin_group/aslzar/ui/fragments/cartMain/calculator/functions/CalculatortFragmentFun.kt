@@ -9,11 +9,32 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.widget.addTextChangedListener
 import com.fin_group.aslzar.R
+import com.fin_group.aslzar.databinding.FragmentCalculatorBinding
 import com.fin_group.aslzar.models.AllClientType
 import com.fin_group.aslzar.models.AllTypePay
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.CalculatorFragment
 import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.android.material.textfield.TextInputLayout
+
+fun CalculatorFragment.fetViews(binding: FragmentCalculatorBinding){
+    typeClient = binding.spinnerClientType
+    typePay = binding.spinnerPayType
+    checkBox = binding.checkbox
+    firstPayCalculator = binding.firstPayCalculator
+    checkboxForBonus = binding.checkboxForBonus
+    bonus = binding.bonus
+    tableSale = binding.tableSale
+    tvTableSale = binding.tvTableSale
+
+    bonusClient = binding.tvBonusForClient
+    firstPay = binding.tvFirstPay
+    sale = binding.tvSale
+    payWithBonus = binding.tvPayWithBonus
+
+    tvFirstPayCalculator = binding.tvFirstPayCalculator
+
+    summa = binding.summa
+}
 
 @SuppressLint("SetTextI18n")
 fun CalculatorFragment.calculator() {
