@@ -28,6 +28,8 @@ import com.fin_group.aslzar.ui.fragments.dataProduct.functions.someImagesProduct
 import com.fin_group.aslzar.util.OnAlikeProductClickListener
 import com.fin_group.aslzar.util.OnImageClickListener
 import com.fin_group.aslzar.util.hideBottomNav
+import com.fin_group.aslzar.util.showBottomNav
+import com.fin_group.aslzar.util.showToolBar
 import com.google.android.material.chip.ChipGroup
 
 
@@ -125,5 +127,10 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
             val bottomSheetFragment = AlikeProductBottomSheetDialogFragment.newInstance(id)
             bottomSheetFragment.show(fragmentManager, tag)
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        showBottomNav()
     }
 }

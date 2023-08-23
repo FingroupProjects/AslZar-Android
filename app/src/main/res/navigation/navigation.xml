@@ -22,7 +22,6 @@
     <fragment
         android:id="@+id/mainCartFragment"
         android:name="com.fin_group.aslzar.ui.fragments.cartMain.MainCartFragment"
-        android:label="Корзина"
         tools:layout="@layout/fragment_main_cart" >
         <action
             android:id="@+id/action_mainCartFragment_to_cartFragment"
@@ -64,14 +63,5 @@
         android:id="@+id/profileFragment"
         android:name="com.fin_group.aslzar.ui.fragments.profile.ProfileFragment"
         android:label="Профиль"
-        tools:layout="@layout/fragment_profile" >
-        <action
-            android:id="@+id/action_profileFragment_to_changeDataProfileDialogFragment"
-            app:destination="@id/changeDataProfileDialogFragment" />
-    </fragment>
-    <dialog
-        android:id="@+id/changeDataProfileDialogFragment"
-        android:name="com.fin_group.aslzar.ui.dialogs.ChangeDataProfileDialogFragment"
-        android:label="fragment_dialog_change_data_profile"
-        tools:layout="@layout/fragment_dialog_change_data_profile" />
+        tools:layout="@layout/fragment_profile" />
 </navigation>
