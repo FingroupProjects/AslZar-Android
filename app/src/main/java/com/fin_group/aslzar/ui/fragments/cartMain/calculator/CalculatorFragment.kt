@@ -12,7 +12,9 @@ import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentCalculatorBinding
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.calculator
 import com.google.android.material.checkbox.MaterialCheckBox
+import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import org.w3c.dom.Text
 
 class CalculatorFragment : Fragment() {
 
@@ -28,10 +30,17 @@ class CalculatorFragment : Fragment() {
     lateinit var tableSale: TextView
     lateinit var tvTableSale: LinearLayout
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    lateinit var bonusClient: TextView
+    lateinit var firstPay: TextView
+    lateinit var sale: TextView
+    lateinit var payWithBonus: TextView
+
+    lateinit var tvFirstPayCalculator: TextInputEditText
+
+    lateinit var summa: TextView
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+
         _binding = FragmentCalculatorBinding.inflate(inflater, container, false)
 
         typeClient = binding.spinnerClientType
@@ -42,6 +51,15 @@ class CalculatorFragment : Fragment() {
         bonus = binding.bonus
         tableSale = binding.tableSale
         tvTableSale = binding.tvTableSale
+
+        bonusClient = binding.tvBonusForClient
+        firstPay = binding.tvFirstPay
+        sale = binding.tvSale
+        payWithBonus = binding.tvPayWithBonus
+
+        tvFirstPayCalculator = binding.tvFirstPayCalculator
+
+        summa = binding.summa
 
         return binding.root
     }
