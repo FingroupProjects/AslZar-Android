@@ -57,23 +57,6 @@ class MainActivity : AppCompatActivity(), OnProductAddedToCartListener {
         //addBadgeToBottomNavigationItem(R.id.mainCartFragment, 5)
     }
 
-    fun addBadgeToBottomNavigationItem(menuItemId: Int, badgeCount: Int) {
-        val badgeDrawable = bottomNavBar.getOrCreateBadge(menuItemId)
-        badgeDrawable.isVisible = true
-        badgeDrawable.number = badgeCount
-        badgeMap[menuItemId] = badgeDrawable
-    }
-
-    fun updateBadgeInBottomNavigation(menuItemId: Int, badgeCount: Int) {
-        val badgeDrawable = bottomNavBar.getOrCreateBadge(menuItemId)
-        badgeDrawable.isVisible = true
-        badgeDrawable.number = badgeCount
-        badgeMap[menuItemId] = badgeDrawable
-    }
-    fun removeBadgeFromBottomNavigationItem(menuItemId: Int) {
-         badgeMap.remove(menuItemId)?.isVisible = false
-    }
-
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.fragmentMain)
         return navController.navigateUp() || super.onSupportNavigateUp()
@@ -101,19 +84,7 @@ class MainActivity : AppCompatActivity(), OnProductAddedToCartListener {
 //        cartFragment.onProductAddedToCart(product)
         val fragment = supportFragmentManager.findFragmentById(R.id.cartFragment)
         if (fragment is CartFragment) {
-            // Взаимодействие с фрагментом
             fragment.onProductAddedToCart(product)
-            Log.d("TAG", "onProductAddedToCart: a11 $product")
-            Log.d("TAG", "onProductAddedToCart: a22 $fragment")
         }
-
-
-//        val cartFragment: Fragment? = supportFragmentManager.findFragmentById(R.id.cartFragment)
-        //val cartFragment = supportFragmentManager.findFragmentById(R.id.cartFragment) as? CartFragment
-        //cartFragment?.onProductAddedToCart(product)
-        Log.d("TAG", "onProductAddedToCart: a1 $product")
-        Log.d("TAG", "onProductAddedToCart: a2 $fragment")
-//        Log.d("TAG", "onProductAddedToCart: a3 ${cartFragment?.onProductAddedToCart(product)}")
-        //Log.d("TAG", "onProductAddedToCart: a3 ${cartFragment?.onProductAddedToCart(product)}")
     }
 }

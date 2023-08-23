@@ -5,9 +5,6 @@ import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Rect
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
-import android.os.Build
 import android.text.InputType
 import android.util.Base64
 import android.view.Gravity
@@ -18,9 +15,7 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
 import androidx.activity.OnBackPressedCallback
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
@@ -31,7 +26,6 @@ import com.fin_group.aslzar.R
 import com.fin_group.aslzar.models.ProductInCart
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
@@ -75,10 +69,15 @@ fun Fragment.redirectToChangeServerFragment(fragmentDirections: NavDirections) {
     findNavController().navigate(fragmentDirections, navOptions)
 }
 
-fun doubleFormat(double: Double): String {
+fun doubleFormat(double: Number): String {
     val decimalFormat = DecimalFormat("#.0")
     return decimalFormat.format(double)
 }
+
+interface CartObserver {
+    fun onCartChanged(totalPrice: Number, totalSalePrice: Number, totalCount: Int)
+}
+
 
 fun nextEt(editText: TextInputEditText) {
     editText.imeOptions = EditorInfo.IME_ACTION_DONE
