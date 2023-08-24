@@ -1,5 +1,6 @@
 package com.fin_group.aslzar.ui.activities
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -23,7 +24,7 @@ import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
-class MainActivity : AppCompatActivity(), OnProductAddedToCartListener {
+class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var toolbar: MaterialToolbar
@@ -31,7 +32,6 @@ class MainActivity : AppCompatActivity(), OnProductAddedToCartListener {
 
     private val badgeMap: MutableMap<Int, BadgeDrawable> = mutableMapOf()
     private lateinit var badgeManager: BadgeManager
-
 
     private val sharedViewModel: SharedViewModel by viewModels()
 
@@ -43,7 +43,6 @@ class MainActivity : AppCompatActivity(), OnProductAddedToCartListener {
 
         setSupportActionBar(toolbar)
         badgeManager = BadgeManager(this)
-
 
         bottomNavBar = binding.bottomNavigationView
         val navController =findNavController(R.id.fragmentMain)
@@ -71,20 +70,20 @@ class MainActivity : AppCompatActivity(), OnProductAddedToCartListener {
         Cart.loadCartFromPrefs(this)
     }
 
+    @SuppressLint("ResourceAsColor")
     override fun onDestroy() {
         super.onDestroy()
         Cart.saveCartToPrefs(this)
 
         val badge = bottomNavBar.getOrCreateBadge(R.id.mainCartFragment)
+        badge.backgroundColor = R.color.background_2
         badgeManager.saveBadgeCount(badge.number)
     }
 
-    override fun onProductAddedToCart(product: ProductInCart) {
-//        val cartFragment = CartFragment()
-//        cartFragment.onProductAddedToCart(product)
-        val fragment = supportFragmentManager.findFragmentById(R.id.cartFragment)
-        if (fragment is CartFragment) {
-            fragment.onProductAddedToCart(product)
-        }
-    }
+//    override fun onProductAddedToCart(product: ProductInCart) {
+//        val fragment = supportFragmentManager.findFragmentById(R.id.cartFragment)
+//        if (fragment is CartFragment) {
+//            fragment.onProductAddedToCart(product)
+//        }
+//    }
 }

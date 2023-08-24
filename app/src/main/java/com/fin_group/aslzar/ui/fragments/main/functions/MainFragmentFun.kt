@@ -103,21 +103,9 @@ fun MainFragment.addProductToCart(bottomNavView: BottomNavigationView, product: 
     )
     Cart.addProduct(cartProduct, requireContext())
 
-//    val badge = bottomNavView.getOrCreateBadge(R.id.mainCartFragment)
-//    badge.isVisible = true
-//    badge.number = badge.number + 1
-
     updateBadge()
-//    val activity = requireActivity() as? OnProductAddedToCartListener
-//    activity?.onProductAddedToCart(cartProduct)
-
-
 
     sharedViewModel.onProductAddedToCart(cartProduct)
-
-//    Log.d("TAG", "addProductToCart: hello")
-//    Log.d("TAG", "addProductToCart: activity $activity")
-//    Log.d("TAG", "addProductToCart: activity2  ${activity?.onProductAddedToCart(cartProduct)}")
 }
 fun MainFragment.updateBadge(){
     val uniqueProductTypes = Cart.getUniqueProductTypesCount()

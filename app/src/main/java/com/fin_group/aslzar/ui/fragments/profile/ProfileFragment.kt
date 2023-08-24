@@ -14,6 +14,7 @@ import com.fin_group.aslzar.ui.dialogs.SignOutProfileFragmentDialog
 import com.fin_group.aslzar.ui.fragments.profile.functions.goToChangePasswordDialog
 import com.fin_group.aslzar.ui.fragments.profile.functions.speedometerView
 import com.fin_group.aslzar.util.hideBottomNav
+import com.fin_group.aslzar.util.showBottomNav
 import com.github.anastr.speedviewlib.Speedometer
 
 @Suppress("DEPRECATION")
@@ -55,5 +56,10 @@ class ProfileFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         hideBottomNav()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        showBottomNav()
     }
 }

@@ -54,6 +54,8 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
 
     val sharedViewModel: SharedViewModel by activityViewModels()
 
+    lateinit var toolbar: MaterialToolbar
+
     lateinit var viewSearch: ConstraintLayout
     var searchText: String = ""
     lateinit var searchView: SearchView
@@ -76,6 +78,9 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
+//        toolbar = binding.toolbar
+//        (activity as AppCompatActivity?)!!.setSupportActionBar(toolbar as MaterialToolbar?)
+//        toolbar.title = "Главная"
         setHasOptionsMenu(true)
         viewSearch = binding.viewSearch
         viewCheckedCategory = binding.viewCheckedCategory
