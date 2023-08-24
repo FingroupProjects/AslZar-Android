@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
 import androidx.fragment.app.activityViewModels
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fin_group.aslzar.adapter.ProductInCartAdapter
@@ -18,14 +19,19 @@ import com.fin_group.aslzar.cart.TotalPriceObserver
 import com.fin_group.aslzar.databinding.FragmentCartBinding
 import com.fin_group.aslzar.models.ProductInCart
 import com.fin_group.aslzar.ui.dialogs.DeleteAllProductFromCartFragmentDialog
+import com.fin_group.aslzar.ui.fragments.cartMain.cart.functions.cartObserver
 import com.fin_group.aslzar.ui.fragments.cartMain.cart.functions.deleteAllProductFromCart
+import com.fin_group.aslzar.ui.fragments.cartMain.cart.functions.fetchItemTouchHelper
 import com.fin_group.aslzar.ui.fragments.cartMain.cart.functions.fetchRV
+import com.fin_group.aslzar.ui.fragments.cartMain.cart.functions.itemTouchCallback
 import com.fin_group.aslzar.util.CartObserver
 import com.fin_group.aslzar.util.EditProductInCart
 import com.fin_group.aslzar.util.OnProductAddedToCartListener
 import com.fin_group.aslzar.util.doubleFormat
+import com.fin_group.aslzar.util.formatNumber
 import com.fin_group.aslzar.viewmodel.SharedViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
 
 
 class CartFragment : Fragment(), EditProductInCart, OnProductAddedToCartListener {
@@ -60,25 +66,15 @@ class CartFragment : Fragment(), EditProductInCart, OnProductAddedToCartListener
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val totalPriceWithoutSale= binding.cartTvTotalPriceWithoutSale
-        val totalPriceWithSale = binding.cartTvTotalSale
-        val cartTvCountProduct = binding.cartTvCountProduct
-        val totalPriceTv = binding.cartTvTotalPrice
-
-
         sharedViewModel.productAdded.observe(viewLifecycleOwner) { product ->
             onProductAddedToCart(product)
         }
-
-        cartObserver = object : CartObserver {
-            override fun onCartChanged(totalPrice: Number, totalSalePrice: Number, totalCount: Int) {
-                totalPriceWithSale.text = "-$totalSalePrice USZ"
-                totalPriceWithoutSale.text = "$totalPrice UZS"
-                cartTvCountProduct.text = "$totalCount шт"
-                totalPriceTv.text = "${doubleFormat(totalPrice.toDouble() - totalSalePrice.toDouble())} USZ"
-            }
-        }
+        cartObserver(binding)
         Cart.registerObserver(cartObserver)
+
+        fetchItemTouchHelper()
+        val itemTouchHelper = ItemTouchHelper(itemTouchCallback)
+        itemTouchHelper.attachToRecyclerView(recyclerView)
 
         fetchRV(allProducts)
         deleteAllProductFromCart()
@@ -107,7 +103,6 @@ class CartFragment : Fragment(), EditProductInCart, OnProductAddedToCartListener
         myAdapter.updateList(allProducts)
         Cart.notifyObservers()
     }
-
     override fun onStart() {
         super.onStart()
         allProducts = Cart.getAllProducts()

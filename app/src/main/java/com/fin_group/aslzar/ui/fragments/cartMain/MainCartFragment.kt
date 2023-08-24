@@ -68,7 +68,7 @@ class MainCartFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-//        hideToolBar()
+        hideToolBar()
     }
 
     override fun onResume() {
@@ -80,6 +80,6 @@ class MainCartFragment : Fragment() {
         super.onDestroyView()
         _binding = null
         Cart.saveCartToPrefs(requireContext())
-//        showToolBar()
+        showToolBar()
     }
 }

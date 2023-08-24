@@ -30,6 +30,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import java.text.DecimalFormat
+import java.text.NumberFormat
+import java.util.Locale
 
 interface FunCallback {
     fun onSuccess(success: Boolean)
@@ -70,7 +72,7 @@ fun Fragment.redirectToChangeServerFragment(fragmentDirections: NavDirections) {
 }
 
 fun doubleFormat(double: Number): String {
-    val decimalFormat = DecimalFormat("#.0")
+    val decimalFormat = DecimalFormat("#.00")
     return decimalFormat.format(double)
 }
 
@@ -100,13 +102,13 @@ fun View.hideKeyboard() {
 
 fun Fragment.hideToolBar(){
     val toolbar = requireActivity().findViewById<MaterialToolbar>(R.id.toolbar)
-    val hideAnim: Animation = AnimationUtils.loadAnimation(requireContext(), R.anim.fade_out)
+    val hideAnim: Animation = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_out)
     toolbar.startAnimation(hideAnim)
     toolbar.visibility = View.GONE
 }
 fun Fragment.showToolBar(){
     val toolbar = requireActivity().findViewById<MaterialToolbar>(R.id.toolbar)
-    val showAnim: Animation = AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in)
+    val showAnim: Animation = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_in)
     toolbar.startAnimation(showAnim)
     toolbar.visibility = View.VISIBLE
 }
@@ -123,6 +125,16 @@ fun Fragment.showBottomNav(){
     bottomNavBar.visibility = View.VISIBLE
 }
 
+fun formatNumber(number: Number): String {
+    val numberFormat = NumberFormat.getNumberInstance(Locale.getDefault())
+    if (numberFormat is DecimalFormat) {
+        val symbols = numberFormat.decimalFormatSymbols
+        symbols.groupingSeparator = ' ' // Установите пробел в качестве разделителя разрядов
+        numberFormat.decimalFormatSymbols = symbols
+        numberFormat.applyPattern("#,##0.00")
+    }
+    return numberFormat.format(number)
+}
 
 
 fun Fragment.setupKeyboardScrolling() {

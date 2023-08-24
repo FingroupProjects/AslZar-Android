@@ -8,7 +8,7 @@
         android:id="@+id/mainFragment"
         android:name="com.fin_group.aslzar.ui.fragments.main.MainFragment"
         android:label="Главная"
-        tools:layout="@layout/fragment_main" >
+        tools:layout="@layout/fragment_main">
         <action
             android:id="@+id/action_mainFragment_to_profileFragment"
             app:destination="@id/profileFragment" />
@@ -17,12 +17,16 @@
             app:destination="@id/barCodeScannerFragment" />
         <action
             android:id="@+id/action_mainFragment_to_dataProductFragment"
-            app:destination="@id/dataProductFragment" />
+            app:destination="@id/dataProductFragment"
+            app:enterAnim="@anim/from_right"
+            app:exitAnim="@anim/to_left"
+            app:popEnterAnim="@anim/from_left"
+            app:popExitAnim="@anim/to_right" />
     </fragment>
     <fragment
         android:id="@+id/mainCartFragment"
         android:name="com.fin_group.aslzar.ui.fragments.cartMain.MainCartFragment"
-        tools:layout="@layout/fragment_main_cart" >
+        tools:layout="@layout/fragment_main_cart">
         <action
             android:id="@+id/action_mainCartFragment_to_cartFragment"
             app:destination="@id/cartFragment" />
@@ -34,7 +38,7 @@
         android:id="@+id/barCodeScannerFragment"
         android:name="com.fin_group.aslzar.ui.fragments.barCode.BarCodeScannerFragment"
         android:label="Штрих-код сканнер"
-        tools:layout="@layout/fragment_bar_code_scanner" >
+        tools:layout="@layout/fragment_bar_code_scanner">
         <action
             android:id="@+id/action_barCodeScannerFragment_to_dataProductFragment"
             app:destination="@id/dataProductFragment"
@@ -54,7 +58,7 @@
         android:id="@+id/dataProductFragment"
         android:name="com.fin_group.aslzar.ui.fragments.dataProduct.DataProductFragment"
         android:label="Данные товара"
-        tools:layout="@layout/fragment_data_product" >
+        tools:layout="@layout/fragment_data_product">
         <argument
             android:name="productId"
             app:argType="string" />
