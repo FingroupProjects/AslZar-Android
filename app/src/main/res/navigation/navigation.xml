@@ -11,10 +11,18 @@
         tools:layout="@layout/fragment_main">
         <action
             android:id="@+id/action_mainFragment_to_profileFragment"
-            app:destination="@id/profileFragment" />
+            app:destination="@id/profileFragment"
+            app:enterAnim="@anim/from_right"
+            app:exitAnim="@anim/to_left"
+            app:popEnterAnim="@anim/from_left"
+            app:popExitAnim="@anim/to_right" />
         <action
             android:id="@+id/action_mainFragment_to_barCodeScannerFragment"
-            app:destination="@id/barCodeScannerFragment" />
+            app:destination="@id/barCodeScannerFragment"
+            app:enterAnim="@anim/from_right"
+            app:exitAnim="@anim/to_left"
+            app:popEnterAnim="@anim/from_left"
+            app:popExitAnim="@anim/to_right" />
         <action
             android:id="@+id/action_mainFragment_to_dataProductFragment"
             app:destination="@id/dataProductFragment"
@@ -36,7 +44,7 @@
     </fragment>
     <fragment
         android:id="@+id/barCodeScannerFragment"
-        android:name="com.fin_group.aslzar.ui.fragments.barCode.BarCodeScannerFragment"
+        android:name="com.fin_group.aslzar.ui.fragments.barCode.BarcodeScannerV2Fragment"
         android:label="Штрих-код сканнер"
         tools:layout="@layout/fragment_bar_code_scanner">
         <action
