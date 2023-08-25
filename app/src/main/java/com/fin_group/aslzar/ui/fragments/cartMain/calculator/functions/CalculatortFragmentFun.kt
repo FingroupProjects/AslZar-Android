@@ -3,20 +3,19 @@
 package com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions
 
 import android.annotation.SuppressLint
+import android.text.InputType
+import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.core.widget.addTextChangedListener
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.databinding.FragmentCalculatorBinding
 import com.fin_group.aslzar.models.AllClientType
 import com.fin_group.aslzar.models.AllTypePay
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.CalculatorFragment
-import com.google.android.material.checkbox.MaterialCheckBox
-import com.google.android.material.textfield.TextInputLayout
 
-fun CalculatorFragment.fetViews(binding: FragmentCalculatorBinding){
+
+fun CalculatorFragment.fetViews(binding: FragmentCalculatorBinding) {
     typeClient = binding.spinnerClientType
     typePay = binding.spinnerPayType
     checkBox = binding.checkbox
@@ -26,7 +25,7 @@ fun CalculatorFragment.fetViews(binding: FragmentCalculatorBinding){
     tableSale = binding.tableSale
     tvTableSale = binding.tvTableSale
 
-    bonusClient = binding.tvBonusForClient
+
     firstPay = binding.tvFirstPay
     sale = binding.tvSale
     payWithBonus = binding.tvPayWithBonus
@@ -34,15 +33,20 @@ fun CalculatorFragment.fetViews(binding: FragmentCalculatorBinding){
     tvFirstPayCalculator = binding.tvFirstPayCalculator
 
     summa = binding.summa
+
+    tvBonusForClient = binding.tvBonusForClient
+
+    editBonus = binding.editBonus
+
 }
 
 @SuppressLint("SetTextI18n")
 fun CalculatorFragment.calculator() {
     val allClientType = listOf(
-        AllClientType(1, "Розничный"),
-        AllClientType(2, "Шарифов Тохир"),
-        AllClientType(3, "Шахобов Нуриддин"),
-        AllClientType(4, "Гафуров Сухроб")
+        AllClientType(1, "Розничный", 0),
+        AllClientType(2, "Шарифов Тохир", 50),
+        AllClientType(3, "Шахобов Нуриддин", 100),
+        AllClientType(4, "Гафуров Сухроб", 200)
     )
 
     val allTypePay = listOf(
@@ -50,117 +54,201 @@ fun CalculatorFragment.calculator() {
         AllTypePay(2, "В рассрочку")
     )
 
-    val arrayAdapterTypeClient = ArrayAdapter(requireContext(), R.layout.spinner_item, allClientType.map { it.name })
+    val arrayAdapterTypeClient =
+        ArrayAdapter(requireContext(), R.layout.spinner_item, allClientType.map { it.name })
     typeClient.setAdapter(arrayAdapterTypeClient)
-    val arrayAdapterTypePay = ArrayAdapter(requireContext(), R.layout.spinner_item, allTypePay.map { it.name })
+
+    val arrayAdapterTypePay =
+        ArrayAdapter(requireContext(), R.layout.spinner_item, allTypePay.map { it.name })
     typePay.setAdapter(arrayAdapterTypePay)
 
     typeClient.setOnItemClickListener { _, _, position, _ ->
         val selectClientType = allClientType[position]
         val selectClientTypeId = selectClientType.id
 
-        typePay.setOnItemClickListener { _, _, position, _ ->
-            val selectTypePay = allTypePay[position]
-            val selectTypePayId = selectTypePay.id
+        if (selectClientTypeId == 1) {
+            val selectedClientBonus = "${selectClientType.bonus} UZS"
+            tvBonusForClient.text = selectedClientBonus
 
-            if (selectClientTypeId == 1 && selectTypePayId == 1){
-                checkBox.visibility = View.GONE
-                firstPayCalculator.visibility = View.GONE
-                checkboxForBonus.visibility = View.GONE
-                bonus.visibility = View.GONE
-                tableSale.visibility = View.GONE
-                tvTableSale.visibility = View.GONE
-            }else if (selectClientTypeId == 1 && selectTypePayId == 2){
-                checkBox.visibility = View.VISIBLE
-                firstPayCalculator.visibility = View.VISIBLE
+            checkboxForBonus.visibility = View.GONE
+            bonus.visibility = View.GONE
+            checkBox.visibility = View.GONE
+            firstPayCalculator.visibility = View.GONE
+            tableSale.visibility = View.GONE
+            tvTableSale.visibility = View.GONE
+            checkBox.isChecked = true
+            bonus.editText?.setText("")
+            
 
-                firstPayCalculator.editText?.addTextChangedListener {
-                    val inputText = it.toString()
-                    if (inputText.isNotEmpty()) {
-                        firstPay.text = "$inputText UZS"
-                    } else {
-                        firstPay.text = "0 UZS"
-                    }
-                }
 
-                checkBox.setOnCheckedChangeListener { _, isChecked ->
+            typePay.setOnItemClickListener { _, _, position, _ ->
+                val selectPayType = allTypePay[position]
+                val selectPayTypeId = selectPayType.id
+
+                if (selectPayTypeId == 1){
+                    checkboxForBonus.visibility = View.GONE
+                    bonus.visibility = View.GONE
+                    checkBox.visibility = View.GONE
+                    firstPayCalculator.visibility = View.GONE
+                    tableSale.visibility = View.GONE
+                    tvTableSale.visibility = View.GONE
+                    checkBox.isChecked = true
+                }else{
+                    checkboxForBonus.visibility = View.GONE
+                    bonus.visibility = View.GONE
+                    checkBox.visibility = View.VISIBLE
+
+                    checkBox.setOnCheckedChangeListener { _, isChecked ->
                     if (isChecked) {
                         firstPayCalculator.visibility = View.GONE
-                        tvFirstPayCalculator.inputType = android.text.InputType.TYPE_NULL
-
-                        val tvFirstPayCalculator = firstPayCalculator.editText
-                        val text = tvFirstPayCalculator?.setText("")
-
-                        firstPayCalculator.editText?.addTextChangedListener {
-                            firstPay.text = "$text UZS"
-
+                        firstPayCalculator.editText?.setText("")
+                        tvFirstPayCalculator.keyListener = null
+                    } else {
+                        firstPayCalculator.visibility = View.VISIBLE
+                        tvFirstPayCalculator.inputType = InputType.TYPE_CLASS_NUMBER
+                    }
+                }
+                    tableSale.visibility = View.VISIBLE
+                    tvTableSale.visibility = View.VISIBLE
+                    firstPayCalculator.editText?.addTextChangedListener {
+                        val inputFirstPayCalculator = it.toString()
+                        if (inputFirstPayCalculator.isNotEmpty()) {
+                            firstPay.text = "$inputFirstPayCalculator UZS"
+                        } else {
+                            firstPay.text = "0 UZS"
                         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                    } else {
-                        firstPayCalculator.visibility = View.VISIBLE
                     }
                 }
-                checkboxForBonus.visibility = View.GONE
-                bonus.visibility = View.GONE
-                tableSale.visibility = View.VISIBLE
-                tvTableSale.visibility = View.VISIBLE
-            } else if (selectClientTypeId != 1 && selectTypePayId == 1){
-                checkBox.visibility = View.GONE
-                firstPayCalculator.visibility = View.GONE
-                checkboxForBonus.visibility = View.VISIBLE
-                bonus.visibility = View.VISIBLE
-                checkboxForBonus.setOnCheckedChangeListener { _, isChecked ->
-                    if (!isChecked) {
-                        bonus.visibility = View.VISIBLE
-                    } else {
-                        bonus.visibility = View.GONE
+            }
+        }else{
+
+            val selectedClientBonus = "${selectClientType.bonus} UZS"
+            tvBonusForClient.text = selectedClientBonus
+
+            bonus.editText?.setText("")
+            editBonus.keyListener = null
+            checkboxForBonus.isChecked = true
+
+
+            checkboxForBonus.visibility = View.VISIBLE
+            bonus.visibility = View.GONE
+            checkBox.visibility = View.GONE
+            firstPayCalculator.visibility = View.GONE
+            tableSale.visibility = View.GONE
+            tvTableSale.visibility = View.GONE
+            typePay.setOnItemClickListener { _, _, position, _ ->
+                val selectPayType = allTypePay[position]
+                val selectPayTypeId = selectPayType.id
+                if (selectPayTypeId == 1){
+                    bonus.editText?.setText("")
+                    checkboxForBonus.visibility = View.VISIBLE
+                    checkboxForBonus.setOnCheckedChangeListener { _, isChecked ->
+                        if (isChecked) {
+                            bonus.visibility = View.GONE
+                            bonus.editText?.setText("")
+                            editBonus.keyListener = null
+                        } else {
+                            bonus.visibility = View.VISIBLE
+                            editBonus.inputType = InputType.TYPE_CLASS_NUMBER
+                        }
                     }
-                }
-                tableSale.visibility = View.GONE
-                tvTableSale.visibility = View.GONE
-            }else if (selectClientTypeId != 1 && selectTypePayId == 2){
-                checkBox.visibility = View.VISIBLE
-                firstPayCalculator.visibility = View.VISIBLE
-                checkBox.setOnCheckedChangeListener { _, isChecked ->
-                    if (!isChecked) {
-                        firstPayCalculator.visibility = View.VISIBLE
-                    } else {
-                        firstPayCalculator.visibility = View.GONE
+                    bonus.editText?.addTextChangedListener {
+                        val inputBonus = it.toString()
+                        if (inputBonus.isNotEmpty()) {
+                            payWithBonus.text = "$inputBonus UZS"
+                        } else {
+                            payWithBonus.text = "0 UZS"
+                        }
                     }
-                }
-                checkboxForBonus.visibility = View.VISIBLE
-                bonus.visibility = View.VISIBLE
-                checkboxForBonus.setOnCheckedChangeListener { _, isChecked ->
-                    if (!isChecked) {
-                        bonus.visibility = View.VISIBLE
-                    } else {
-                        bonus.visibility = View.GONE
+                    checkBox.visibility = View.GONE
+                    firstPayCalculator.visibility = View.GONE
+                    tableSale.visibility = View.GONE
+                    tvTableSale.visibility = View.GONE
+                    checkBox.isChecked = true
+                }else{
+
+                    checkboxForBonus.isChecked = true
+                    checkBox.isChecked = true
+
+                    checkboxForBonus.visibility = View.VISIBLE
+                    checkboxForBonus.setOnCheckedChangeListener { _, isChecked ->
+                        if (isChecked) {
+                            bonus.visibility = View.GONE
+                            bonus.editText?.setText("")
+                            editBonus.keyListener = null
+                        } else {
+                            bonus.visibility = View.VISIBLE
+                            editBonus.inputType = InputType.TYPE_CLASS_NUMBER
+                        }
                     }
+                    bonus.editText?.addTextChangedListener {
+                        val inputBonus = it.toString()
+                        if (inputBonus.isNotEmpty()) {
+                            payWithBonus.text = "$inputBonus UZS"
+                        } else {
+                            payWithBonus.text = "0 UZS"
+                        }
+                    }
+                    checkBox.visibility = View.VISIBLE
+                    checkBox.setOnCheckedChangeListener { _, isChecked ->
+                        if (isChecked) {
+                            firstPayCalculator.visibility = View.GONE
+                            firstPayCalculator.editText?.setText("")
+                            tvFirstPayCalculator.keyListener = null
+                        } else {
+                            firstPayCalculator.visibility = View.VISIBLE
+                            tvFirstPayCalculator.inputType = InputType.TYPE_CLASS_NUMBER
+                        }
+                    }
+                    firstPayCalculator.editText?.addTextChangedListener {
+                        val inputFirstPay = it.toString()
+                        if (inputFirstPay.isNotEmpty()) {
+                            firstPay.text = "$inputFirstPay UZS"
+                        } else {
+                            firstPay.text = "0 UZS"
+                        }
+                    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    tableSale.visibility = View.GONE
+                    tvTableSale.visibility = View.GONE
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 }
-                tableSale.visibility = View.VISIBLE
-                tvTableSale.visibility = View.VISIBLE
             }
         }
+
     }
 }
-
-
-
