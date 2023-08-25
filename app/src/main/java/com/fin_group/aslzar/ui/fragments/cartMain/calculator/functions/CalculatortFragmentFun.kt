@@ -4,7 +4,6 @@ package com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions
 
 import android.annotation.SuppressLint
 import android.text.InputType
-import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
 import androidx.core.widget.addTextChangedListener
@@ -14,8 +13,8 @@ import com.fin_group.aslzar.models.AllClientType
 import com.fin_group.aslzar.models.AllTypePay
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.CalculatorFragment
 
-
 fun CalculatorFragment.fetViews(binding: FragmentCalculatorBinding) {
+
     typeClient = binding.spinnerClientType
     typePay = binding.spinnerPayType
     checkBox = binding.checkbox
@@ -24,7 +23,6 @@ fun CalculatorFragment.fetViews(binding: FragmentCalculatorBinding) {
     bonus = binding.bonus
     tableSale = binding.tableSale
     tvTableSale = binding.tvTableSale
-
 
     firstPay = binding.tvFirstPay
     sale = binding.tvSale
@@ -78,8 +76,6 @@ fun CalculatorFragment.calculator() {
             tvTableSale.visibility = View.GONE
             checkBox.isChecked = true
             bonus.editText?.setText("")
-            
-
 
             typePay.setOnItemClickListener { _, _, position, _ ->
                 val selectPayType = allTypePay[position]
@@ -128,7 +124,6 @@ fun CalculatorFragment.calculator() {
             bonus.editText?.setText("")
             editBonus.keyListener = null
             checkboxForBonus.isChecked = true
-
 
             checkboxForBonus.visibility = View.VISIBLE
             bonus.visibility = View.GONE
@@ -208,44 +203,8 @@ fun CalculatorFragment.calculator() {
                             firstPay.text = "0 UZS"
                         }
                     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                     tableSale.visibility = View.GONE
                     tvTableSale.visibility = View.GONE
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                 }
             }
         }
