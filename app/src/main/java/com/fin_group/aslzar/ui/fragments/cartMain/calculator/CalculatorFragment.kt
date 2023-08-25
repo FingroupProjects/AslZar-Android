@@ -10,6 +10,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentCalculatorBinding
+import com.fin_group.aslzar.models.AllClientType
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.calculator
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.fetViews
 import com.google.android.material.checkbox.MaterialCheckBox
@@ -30,7 +31,6 @@ class CalculatorFragment : Fragment() {
     lateinit var tableSale: TextView
     lateinit var tvTableSale: LinearLayout
 
-    lateinit var bonusClient: TextView
     lateinit var firstPay: TextView
     lateinit var sale: TextView
     lateinit var payWithBonus: TextView
@@ -39,15 +39,21 @@ class CalculatorFragment : Fragment() {
 
     lateinit var summa: TextView
 
+
+    lateinit var tvBonusForClient: TextView
+
+    lateinit var editBonus: TextInputEditText
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentCalculatorBinding.inflate(inflater, container, false)
-        fetViews(binding)
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        fetViews(binding)
         calculator()
+        super.onViewCreated(view, savedInstanceState)
     }
 
     override fun onStart() {
