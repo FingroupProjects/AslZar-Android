@@ -66,11 +66,11 @@ class BarcodeScannerV2Fragment : Fragment() {
 //            }
         }
 
-        val toolbar = requireActivity().findViewById<MaterialToolbar>(R.id.toolbar)
-        toolbar.setNavigationOnClickListener {
-            findNavController().popBackStack()
-            showBottomNav()
-        }
+//        val toolbar = requireActivity().findViewById<MaterialToolbar>(R.id.toolbar)
+//        toolbar.setNavigationOnClickListener {
+//            findNavController().popBackStack()
+//            showBottomNav()
+//        }
     }
 
     private fun askForCameraPermission() {
