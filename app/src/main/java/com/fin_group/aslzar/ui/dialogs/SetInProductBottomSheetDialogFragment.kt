@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fin_group.aslzar.R
@@ -14,6 +15,7 @@ import com.fin_group.aslzar.models.ImageDataModel2
 import com.fin_group.aslzar.response.InStock
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.util.OnImageClickListener
+import com.fin_group.aslzar.viewmodel.SharedViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 
@@ -23,6 +25,8 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnIma
     private val binding get() = _binding!!
 
     lateinit var recyclerView: RecyclerView
+
+    val sharedViewModel: SharedViewModel by activityViewModels()
 
     private var currentSelectedPosition = RecyclerView.NO_POSITION
     var imageList: List<ImageDataModel2> = emptyList()

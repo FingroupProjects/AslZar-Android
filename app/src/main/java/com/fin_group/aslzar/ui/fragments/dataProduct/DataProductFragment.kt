@@ -1,6 +1,7 @@
 package com.fin_group.aslzar.ui.fragments.dataProduct
 
 import android.annotation.SuppressLint
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -9,7 +10,9 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
 import com.fin_group.aslzar.R
@@ -28,6 +31,9 @@ import com.fin_group.aslzar.ui.fragments.dataProduct.functions.someImagesProduct
 import com.fin_group.aslzar.util.OnAlikeProductClickListener
 import com.fin_group.aslzar.util.OnImageClickListener
 import com.fin_group.aslzar.util.hideBottomNav
+import com.fin_group.aslzar.util.showBottomNav
+import com.fin_group.aslzar.util.showToolBar
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.chip.ChipGroup
 
 
@@ -42,6 +48,8 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
     lateinit var recyclerViewLikeProducts: RecyclerView
 
     private var currentSelectedPosition = RecyclerView.NO_POSITION
+
+    lateinit var toolbar: MaterialToolbar
 
     var imageList: List<ImageDataModel> = emptyList()
     var alikeProductsList: List<ImageDataModel2> = emptyList()
@@ -59,6 +67,13 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentDataProductBinding.inflate(inflater, container, false)
+//        toolbar = binding.toolbar
+//        (activity as AppCompatActivity?)!!.setSupportActionBar(toolbar as MaterialToolbar?)
+//        toolbar.title = "Данные товара"
+//        toolbar.setNavigationIcon(R.drawable.ic_back)
+//        toolbar.setNavigationOnClickListener {
+//            findNavController().popBackStack()
+//        }
         hideBottomNav()
         setHasOptionsMenu(true)
         recyclerViewSomeImages = binding.otherImgRv
@@ -125,5 +140,10 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
             val bottomSheetFragment = AlikeProductBottomSheetDialogFragment.newInstance(id)
             bottomSheetFragment.show(fragmentManager, tag)
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        showBottomNav()
     }
 }

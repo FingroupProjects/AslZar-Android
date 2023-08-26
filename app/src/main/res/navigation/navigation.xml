@@ -8,22 +8,33 @@
         android:id="@+id/mainFragment"
         android:name="com.fin_group.aslzar.ui.fragments.main.MainFragment"
         android:label="Главная"
-        tools:layout="@layout/fragment_main" >
+        tools:layout="@layout/fragment_main">
         <action
             android:id="@+id/action_mainFragment_to_profileFragment"
-            app:destination="@id/profileFragment" />
+            app:destination="@id/profileFragment"
+            app:enterAnim="@anim/from_right"
+            app:exitAnim="@anim/to_left"
+            app:popEnterAnim="@anim/from_left"
+            app:popExitAnim="@anim/to_right" />
         <action
             android:id="@+id/action_mainFragment_to_barCodeScannerFragment"
-            app:destination="@id/barCodeScannerFragment" />
+            app:destination="@id/barCodeScannerFragment"
+            app:enterAnim="@anim/from_right"
+            app:exitAnim="@anim/to_left"
+            app:popEnterAnim="@anim/from_left"
+            app:popExitAnim="@anim/to_right" />
         <action
             android:id="@+id/action_mainFragment_to_dataProductFragment"
-            app:destination="@id/dataProductFragment" />
+            app:destination="@id/dataProductFragment"
+            app:enterAnim="@anim/from_right"
+            app:exitAnim="@anim/to_left"
+            app:popEnterAnim="@anim/from_left"
+            app:popExitAnim="@anim/to_right" />
     </fragment>
     <fragment
         android:id="@+id/mainCartFragment"
         android:name="com.fin_group.aslzar.ui.fragments.cartMain.MainCartFragment"
-        android:label="Корзина"
-        tools:layout="@layout/fragment_main_cart" >
+        tools:layout="@layout/fragment_main_cart">
         <action
             android:id="@+id/action_mainCartFragment_to_cartFragment"
             app:destination="@id/cartFragment" />
@@ -33,9 +44,9 @@
     </fragment>
     <fragment
         android:id="@+id/barCodeScannerFragment"
-        android:name="com.fin_group.aslzar.ui.fragments.barCode.BarCodeScannerFragment"
+        android:name="com.fin_group.aslzar.ui.fragments.barCode.BarcodeScannerV2Fragment"
         android:label="Штрих-код сканнер"
-        tools:layout="@layout/fragment_bar_code_scanner" >
+        tools:layout="@layout/fragment_bar_code_scanner">
         <action
             android:id="@+id/action_barCodeScannerFragment_to_dataProductFragment"
             app:destination="@id/dataProductFragment"
@@ -55,7 +66,7 @@
         android:id="@+id/dataProductFragment"
         android:name="com.fin_group.aslzar.ui.fragments.dataProduct.DataProductFragment"
         android:label="Данные товара"
-        tools:layout="@layout/fragment_data_product" >
+        tools:layout="@layout/fragment_data_product">
         <argument
             android:name="productId"
             app:argType="string" />
@@ -64,14 +75,5 @@
         android:id="@+id/profileFragment"
         android:name="com.fin_group.aslzar.ui.fragments.profile.ProfileFragment"
         android:label="Профиль"
-        tools:layout="@layout/fragment_profile" >
-        <action
-            android:id="@+id/action_profileFragment_to_changeDataProfileDialogFragment"
-            app:destination="@id/changeDataProfileDialogFragment" />
-    </fragment>
-    <dialog
-        android:id="@+id/changeDataProfileDialogFragment"
-        android:name="com.fin_group.aslzar.ui.dialogs.ChangeDataProfileDialogFragment"
-        android:label="fragment_dialog_change_data_profile"
-        tools:layout="@layout/fragment_dialog_change_data_profile" />
+        tools:layout="@layout/fragment_profile" />
 </navigation>

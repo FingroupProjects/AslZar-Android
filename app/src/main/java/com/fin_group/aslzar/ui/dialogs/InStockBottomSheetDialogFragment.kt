@@ -54,7 +54,7 @@ class InStockBottomSheetDialogFragment : BaseBottomSheetDialogFragment() {
         _binding = FragmentBottomSheetDialogInStockBinding.inflate(inflater, container, false)
 
         arguments?.let {
-            product = it.getParcelable(ARG_PRODUCT)!!
+            //product = it.getParcelable(ARG_PRODUCT)!!
             inStockProductId = it.getString(ARG_PRODUCT_ID, "")
         }
 

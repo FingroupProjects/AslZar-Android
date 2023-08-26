@@ -19,7 +19,6 @@ class FragmentLogin : Fragment() {
     private val binding get() = _binding!!
     private var doubleBackToExitPressedOnce = false
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

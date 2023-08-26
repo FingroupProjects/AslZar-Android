@@ -3,6 +3,7 @@ package com.fin_group.aslzar.ui.fragments.main
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.Menu
@@ -20,6 +21,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.ProductsAdapter
+import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentMainBinding
 import com.fin_group.aslzar.models.Category
 import com.fin_group.aslzar.models.ProductInCart
@@ -52,6 +54,8 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
 
     val sharedViewModel: SharedViewModel by activityViewModels()
 
+    lateinit var toolbar: MaterialToolbar
+
     lateinit var viewSearch: ConstraintLayout
     var searchText: String = ""
     lateinit var searchView: SearchView
@@ -74,6 +78,9 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
+//        toolbar = binding.toolbar
+//        (activity as AppCompatActivity?)!!.setSupportActionBar(toolbar as MaterialToolbar?)
+//        toolbar.title = "Главная"
         setHasOptionsMenu(true)
         viewSearch = binding.viewSearch
         viewCheckedCategory = binding.viewCheckedCategory
@@ -109,16 +116,17 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         })
 
         allProducts = listOf(
-            ProductV2("00-00000001", "Кольцо золотое с бриллиантом 3", 893, listOf<String>("hello", "hi"), "2.7.5.4.012.1_1,6_0", "00001", 22.9, 1225.0 ),
-            ProductV2("00-00000002", "Кольцо золотое с фианитом", 433, listOf<String>("hello", "hi"), "2.7.5.2.045.4_1,6_0", "00001", 22.9,1225.0 ),
-            ProductV2("00-00000003", "Кольцо золотое с бриллиантом 2", 753, listOf<String>("hello", "hi"), "2.7.5.6.056.3_1,6_0", "00001", 22.9, 1225.0 ),
-            ProductV2("00-00000004", "Кольцо золотое с бриллиантом 1", 0, listOf<String>("hello", "hi"), "2.7.5.1.022.2_1,6_0", "00001", 22.9,1225.0 ),
-            ProductV2("00-00000005", "Кольцо золотое с бриллиантом 4", 823, listOf<String>("hello", "hi"), "2.7.5.1.022.2_1,6_0", "00001", 22.9,1225.0 ),
-            ProductV2("00-00000006", "Кольцо золотое с бриллиантом 5", 823, listOf<String>("hello", "hi"), "2.7.5.1.022.2_1,6_0", "00001", 22.9,1225.0 ),
-            ProductV2("00-00000007", "Кольцо золотое с бриллиантом 6", 823, listOf<String>("hello", "hi"), "2.7.5.1.022.2_1,6_0", "00001", 22.9,1225.0 ),
-            ProductV2("00-00000008", "Кольцо золотое с бриллиантом 7", 823, listOf<String>("hello", "hi"), "2.7.5.1.022.2_1,6_0", "00001", 22.9,1225.0 ),
+            ProductV2("00-00000001", "Кольцо золотое с бриллиантом 3", 893, listOf<String>("hello", "hi"), "2.7.5.4.012.1_1,6_0", "00001", 10, 1225.0 ),
+            ProductV2("00-00000002", "Кольцо золотое с фианитом", 433, listOf<String>("hello", "hi"), "2.7.5.2.045.4_1,6_0", "00001", 12,1225.0 ),
+            ProductV2("00-00000003", "Кольцо золотое с бриллиантом 2", 753, listOf<String>("hello", "hi"), "2.7.5.6.056.3_1,6_0", "00001", 13.5, 1225.0 ),
+            ProductV2("00-00000004", "Кольцо золотое с бриллиантом 1", 0, listOf<String>("hello", "hi"), "2.7.5.1.022.2_1,6_0", "00001", 5,1225.0 ),
+            ProductV2("00-00000005", "Кольцо золотое с бриллиантом 4", 823, listOf<String>("hello", "hi"), "2.7.5.1.022.2_1,6_0", "00001", 9,1225.0 ),
+            ProductV2("00-00000006", "Кольцо золотое с бриллиантом 5", 823, listOf<String>("hello", "hi"), "2.7.5.1.022.2_1,6_0", "00001", 6,1225.0 ),
+            ProductV2("00-00000007", "Кольцо золотое с бриллиантом 6", 823, listOf<String>("hello", "hi"), "2.7.5.1.022.2_1,6_0", "00001", 35,1225.0 ),
+            ProductV2("00-00000008", "Кольцо золотое с бриллиантом 7", 823, listOf<String>("hello", "hi"), "2.7.5.1.022.2_1,6_0", "00001", 75,1225.0 ),
         )
         fetchRV(allProducts)
+
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -161,10 +169,22 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         categoryDialog.show(activity?.supportFragmentManager!!, "category check dialog")
     }
 
+
+    override fun onPause() {
+        super.onPause()
+        Cart.saveCartToPrefs(requireContext())
+    }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        Cart.saveCartToPrefs(requireContext())
+        _binding = null
+    }
     override fun onStart() {
         super.onStart()
-        showToolBar()
-        showBottomNav()
+        Cart.loadCartFromPrefs(requireContext())
+        Cart.notifyObservers()
+//        showToolBar()
+//        showBottomNav()
     }
 
     override fun onAttach(context: Context) {
@@ -172,10 +192,6 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         badgeManager = BadgeManager(requireContext())
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
 
     override fun onResume() {
         super.onResume()

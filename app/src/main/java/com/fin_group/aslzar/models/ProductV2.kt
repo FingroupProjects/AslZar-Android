@@ -7,6 +7,6 @@ data class ProductV2(
     val image: List<String>,
     val barcode: String,
     val category_id: String,
-    val sale: Double,
-    val price: Double
+    val sale: Number,
+    val price: Number
 )

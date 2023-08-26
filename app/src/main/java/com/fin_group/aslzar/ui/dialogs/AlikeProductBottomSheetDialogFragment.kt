@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL
 import androidx.recyclerview.widget.RecyclerView
@@ -17,12 +18,15 @@ import com.fin_group.aslzar.response.InStock
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.util.BaseBottomSheetDialogFragment
 import com.fin_group.aslzar.util.OnImageClickListener
+import com.fin_group.aslzar.viewmodel.SharedViewModel
 
 @Suppress("DEPRECATION")
 class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(), OnImageClickListener {
 
     private var _binding: FragmentAlikeProductBottomSheetDialogBinding? = null
     private val binding get() = _binding!!
+
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     private var alikeProductID: String = ""
     lateinit var recyclerView: RecyclerView
@@ -115,7 +119,8 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(), O
         binding.apply {
             close.setOnClickListener { dismiss() }
             addToCart.setOnClickListener {
-                Cart.addProduct(cartProduct, requireContext())
+//                Cart.addProduct(cartProduct, requireContext())
+                sharedViewModel.onProductAddedToCart(cartProduct)
             }
         }
 

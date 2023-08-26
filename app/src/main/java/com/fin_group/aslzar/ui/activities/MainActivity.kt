@@ -1,5 +1,6 @@
 package com.fin_group.aslzar.ui.activities
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -23,7 +24,7 @@ import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
-class MainActivity : AppCompatActivity(), OnProductAddedToCartListener {
+class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var toolbar: MaterialToolbar
@@ -31,7 +32,6 @@ class MainActivity : AppCompatActivity(), OnProductAddedToCartListener {
 
     private val badgeMap: MutableMap<Int, BadgeDrawable> = mutableMapOf()
     private lateinit var badgeManager: BadgeManager
-
 
     private val sharedViewModel: SharedViewModel by viewModels()
 
@@ -44,7 +44,6 @@ class MainActivity : AppCompatActivity(), OnProductAddedToCartListener {
         setSupportActionBar(toolbar)
         badgeManager = BadgeManager(this)
 
-
         bottomNavBar = binding.bottomNavigationView
         val navController =findNavController(R.id.fragmentMain)
 
@@ -55,23 +54,6 @@ class MainActivity : AppCompatActivity(), OnProductAddedToCartListener {
         bottomNavBar.setupWithNavController(navController)
 
         //addBadgeToBottomNavigationItem(R.id.mainCartFragment, 5)
-    }
-
-    fun addBadgeToBottomNavigationItem(menuItemId: Int, badgeCount: Int) {
-        val badgeDrawable = bottomNavBar.getOrCreateBadge(menuItemId)
-        badgeDrawable.isVisible = true
-        badgeDrawable.number = badgeCount
-        badgeMap[menuItemId] = badgeDrawable
-    }
-
-    fun updateBadgeInBottomNavigation(menuItemId: Int, badgeCount: Int) {
-        val badgeDrawable = bottomNavBar.getOrCreateBadge(menuItemId)
-        badgeDrawable.isVisible = true
-        badgeDrawable.number = badgeCount
-        badgeMap[menuItemId] = badgeDrawable
-    }
-    fun removeBadgeFromBottomNavigationItem(menuItemId: Int) {
-         badgeMap.remove(menuItemId)?.isVisible = false
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -88,32 +70,20 @@ class MainActivity : AppCompatActivity(), OnProductAddedToCartListener {
         Cart.loadCartFromPrefs(this)
     }
 
+    @SuppressLint("ResourceAsColor")
     override fun onDestroy() {
         super.onDestroy()
         Cart.saveCartToPrefs(this)
 
         val badge = bottomNavBar.getOrCreateBadge(R.id.mainCartFragment)
+        badge.backgroundColor = R.color.background_2
         badgeManager.saveBadgeCount(badge.number)
     }
 
-    override fun onProductAddedToCart(product: ProductInCart) {
-//        val cartFragment = CartFragment()
-//        cartFragment.onProductAddedToCart(product)
-        val fragment = supportFragmentManager.findFragmentById(R.id.cartFragment)
-        if (fragment is CartFragment) {
-            // Взаимодействие с фрагментом
-            fragment.onProductAddedToCart(product)
-            Log.d("TAG", "onProductAddedToCart: a11 $product")
-            Log.d("TAG", "onProductAddedToCart: a22 $fragment")
-        }
-
-
-//        val cartFragment: Fragment? = supportFragmentManager.findFragmentById(R.id.cartFragment)
-        //val cartFragment = supportFragmentManager.findFragmentById(R.id.cartFragment) as? CartFragment
-        //cartFragment?.onProductAddedToCart(product)
-        Log.d("TAG", "onProductAddedToCart: a1 $product")
-        Log.d("TAG", "onProductAddedToCart: a2 $fragment")
-//        Log.d("TAG", "onProductAddedToCart: a3 ${cartFragment?.onProductAddedToCart(product)}")
-        //Log.d("TAG", "onProductAddedToCart: a3 ${cartFragment?.onProductAddedToCart(product)}")
-    }
+//    override fun onProductAddedToCart(product: ProductInCart) {
+//        val fragment = supportFragmentManager.findFragmentById(R.id.cartFragment)
+//        if (fragment is CartFragment) {
+//            fragment.onProductAddedToCart(product)
+//        }
+//    }
 }

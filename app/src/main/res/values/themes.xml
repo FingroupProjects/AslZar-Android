@@ -128,7 +128,6 @@
     </style>
 
     //for MaterialCardView
-
     <style name="CardView.Cart" parent="Widget.Material3.CardView.Elevated">
         <item name="cardBackgroundColor">@drawable/bg_card_view_for_cart_check</item>
         <item name="strokeWidth">0dp</item>
@@ -141,13 +140,9 @@
         <item name="buttonTint">@color/primary_color_2</item>
     </style>
 
-
-
-
-
-
-
-
-
+    //Badges
+    <style name="CustomBadge" parent="@style/Widget.MaterialComponents.Badge">
+        <item name="backgroundColor">@color/background_2</item>
+    </style>
 
 </resources>

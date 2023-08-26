@@ -1,6 +1,7 @@
 package com.fin_group.aslzar.ui.fragments.cartMain
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +13,7 @@ import com.fin_group.aslzar.adapter.TabLayoutAdapter
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.ui.fragments.cartMain.functions.removeBadges
 import com.fin_group.aslzar.util.hideToolBar
+import com.fin_group.aslzar.util.showToolBar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.tabs.TabLayout
 
@@ -38,8 +40,9 @@ class MainCartFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         tableLayout = binding.tabLayout
         viewPager2 = binding.viewPager2
-        hideToolBar()
         bottomNavigationView = requireActivity().findViewById(R.id.bottomNavigationView)
+        Log.d("TAG", "onViewCreated: ${Cart.getTotalSalePrice()}")
+        Log.d("TAG", "onViewCreated: ${Cart.getTotalPrice()}")
 
         tableLayout.addTab(tableLayout.newTab().setText("Корзина"))
         tableLayout.addTab(tableLayout.newTab().setText("Калькулятор"))
@@ -63,6 +66,11 @@ class MainCartFragment : Fragment() {
         })
     }
 
+    override fun onStart() {
+        super.onStart()
+        hideToolBar()
+    }
+
     override fun onResume() {
         super.onResume()
         bottomNavigationView = requireActivity().findViewById(R.id.bottomNavigationView)
@@ -72,5 +80,6 @@ class MainCartFragment : Fragment() {
         super.onDestroyView()
         _binding = null
         Cart.saveCartToPrefs(requireContext())
+        showToolBar()
     }
 }
