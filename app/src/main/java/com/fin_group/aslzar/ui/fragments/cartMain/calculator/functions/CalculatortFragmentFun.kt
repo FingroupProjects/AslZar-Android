@@ -74,36 +74,36 @@ fun CalculatorFragment.calculator() {
             firstPayCalculator.visibility = View.GONE
             tableSale.visibility = View.GONE
             tvTableSale.visibility = View.GONE
-            checkBox.isChecked = true
+            checkBox.isChecked = false
             bonus.editText?.setText("")
 
             typePay.setOnItemClickListener { _, _, position, _ ->
                 val selectPayType = allTypePay[position]
                 val selectPayTypeId = selectPayType.id
 
-                if (selectPayTypeId == 1){
+                if (selectPayTypeId == 1) {
                     checkboxForBonus.visibility = View.GONE
                     bonus.visibility = View.GONE
                     checkBox.visibility = View.GONE
                     firstPayCalculator.visibility = View.GONE
                     tableSale.visibility = View.GONE
                     tvTableSale.visibility = View.GONE
-                    checkBox.isChecked = true
-                }else{
+                    checkBox.isChecked = false
+                } else {
                     checkboxForBonus.visibility = View.GONE
                     bonus.visibility = View.GONE
                     checkBox.visibility = View.VISIBLE
 
                     checkBox.setOnCheckedChangeListener { _, isChecked ->
-                    if (isChecked) {
-                        firstPayCalculator.visibility = View.GONE
-                        firstPayCalculator.editText?.setText("")
-                        tvFirstPayCalculator.keyListener = null
-                    } else {
-                        firstPayCalculator.visibility = View.VISIBLE
-                        tvFirstPayCalculator.inputType = InputType.TYPE_CLASS_NUMBER
+                        if (isChecked) {
+                            firstPayCalculator.visibility = View.VISIBLE
+                            tvFirstPayCalculator.inputType = InputType.TYPE_CLASS_NUMBER
+                        } else {
+                            firstPayCalculator.visibility = View.GONE
+                            firstPayCalculator.editText?.setText("")
+                            tvFirstPayCalculator.keyListener = null
+                        }
                     }
-                }
                     tableSale.visibility = View.VISIBLE
                     tvTableSale.visibility = View.VISIBLE
                     firstPayCalculator.editText?.addTextChangedListener {
@@ -116,15 +116,25 @@ fun CalculatorFragment.calculator() {
                     }
                 }
             }
-        }else{
+        } else {
 
             val selectedClientBonus = "${selectClientType.bonus} UZS"
             tvBonusForClient.text = selectedClientBonus
 
             bonus.editText?.setText("")
             editBonus.keyListener = null
-            checkboxForBonus.isChecked = true
+            checkboxForBonus.isChecked = false
 
+            checkboxForBonus.setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked) {
+                    bonus.visibility = View.VISIBLE
+                    editBonus.inputType = InputType.TYPE_CLASS_NUMBER
+                } else {
+                    bonus.visibility = View.GONE
+                    bonus.editText?.setText("")
+                    editBonus.keyListener = null
+                }
+            }
             checkboxForBonus.visibility = View.VISIBLE
             bonus.visibility = View.GONE
             checkBox.visibility = View.GONE
@@ -134,17 +144,17 @@ fun CalculatorFragment.calculator() {
             typePay.setOnItemClickListener { _, _, position, _ ->
                 val selectPayType = allTypePay[position]
                 val selectPayTypeId = selectPayType.id
-                if (selectPayTypeId == 1){
+                if (selectPayTypeId == 1) {
                     bonus.editText?.setText("")
                     checkboxForBonus.visibility = View.VISIBLE
                     checkboxForBonus.setOnCheckedChangeListener { _, isChecked ->
                         if (isChecked) {
+                            bonus.visibility = View.VISIBLE
+                            editBonus.inputType = InputType.TYPE_CLASS_NUMBER
+                        } else {
                             bonus.visibility = View.GONE
                             bonus.editText?.setText("")
                             editBonus.keyListener = null
-                        } else {
-                            bonus.visibility = View.VISIBLE
-                            editBonus.inputType = InputType.TYPE_CLASS_NUMBER
                         }
                     }
                     bonus.editText?.addTextChangedListener {
@@ -159,21 +169,21 @@ fun CalculatorFragment.calculator() {
                     firstPayCalculator.visibility = View.GONE
                     tableSale.visibility = View.GONE
                     tvTableSale.visibility = View.GONE
-                    checkBox.isChecked = true
-                }else{
+                    checkBox.isChecked = false
+                } else {
 
-                    checkboxForBonus.isChecked = true
-                    checkBox.isChecked = true
+                    checkboxForBonus.isChecked = false
+                    checkBox.isChecked = false
 
                     checkboxForBonus.visibility = View.VISIBLE
                     checkboxForBonus.setOnCheckedChangeListener { _, isChecked ->
                         if (isChecked) {
+                            bonus.visibility = View.VISIBLE
+                            editBonus.inputType = InputType.TYPE_CLASS_NUMBER
+                        } else {
                             bonus.visibility = View.GONE
                             bonus.editText?.setText("")
                             editBonus.keyListener = null
-                        } else {
-                            bonus.visibility = View.VISIBLE
-                            editBonus.inputType = InputType.TYPE_CLASS_NUMBER
                         }
                     }
                     bonus.editText?.addTextChangedListener {
@@ -187,12 +197,12 @@ fun CalculatorFragment.calculator() {
                     checkBox.visibility = View.VISIBLE
                     checkBox.setOnCheckedChangeListener { _, isChecked ->
                         if (isChecked) {
+                            firstPayCalculator.visibility = View.VISIBLE
+                            tvFirstPayCalculator.inputType = InputType.TYPE_CLASS_NUMBER
+                        } else {
                             firstPayCalculator.visibility = View.GONE
                             firstPayCalculator.editText?.setText("")
                             tvFirstPayCalculator.keyListener = null
-                        } else {
-                            firstPayCalculator.visibility = View.VISIBLE
-                            tvFirstPayCalculator.inputType = InputType.TYPE_CLASS_NUMBER
                         }
                     }
                     firstPayCalculator.editText?.addTextChangedListener {
@@ -203,8 +213,8 @@ fun CalculatorFragment.calculator() {
                             firstPay.text = "0 UZS"
                         }
                     }
-                    tableSale.visibility = View.GONE
-                    tvTableSale.visibility = View.GONE
+                    tableSale.visibility = View.VISIBLE
+                    tvTableSale.visibility = View.VISIBLE
                 }
             }
         }

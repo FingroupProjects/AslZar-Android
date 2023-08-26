@@ -236,6 +236,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             app:boxBackgroundMode="outline"
+            android:background="@color/white"
             app:boxStrokeColor="@color/background_2"
             app:hintTextColor="@color/text_color_1"
             app:layout_constraintEnd_toEndOf="parent"
@@ -269,6 +270,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             app:boxBackgroundMode="outline"
+            android:background="@color/white"
             app:boxStrokeColor="@color/background_2"
             app:hintTextColor="@color/text_color_1"
             app:layout_constraintEnd_toEndOf="parent"
@@ -284,19 +286,17 @@
 
         <com.google.android.material.checkbox.MaterialCheckBox
             android:id="@+id/checkboxForBonus"
+            style="@style/Widget.App.CheckBox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="10dp"
-            android:buttonTint="@color/primary_color_2"
             android:checked="true"
             android:clickable="true"
             android:text="Использовать бонус"
             android:textColor="@color/text_color_1"
             android:textStyle="bold"
             android:visibility="gone"
-            app:buttonIcon="@drawable/ic_check"
-            app:buttonIconTint="@color/white"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/payType" />
 
@@ -308,6 +308,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="-10dp"
             android:layout_marginEnd="16dp"
+            android:background="@color/white"
             android:checked="true"
             android:visibility="gone"
             app:boxBackgroundMode="outline"
@@ -327,19 +328,17 @@
 
         <com.google.android.material.checkbox.MaterialCheckBox
             android:id="@+id/checkbox"
+            style="@style/Widget.App.CheckBox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="10dp"
-            android:buttonTint="@color/primary_color_2"
             android:checked="true"
             android:clickable="true"
             android:text="Введите первоначальный взнос/UZS"
             android:textColor="@color/text_color_1"
             android:textStyle="bold"
             android:visibility="gone"
-            app:buttonIcon="@drawable/ic_check"
-            app:buttonIconTint="@color/white"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/bonus" />
 
@@ -351,6 +350,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="-10dp"
             android:layout_marginEnd="16dp"
+            android:background="@color/white"
             android:checked="true"
             android:visibility="gone"
             app:boxBackgroundMode="outline"
@@ -387,26 +387,17 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="5dp"
             android:layout_marginEnd="16dp"
+            android:background="@drawable/bg_table_calculator"
             android:orientation="vertical"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tableSale">
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/primary_color_3" />
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="@color/primary_color_3" />
 
                 <TextView
                     android:layout_width="0dp"
@@ -431,11 +422,6 @@
                     android:textColor="@color/text_color_1"
                     android:textStyle="bold" />
 
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="@color/primary_color_3" />
-
             </LinearLayout>
 
             <View
@@ -447,11 +433,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="@color/primary_color_3" />
 
                 <TextView
                     android:layout_width="0dp"
@@ -476,11 +457,6 @@
                     android:textColor="@color/text_color_1"
                     android:textStyle="bold" />
 
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="@color/primary_color_3" />
-
             </LinearLayout>
 
             <View
@@ -492,11 +468,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="@color/primary_color_3" />
 
                 <TextView
                     android:layout_width="0dp"
@@ -521,11 +492,6 @@
                     android:textColor="@color/text_color_1"
                     android:textStyle="bold" />
 
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="@color/primary_color_3" />
-
             </LinearLayout>
 
             <View
@@ -537,11 +503,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="@color/primary_color_3" />
 
                 <TextView
                     android:layout_width="0dp"
@@ -566,11 +527,6 @@
                     android:textColor="@color/text_color_1"
                     android:textStyle="bold" />
 
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="@color/primary_color_3" />
-
             </LinearLayout>
 
             <View
@@ -582,11 +538,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="@color/primary_color_3" />
 
                 <TextView
                     android:layout_width="0dp"
@@ -611,11 +562,6 @@
                     android:textColor="@color/text_color_1"
                     android:textStyle="bold" />
 
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="@color/primary_color_3" />
-
             </LinearLayout>
 
             <View
@@ -627,11 +573,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="@color/primary_color_3" />
 
                 <TextView
                     android:layout_width="0dp"
@@ -656,18 +597,10 @@
                     android:textColor="@color/text_color_1"
                     android:textStyle="bold" />
 
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="@color/primary_color_3" />
-
             </LinearLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/primary_color_3" />
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </ScrollView>
