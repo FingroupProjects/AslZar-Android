@@ -30,19 +30,20 @@ class CalculatorFragment : Fragment() {
     lateinit var bonus: TextInputLayout
     lateinit var tableSale: TextView
     lateinit var tvTableSale: LinearLayout
-
     lateinit var firstPay: TextView
     lateinit var sale: TextView
     lateinit var payWithBonus: TextView
-
     lateinit var tvFirstPayCalculator: TextInputEditText
-
     lateinit var summa: TextView
-
-
     lateinit var tvBonusForClient: TextView
-
     lateinit var editBonus: TextInputEditText
+
+    // for table
+    lateinit var fourSale: TextView
+    lateinit var sixSale: TextView
+    lateinit var eightSale: TextView
+    lateinit var tenSale: TextView
+    lateinit var twelveSale: TextView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentCalculatorBinding.inflate(inflater, container, false)
@@ -53,6 +54,7 @@ class CalculatorFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         fetViews(binding)
         calculator()
+//        tableCount()
         super.onViewCreated(view, savedInstanceState)
     }
 

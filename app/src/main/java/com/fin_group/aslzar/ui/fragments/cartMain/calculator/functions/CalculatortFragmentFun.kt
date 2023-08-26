@@ -23,18 +23,20 @@ fun CalculatorFragment.fetViews(binding: FragmentCalculatorBinding) {
     bonus = binding.bonus
     tableSale = binding.tableSale
     tvTableSale = binding.tvTableSale
-
     firstPay = binding.tvFirstPay
     sale = binding.tvSale
     payWithBonus = binding.tvPayWithBonus
-
     tvFirstPayCalculator = binding.tvFirstPayCalculator
-
     summa = binding.summa
-
     tvBonusForClient = binding.tvBonusForClient
-
     editBonus = binding.editBonus
+
+    //binding for table
+//    fourSale = binding.fourSale
+//    sixSale = binding.sixSale
+//    eightSale = binding.eightSale
+//    tenSale = binding.tenSale
+//    twelveSale = binding.twelveSale
 
 }
 
