@@ -1,6 +1,5 @@
 package com.fin_group.aslzar.ui.fragments.cartMain.cart.functions
 
-import android.util.Log
 import android.widget.Toast
 import android.annotation.SuppressLint
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -68,14 +67,14 @@ fun CartFragment.fetchItemTouchHelper(){
             myAdapter.updateList(allProducts)
             Cart.notifyObservers()
 
-            val snackbar = Snackbar.make(requireView(), "Товар удален", Snackbar.LENGTH_LONG)
-            snackbar.setAction("Отменить") {
+            val snackBar = Snackbar.make(requireView(), "Товар удален", Snackbar.LENGTH_LONG)
+            snackBar.setAction("Отменить") {
                 Cart.addProduct(productToRemove, requireContext())
                 allProducts = Cart.getAllProducts()
                 myAdapter.updateList(allProducts)
                 Cart.notifyObservers()
             }
-            snackbar.show()
+            snackBar.show()
         }
     }
 }

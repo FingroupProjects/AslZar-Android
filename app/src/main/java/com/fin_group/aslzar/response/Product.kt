@@ -4,6 +4,10 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 import java.io.Serializable
 
+data class GetAllProductsResponse(
+    val result: List<Product>
+)
+
 @Parcelize
 data class Product(
     val id: String,
@@ -11,7 +15,6 @@ data class Product(
     val name: String,
     val price: Number,
     val category_id: String,
-    val barcode: String,
     val sale: Number,
     val color: String,
     val stone_type: String,
@@ -29,5 +32,6 @@ data class Product(
 data class InStock(
     val store_house: String,
     val subsidiary: String,
-    val count: Number
+    val count: Number,
+    val sale: Number
 ) : Parcelable, Serializable

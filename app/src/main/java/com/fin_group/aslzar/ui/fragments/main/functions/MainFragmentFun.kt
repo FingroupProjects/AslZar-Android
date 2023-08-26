@@ -9,16 +9,12 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.models.ProductInCart
-import com.fin_group.aslzar.models.ProductV2
+import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.ui.dialogs.CheckCategoryFragmentDialog
 import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.WarningNoHaveProductFragmentDialog
-import com.fin_group.aslzar.ui.fragments.cartMain.MainCartFragment
-import com.fin_group.aslzar.ui.fragments.cartMain.cart.CartFragment
 import com.fin_group.aslzar.ui.fragments.main.MainFragment
 import com.fin_group.aslzar.util.CategoryClickListener
-import com.fin_group.aslzar.util.EditProductInCart
-import com.fin_group.aslzar.util.OnProductAddedToCartListener
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 fun MainFragment.callCategoryDialog(listener: CategoryClickListener) {
@@ -91,12 +87,12 @@ fun MainFragment.filterFun(){
     callCategoryDialog(this)
 }
 
-fun MainFragment.addProductToCart(bottomNavView: BottomNavigationView, product: ProductV2){
+fun MainFragment.addProductToCart(bottomNavView: BottomNavigationView, product: Product){
     val cartProduct = ProductInCart(
         product.id,
+        product.full_name,
+        product.img,
         product.name,
-        product.image,
-        product.barcode,
         1,
         product.sale,
         product.price
@@ -119,7 +115,7 @@ fun MainFragment.updateBadge(){
 fun MainFragment.filterProducts() {
     filteredProducts = if (searchText.isNotEmpty()){
         allProducts.filter { product ->
-            product.name.contains(searchText, ignoreCase = true) || product.barcode.contains(searchText, ignoreCase = true)
+            product.name.contains(searchText, ignoreCase = true) || product.id.contains(searchText, ignoreCase = true)
         }
     } else {
         if (selectCategory?.id == "all" || selectCategory == null) {

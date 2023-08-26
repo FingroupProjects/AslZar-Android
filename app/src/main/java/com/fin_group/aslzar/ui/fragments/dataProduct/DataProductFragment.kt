@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
@@ -24,8 +25,6 @@ import com.fin_group.aslzar.models.ImageDataModel2
 import com.fin_group.aslzar.ui.dialogs.AlikeProductBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.callInStockDialog
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.callSetInProduct
-import com.fin_group.aslzar.ui.fragments.dataProduct.functions.callSizeChipGroup
-import com.fin_group.aslzar.ui.fragments.dataProduct.functions.callWeightChipGroup
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.likeProducts
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.someImagesProduct
 import com.fin_group.aslzar.util.OnAlikeProductClickListener
@@ -33,6 +32,7 @@ import com.fin_group.aslzar.util.OnImageClickListener
 import com.fin_group.aslzar.util.hideBottomNav
 import com.fin_group.aslzar.util.showBottomNav
 import com.fin_group.aslzar.util.showToolBar
+import com.fin_group.aslzar.viewmodel.SharedViewModel
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.chip.ChipGroup
 
@@ -44,11 +44,13 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
     private val binding get() = _binding!!
 
     private val args by navArgs<DataProductFragmentArgs>()
+    val sharedViewModel: SharedViewModel by activityViewModels()
+
+
     lateinit var recyclerViewSomeImages: RecyclerView
     lateinit var recyclerViewLikeProducts: RecyclerView
 
     private var currentSelectedPosition = RecyclerView.NO_POSITION
-
     lateinit var toolbar: MaterialToolbar
 
     var imageList: List<ImageDataModel> = emptyList()
@@ -95,10 +97,10 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
     @SuppressLint("UseCompatLoadingForColorStateLists")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val weightList = listOf("1.5", "1.7", "1.8", "2.0", "2.1", "2.3")
-        val sizeList = listOf("10.5", "12.1", "13.5", "13.7", "14", "14.8")
-        callWeightChipGroup(weightList)
-        callSizeChipGroup(sizeList)
+//        val weightList = listOf("1.5", "1.7", "1.8", "2.0", "2.1", "2.3")
+//        val sizeList = listOf("10.5", "12.1", "13.5", "13.7", "14", "14.8")
+//        callWeightChipGroup(weightList)
+//        callSizeChipGroup(sizeList)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

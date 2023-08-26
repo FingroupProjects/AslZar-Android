@@ -15,78 +15,100 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/imageProductInCart"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
 
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ring_2" />
-
-        <TextView
-            android:id="@+id/nameProductInCart"
-            style="@style/forTextView"
-            android:layout_width="0dp"
+        <Button
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:lines="2"
-            android:text="Серьги золотые с бриллиантами"
-            app:layout_constraintEnd_toStartOf="@+id/minusProduct"
-            app:layout_constraintStart_toEndOf="@+id/imageProductInCart"
-            app:layout_constraintTop_toTopOf="@+id/imageProductInCart" />
-
-        <TextView
-            android:id="@+id/codeProductInCart"
-            style="@style/forTextView2.12"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginBottom="4dp"
-            android:text="(2.7.2.1.096.1_7,9_0)"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/imageProductInCart"
-            app:layout_constraintTop_toBottomOf="@+id/nameProductInCart" />
-
-        <ImageView
-            android:id="@+id/addProduct"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginEnd="8dp"
-            android:src="@drawable/ic_add_1"
+            android:gravity="end"
+            android:text="Button"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/countProductInCart"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:text="5"
-            android:textColor="@color/primary_color_2"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="@+id/minusProduct"
-            app:layout_constraintEnd_toStartOf="@+id/addProduct"
-            app:layout_constraintTop_toTopOf="@+id/minusProduct" />
-
-        <ImageView
-            android:id="@+id/minusProduct"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:src="@drawable/ic_minus_1"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/countProductInCart"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
+            <ImageView
+                android:id="@+id/imageProductInCart"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp"
+
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ring_2" />
+
+            <TextView
+                android:id="@+id/nameProductInCart"
+                style="@style/forTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:lines="2"
+                android:text="Серьги золотые с бриллиантами"
+                app:layout_constraintEnd_toStartOf="@+id/minusProduct"
+                app:layout_constraintStart_toEndOf="@+id/imageProductInCart"
+                app:layout_constraintTop_toTopOf="@+id/imageProductInCart" />
+
+            <TextView
+                android:id="@+id/codeProductInCart"
+                style="@style/forTextView2.12"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginBottom="4dp"
+                android:text="(2.7.2.1.096.1_7,9_0)"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/imageProductInCart"
+                app:layout_constraintTop_toBottomOf="@+id/nameProductInCart" />
+
+            <ImageView
+                android:id="@+id/addProduct"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="8dp"
+                android:src="@drawable/ic_add_1"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/countProductInCart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="5"
+                android:textColor="@color/primary_color_2"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@+id/minusProduct"
+                app:layout_constraintEnd_toStartOf="@+id/addProduct"
+                app:layout_constraintTop_toTopOf="@+id/minusProduct" />
+
+            <ImageView
+                android:id="@+id/minusProduct"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:src="@drawable/ic_minus_1"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/countProductInCart"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

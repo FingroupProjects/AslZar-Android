@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL
 import androidx.recyclerview.widget.RecyclerView
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.ProductSomeImagesAdapter
-import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentAlikeProductBottomSheetDialogBinding
 import com.fin_group.aslzar.models.ImageDataModel
 import com.fin_group.aslzar.models.ProductInCart
@@ -77,10 +76,10 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(), O
         recyclerView = binding.lpSomeImagesRv
 
         val inStockList = listOf(
-            InStock("Магазин 1", "Витрина 3", 8),
-            InStock("Магазин 2", "Витрина 8", 8),
-            InStock("Магазин 12", "Витрина 7", 8),
-            InStock("Магазин 5", "Витрина 6", 8)
+            InStock("Магазин 1", "Витрина 3", 8, 0),
+            InStock("Магазин 2", "Витрина 8", 8, 0),
+            InStock("Магазин 12", "Витрина 7", 8, 0),
+            InStock("Магазин 5", "Витрина 6", 8, 0)
         )
 
         similarProduct = Product(
@@ -89,7 +88,6 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(), O
             name = "23..789.77",
             price = 120.0,
             category_id = "jewelry",
-            barcode = "123456789",
             sale = 0.2,
             color = "фиолетовый",
             stone_type = "аметист",
@@ -110,7 +108,7 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(), O
             similarProduct.id,
             similarProduct.full_name,
             similarProduct.img,
-            similarProduct.barcode,
+            similarProduct.name,
             1,
             similarProduct.sale,
             similarProduct.price

@@ -30,6 +30,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
+                <TextView
+                    android:id="@+id/product_sale2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="#b3271c"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="2dp"
+                    android:text="-40.0%"
+                    android:textColor="@color/white"
+                    android:visibility="visible"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
                 <ImageView
                     android:id="@+id/imageView2"
                     android:layout_width="180dp"
@@ -125,6 +138,30 @@
             app:layout_constraintTop_toBottomOf="@+id/textView16" />
 
         <TextView
+            android:id="@+id/textView27"
+            style="@style/forTextView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="3dp"
+            android:text="Вес:"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView19" />
+
+        <TextView
+            android:id="@+id/textView20"
+            style="@style/forTextView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="3dp"
+            android:text="Размер:"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView27" />
+
+        <TextView
             android:id="@+id/dp_code"
             style="@style/forTextView"
             android:layout_width="wrap_content"
@@ -197,16 +234,28 @@
             app:layout_constraintTop_toTopOf="@+id/textView19" />
 
         <TextView
-            android:id="@+id/textView27"
-            style="@style/forTextView2"
+            android:id="@+id/dp_size"
+            style="@style/forTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="3dp"
-            android:text="Вес:"
+            android:layout_marginStart="5dp"
+            android:text="14,8 мм"
             android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView19" />
+            app:layout_constraintBottom_toBottomOf="@+id/textView20"
+            app:layout_constraintStart_toEndOf="@+id/textView20"
+            app:layout_constraintTop_toTopOf="@+id/textView20" />
+
+        <TextView
+            android:id="@+id/dp_weight"
+            style="@style/forTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:text="1.5 г"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/textView27"
+            app:layout_constraintStart_toEndOf="@+id/textView27"
+            app:layout_constraintTop_toTopOf="@+id/textView27" />
 
         <HorizontalScrollView
             android:id="@+id/horizontalScrollViewWeight"
@@ -226,44 +275,10 @@
                 android:orientation="horizontal"
                 app:selectionRequired="true"
                 app:singleLine="true"
-                app:singleSelection="true"></com.google.android.material.chip.ChipGroup>
+                app:singleSelection="true">
+
+            </com.google.android.material.chip.ChipGroup>
         </HorizontalScrollView>
-
-        <TextView
-            android:id="@+id/textView20"
-            style="@style/forTextView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="3dp"
-            android:text="Размер:"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView27" />
-
-        <TextView
-            android:id="@+id/dp_metal2"
-            style="@style/forTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:text="14,8 мм"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/textView20"
-            app:layout_constraintStart_toEndOf="@+id/textView20"
-            app:layout_constraintTop_toTopOf="@+id/textView20" />
-
-        <TextView
-            android:id="@+id/dp_metal3"
-            style="@style/forTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:text="1.5 г"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/textView27"
-            app:layout_constraintStart_toEndOf="@+id/textView27"
-            app:layout_constraintTop_toTopOf="@+id/textView27" />
 
         <HorizontalScrollView
             android:id="@+id/horizontalScrollViewSize"
@@ -283,7 +298,8 @@
                 android:orientation="horizontal"
                 app:selectionRequired="true"
                 app:singleLine="true"
-                app:singleSelection="true"></com.google.android.material.chip.ChipGroup>
+                app:singleSelection="true">
+            </com.google.android.material.chip.ChipGroup>
         </HorizontalScrollView>
 
         <TextView
@@ -312,15 +328,17 @@
             tools:ignore="SpeakableTextPresentCheck"
             tools:listitem="@layout/row_slider_item_2" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_add_to_cart"
-            style="@style/Widget.Material3.Button.IconButton.Outlined"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
             android:layout_marginBottom="10dp"
             android:text="Добавить в корзину"
+            android:padding="10dp"
+            android:gravity="center"
+            android:background="@drawable/ripple_effect_btn"
             android:textColor="@color/text_color_1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
