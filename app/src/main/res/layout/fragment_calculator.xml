@@ -389,7 +389,7 @@
             android:layout_marginEnd="16dp"
             android:background="@drawable/bg_table_calculator"
             android:orientation="vertical"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tableSale">
@@ -449,10 +449,11 @@
                     android:background="@color/primary_color_3" />
 
                 <TextView
+                    android:id="@+id/fourSale"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="752000"
+                    android:text="0"
                     android:textAlignment="center"
                     android:textColor="@color/text_color_1"
                     android:textStyle="bold" />
@@ -484,10 +485,11 @@
                     android:background="@color/primary_color_3" />
 
                 <TextView
+                    android:id="@+id/sixSale"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="552000"
+                    android:text="0"
                     android:textAlignment="center"
                     android:textColor="@color/text_color_1"
                     android:textStyle="bold" />
@@ -519,10 +521,11 @@
                     android:background="@color/primary_color_3" />
 
                 <TextView
+                    android:id="@+id/eightSale"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="402000"
+                    android:text="0"
                     android:textAlignment="center"
                     android:textColor="@color/text_color_1"
                     android:textStyle="bold" />
@@ -554,10 +557,11 @@
                     android:background="@color/primary_color_3" />
 
                 <TextView
+                    android:id="@+id/tenSale"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="300351"
+                    android:text="0"
                     android:textAlignment="center"
                     android:textColor="@color/text_color_1"
                     android:textStyle="bold" />
@@ -589,10 +593,11 @@
                     android:background="@color/primary_color_3" />
 
                 <TextView
+                    android:id="@+id/twelveSale"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="250541"
+                    android:text="0"
                     android:textAlignment="center"
                     android:textColor="@color/text_color_1"
                     android:textStyle="bold" />
