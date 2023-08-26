@@ -135,8 +135,14 @@
         <item name="strokeColor">@android:color/transparent</item>
     </style>
 
+    //for checkBox
+    <style name="Widget.App.CheckBox" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
+        <item name="buttonTint">@color/primary_color_2</item>
+    </style>
+
     //Badges
     <style name="CustomBadge" parent="@style/Widget.MaterialComponents.Badge">
         <item name="backgroundColor">@color/background_2</item>
     </style>
+
 </resources>
