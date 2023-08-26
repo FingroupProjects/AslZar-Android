@@ -2,7 +2,9 @@ package com.fin_group.aslzar.ui.fragments.cartMain.cart
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.util.Log
+import android.util.TypedValue
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +15,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.ProductInCartAdapter
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.cart.TotalPriceObserver
@@ -32,6 +35,7 @@ import com.fin_group.aslzar.util.formatNumber
 import com.fin_group.aslzar.viewmodel.SharedViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
+import kotlin.math.roundToInt
 
 
 class CartFragment : Fragment(), EditProductInCart, OnProductAddedToCartListener {
@@ -79,6 +83,12 @@ class CartFragment : Fragment(), EditProductInCart, OnProductAddedToCartListener
         fetchRV(allProducts)
         deleteAllProductFromCart()
     }
+
+    private val Int.dp
+        get() = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            toFloat(), resources.displayMetrics
+        ).roundToInt()
 
     override fun plusProductInCart(productInCart: ProductInCart) {
         Cart.plusProduct(productInCart.id, requireContext())

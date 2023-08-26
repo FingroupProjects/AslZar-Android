@@ -1,21 +1,15 @@
 package com.fin_group.aslzar.ui.dialogs
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.InStockAdapter
 import com.fin_group.aslzar.databinding.FragmentBottomSheetDialogInStockBinding
-import com.fin_group.aslzar.models.InStockProduct
-import com.fin_group.aslzar.models.ProductV2
 import com.fin_group.aslzar.response.InStock
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.util.BaseBottomSheetDialogFragment
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 @Suppress("DEPRECATION")
 class InStockBottomSheetDialogFragment : BaseBottomSheetDialogFragment() {
@@ -62,15 +56,15 @@ class InStockBottomSheetDialogFragment : BaseBottomSheetDialogFragment() {
         //inStockList = product.counts
 
         inStockList = listOf(
-            InStock("Магазин 1", "Витрина 3", 8),
-            InStock("Магазин 2", "Витрина 8", 8),
-            InStock("Магазин 12", "Витрина 7", 8),
-            InStock("Магазин 5", "Витрина 6", 8),
-            InStock("Магазин 8", "Витрина 3", 8),
-            InStock("Магазин 4", "Витрина 5", 8),
-            InStock("Магазин 6", "Витрина 3", 8),
-            InStock("Магазин 3", "Витрина 4", 8),
-            InStock("Магазин 7", "Витрина 3", 8)
+            InStock("Магазин 1", "Витрина 3", 8, 0),
+            InStock("Магазин 2", "Витрина 8", 8, 0),
+            InStock("Магазин 12", "Витрина 7", 8, 0),
+            InStock("Магазин 5", "Витрина 6", 8, 0),
+            InStock("Магазин 8", "Витрина 3", 8, 0),
+            InStock("Магазин 4", "Витрина 5", 8, 0),
+            InStock("Магазин 6", "Витрина 3", 8, 0),
+            InStock("Магазин 3", "Витрина 4", 8, 0),
+            InStock("Магазин 7", "Витрина 3", 8, 0)
         )
 
         return binding.root

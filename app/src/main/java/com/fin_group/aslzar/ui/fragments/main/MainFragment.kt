@@ -3,7 +3,6 @@ package com.fin_group.aslzar.ui.fragments.main
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.Menu
@@ -26,6 +25,8 @@ import com.fin_group.aslzar.databinding.FragmentMainBinding
 import com.fin_group.aslzar.models.Category
 import com.fin_group.aslzar.models.ProductInCart
 import com.fin_group.aslzar.models.ProductV2
+import com.fin_group.aslzar.response.InStock
+import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.ui.activities.MainActivity
 import com.fin_group.aslzar.ui.dialogs.CheckCategoryFragmentDialog
 import com.fin_group.aslzar.ui.fragments.main.functions.addProductToCart
@@ -39,8 +40,6 @@ import com.fin_group.aslzar.ui.fragments.main.functions.searchBarChecked
 import com.fin_group.aslzar.ui.fragments.main.functions.searchViewFun
 import com.fin_group.aslzar.ui.fragments.main.functions.updateBadge
 import com.fin_group.aslzar.util.BadgeManager
-import com.fin_group.aslzar.util.showBottomNav
-import com.fin_group.aslzar.util.showToolBar
 import com.fin_group.aslzar.viewmodel.SharedViewModel
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -60,8 +59,8 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
     var searchText: String = ""
     lateinit var searchView: SearchView
 
-    var allProducts: List<ProductV2> = emptyList()
-    var filteredProducts: List<ProductV2> = emptyList()
+    var allProducts: List<Product> = emptyList()
+    var filteredProducts: List<Product> = emptyList()
     lateinit var myAdapter: ProductsAdapter
 
     lateinit var viewCheckedCategory: ConstraintLayout
@@ -87,7 +86,7 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
 //        bottomNavigationView = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView)
 
         binding.fabClearSearch.setOnClickListener {
-            if (searchText != ""){
+            if (searchText != "") {
                 searchView.setQuery("", false)
             }
             viewSearch.visibility = GONE
@@ -100,7 +99,8 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         super.onViewCreated(view, savedInstanceState)
         searchView = binding.searchViewMain
 
-        mainActivity = activity as? MainActivity ?: throw IllegalStateException("Activity is not MainActivity")
+        mainActivity =
+            activity as? MainActivity ?: throw IllegalStateException("Activity is not MainActivity")
 //        bottomNavigationView = view.findViewById(R.id.bottomNavigationView)
         //updateBadge()
 
@@ -108,6 +108,7 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return true
             }
+
             override fun onQueryTextChange(newText: String?): Boolean {
                 searchText = newText.toString()
                 filterProducts()
@@ -116,21 +117,97 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         })
 
         allProducts = listOf(
-            ProductV2("00-00000001", "Кольцо золотое с бриллиантом 3", 893, listOf<String>("hello", "hi"), "2.7.5.4.012.1_1,6_0", "00001", 10, 1225.0 ),
-            ProductV2("00-00000002", "Кольцо золотое с фианитом", 433, listOf<String>("hello", "hi"), "2.7.5.2.045.4_1,6_0", "00001", 12,1225.0 ),
-            ProductV2("00-00000003", "Кольцо золотое с бриллиантом 2", 753, listOf<String>("hello", "hi"), "2.7.5.6.056.3_1,6_0", "00001", 13.5, 1225.0 ),
-            ProductV2("00-00000004", "Кольцо золотое с бриллиантом 1", 0, listOf<String>("hello", "hi"), "2.7.5.1.022.2_1,6_0", "00001", 5,1225.0 ),
-            ProductV2("00-00000005", "Кольцо золотое с бриллиантом 4", 823, listOf<String>("hello", "hi"), "2.7.5.1.022.2_1,6_0", "00001", 9,1225.0 ),
-            ProductV2("00-00000006", "Кольцо золотое с бриллиантом 5", 823, listOf<String>("hello", "hi"), "2.7.5.1.022.2_1,6_0", "00001", 6,1225.0 ),
-            ProductV2("00-00000007", "Кольцо золотое с бриллиантом 6", 823, listOf<String>("hello", "hi"), "2.7.5.1.022.2_1,6_0", "00001", 35,1225.0 ),
-            ProductV2("00-00000008", "Кольцо золотое с бриллиантом 7", 823, listOf<String>("hello", "hi"), "2.7.5.1.022.2_1,6_0", "00001", 75,1225.0 ),
+            Product(
+                id = "1",
+                full_name = "Золотое кольцо с бриллиантом",
+                name = "Золотое кольцо",
+                price = 500.0,
+                category_id = "rings",
+                sale = 10.0,
+                color = "Золотой",
+                stone_type = "Бриллиант",
+                metal = "Золото 18K",
+                content = "Элегантное золотое кольцо с одним бриллиантом.",
+                size = "17",
+                weight = "3 г",
+                country_of_origin = "Италия",
+                provider = "Luxe Jewelry",
+                counts = listOf(
+                    InStock("Центральный склад", "Москва", 20, 5),
+                    InStock("Региональный склад", "Санкт-Петербург", 15, 3)
+                ),
+                img = listOf("link_to_image_1")
+            ),
+            Product(
+                id = "2",
+                full_name = "Серебряное колье с жемчугом",
+                name = "Серебряное колье",
+                price = 150.0,
+                category_id = "necklaces",
+                sale = 20.0,
+                color = "Серебряный",
+                stone_type = "Жемчуг",
+                metal = "Серебро 925",
+                content = "Прекрасное серебряное колье с подвеской из жемчуга.",
+                size = "Универсальный",
+                weight = "8 г",
+                country_of_origin = "Франция",
+                provider = "Chic Accessories",
+                counts = listOf(
+                    InStock("Центральный склад", "Москва", 30, 8),
+                    InStock("Региональный склад", "Екатеринбург", 25, 6)
+                ),
+                img = listOf("link_to_image_2")
+            ),
+            Product(
+                id = "5",
+                full_name = "Серьги из белого золота с сапфирами",
+                name = "Серьги из белого золота",
+                price = 750.0,
+                category_id = "earrings",
+                sale = 10.0,
+                color = "Белое золото",
+                stone_type = "Сапфир",
+                metal = "Белое золото 14K",
+                content = "Изысканные серьги из белого золота с вставками из сапфиров.",
+                size = "Маленький",
+                weight = "2 г",
+                country_of_origin = "Швейцария",
+                provider = "Luxury Gems",
+                counts = listOf(
+                    InStock("Центральный склад", "Москва", 15, 4),
+                    InStock("Региональный склад", "Санкт-Петербург", 10, 2)
+                ),
+                img = listOf("link_to_image_5")
+            ),
+            Product(
+                id = "6",
+                full_name = "Браслет с бриллиантами и изумрудами",
+                name = "Браслет с бриллиантами",
+                price = 1200.0,
+                category_id = "bracelets",
+                sale = 8.0,
+                color = "Золотой",
+                stone_type = "Бриллиант, изумруд",
+                metal = "Золото 18K",
+                content = "Роскошный браслет с бриллиантами и изумрудами, идеально подходящий для особых случаев.",
+                size = "Стандартный",
+                weight = "10 г",
+                country_of_origin = "Франция",
+                provider = "Jewel Emporium",
+                counts = listOf(
+                    InStock("Центральный склад", "Москва", 8, 2),
+                    InStock("Региональный склад", "Екатеринбург", 6, 1)
+                ),
+                img = listOf("link_to_image_6")
+            )
         )
         fetchRV(allProducts)
 
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private fun fetchRV(productList: List<ProductV2>){
+    private fun fetchRV(productList: List<Product>) {
         val recyclerView = binding.mainRecyclerView
         recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
         myAdapter = ProductsAdapter(productList, this)
@@ -145,17 +222,20 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
+        when (item.itemId) {
             R.id.search_item -> {
                 searchViewFun()
             }
+
             R.id.filter_item -> {
                 filterFun()
             }
+
             R.id.barcode_item -> {
                 val action = MainFragmentDirections.actionMainFragmentToBarCodeScannerFragment()
                 findNavController().navigate(action)
             }
+
             R.id.profile_item -> {
                 findNavController().navigate(R.id.action_mainFragment_to_profileFragment)
             }
@@ -163,7 +243,7 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun categoryDialog(){
+    private fun categoryDialog() {
         val categoryDialog = CheckCategoryFragmentDialog()
         categoryDialog.setCategoryClickListener(this)
         categoryDialog.show(activity?.supportFragmentManager!!, "category check dialog")
@@ -174,11 +254,13 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         super.onPause()
         Cart.saveCartToPrefs(requireContext())
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         Cart.saveCartToPrefs(requireContext())
         _binding = null
     }
+
     override fun onStart() {
         super.onStart()
         Cart.loadCartFromPrefs(requireContext())
@@ -203,11 +285,12 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         sharedViewModel.onProductAddedToCart(product)
     }
 
-    override fun addToCart(product: ProductV2) {
+    override fun addToCart(product: Product) {
         addProductToCart(bottomNavigationView, product)
     }
-    override fun inStock(product: ProductV2) {
-        if (product.count > 0) {
+
+    override fun inStock(product: Product) {
+        if (product.counts.isEmpty()) {
             callInStockDialog(product.id)
         } else {
             callOutStock(product.id)
@@ -217,13 +300,13 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
     override fun onCategorySelected(selectedCategory: Category) {
         selectCategory = selectedCategory
         binding.apply {
-            if (!searchBarChecked(viewSearch)){
+            if (!searchBarChecked(viewSearch)) {
                 viewSearch.visibility = GONE
             }
             materialCardViewCategory.setOnClickListener {
                 categoryDialog()
             }
-            if (selectedCategory.id == "all"){
+            if (selectedCategory.id == "all") {
                 viewCheckedCategory.visibility = GONE
             }
             fabClearCategory.setOnClickListener {

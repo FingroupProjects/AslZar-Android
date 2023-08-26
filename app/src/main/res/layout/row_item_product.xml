@@ -29,7 +29,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ring_1" />
+            app:srcCompat="@drawable/ring_6" />
 
         <TextView
             android:id="@+id/product_title"
@@ -84,6 +84,34 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/ib_haveInStore"
             app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/product_sale"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/sale_bg"
+            android:paddingStart="4dp"
+            android:paddingEnd="2dp"
+            android:text="-40.0%"
+            android:textColor="@color/white"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/product_sale3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@color/background_2"
+            android:paddingStart="4dp"
+            android:paddingEnd="2dp"
+            android:text="400 000 000 UZS"
+            android:textColor="@color/white"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/product_sale"
+            app:layout_constraintTop_toTopOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.google.android.material.card.MaterialCardView>

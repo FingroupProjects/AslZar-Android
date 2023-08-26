@@ -76,7 +76,6 @@ class MainActivity : AppCompatActivity() {
         Cart.saveCartToPrefs(this)
 
         val badge = bottomNavBar.getOrCreateBadge(R.id.mainCartFragment)
-        badge.backgroundColor = R.color.background_2
         badgeManager.saveBadgeCount(badge.number)
     }
 

@@ -6,6 +6,176 @@
     android:layout_height="wrap_content"
     tools:context=".ui.dialogs.SetInProductBottomSheetDialogFragment">
 
+    <TextView
+        android:id="@+id/textView36"
+        style="@style/forTextView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="5dp"
+        android:text="Код: "
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/spSomeImagesRv" />
+
+    <TextView
+        android:id="@+id/textView37"
+        style="@style/forTextView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="3dp"
+        android:text="Цена: "
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textView36" />
+
+    <TextView
+        android:id="@+id/textView38"
+        style="@style/forTextView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="3dp"
+        android:text="Камень: "
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textView37" />
+
+    <TextView
+        android:id="@+id/textView39"
+        style="@style/forTextView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="5dp"
+        android:text="Проба: "
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textView38" />
+
+    <TextView
+        android:id="@+id/textView40"
+        style="@style/forTextView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="5dp"
+        android:text="Металл: "
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textView39" />
+
+    <TextView
+        android:id="@+id/textView41"
+        style="@style/forTextView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="5dp"
+        android:text="Вес:"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textView40" />
+
+    <TextView
+        android:id="@+id/textView42"
+        style="@style/forTextView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="10dp"
+        android:text="Размер:"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textView41" />
+
+    <TextView
+        android:id="@+id/dp_code4"
+        style="@style/forTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:text="(2.7.2.1.096.1_7,9_0)"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/textView36"
+        app:layout_constraintStart_toEndOf="@id/textView36"
+        app:layout_constraintTop_toTopOf="@id/textView36" />
+
+    <TextView
+        android:id="@+id/dp_price4"
+        style="@style/forTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:text="3232000 UZS"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/textView37"
+        app:layout_constraintStart_toEndOf="@id/textView37"
+        app:layout_constraintTop_toTopOf="@id/textView37" />
+
+    <TextView
+        android:id="@+id/dp_stone4"
+        style="@style/forTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:text="Бриллиант"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/textView38"
+        app:layout_constraintStart_toEndOf="@id/textView38"
+        app:layout_constraintTop_toTopOf="@id/textView38" />
+
+    <TextView
+        android:id="@+id/dp_probe4"
+        style="@style/forTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:text="585"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/textView39"
+        app:layout_constraintStart_toEndOf="@id/textView39"
+        app:layout_constraintTop_toTopOf="@id/textView39" />
+
+    <TextView
+        android:id="@+id/dp_metal10"
+        style="@style/forTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:text="Золото"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/textView40"
+        app:layout_constraintStart_toEndOf="@id/textView40"
+        app:layout_constraintTop_toTopOf="@id/textView40" />
+
+    <TextView
+        android:id="@+id/dp_metal11"
+        style="@style/forTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:text="14,8 мм"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/textView41"
+        app:layout_constraintStart_toEndOf="@id/textView41"
+        app:layout_constraintTop_toTopOf="@id/textView41" />
+
+    <TextView
+        android:id="@+id/dp_metal12"
+        style="@style/forTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:text="1.5 г"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/textView42"
+        app:layout_constraintStart_toEndOf="@id/textView42"
+        app:layout_constraintTop_toTopOf="@id/textView42" />
+
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/materialCardViewComplect"
         android:layout_width="match_parent"
@@ -36,16 +206,6 @@
 
 
             <ImageView
-                android:id="@+id/goTo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:src="@drawable/ic_go_to"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/close" />
-
-            <ImageView
                 android:id="@+id/close"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -63,7 +223,7 @@
                 android:layout_marginEnd="8dp"
                 android:src="@drawable/ic_add_1"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/goTo" />
+                app:layout_constraintTop_toBottomOf="@+id/close" />
 
             <TextView
                 android:id="@+id/textView11"
@@ -98,13 +258,11 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:layout_marginEnd="5dp"
-        android:layout_marginBottom="10dp"
         android:orientation="horizontal"
         android:paddingBottom="3dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/materialCardViewComplect"

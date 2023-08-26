@@ -2,21 +2,18 @@
 
 package com.fin_group.aslzar.ui.fragments.dataProduct.functions
 
-import android.annotation.SuppressLint
-import android.util.Log
-import androidx.core.content.ContextCompat
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.models.ImageDataModel
 import com.fin_group.aslzar.models.ImageDataModel2
-import com.fin_group.aslzar.ui.dialogs.AlikeProductBottomSheetDialogFragment
+import com.fin_group.aslzar.models.ProductInCart
+import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.SetInProductBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.WarningNoHaveProductFragmentDialog
 import com.fin_group.aslzar.ui.fragments.dataProduct.DataProductFragment
-import com.fin_group.aslzar.util.OnImageClickListener
-import com.google.android.material.chip.Chip
 
 fun DataProductFragment.callInStockDialog(id: String) {
     val fragmentManager = requireFragmentManager()
@@ -43,6 +40,20 @@ fun DataProductFragment.callOutStock(id: String) {
     }
 }
 
+fun DataProductFragment.addProduct(product: Product){
+    val cartProduct = ProductInCart (
+        product.id,
+        product.full_name,
+        product.img,
+        product.name,
+        1,
+        product.sale,
+        product.price
+    )
+    sharedViewModel.onProductAddedToCart(cartProduct)
+    Toast.makeText(requireContext(), "Продукт добавлен в корзину", Toast.LENGTH_SHORT).show()
+}
+
 fun DataProductFragment.callSetInProduct(id: String){
     val fragmentManager = requireFragmentManager()
     val tag = "Set product in bottom sheet"
@@ -53,64 +64,64 @@ fun DataProductFragment.callSetInProduct(id: String){
         bottomSheetFragment.show(fragmentManager, tag)
     }
 }
-
-@SuppressLint("UseCompatLoadingForColorStateLists")
-fun DataProductFragment.callSizeChipGroup(sizeList: List<String>){
-    for (size in sizeList) {
-        val chip = Chip(requireContext(), null, R.style.Widget_App_Chip)
-        chip.text = size
-        chip.isCheckable = true
-        chip.isClickable = true
-        if (size == sizeList[0]){
-            chip.isChecked = true
-            sizeSelected = size
-        }
-        val chipBackgroundSelector = ContextCompat.getColorStateList(requireContext(), R.color.chip_background_selector)
-        chip.chipBackgroundColor = chipBackgroundSelector
-        chip.setTextColor(resources.getColorStateList(R.color.text_color_1))
-        chip.setChipStrokeColorResource(R.color.border_color_1)
-        chip.chipStrokeWidth = 3F
-        
-        sizeChipGroup.addView(chip)
-    }
-
-    sizeChipGroup.setOnCheckedChangeListener { group, checkedId ->
-        val selectedChip = group.findViewById<Chip>(checkedId)
-        if (selectedChip != null) {
-            val selectedSize = selectedChip.text.toString()
-            sizeSelected = selectedSize
-        }
-    }
-}
-
-@SuppressLint("UseCompatLoadingForColorStateLists")
-fun DataProductFragment.callWeightChipGroup(weightList: List<String>){
-    for (size in weightList) {
-        val chip = Chip(requireContext(), null, R.style.Widget_App_Chip)
-        chip.text = size
-        chip.isCheckable = true
-        chip.isClickable = true
-        if (size == weightList[0]){
-            chip.isChecked = true
-            sizeSelected = size
-        }
-        val chipBackgroundSelector = ContextCompat.getColorStateList(requireContext(), R.color.chip_background_selector)
-        chip.chipBackgroundColor = chipBackgroundSelector
-        chip.setTextColor(resources.getColorStateList(R.color.text_color_1))
-        chip.setChipStrokeColorResource(R.color.border_color_1)
-        chip.chipStrokeWidth = 3F
-
-        weightChipGroup.addView(chip)
-    }
-
-    weightChipGroup.setOnCheckedChangeListener { group, checkedId ->
-        val selectedChip = group.findViewById<Chip>(checkedId)
-        if (selectedChip != null) {
-            val selectedWeight = selectedChip.text.toString()
-            weightSelected = selectedWeight
-        }
-    }
-}
+//
+//@SuppressLint("UseCompatLoadingForColorStateLists")
+//fun DataProductFragment.callSizeChipGroup(sizeList: List<String>){
+//    for (size in sizeList) {
+//        val chip = Chip(requireContext(), null, R.style.Widget_App_Chip)
+//        chip.text = size
+//        chip.isCheckable = true
+//        chip.isClickable = true
+//        if (size == sizeList[0]){
+//            chip.isChecked = true
+//            sizeSelected = size
+//        }
+//        val chipBackgroundSelector = ContextCompat.getColorStateList(requireContext(), R.color.chip_background_selector)
+//        chip.chipBackgroundColor = chipBackgroundSelector
+//        chip.setTextColor(resources.getColorStateList(R.color.text_color_1))
+//        chip.setChipStrokeColorResource(R.color.border_color_1)
+//        chip.chipStrokeWidth = 3F
+//
+//        sizeChipGroup.addView(chip)
+//    }
+//
+//    sizeChipGroup.setOnCheckedChangeListener { group, checkedId ->
+//        val selectedChip = group.findViewById<Chip>(checkedId)
+//        if (selectedChip != null) {
+//            val selectedSize = selectedChip.text.toString()
+//            sizeSelected = selectedSize
+//        }
+//    }
+//}
+//
+//@SuppressLint("UseCompatLoadingForColorStateLists")
+//fun DataProductFragment.callWeightChipGroup(weightList: List<String>){
+//    for (size in weightList) {
+//        val chip = Chip(requireContext(), null, R.style.Widget_App_Chip)
+//        chip.text = size
+//        chip.isCheckable = true
+//        chip.isClickable = true
+//        if (size == weightList[0]){
+//            chip.isChecked = true
+//            sizeSelected = size
+//        }
+//        val chipBackgroundSelector = ContextCompat.getColorStateList(requireContext(), R.color.chip_background_selector)
+//        chip.chipBackgroundColor = chipBackgroundSelector
+//        chip.setTextColor(resources.getColorStateList(R.color.text_color_1))
+//        chip.setChipStrokeColorResource(R.color.border_color_1)
+//        chip.chipStrokeWidth = 3F
+//
+//        weightChipGroup.addView(chip)
+//    }
+//
+//    weightChipGroup.setOnCheckedChangeListener { group, checkedId ->
+//        val selectedChip = group.findViewById<Chip>(checkedId)
+//        if (selectedChip != null) {
+//            val selectedWeight = selectedChip.text.toString()
+//            weightSelected = selectedWeight
+//        }
+//    }
+//}
 
 fun DataProductFragment.someImagesProduct() {
     imageList = listOf(

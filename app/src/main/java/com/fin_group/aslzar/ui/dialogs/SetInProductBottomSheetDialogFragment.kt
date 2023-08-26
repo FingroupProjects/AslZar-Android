@@ -82,10 +82,10 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnIma
         )
 
         val inStockList = listOf(
-            InStock("Магазин 1", "Витрина 3", 8),
-            InStock("Магазин 2", "Витрина 8", 8),
-            InStock("Магазин 12", "Витрина 7", 8),
-            InStock("Магазин 5", "Витрина 6", 8)
+            InStock("Магазин 1", "Витрина 3", 8, 0),
+            InStock("Магазин 2", "Витрина 8", 8, 0),
+            InStock("Магазин 12", "Витрина 7", 8, 0),
+            InStock("Магазин 5", "Витрина 6", 8, 0)
         )
 
         allProducts = listOf(
@@ -95,7 +95,6 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnIma
                 name = "Серьги с аметистом",
                 price = 120.0,
                 category_id = "jewelry",
-                barcode = "123456789",
                 sale = 0.2,
                 color = "фиолетовый",
                 stone_type = "аметист",
@@ -117,7 +116,6 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnIma
                 name = "Серьги с аметистом",
                 price = 1200,
                 category_id = "jewelry",
-                barcode = "123456789",
                 sale = 10,
                 color = "фиолетовый",
                 stone_type = "аметист",
@@ -150,11 +148,8 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnIma
 
     private fun setProductBottomSheet() {
         binding.apply {
-            goTo.setOnClickListener {
-                Toast.makeText(requireContext(), "Информация о продукте", Toast.LENGTH_SHORT).show()
-            }
             add.setOnClickListener {
-
+//                sharedViewModel.onProductAddedToCart()
 
                 Toast.makeText(requireContext(), "Добавление в корзину", Toast.LENGTH_SHORT).show()
             }

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ripple
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="#67FFFFFF"> <!-- Ripple color :: WHITE -->
+
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/background_1"/>
+            <stroke android:color="@color/background_2" android:width="1.75dp"/>
+            <corners android:radius="10dp"/>
+        </shape>
+    </item>
+
+    <!-- Make sure the ripple doesn't exceed the bounds -->
+    <item android:id="@android:id/mask">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/background_disable"/>
+            <stroke android:color="@color/background_2" android:width="1.75dp"/>
+            <corners android:radius="10dp"/>
+        </shape>
+    </item>
+</ripple>
