@@ -37,7 +37,7 @@ fun CartFragment.cartObserver(binding: FragmentCartBinding){
             totalPriceWithSale.text = "${formatNumber(totalSalePrice)} USZ"
             totalPriceWithoutSale.text = "${formatNumber(totalPrice)} UZS"
             cartTvCountProduct.text = "$totalCount шт"
-            totalPriceTv.text = "${formatNumber(totalPrice.toDouble() - totalSalePrice.toDouble())} USZ"
+            totalPriceTv.text = "${formatNumber(Cart.getTotalPriceWithSale())} USZ"
         }
     }
 }

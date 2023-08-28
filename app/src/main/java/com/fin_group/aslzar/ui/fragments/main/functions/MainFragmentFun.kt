@@ -126,6 +126,5 @@ fun MainFragment.filterProducts() {
             }
         }
     }
-
     myAdapter.updateProducts(filteredProducts)
 }

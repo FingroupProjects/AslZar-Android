@@ -11,7 +11,6 @@ import androidx.viewpager2.widget.ViewPager2
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.TabLayoutAdapter
 import com.fin_group.aslzar.cart.Cart
-import com.fin_group.aslzar.ui.fragments.cartMain.functions.removeBadges
 import com.fin_group.aslzar.util.hideToolBar
 import com.fin_group.aslzar.util.showToolBar
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -41,8 +40,8 @@ class MainCartFragment : Fragment() {
         tableLayout = binding.tabLayout
         viewPager2 = binding.viewPager2
         bottomNavigationView = requireActivity().findViewById(R.id.bottomNavigationView)
-        Log.d("TAG", "onViewCreated: ${Cart.getTotalSalePrice()}")
-        Log.d("TAG", "onViewCreated: ${Cart.getTotalPrice()}")
+        Log.d("TAG", "onViewCreated: ${Cart.getTotalPriceWithSale()}")
+        Log.d("TAG", "onViewCreated: ${Cart.getTotalPriceWithoutSale()}")
 
         tableLayout.addTab(tableLayout.newTab().setText("Корзина"))
         tableLayout.addTab(tableLayout.newTab().setText("Калькулятор"))

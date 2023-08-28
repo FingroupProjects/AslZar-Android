@@ -20,8 +20,8 @@ object Cart {
     }
 
     fun notifyObservers() {
-        val totalPrice = getTotalPrice()
-        val totalSalePrice = getTotalSalePrice()
+        val totalPrice = getTotalPriceWithoutSale()
+        val totalSalePrice = getTotalPriceWithSale()
         val totalCount = getTotalCount()
 
         observers.forEach { it.onCartChanged(totalPrice, totalSalePrice, totalCount) }
@@ -31,12 +31,16 @@ object Cart {
         return products.toMutableList()
     }
 
-    fun getTotalPrice(): Number {
+    fun getTotalPriceWithoutSale(): Number {
         return products.sumOf { it.price.toDouble() * it.count }
     }
 
-    fun getTotalSalePrice(): Number {
+    fun getTotalPriceWithSale(): Number {
         return products.sumOf { it.count * (it.sale.toDouble() * it.price.toDouble()) / 100 }
+    }
+
+    fun getTotalPrice(): Number {
+        return getTotalPriceWithoutSale().toDouble() - getTotalPriceWithoutSale().toDouble()
     }
 
     fun getTotalCount(): Int {
