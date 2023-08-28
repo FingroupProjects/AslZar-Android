@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.ArrayAdapter
 import androidx.core.widget.addTextChangedListener
 import com.fin_group.aslzar.R
+import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentCalculatorBinding
 import com.fin_group.aslzar.models.AllClientType
 import com.fin_group.aslzar.models.AllTypePay
@@ -32,12 +33,11 @@ fun CalculatorFragment.fetViews(binding: FragmentCalculatorBinding) {
     editBonus = binding.editBonus
 
     //binding for table
-//    fourSale = binding.fourSale
-//    sixSale = binding.sixSale
-//    eightSale = binding.eightSale
-//    tenSale = binding.tenSale
-//    twelveSale = binding.twelveSale
-
+    fourSale = binding.fourSale
+    sixSale = binding.sixSale
+    eightSale = binding.eightSale
+    tenSale = binding.tenSale
+    twelveSale = binding.twelveSale
 }
 
 @SuppressLint("SetTextI18n")
@@ -112,6 +112,7 @@ fun CalculatorFragment.calculator() {
                         val inputFirstPayCalculator = it.toString()
                         if (inputFirstPayCalculator.isNotEmpty()) {
                             firstPay.text = "$inputFirstPayCalculator UZS"
+
                         } else {
                             firstPay.text = "0 UZS"
                         }
