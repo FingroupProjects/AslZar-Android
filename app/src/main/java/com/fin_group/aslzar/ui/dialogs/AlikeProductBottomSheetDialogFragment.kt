@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL
@@ -39,21 +40,21 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(), O
     lateinit var similarProduct: Product
 
     companion object {
-//        fun newInstance(product: Product): AlikeProductBottomSheetDialogFragment {
-//            val dialog = AlikeProductBottomSheetDialogFragment()
-//            val args = Bundle()
-//            args.putSerializable(ARG_PRODUCT, product)
-//            dialog.arguments = args
-//            return dialog
-//        }
-
-        fun newInstance(likeProductId: String): AlikeProductBottomSheetDialogFragment {
+        fun newInstance(product: Product): AlikeProductBottomSheetDialogFragment {
             val dialog = AlikeProductBottomSheetDialogFragment()
             val args = Bundle()
-            args.putString("likeProductId", likeProductId)
+            args.putSerializable(ARG_PRODUCT, product)
             dialog.arguments = args
             return dialog
         }
+
+//        fun newInstance(likeProductId: String): AlikeProductBottomSheetDialogFragment {
+//            val dialog = AlikeProductBottomSheetDialogFragment()
+//            val args = Bundle()
+//            args.putString("likeProductId", likeProductId)
+//            dialog.arguments = args
+//            return dialog
+//        }
 
         private const val ARG_PRODUCT = "alikeProduct"
 
@@ -65,11 +66,12 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(), O
         _binding = FragmentAlikeProductBottomSheetDialogBinding.inflate(inflater, container, false)
 
         arguments?.let {
-            alikeProductID = it.getString("likeProductId", "")
-            //similarProduct = it.getParcelable(ARG_PRODUCT)!!
+//            alikeProductID = it.getString("likeProductId", "")
+            similarProduct = it.getParcelable(ARG_PRODUCT)!!
         }
-        binding.lpTitle.text = alikeProductID
+//        binding.lpTitle.text = alikeProductID
         adapter = ProductSomeImagesAdapter(alikeImageList, this)
+        setDataProduct(similarProduct)
 
         return binding.root
     }
@@ -85,43 +87,34 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(), O
             InStock("Магазин 5", "Витрина 6", 8, 0)
         )
 
-        similarProduct = Product(
-            id = "0000022",
-            full_name = "Кольцо с аметистом",
-            name = "23..789.77",
-            price = 120.0,
-            category_id = "jewelry",
-            sale = 0.2,
-            color = "фиолетовый",
-            stone_type = "аметист",
-            metal = "серебро",
-            content = "Серьги с натуральным аметистом",
-            size = "малый",
-            weight = "5 г",
-            country_of_origin = "Индия",
-            provider = "Украшения Востока",
-            counts = inStockList,
-            img = listOf(
-                "https://cdn2.thecatapi.com/images/2n3.jpg",
-                "https://cdn2.thecatapi.com/images/2qo.jpg"
-            )
-        )
-
-        val cartProduct = ProductInCart (
-            similarProduct.id,
-            similarProduct.full_name,
-            similarProduct.img,
-            similarProduct.name,
-            1,
-            similarProduct.sale,
-            similarProduct.price
-        )
+//        similarProduct = Product(
+//            id = "0000022",
+//            full_name = "Кольцо с аметистом",
+//            name = "23..789.77",
+//            price = 120.0,
+//            category_id = "jewelry",
+//            sale = 0.2,
+//            color = "фиолетовый",
+//            stone_type = "аметист",
+//            metal = "серебро",
+//            content = "Серьги с натуральным аметистом",
+//            size = "малый",
+//            weight = "5 г",
+//            country_of_origin = "Индия",
+//            provider = "Украшения Востока",
+//            counts = inStockList,
+//            img = listOf(
+//                "https://cdn2.thecatapi.com/images/2n3.jpg",
+//                "https://cdn2.thecatapi.com/images/2qo.jpg"
+//            )
+//        )
+        
 
         binding.apply {
             close.setOnClickListener { dismiss() }
             addToCart.setOnClickListener {
-                Cart.addProduct(cartProduct, requireContext())
                 sharedViewModel.onProductAddedToCart(similarProduct, requireContext())
+                Toast.makeText(requireContext(), "Товар добавлен ", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -140,12 +133,24 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(), O
         adapter.updateList(alikeImageList)
     }
 
+    private fun setDataProduct(product: Product){
+        binding.apply {
+            apTitle.text = product.full_name
+            apCode.text = product.name
+            apPrice.text = product.price.toString()
+            apStone.text = product.stone_type
+            apProbe.text = product.content
+            apMetal.text = product.metal
+            apWeight.text = product.weight
+            apSize.text = product.size
+        }
+    }
+
     override fun setImage(image: String) {
         currentSelectedPosition = alikeImageList.indexOfFirst { it.image == image }
         adapter.setSelectedPosition(currentSelectedPosition)
         Glide.with(requireContext())
             .load(image)
-            .centerCrop()
             .transform(RoundedCorners(10))
             .error(R.drawable.ic_no_image)
             .into(binding.lpMainIv)

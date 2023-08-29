@@ -23,6 +23,7 @@ import com.fin_group.aslzar.adapter.ProductSomeImagesAdapter
 import com.fin_group.aslzar.databinding.FragmentDataProductBinding
 import com.fin_group.aslzar.models.ImageDataModel
 import com.fin_group.aslzar.models.ImageDataModel2
+import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.ui.dialogs.AlikeProductBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.callInStockDialog
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.callSetInProduct
@@ -55,7 +56,7 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
     lateinit var toolbar: MaterialToolbar
 
     var imageList: List<ImageDataModel> = emptyList()
-    var alikeProductsList: List<ImageDataModel2> = emptyList()
+    var alikeProductsList: List<Product> = emptyList()
     lateinit var productSomeImagesAdapter: ProductSomeImagesAdapter
     lateinit var productAlikeAdapter: AlikeProductsAdapter
 
@@ -134,13 +135,13 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         Glide.with(requireContext()).load(image).into(binding.imageView2)
     }
 
-    override fun callBottomDialog(id: String) {
+    override fun callBottomDialog(product: Product) {
         val fragmentManager = requireFragmentManager()
         val tag = "alike_product_dialog"
         val existingFragment = fragmentManager.findFragmentByTag(tag)
 
         if (existingFragment == null) {
-            val bottomSheetFragment = AlikeProductBottomSheetDialogFragment.newInstance(id)
+            val bottomSheetFragment = AlikeProductBottomSheetDialogFragment.newInstance(product)
             bottomSheetFragment.show(fragmentManager, tag)
         }
     }
