@@ -1,6 +1,7 @@
 package com.fin_group.aslzar.ui.dialogs
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,18 +9,18 @@ import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.fin_group.aslzar.R
-import com.fin_group.aslzar.adapter.BottomSheetItemAdapter
+import com.bumptech.glide.Glide
+import com.fin_group.aslzar.adapter.SetInProductAdapter
 import com.fin_group.aslzar.databinding.FragmentSheetDialogSetInProductBottomBinding
 import com.fin_group.aslzar.models.ImageDataModel2
 import com.fin_group.aslzar.response.InStock
 import com.fin_group.aslzar.response.Product
-import com.fin_group.aslzar.util.OnImageClickListener
+import com.fin_group.aslzar.util.OnProductClickListener
 import com.fin_group.aslzar.viewmodel.SharedViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 
-class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnImageClickListener {
+class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnProductClickListener {
 
     private var _binding: FragmentSheetDialogSetInProductBottomBinding? = null
     private val binding get() = _binding!!
@@ -27,10 +28,11 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnIma
     lateinit var recyclerView: RecyclerView
 
     val sharedViewModel: SharedViewModel by activityViewModels()
+    private lateinit var selectedProduct: Product
 
     private var currentSelectedPosition = RecyclerView.NO_POSITION
     var imageList: List<ImageDataModel2> = emptyList()
-    lateinit var setProduct: BottomSheetItemAdapter
+    lateinit var setInProductAdapter: SetInProductAdapter
 
     private var setInProductId: String = ""
     var allProducts: List<Product> = emptyList()
@@ -51,6 +53,8 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnIma
         _binding = FragmentSheetDialogSetInProductBottomBinding.inflate(inflater, container, false)
         recyclerView = binding.spSomeImagesRv
 
+        binding.close.setOnClickListener { dismiss() }
+
         arguments?.let {
             setInProductId = it.getString("setInProductId", "")
         }
@@ -59,27 +63,6 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnIma
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        setProduct = BottomSheetItemAdapter(imageList, this)
-        setProduct.setSelectedPositions(0)
-        setProductBottomSheet()
-        setProduct()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
-
-    private fun setProduct() {
-        imageList = listOf(
-            ImageDataModel2("00011", R.drawable.ring_2, "Кольцо 11"),
-            ImageDataModel2("00012", R.drawable.ring_3, "Кольцо 12"),
-            ImageDataModel2("00013", R.drawable.ring_7, "Кольцо 13"),
-            ImageDataModel2("00014", R.drawable.ring_4, "Кольцо 14"),
-            ImageDataModel2("00015", R.drawable.ring_6, "Кольцо 15"),
-        )
 
         val inStockList = listOf(
             InStock("Магазин 1", "Витрина 3", 8, 0),
@@ -90,30 +73,30 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnIma
 
         allProducts = listOf(
             Product(
-                id = "0000022",
-                full_name = "Кольцо",
-                name = "Серьги с аметистом",
-                price = 120.0,
+                id = "00001323022",
+                full_name = "Кольцо 1",
+                name = "Серьги с аметистом 1",
+                price = 120000,
                 category_id = "jewelry",
-                sale = 0.2,
+                sale = 8,
                 color = "фиолетовый",
                 stone_type = "аметист",
-                metal = "серебро",
+                metal = "Золото",
                 content = "Серьги с натуральным аметистом",
-                size = "малый",
+                size = "21 мм",
                 weight = "5 г",
-                country_of_origin = "Индия",
+                country_of_origin = "Турция",
                 provider = "Украшения Востока",
                 counts = inStockList,
                 img = listOf(
-                    "https://cdn2.thecatapi.com/images/2n3.jpg",
-                    "https://cdn2.thecatapi.com/images/2qo.jpg"
+                    "http://convertolink.taskpro.tj/photoLink/public/storage/images/mixGa5sQn5AqcURSKl2Lm3tayf2Xb6SEUupuJQXV.png",
+                    "http://convertolink.taskpro.tj/photoLink/public/storage/images/EI2sNF9keTbJRHDRqSnPhf8uPNs500V6oOyNDGur.png"
                 )
             ),
             Product(
-                id = "0000021",
-                full_name = "Кольцо",
-                name = "Серьги с аметистом",
+                id = "0000032421",
+                full_name = "Кольцо 2",
+                name = "Серьги с аметистом 2",
                 price = 1200,
                 category_id = "jewelry",
                 sale = 10,
@@ -127,34 +110,62 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnIma
                 provider = "Украшения Востока",
                 counts = inStockList,
                 img = listOf(
-                    "https://cdn2.thecatapi.com/images/as2.jpg",
-                    "https://cdn2.thecatapi.com/images/bbg.jpg"
+                    "http://convertolink.taskpro.tj/photoLink/public/storage/images/EI2sNF9keTbJRHDRqSnPhf8uPNs500V6oOyNDGur.png",
+                    "http://convertolink.taskpro.tj/photoLink/public/storage/images/mixGa5sQn5AqcURSKl2Lm3tayf2Xb6SEUupuJQXV.png"
                 )
             )
         )
-        recyclerView.layoutManager =
-            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        recyclerView.adapter = setProduct
-        setProduct.updateList(imageList)
+        setInProductAdapter = SetInProductAdapter(allProducts, this)
+
+        recyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        recyclerView.adapter = setInProductAdapter
+        setInProductAdapter.updateList(allProducts)
+
+        setInitialProductAndInterface()
     }
 
-    override fun setImage(image: Int) {
-        currentSelectedPosition = imageList.indexOfFirst { it.image == image }
-        setProduct.setSelectedPositions(currentSelectedPosition)
-        binding.mainImageView.setImageResource(image)
-//        viewAdapter.notifyItemChanged(currentSelectedPosition)
-//        Glide.with(requireContext()).load(image).into(binding.imageView2)
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
-    private fun setProductBottomSheet() {
+    private fun setInitialProductAndInterface() {
+        selectedProduct = allProducts[0]
+        setDataProduct(selectedProduct)
+        setInProductAdapter.setSelectedPositions(0)
+        setInProductAdapter.updateList(allProducts)
+    }
+
+    override fun setProduct(product: Product) {
+        val image = product.img[0]
+        selectedProduct = product
+        setDataProduct(product)
+        currentSelectedPosition = allProducts.indexOfFirst { it.id == product.id }
+        setInProductAdapter.setSelectedPositions(currentSelectedPosition)
+        Glide.with(requireContext()).load(image).into(binding.mainImageView)
+
+        setProductBottomSheet(product)
+    }
+
+    private fun setProductBottomSheet(product: Product) {
         binding.apply {
-            add.setOnClickListener {
-//                sharedViewModel.onProductAddedToCart()
-
-                Toast.makeText(requireContext(), "Добавление в корзину", Toast.LENGTH_SHORT).show()
+            addToCart.setOnClickListener {
+                sharedViewModel.onProductAddedToCart(product, requireContext())
+                Toast.makeText(requireContext(), "Продукт ${product.full_name} добавлен", Toast.LENGTH_SHORT).show()
             }
-            close.setOnClickListener { dismiss() }
         }
     }
 
+    private fun setDataProduct(product: Product){
+        binding.apply {
+            sipFullName.text = product.full_name
+            sipCode.text = product.name
+            sipPrice.text = product.price.toString()
+            sipStone.text = product.stone_type
+            sipProbe.text = product.content
+            sipMetal.text = product.metal
+            sipWeight.text = product.weight
+            sipSize.text = product.size
+        }
+    }
 }

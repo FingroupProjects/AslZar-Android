@@ -1,6 +1,6 @@
 package com.fin_group.aslzar.models
 
 data class ImageDataModel(
-    val image: Int,
+    val image: String,
     val name: String
 )

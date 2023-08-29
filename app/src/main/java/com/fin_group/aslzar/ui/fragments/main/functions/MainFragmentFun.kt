@@ -87,21 +87,9 @@ fun MainFragment.filterFun(){
     callCategoryDialog(this)
 }
 
-fun MainFragment.addProductToCart(bottomNavView: BottomNavigationView, product: Product){
-    val cartProduct = ProductInCart(
-        product.id,
-        product.full_name,
-        product.img,
-        product.name,
-        1,
-        product.sale,
-        product.price
-    )
-    Cart.addProduct(cartProduct, requireContext())
-
+fun MainFragment.addProductToCart(product: Product){
     updateBadge()
-
-    sharedViewModel.onProductAddedToCart(cartProduct)
+    sharedViewModel.onProductAddedToCart(product, requireContext())
 }
 fun MainFragment.updateBadge(){
     val uniqueProductTypes = Cart.getUniqueProductTypesCount()

@@ -24,6 +24,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.models.ProductInCart
+import com.fin_group.aslzar.response.Product
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -42,8 +43,12 @@ interface OnFriendAddedListener {
     fun onFriendAddedSuccessfully(success: Boolean)
 }
 
+interface OnProductClickListener{
+    fun setProduct(product: Product)
+}
+
 interface OnImageClickListener{
-    fun setImage(image: Int)
+    fun setImage(image: String)
 }
 interface EditProductInCart{
     fun plusProductInCart(productInCart: ProductInCart)
@@ -77,7 +82,7 @@ fun doubleFormat(double: Number): String {
 }
 
 interface CartObserver {
-    fun onCartChanged(totalPrice: Number, totalSalePrice: Number, totalCount: Int)
+    fun onCartChanged(totalPriceWithoutSale: Number, totalPriceWithSale: Number, totalCount: Int, totalPrice: Number)
 }
 
 

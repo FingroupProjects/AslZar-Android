@@ -33,11 +33,4 @@
     <color name="background_5">@color/primary_color_1</color>
     <color name="background_6">#2D4D1F08</color>
 
-    //color for progressBar add by Toxa
-    <color name="progressColorVeryWeak">#FF0000</color>
-    <color name="progressColorWeak">#FFA500</color>
-    <color name="progressColorMedium">#FFFF00</color>
-    <color name="progressColorStrong">#00FF00</color>
-    <color name="progressColorVeryStrong">#0000FF</color>
-
 </resources>

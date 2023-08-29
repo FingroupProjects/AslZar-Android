@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.fin_group.aslzar.databinding.RowSliderItem2Binding
 import com.fin_group.aslzar.models.ImageDataModel2
 import com.fin_group.aslzar.util.OnAlikeProductClickListener
@@ -27,8 +28,11 @@ class AlikeProductsAdapter(
     }
     inner class ViewHolder(binding: RowSliderItem2Binding) : RecyclerView.ViewHolder(binding.root) {
         val imageView = binding.imageView
+        @SuppressLint("CheckResult")
         fun bindItems(likeProduct: ImageDataModel2) {
-            imageView.setImageResource(likeProduct.image)
+            Glide.with(itemView.context).load(likeProduct.image).override(180, 180).into(imageView)
+
+//            imageView.setImageResource(likeProduct.image)
         }
     }
     @SuppressLint("NotifyDataSetChanged")

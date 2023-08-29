@@ -2,38 +2,43 @@ package com.fin_group.aslzar.adapter
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.fin_group.aslzar.R
-import com.fin_group.aslzar.models.ImageDataModel
-import com.fin_group.aslzar.models.ImageDataModel2
-import com.fin_group.aslzar.util.OnImageClickListener
+import com.fin_group.aslzar.databinding.ListItemBinding
+import com.fin_group.aslzar.response.Product
+import com.fin_group.aslzar.util.OnProductClickListener
 
-class BottomSheetItemAdapter(var mList: List<ImageDataModel2>, private val listener: OnImageClickListener)
-    : RecyclerView.Adapter<BottomSheetItemAdapter.ViewHolder>() {
+class SetInProductAdapter(private var productList: List<Product>, private val listener: OnProductClickListener)
+    : RecyclerView.Adapter<SetInProductAdapter.ViewHolder>() {
 
     var selectedItemPosition = RecyclerView.NO_POSITION
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item, parent, false)
-        return ViewHolder(view)
+        val binding = ListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ViewHolder(binding)
     }
     override fun getItemCount(): Int {
-        return mList.size
+        return productList.size
     }
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = mList[position]
+        val item = productList[position]
         val isSelected = position == selectedItemPosition
         holder.bindSetProductItems(item, isSelected)
         holder.itemView.setOnClickListener {
             selectedItemPosition = position
-            listener.setImage(item.image)
+            listener.setProduct(item)
         }
     }
+
+    fun getProductByPosition(position: Int): Product{
+        return productList[position]
+    }
+
     @SuppressLint("NotifyDataSetChanged")
-    fun updateList(newList: List<ImageDataModel2>) {
-        mList = newList
+    fun updateList(newList: List<Product>) {
+        productList = newList
         notifyDataSetChanged()
     }
     @SuppressLint("NotifyDataSetChanged")
@@ -41,18 +46,17 @@ class BottomSheetItemAdapter(var mList: List<ImageDataModel2>, private val liste
         selectedItemPosition = position
         notifyDataSetChanged()
     }
-    class ViewHolder(ItemView: View) : RecyclerView.ViewHolder(ItemView) {
-        fun bindSetProductItems(imageDataModel: ImageDataModel2, isSelected: Boolean) {
+    inner class ViewHolder(binding: ListItemBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bindSetProductItems(imageDataModel: Product, isSelected: Boolean) {
             val imageView = itemView.findViewById<ImageView>(R.id.image)
 //            val textView = itemView.findViewById<TextView>(R.id.tvName)
 //            textView.text = imageDataModel.name
-//            Glide.with(itemView.context).load(imageDataModel.image).into(imageView)
             if (isSelected) {
                 itemView.setBackgroundResource(R.drawable.selected_item_background)
             } else {
                 itemView.background = null
             }
-            imageView.setImageResource(imageDataModel.image)
+            Glide.with(itemView.context).load(imageDataModel.img[0]).into(imageView)
         }
     }
 }

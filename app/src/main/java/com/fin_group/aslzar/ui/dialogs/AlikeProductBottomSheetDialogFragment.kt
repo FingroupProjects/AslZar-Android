@@ -8,8 +8,11 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.ProductSomeImagesAdapter
+import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentAlikeProductBottomSheetDialogBinding
 import com.fin_group.aslzar.models.ImageDataModel
 import com.fin_group.aslzar.models.ProductInCart
@@ -117,8 +120,8 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(), O
         binding.apply {
             close.setOnClickListener { dismiss() }
             addToCart.setOnClickListener {
-//                Cart.addProduct(cartProduct, requireContext())
-                sharedViewModel.onProductAddedToCart(cartProduct)
+                Cart.addProduct(cartProduct, requireContext())
+                sharedViewModel.onProductAddedToCart(similarProduct, requireContext())
             }
         }
 
@@ -127,24 +130,26 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(), O
 
     private fun setProducts() {
         alikeImageList = listOf(
-            ImageDataModel(R.drawable.ring_1, "Кольцо 1"),
-            ImageDataModel(R.drawable.ring_3, "Кольцо 2"),
-            ImageDataModel(R.drawable.ring_7, "Кольцо 3"),
-            ImageDataModel(R.drawable.ring_4, "Кольцо 4"),
-            ImageDataModel(R.drawable.ring_6, "Кольцо 5"),
+            ImageDataModel("http://convertolink.taskpro.tj/photoLink/public/storage/images/PlNk0wsmedvtLhkPu7wzj7Sk7OIiaKJosxy8NidO.png", "Кольцо 2"),
+            ImageDataModel("http://convertolink.taskpro.tj/photoLink/public/storage/images/85cIg9T9cwf3fevuQJ8rnGxrrG80Jh5mHatHRZWr.png", "Кольцо 3"),
+            ImageDataModel("http://convertolink.taskpro.tj/photoLink/public/storage/images/oB9W5AC6jBQeFScqr8YFjRs81tCekLKYRe8cHSrH.png", "Кольцо 4"),
+            ImageDataModel("http://convertolink.taskpro.tj/photoLink/public/storage/images/hIu6UbR6WAiCK1YYLUqd6KvOKYU5lzMHoYrLmqjW.png", "Кольцо 5"),
         )
         recyclerView.layoutManager = LinearLayoutManager(requireContext(), HORIZONTAL, false)
         recyclerView.adapter = adapter
         adapter.updateList(alikeImageList)
     }
 
-    override fun setImage(image: Int) {
+    override fun setImage(image: String) {
         currentSelectedPosition = alikeImageList.indexOfFirst { it.image == image }
         adapter.setSelectedPosition(currentSelectedPosition)
-        binding.lpMainIv.setImageResource(image)
-//        viewAdapter.notifyItemChanged(currentSelectedPosition)
-//        Toast.makeText(requireContext(), currentSelectedPosition, Toast.LENGTH_SHORT).show()
-//        Glide.with(requireContext()).load(image).into(binding.imageView2)
-
+        Glide.with(requireContext())
+            .load(image)
+            .centerCrop()
+            .transform(RoundedCorners(10))
+            .error(R.drawable.ic_no_image)
+            .into(binding.lpMainIv)
+        //binding.lpMainIv.setImageResource(image)
+        adapter.notifyItemChanged(currentSelectedPosition)
     }
 }

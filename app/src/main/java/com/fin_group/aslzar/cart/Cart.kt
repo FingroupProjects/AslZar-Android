@@ -20,11 +20,12 @@ object Cart {
     }
 
     fun notifyObservers() {
-        val totalPrice = getTotalPriceWithoutSale()
+        val totalPriceWithoutSale = getTotalPriceWithoutSale()
         val totalSalePrice = getTotalPriceWithSale()
         val totalCount = getTotalCount()
+        val totalPrice = getTotalPrice()
 
-        observers.forEach { it.onCartChanged(totalPrice, totalSalePrice, totalCount) }
+        observers.forEach { it.onCartChanged(totalPriceWithoutSale, totalSalePrice, totalCount, totalPrice) }
     }
 
     fun getAllProducts(): MutableList<ProductInCart> {

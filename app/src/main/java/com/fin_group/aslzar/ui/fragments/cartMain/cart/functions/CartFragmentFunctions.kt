@@ -2,6 +2,7 @@ package com.fin_group.aslzar.ui.fragments.cartMain.cart.functions
 
 import android.widget.Toast
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -26,18 +27,18 @@ fun CartFragment.fetchRV(productInCartList: List<ProductInCart>){
 }
 
 fun CartFragment.cartObserver(binding: FragmentCartBinding){
-    val totalPriceWithoutSale= binding.cartTvTotalPriceWithoutSale
-    val totalPriceWithSale = binding.cartTvTotalSale
+    val totalPriceWithoutSaleTv= binding.cartTvTotalPriceWithoutSale
+    val totalPriceWithSaleTv = binding.cartTvTotalSale
     val cartTvCountProduct = binding.cartTvCountProduct
     val totalPriceTv = binding.cartTvTotalPrice
 
     cartObserver = object : CartObserver {
         @SuppressLint("SetTextI18n")
-        override fun onCartChanged(totalPrice: Number, totalSalePrice: Number, totalCount: Int) {
-            totalPriceWithSale.text = "${formatNumber(totalSalePrice)} USZ"
-            totalPriceWithoutSale.text = "${formatNumber(totalPrice)} UZS"
+        override fun onCartChanged(totalPriceWithoutSale: Number, totalPriceWithSale: Number, totalCount: Int, totalPrice: Number) {
+            totalPriceWithSaleTv.text = "${formatNumber(totalPriceWithSale)} USZ"
+            totalPriceWithoutSaleTv.text = "${formatNumber(totalPriceWithoutSale)} UZS"
             cartTvCountProduct.text = "$totalCount шт"
-            totalPriceTv.text = "${formatNumber(Cart.getTotalPriceWithSale())} USZ"
+            totalPriceTv.text = "${formatNumber(totalPriceWithoutSale.toDouble() - totalPriceWithSale.toDouble())} UZS"
         }
     }
 }

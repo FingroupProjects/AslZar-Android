@@ -25,20 +25,20 @@ import java.text.NumberFormat
 
 
 
-class TotalPriceObserver(private val textView: TextView) : CartObserver {
-    override fun onCartChanged(totalPrice: Number, totalSalePrice: Number, totalCount: Int) {
-        textView.text = "Общая сумма: $totalPrice"
-    }
-}
-
-class TotalSalePriceObserver(private val textView: TextView) : CartObserver {
-    override fun onCartChanged(totalPrice: Number, totalSalePrice: Number, totalCount: Int) {
-        textView.text = "Сумма скидок: $totalSalePrice"
-    }
-}
-
-class TotalCountObserver(private val textView: TextView) : CartObserver {
-    override fun onCartChanged(totalPrice: Number, totalSalePrice: Number, totalCount: Int) {
-        textView.text = "Количество товаров: $totalCount"
-    }
-}
+//class TotalPriceObserver(private val textView: TextView) : CartObserver {
+//    override fun onCartChanged(totalPrice: Number, totalSalePrice: Number, totalCount: Int) {
+//        textView.text = "Общая сумма: $totalPrice"
+//    }
+//}
+//
+//class TotalSalePriceObserver(private val textView: TextView) : CartObserver {
+//    override fun onCartChanged(totalPrice: Number, totalSalePrice: Number, totalCount: Int) {
+//        textView.text = "Сумма скидок: $totalSalePrice"
+//    }
+//}
+//
+//class TotalCountObserver(private val textView: TextView) : CartObserver {
+//    override fun onCartChanged(totalPrice: Number, totalSalePrice: Number, totalCount: Int) {
+//        textView.text = "Количество товаров: $totalCount"
+//    }
+//}
