@@ -63,7 +63,7 @@ interface OnProductAddedToCartListener {
 
 
 interface OnAlikeProductClickListener{
-    fun callBottomDialog(id: String)
+    fun callBottomDialog(product: Product)
 }
 
 

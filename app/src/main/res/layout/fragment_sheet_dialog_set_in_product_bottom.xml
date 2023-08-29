@@ -232,7 +232,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/sip_full_name" />
 
-
             <TextView
                 android:id="@+id/sip_full_name"
                 style="@style/forTextView"

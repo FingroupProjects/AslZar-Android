@@ -7,10 +7,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.fin_group.aslzar.databinding.RowSliderItem2Binding
 import com.fin_group.aslzar.models.ImageDataModel2
+import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.util.OnAlikeProductClickListener
 
 class AlikeProductsAdapter(
-    var alikeProductsList: List<ImageDataModel2>,
+    var alikeProductsList: List<Product>,
     val listener: OnAlikeProductClickListener
 ) : RecyclerView.Adapter<AlikeProductsAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -23,20 +24,20 @@ class AlikeProductsAdapter(
         holder.bindItems(alikeProduct)
 
         holder.itemView.setOnClickListener {
-            listener.callBottomDialog(alikeProduct.id)
+            listener.callBottomDialog(alikeProduct)
         }
     }
     inner class ViewHolder(binding: RowSliderItem2Binding) : RecyclerView.ViewHolder(binding.root) {
         val imageView = binding.imageView
         @SuppressLint("CheckResult")
-        fun bindItems(likeProduct: ImageDataModel2) {
-            Glide.with(itemView.context).load(likeProduct.image).override(180, 180).into(imageView)
+        fun bindItems(likeProduct: Product) {
+            Glide.with(itemView.context).load(likeProduct.img[0]).override(180, 180).into(imageView)
 
 //            imageView.setImageResource(likeProduct.image)
         }
     }
     @SuppressLint("NotifyDataSetChanged")
-    fun updateList(newList: List<ImageDataModel2>) {
+    fun updateList(newList: List<Product>) {
         alikeProductsList = newList
         notifyDataSetChanged()
     }
