@@ -16,6 +16,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.AlikeProductsAdapter
 import com.fin_group.aslzar.adapter.ProductSomeImagesAdapter
@@ -123,14 +124,14 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         hideBottomNav()
     }
 
-    override fun setImage(image: Int) {
+    override fun setImage(image: String) {
         currentSelectedPosition = imageList.indexOfFirst { it.image == image }
         productSomeImagesAdapter.setSelectedPosition(currentSelectedPosition)
-        binding.imageView2.setImageResource(image)
+//        binding.imageView2.setImageResource(image)
 //        viewAdapter.notifyItemChanged(currentSelectedPosition)
 //        Toast.makeText(requireContext(), currentSelectedPosition, Toast.LENGTH_SHORT).show()
 
-//        Glide.with(requireContext()).load(image).into(binding.imageView2)
+        Glide.with(requireContext()).load(image).into(binding.imageView2)
     }
 
     override fun callBottomDialog(id: String) {

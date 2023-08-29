@@ -18,7 +18,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.ProductInCartAdapter
 import com.fin_group.aslzar.cart.Cart
-import com.fin_group.aslzar.cart.TotalPriceObserver
 import com.fin_group.aslzar.databinding.FragmentCartBinding
 import com.fin_group.aslzar.models.ProductInCart
 import com.fin_group.aslzar.ui.dialogs.DeleteAllProductFromCartFragmentDialog

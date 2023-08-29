@@ -41,16 +41,7 @@ fun DataProductFragment.callOutStock(id: String) {
 }
 
 fun DataProductFragment.addProduct(product: Product){
-    val cartProduct = ProductInCart (
-        product.id,
-        product.full_name,
-        product.img,
-        product.name,
-        1,
-        product.sale,
-        product.price
-    )
-    sharedViewModel.onProductAddedToCart(cartProduct)
+    sharedViewModel.onProductAddedToCart(product, requireContext())
     Toast.makeText(requireContext(), "Продукт добавлен в корзину", Toast.LENGTH_SHORT).show()
 }
 
@@ -125,11 +116,10 @@ fun DataProductFragment.callSetInProduct(id: String){
 
 fun DataProductFragment.someImagesProduct() {
     imageList = listOf(
-        ImageDataModel(R.drawable.ring_2, "Test"),
-        ImageDataModel(R.drawable.ring_3, "Test"),
-        ImageDataModel(R.drawable.ring_4, "Test"),
-        ImageDataModel(R.drawable.ring_6, "Test"),
-        ImageDataModel(R.drawable.ring_7, "Test")
+        ImageDataModel("http://convertolink.taskpro.tj/photoLink/public/storage/images/PlNk0wsmedvtLhkPu7wzj7Sk7OIiaKJosxy8NidO.png", "Test"),
+        ImageDataModel("http://convertolink.taskpro.tj/photoLink/public/storage/images/85cIg9T9cwf3fevuQJ8rnGxrrG80Jh5mHatHRZWr.png", "Test"),
+        ImageDataModel("http://convertolink.taskpro.tj/photoLink/public/storage/images/oB9W5AC6jBQeFScqr8YFjRs81tCekLKYRe8cHSrH.png", "Test"),
+        ImageDataModel("http://convertolink.taskpro.tj/photoLink/public/storage/images/hIu6UbR6WAiCK1YYLUqd6KvOKYU5lzMHoYrLmqjW.png", "Test")
     )
     recyclerViewSomeImages.layoutManager = LinearLayoutManager(requireContext(), HORIZONTAL, false)
     recyclerViewSomeImages.adapter = productSomeImagesAdapter
@@ -138,11 +128,10 @@ fun DataProductFragment.someImagesProduct() {
 
 fun  DataProductFragment.likeProducts(){
     alikeProductsList = listOf(
-        ImageDataModel2("00001", R.drawable.ring_2, "Кольцо 1"),
-        ImageDataModel2("00005", R.drawable.ring_3, "Кольцо 2"),
-        ImageDataModel2("00006", R.drawable.ring_7, "Кольцо 3"),
-        ImageDataModel2("00007", R.drawable.ring_4, "Кольцо 4"),
-        ImageDataModel2("00008", R.drawable.ring_6, "Кольцо 5"),
+        ImageDataModel2("00005", "http://convertolink.taskpro.tj/photoLink/public/storage/images/PlNk0wsmedvtLhkPu7wzj7Sk7OIiaKJosxy8NidO.png", "Кольцо 2"),
+        ImageDataModel2("00006", "http://convertolink.taskpro.tj/photoLink/public/storage/images/85cIg9T9cwf3fevuQJ8rnGxrrG80Jh5mHatHRZWr.png", "Кольцо 3"),
+        ImageDataModel2("00007", "http://convertolink.taskpro.tj/photoLink/public/storage/images/oB9W5AC6jBQeFScqr8YFjRs81tCekLKYRe8cHSrH.png", "Кольцо 4"),
+        ImageDataModel2("00008", "http://convertolink.taskpro.tj/photoLink/public/storage/images/hIu6UbR6WAiCK1YYLUqd6KvOKYU5lzMHoYrLmqjW.png", "Кольцо 5"),
     )
     recyclerViewLikeProducts.layoutManager = LinearLayoutManager(requireContext(), HORIZONTAL, false)
     recyclerViewLikeProducts.adapter = productAlikeAdapter

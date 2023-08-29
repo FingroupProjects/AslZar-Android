@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.models.ImageDataModel
 import com.fin_group.aslzar.util.OnImageClickListener
@@ -55,7 +56,7 @@ class ProductSomeImagesAdapter(var imageDataModelList: List<ImageDataModel>, pri
             } else {
                 itemView.background = null
             }
-            imageView.setImageResource(imageDataModel.image)
+            Glide.with(itemView.context).load(imageDataModel.image).into(imageView)
         }
     }
 }

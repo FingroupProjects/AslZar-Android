@@ -195,10 +195,7 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
                 weight = "10 г",
                 country_of_origin = "Франция",
                 provider = "Jewel Emporium",
-                counts = listOf(
-                    InStock("Центральный склад", "Москва", 8, 2),
-                    InStock("Региональный склад", "Екатеринбург", 6, 1)
-                ),
+                counts = emptyList(),
                 img = listOf("link_to_image_6")
             )
         )
@@ -226,16 +223,13 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
             R.id.search_item -> {
                 searchViewFun()
             }
-
             R.id.filter_item -> {
                 filterFun()
             }
-
             R.id.barcode_item -> {
                 val action = MainFragmentDirections.actionMainFragmentToBarCodeScannerFragment()
                 findNavController().navigate(action)
             }
-
             R.id.profile_item -> {
                 findNavController().navigate(R.id.action_mainFragment_to_profileFragment)
             }
@@ -281,16 +275,12 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         updateBadge()
     }
 
-    private fun onProductAddedToCart(product: ProductInCart) {
-        sharedViewModel.onProductAddedToCart(product)
-    }
-
     override fun addToCart(product: Product) {
-        addProductToCart(bottomNavigationView, product)
+        addProductToCart(product)
     }
 
     override fun inStock(product: Product) {
-        if (product.counts.isEmpty()) {
+        if (product.counts.isNotEmpty()) {
             callInStockDialog(product.id)
         } else {
             callOutStock(product.id)
