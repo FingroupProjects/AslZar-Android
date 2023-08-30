@@ -145,4 +145,13 @@
         <item name="backgroundColor">@color/background_2</item>
     </style>
 
+    //for tableSale
+
+    <style name="tableTextFirst" parent="TextAppearance.AppCompat.Title">
+        <item name="android:textColor">@color/text_color_1</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textAlignment">center</item>
+    </style>
+
 </resources>
