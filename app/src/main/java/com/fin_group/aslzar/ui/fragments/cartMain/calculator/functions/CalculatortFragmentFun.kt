@@ -3,15 +3,20 @@
 package com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions
 
 import android.annotation.SuppressLint
+import android.graphics.Typeface
 import android.text.InputType
+import android.view.Gravity
 import android.view.View
 import android.widget.ArrayAdapter
+import android.widget.LinearLayout
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import com.fin_group.aslzar.R
-import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentCalculatorBinding
 import com.fin_group.aslzar.models.AllClientType
 import com.fin_group.aslzar.models.AllTypePay
+import com.fin_group.aslzar.models.Installment
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.CalculatorFragment
 
 fun CalculatorFragment.fetViews(binding: FragmentCalculatorBinding) {
@@ -23,7 +28,6 @@ fun CalculatorFragment.fetViews(binding: FragmentCalculatorBinding) {
     checkboxForBonus = binding.checkboxForBonus
     bonus = binding.bonus
     tableSale = binding.tableSale
-    tvTableSale = binding.tvTableSale
     firstPay = binding.tvFirstPay
     sale = binding.tvSale
     payWithBonus = binding.tvPayWithBonus
@@ -32,12 +36,10 @@ fun CalculatorFragment.fetViews(binding: FragmentCalculatorBinding) {
     tvBonusForClient = binding.tvBonusForClient
     editBonus = binding.editBonus
 
-    //binding for table
-    fourSale = binding.fourSale
-    sixSale = binding.sixSale
-    eightSale = binding.eightSale
-    tenSale = binding.tenSale
-    twelveSale = binding.twelveSale
+    tvTable = binding.tvTable
+    monthTable = binding.monthTable
+    percentTable = binding.percentTable
+
 }
 
 @SuppressLint("SetTextI18n")
@@ -75,7 +77,7 @@ fun CalculatorFragment.calculator() {
             checkBox.visibility = View.GONE
             firstPayCalculator.visibility = View.GONE
             tableSale.visibility = View.GONE
-            tvTableSale.visibility = View.GONE
+            tvTable.visibility = View.GONE
             checkBox.isChecked = false
             bonus.editText?.setText("")
 
@@ -89,7 +91,7 @@ fun CalculatorFragment.calculator() {
                     checkBox.visibility = View.GONE
                     firstPayCalculator.visibility = View.GONE
                     tableSale.visibility = View.GONE
-                    tvTableSale.visibility = View.GONE
+                    tvTable.visibility = View.GONE
                     checkBox.isChecked = false
                 } else {
                     checkboxForBonus.visibility = View.GONE
@@ -107,12 +109,11 @@ fun CalculatorFragment.calculator() {
                         }
                     }
                     tableSale.visibility = View.VISIBLE
-                    tvTableSale.visibility = View.VISIBLE
+                    tvTable.visibility = View.VISIBLE
                     firstPayCalculator.editText?.addTextChangedListener {
                         val inputFirstPayCalculator = it.toString()
                         if (inputFirstPayCalculator.isNotEmpty()) {
                             firstPay.text = "$inputFirstPayCalculator UZS"
-
                         } else {
                             firstPay.text = "0 UZS"
                         }
@@ -143,7 +144,7 @@ fun CalculatorFragment.calculator() {
             checkBox.visibility = View.GONE
             firstPayCalculator.visibility = View.GONE
             tableSale.visibility = View.GONE
-            tvTableSale.visibility = View.GONE
+            tvTable.visibility = View.GONE
             typePay.setOnItemClickListener { _, _, position, _ ->
                 val selectPayType = allTypePay[position]
                 val selectPayTypeId = selectPayType.id
@@ -171,7 +172,7 @@ fun CalculatorFragment.calculator() {
                     checkBox.visibility = View.GONE
                     firstPayCalculator.visibility = View.GONE
                     tableSale.visibility = View.GONE
-                    tvTableSale.visibility = View.GONE
+                    tvTable.visibility = View.GONE
                     checkBox.isChecked = false
                 } else {
 
@@ -217,10 +218,69 @@ fun CalculatorFragment.calculator() {
                         }
                     }
                     tableSale.visibility = View.VISIBLE
-                    tvTableSale.visibility = View.VISIBLE
+                    tvTable.visibility = View.VISIBLE
                 }
             }
         }
+    }
+}
 
+@SuppressLint("SetTextI18n")
+fun CalculatorFragment.createTable() {
+
+    val getInstallment = listOf(
+        Installment("2", 2),
+        Installment("3", 3),
+        Installment("4", 4),
+        Installment("5", 5),
+        Installment("6", 6),
+        Installment("7", 7),
+//        Installment("8", "800"),
+//        Installment("9", "900"),
+//        Installment("10", "1000"),
+//        Installment("11", "1100"),
+//        Installment("12", "1200"),
+//        Installment("20", "2000"),
+//        Installment("22", "2200")
+    )
+
+    val styleTextColor = ContextCompat.getColor(requireContext(), R.color.text_color_1)
+    val styleTextSize = 15f
+    val styleBackground = R.drawable.bg_text_view_in_table
+    val styleTextAlignment = TextView.TEXT_ALIGNMENT_CENTER
+    val boldTypeface = Typeface.defaultFromStyle(Typeface.BOLD)
+
+
+    for (i in getInstallment.indices) {
+        val monthTextView = TextView(requireContext()).apply {
+            layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+            text = "${getInstallment[i].month} платежей"
+            gravity = Gravity.CENTER
+            setTextColor(styleTextColor)
+            textSize = styleTextSize
+
+            if (i < getInstallment.size - 1) {
+                setBackgroundResource(styleBackground)
+            }
+            textAlignment = styleTextAlignment
+            typeface = boldTypeface
+        }
+        monthTable.addView(monthTextView)
+
+        val amountTextView = TextView(requireContext()).apply {
+            layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+            text = getInstallment[i].percent.toString()
+            gravity = Gravity.CENTER
+            setTextColor(styleTextColor)
+            textSize = styleTextSize
+
+            if (i < getInstallment.size - 1) {
+                setBackgroundResource(styleBackground)
+            }
+
+            textAlignment = styleTextAlignment
+            typeface = boldTypeface
+        }
+        percentTable.addView(amountTextView)
     }
 }
