@@ -41,7 +41,7 @@ object Cart {
     }
 
     fun getTotalPrice(): Number {
-        return getTotalPriceWithoutSale().toDouble() - getTotalPriceWithoutSale().toDouble()
+        return products.sumOf { (it.price.toDouble() * it.count) - (it.count * (it.sale.toDouble() * it.price.toDouble()) / 100) }
     }
 
     fun getTotalCount(): Int {

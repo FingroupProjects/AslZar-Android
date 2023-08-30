@@ -31,7 +31,6 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnPro
     private lateinit var selectedProduct: Product
 
     private var currentSelectedPosition = RecyclerView.NO_POSITION
-    var imageList: List<ImageDataModel2> = emptyList()
     lateinit var setInProductAdapter: SetInProductAdapter
 
     private var setInProductId: String = ""
