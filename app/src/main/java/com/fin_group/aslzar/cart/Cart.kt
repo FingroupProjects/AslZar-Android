@@ -1,6 +1,7 @@
 package com.fin_group.aslzar.cart
 
 import android.content.Context
+import com.fin_group.aslzar.models.Installment
 import com.fin_group.aslzar.models.ProductInCart
 import com.fin_group.aslzar.util.CartObserver
 import com.google.gson.Gson
