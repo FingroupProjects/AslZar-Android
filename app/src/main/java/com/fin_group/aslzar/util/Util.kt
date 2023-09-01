@@ -23,8 +23,10 @@ import androidx.navigation.NavDirections
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.fin_group.aslzar.R
+import com.fin_group.aslzar.databinding.FragmentCalculatorBinding
 import com.fin_group.aslzar.models.ProductInCart
 import com.fin_group.aslzar.response.Product
+import com.fin_group.aslzar.ui.fragments.cartMain.calculator.CalculatorFragment
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment

@@ -5,6 +5,7 @@ package com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions
 import android.annotation.SuppressLint
 import android.graphics.Typeface
 import android.text.InputType
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.ArrayAdapter
@@ -13,11 +14,13 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import com.fin_group.aslzar.R
+import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentCalculatorBinding
 import com.fin_group.aslzar.models.AllClientType
 import com.fin_group.aslzar.models.AllTypePay
 import com.fin_group.aslzar.models.Installment
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.CalculatorFragment
+import com.fin_group.aslzar.util.formatNumber
 
 fun CalculatorFragment.fetViews(binding: FragmentCalculatorBinding) {
 
@@ -39,6 +42,12 @@ fun CalculatorFragment.fetViews(binding: FragmentCalculatorBinding) {
     tvTable = binding.tvTable
     monthTable = binding.monthTable
     percentTable = binding.percentTable
+
+
+    getInstallment = listOf()
+
+
+
 
 }
 
@@ -228,20 +237,18 @@ fun CalculatorFragment.calculator() {
 @SuppressLint("SetTextI18n")
 fun CalculatorFragment.createTable() {
 
-    val getInstallment = listOf(
-        Installment("2", 2),
-        Installment("3", 3),
-        Installment("4", 4),
-        Installment("5", 5),
-        Installment("6", 6),
-        Installment("7", 7),
-//        Installment("8", "800"),
-//        Installment("9", "900"),
-//        Installment("10", "1000"),
-//        Installment("11", "1100"),
-//        Installment("12", "1200"),
-//        Installment("20", "2000"),
-//        Installment("22", "2200")
+    val totalCart = Cart.getTotalPrice()
+    Log.d("TAG", "Счет а карзини Сухроб: $totalCart")
+
+    getInstallment = listOf(
+        Installment("2", 20),
+        Installment("3", 30),
+//        Installment("4", 40),
+//        Installment("5", 50),
+//        Installment("6", 60),
+//        Installment("7", 70),
+//        Installment("8", 80),
+//        Installment("9", 90)
     )
 
     val styleTextColor = ContextCompat.getColor(requireContext(), R.color.text_color_1)
@@ -250,15 +257,15 @@ fun CalculatorFragment.createTable() {
     val styleTextAlignment = TextView.TEXT_ALIGNMENT_CENTER
     val boldTypeface = Typeface.defaultFromStyle(Typeface.BOLD)
 
-
     for (i in getInstallment.indices) {
+
+        // Create month table
         val monthTextView = TextView(requireContext()).apply {
             layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
             text = "${getInstallment[i].month} платежей"
             gravity = Gravity.CENTER
             setTextColor(styleTextColor)
             textSize = styleTextSize
-
             if (i < getInstallment.size - 1) {
                 setBackgroundResource(styleBackground)
             }
@@ -267,17 +274,114 @@ fun CalculatorFragment.createTable() {
         }
         monthTable.addView(monthTextView)
 
+        //Расчет без первоначльного взноса
+        val getMonth = getInstallment[i].month
+        Log.d("TAG", "Гирифтани мох аз DataClass: $getMonth")
+
+        val getPercent = getInstallment[i].percent
+        Log.d("TAG", "Гирифтани процент аз DataClass: $getPercent")
+
+        val getPercentFromTotalCart = (totalCart.toInt() * getPercent.toInt()) / 100
+        Log.d("TAG", "Гирифтани процент аз счети сухроб: $getPercentFromTotalCart")
+
+        val plusPercent = totalCart.toInt() + getPercentFromTotalCart
+        Log.d("TAG", "Чамъ кадани процент ба счети Сухроб: $plusPercent")
+
+        val tablePercent : Double = plusPercent.toDouble() / getMonth.toInt()
+        Log.d("TAG", "Месячный платеж: $tablePercent")
+
+
+        // Create pay table
         val amountTextView = TextView(requireContext()).apply {
             layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
-            text = getInstallment[i].percent.toString()
+            val a = getInstallment[i].percent.toString()
+
+            // Расчет с первональным взносом
+            firstPayCalculator.editText?.addTextChangedListener {
+                val inputFirstPay = it.toString()
+                if (inputFirstPay.isNotEmpty()) {
+
+                    val getFirstPay = inputFirstPay
+                    Log.d("TAG", "Первоначальный взнос: $getFirstPay")
+
+                    val minusFirstPay = totalCart.toInt() - getFirstPay.toInt()
+                    Log.d("TAG", "Минус первоначальный взнос: $minusFirstPay")
+
+                    val getPercentFromTotalCart = (minusFirstPay * getPercent.toInt()) / 100
+                    Log.d("TAG", "Гирифтани процент аз счети сухроб: $getPercentFromTotalCart")
+
+                    val plusPercent = minusFirstPay + getPercentFromTotalCart
+                    Log.d("TAG", "Чамъ кадани процент ба счети Сухроб: $plusPercent")
+                    val tablePercentWithFirstPay : Double = plusPercent.toDouble() / getMonth.toInt()
+                    Log.d("TAG", "Месячный платеж с первоначальный взносом: $tablePercentWithFirstPay")
+                    text = formatNumber(tablePercentWithFirstPay)
+                }else {
+                    firstPay.text = "0 UZS"
+                }
+            }
+
+            //Расчет с бонусом
+            bonus.editText?.addTextChangedListener {
+                val inputBonus = it.toString()
+                if (inputBonus.isNotEmpty()) {
+                    val getPayWithBonus = inputBonus
+                    Log.d("TAG", "Бонус: $getPayWithBonus")
+
+                    val minusBonus = totalCart.toInt() - getPayWithBonus.toInt()
+                    Log.d("TAG", "Минус с учетом бонус: $minusBonus")
+
+                    val getPercentFromTotalCart = (minusBonus * getPercent.toInt()) / 100
+                    Log.d("TAG", "Гирифтани процент аз счети сухроб: $getPercentFromTotalCart")
+
+                    val plusPercent = minusBonus + getPercentFromTotalCart
+                    Log.d("TAG", "Чамъ кадани процент ба счети Сухроб: $plusPercent")
+
+                    val tablePercentWithFirstPay : Double = plusPercent.toDouble() / getMonth.toInt()
+                    Log.d("TAG", "Месячный платеж с бонусом: $tablePercentWithFirstPay")
+                    text = formatNumber(tablePercentWithFirstPay)
+
+                } else {
+                    payWithBonus.text = "0 UZS"
+                }
+            }
+
+            //Расчет с учетом бонуса и первоначального взноса
+
+            bonus.editText?.addTextChangedListener {
+                val inputBonus = it.toString()
+                if (inputBonus.isNotEmpty()) {
+
+                    firstPayCalculator.editText?.addTextChangedListener {
+                        val inputFirstPay = it.toString()
+                        if (inputFirstPay.isNotEmpty()) {
+
+                            val total = inputBonus.toInt() + inputFirstPay.toInt()
+                            Log.d("Tag", "Сумма бонуса и первоначального взноса $total")
+
+                            val totalWithOutBonusAndFirstPay = totalCart.toInt() - total
+                            Log.d("Tag", "Минус от каорзини Сухроба: $totalWithOutBonusAndFirstPay")
+
+                            val getPercentFromTotalCart = (totalWithOutBonusAndFirstPay * getPercent.toInt()) / 100
+                            Log.d("TAG", "Гирифтани процент аз счети сухроб: $getPercentFromTotalCart")
+
+                            val plusPercent = totalWithOutBonusAndFirstPay + getPercentFromTotalCart
+                            Log.d("TAG", "Чамъ кадани процент ба счети Сухроб: $plusPercent")
+
+                            val tablePercentWithFirstPay : Double = plusPercent.toDouble() / getMonth.toInt()
+                            Log.d("TAG", "Месячный платеж с бонусом: $tablePercentWithFirstPay")
+                            text = formatNumber(tablePercentWithFirstPay)
+
+                        }
+                    }
+                }
+            }
+            text = formatNumber(tablePercent)
             gravity = Gravity.CENTER
             setTextColor(styleTextColor)
             textSize = styleTextSize
-
             if (i < getInstallment.size - 1) {
                 setBackgroundResource(styleBackground)
             }
-
             textAlignment = styleTextAlignment
             typeface = boldTypeface
         }

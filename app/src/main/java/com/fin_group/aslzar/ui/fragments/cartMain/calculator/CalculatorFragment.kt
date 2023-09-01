@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.appcompat.widget.LinearLayoutCompat
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentCalculatorBinding
+import com.fin_group.aslzar.models.Installment
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.calculator
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.createTable
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.fetViews
@@ -39,6 +40,7 @@ class CalculatorFragment : Fragment() {
     lateinit var tvBonusForClient: TextView
     lateinit var editBonus: TextInputEditText
 
+    lateinit var getInstallment: List<Installment>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentCalculatorBinding.inflate(inflater, container, false)
