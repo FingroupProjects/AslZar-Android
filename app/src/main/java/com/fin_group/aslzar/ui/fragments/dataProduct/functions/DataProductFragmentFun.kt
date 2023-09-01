@@ -128,7 +128,7 @@ fun DataProductFragment.someImagesProduct() {
     productSomeImagesAdapter.updateList(imageList)
 }
 
-fun  DataProductFragment.likeProducts(){
+fun DataProductFragment.likeProducts(){
     val inStockList = listOf(
         InStock("Магазин 1", "Витрина 3", 8, 0),
         InStock("Магазин 2", "Витрина 8", 8, 0),

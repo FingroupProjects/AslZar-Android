@@ -328,7 +328,7 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
                 full_name = "Кольцо золотое «Бабочка»",
                 name = "(1.4.1.1.336.3_17,5)",
                 price = 3005000,
-                category_id = "00004",
+                category_id = "00001",
                 sale = 8.0,
                 color = "Золотой",
                 stone_type = "Бриллиант, изумруд",
