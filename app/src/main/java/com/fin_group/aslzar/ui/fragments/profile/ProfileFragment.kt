@@ -32,7 +32,9 @@ class ProfileFragment : Fragment() {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
         speedometer = binding.speedView
         setHasOptionsMenu(true)
-        speedometerView()
+        val asd: Number = 6.8
+
+        speedometerView(asd.toFloat())
         binding.btnChangePassword.setOnClickListener {
             goToChangePasswordDialog()
         }

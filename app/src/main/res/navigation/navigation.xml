@@ -70,6 +70,10 @@
         <argument
             android:name="productId"
             app:argType="string" />
+        <argument
+            android:name="product"
+            app:argType="com.fin_group.aslzar.response.Product"
+            app:nullable="true" />
     </fragment>
     <fragment
         android:id="@+id/profileFragment"

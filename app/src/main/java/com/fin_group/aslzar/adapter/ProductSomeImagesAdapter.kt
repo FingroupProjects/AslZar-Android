@@ -10,7 +10,7 @@ import com.fin_group.aslzar.R
 import com.fin_group.aslzar.models.ImageDataModel
 import com.fin_group.aslzar.util.OnImageClickListener
 
-class ProductSomeImagesAdapter(var imageDataModelList: List<ImageDataModel>, private val listener: OnImageClickListener) : RecyclerView.Adapter<ProductSomeImagesAdapter.ViewHolder>() {
+class ProductSomeImagesAdapter(var imageDataModelList: List<String>, private val listener: OnImageClickListener) : RecyclerView.Adapter<ProductSomeImagesAdapter.ViewHolder>() {
 
     var selectedItemPosition = RecyclerView.NO_POSITION
 
@@ -30,11 +30,11 @@ class ProductSomeImagesAdapter(var imageDataModelList: List<ImageDataModel>, pri
 
         holder.itemView.setOnClickListener {
             selectedItemPosition = position
-            listener.setImage(product.image)
+            listener.setImage(product)
         }
     }
 
-    fun updateList(newList: List<ImageDataModel>) {
+    fun updateList(newList: List<String>) {
         imageDataModelList = newList
         notifyDataSetChanged()
     }
@@ -46,7 +46,7 @@ class ProductSomeImagesAdapter(var imageDataModelList: List<ImageDataModel>, pri
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bindItems(imageDataModel: ImageDataModel, isSelected: Boolean) {
+        fun bindItems(imageDataModel: String, isSelected: Boolean) {
             val imageView = itemView.findViewById<ImageView>(R.id.imageView)
 //            val textView = itemView.findViewById<TextView>(R.id.tvName)
 //            textView.text = imageDataModel.name
@@ -56,7 +56,7 @@ class ProductSomeImagesAdapter(var imageDataModelList: List<ImageDataModel>, pri
             } else {
                 itemView.background = null
             }
-            Glide.with(itemView.context).load(imageDataModel.image).into(imageView)
+            Glide.with(itemView.context).load(imageDataModel).into(imageView)
         }
     }
 }

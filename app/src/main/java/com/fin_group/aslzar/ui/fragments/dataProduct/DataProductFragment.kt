@@ -28,6 +28,7 @@ import com.fin_group.aslzar.ui.dialogs.AlikeProductBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.callInStockDialog
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.callSetInProduct
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.likeProducts
+import com.fin_group.aslzar.ui.fragments.dataProduct.functions.setDataProduct
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.someImagesProduct
 import com.fin_group.aslzar.util.OnAlikeProductClickListener
 import com.fin_group.aslzar.util.OnImageClickListener
@@ -48,6 +49,7 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
     private val args by navArgs<DataProductFragmentArgs>()
     val sharedViewModel: SharedViewModel by activityViewModels()
 
+    lateinit var product: Product
 
     lateinit var recyclerViewSomeImages: RecyclerView
     lateinit var recyclerViewLikeProducts: RecyclerView
@@ -55,7 +57,7 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
     private var currentSelectedPosition = RecyclerView.NO_POSITION
     lateinit var toolbar: MaterialToolbar
 
-    var imageList: List<ImageDataModel> = emptyList()
+    var imageList: List<String> = emptyList()
     var alikeProductsList: List<Product> = emptyList()
     lateinit var productSomeImagesAdapter: ProductSomeImagesAdapter
     lateinit var productAlikeAdapter: AlikeProductsAdapter
@@ -71,6 +73,7 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentDataProductBinding.inflate(inflater, container, false)
+        product = args.product!!
 //        toolbar = binding.toolbar
 //        (activity as AppCompatActivity?)!!.setSupportActionBar(toolbar as MaterialToolbar?)
 //        toolbar.title = "Данные товара"
@@ -99,6 +102,7 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
     @SuppressLint("UseCompatLoadingForColorStateLists")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setDataProduct(product, binding)
 //        val weightList = listOf("1.5", "1.7", "1.8", "2.0", "2.1", "2.3")
 //        val sizeList = listOf("10.5", "12.1", "13.5", "13.7", "14", "14.8")
 //        callWeightChipGroup(weightList)
@@ -126,7 +130,7 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
     }
 
     override fun setImage(image: String) {
-        currentSelectedPosition = imageList.indexOfFirst { it.image == image }
+        currentSelectedPosition = imageList.indexOfFirst { it == image }
         productSomeImagesAdapter.setSelectedPosition(currentSelectedPosition)
 //        binding.imageView2.setImageResource(image)
 //        viewAdapter.notifyItemChanged(currentSelectedPosition)

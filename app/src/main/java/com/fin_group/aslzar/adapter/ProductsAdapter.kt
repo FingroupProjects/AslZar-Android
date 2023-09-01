@@ -9,6 +9,7 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.databinding.RowItemProductBinding
 import com.fin_group.aslzar.response.Product
@@ -35,7 +36,7 @@ class ProductsAdapter(
         holder.bind(product)
 
         binding.root.setOnClickListener {
-            val action = MainFragmentDirections.actionMainFragmentToDataProductFragment(product.id)
+            val action = MainFragmentDirections.actionMainFragmentToDataProductFragment(product.id, product)
             holder.itemView.findNavController().navigate(action)
         }
     }
@@ -53,15 +54,15 @@ class ProductsAdapter(
             title.text = product.full_name
             code.text = product.name
 
-//            if (product.image != ""){
-//                Glide.with(itemView.context)
-//                    .load(product.image)
-//                    .override(100, 100)
-//                    .centerCrop()
-//                    .into(image)
-//            } else {
-//                image.setImageResource(R.drawable.ic_no_image)
-//            }
+            if (product.img.isNotEmpty()){
+                Glide.with(itemView.context)
+                    .load(product.img[0])
+                    .override(200, 200)
+                    .centerCrop()
+                    .into(image)
+            } else {
+                image.setImageResource(R.drawable.ic_no_image)
+            }
 
             if (product.sale.toDouble() <= 0){
                 saleTv.visibility = GONE

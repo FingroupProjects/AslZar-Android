@@ -23,36 +23,30 @@ class SessionManager(context: Context) {
 
     companion object {
         const val PREFS_KEY = "prefs"
-        const val USER_ID = "user_id"
-        const val USER_NAME = "user_name"
+        const val TOKEN = "user_token"
+        const val KEY = "key_for_cipher"
+        const val USER_FIO = "user_name"
+        const val USER_LOCATION = "user_location"
         const val USER_LOGIN = "user_login"
-        const val USER_ROLE = "user_role"
-        const val USER_SCLAD = "user_sclad"
         const val PASSWORD_PREF = "password_pref"
         const val IS_LOGGED_IN_KEY = "is_logged_in"
     }
 
-    fun saveId(id: String) {
+    fun saveKey(key: SecretKeySpec){
         val editor = prefs.edit()
-        editor.putString(USER_ID, id)
+        editor.putString(KEY, key.toString())
         editor.apply()
     }
 
-    fun saveRole(role: String){
+    fun saveToken(token: String){
         val editor = prefs.edit()
-        editor.putString(USER_ROLE, role)
+        editor.putString(TOKEN, token)
         editor.apply()
     }
 
     fun saveName(name: String) {
         val editor = prefs.edit()
-        editor.putString(USER_NAME, name)
-        editor.apply()
-    }
-
-    fun saveSclad(sclad: String) {
-        val editor = prefs.edit()
-        editor.putString(USER_SCLAD, sclad)
+        editor.putString(USER_FIO, name)
         editor.apply()
     }
 
@@ -62,26 +56,28 @@ class SessionManager(context: Context) {
         editor.apply()
     }
 
+    fun saveUserLocation(location: String){
+        val editor = prefs.edit()
+        editor.putString(USER_LOCATION, location)
+        editor.apply()
+    }
+
     fun savePassword(password: String) {
         val editor = prefs.edit()
         editor.putString(PASSWORD_PREF, password)
         editor.apply()
     }
 
+    fun fetchKey(): String?{
+        return prefs.getString(KEY, null)
+    }
+
+    fun fetchToken(): String? {
+        return prefs.getString(TOKEN, null)
+    }
+
     fun fetchName(): String? {
-        return prefs.getString(USER_NAME, null)
-    }
-
-    fun fetchId(): String? {
-        return prefs.getString(USER_ID, null)
-    }
-
-    fun fetchSclad(): String? {
-        return prefs.getString(USER_SCLAD, null)
-    }
-
-    fun fetchRole(): String? {
-        return prefs.getString(USER_ROLE, null)
+        return prefs.getString(USER_FIO, null)
     }
 
     fun fetchLogin(): String? {
@@ -92,14 +88,13 @@ class SessionManager(context: Context) {
         return prefs.getString(PASSWORD_PREF, null)
     }
 
+
+
     fun clearSession() {
         val editor = prefs.edit()
-        editor.remove(USER_ID)
-        editor.remove(USER_NAME)
+        editor.remove(USER_FIO)
         editor.remove(USER_LOGIN)
         editor.remove(PASSWORD_PREF)
-        editor.remove(USER_ROLE)
-        editor.remove(USER_SCLAD)
         editor.putBoolean(IS_LOGGED_IN_KEY, false)
         editor.apply()
     }

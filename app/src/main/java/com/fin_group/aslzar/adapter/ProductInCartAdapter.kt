@@ -7,6 +7,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.fin_group.aslzar.R
 import com.fin_group.aslzar.databinding.RowItemProductInCartBinding
 import com.fin_group.aslzar.models.ImageDataModel2
 import com.fin_group.aslzar.models.ProductInCart
@@ -49,6 +51,16 @@ class ProductInCartAdapter(private var listProductInCart: List<ProductInCart>, p
 
         @SuppressLint("UseCompatLoadingForDrawables")
         fun bind(product: ProductInCart){
+            if (product.image.isNotEmpty()){
+                Glide.with(itemView.context)
+                    .load(product.image[0])
+                    .override(200, 200)
+                    .centerCrop()
+                    .into(image)
+            } else {
+                image.setImageResource(R.drawable.ic_no_image)
+            }
+
             name.text = product.name
             code.text = product.code
             count.text = product.count.toString()

@@ -35,7 +35,7 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(), O
     lateinit var recyclerView: RecyclerView
 
     private var currentSelectedPosition = RecyclerView.NO_POSITION
-    var alikeImageList: List<ImageDataModel> = emptyList()
+    var alikeImageList: List<String> = emptyList()
     lateinit var adapter: ProductSomeImagesAdapter
     lateinit var similarProduct: Product
 
@@ -123,10 +123,11 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(), O
 
     private fun setProducts() {
         alikeImageList = listOf(
-            ImageDataModel("http://convertolink.taskpro.tj/photoLink/public/storage/images/PlNk0wsmedvtLhkPu7wzj7Sk7OIiaKJosxy8NidO.png", "Кольцо 2"),
-            ImageDataModel("http://convertolink.taskpro.tj/photoLink/public/storage/images/85cIg9T9cwf3fevuQJ8rnGxrrG80Jh5mHatHRZWr.png", "Кольцо 3"),
-            ImageDataModel("http://convertolink.taskpro.tj/photoLink/public/storage/images/oB9W5AC6jBQeFScqr8YFjRs81tCekLKYRe8cHSrH.png", "Кольцо 4"),
-            ImageDataModel("http://convertolink.taskpro.tj/photoLink/public/storage/images/hIu6UbR6WAiCK1YYLUqd6KvOKYU5lzMHoYrLmqjW.png", "Кольцо 5"),
+            "http://convertolink.taskpro.tj/photoLink/public/storage/images/PlNk0wsmedvtLhkPu7wzj7Sk7OIiaKJosxy8NidO.png",
+            "http://convertolink.taskpro.tj/photoLink/public/storage/images/85cIg9T9cwf3fevuQJ8rnGxrrG80Jh5mHatHRZWr.png",
+            "http://convertolink.taskpro.tj/photoLink/public/storage/images/7HwYLvcR5CSUYmp5rbdpjDzus9VwZQN8aZkjdz7O.png",
+            "http://convertolink.taskpro.tj/photoLink/public/storage/images/oB9W5AC6jBQeFScqr8YFjRs81tCekLKYRe8cHSrH.png",
+            "http://convertolink.taskpro.tj/photoLink/public/storage/images/hIu6UbR6WAiCK1YYLUqd6KvOKYU5lzMHoYrLmqjW.png"
         )
         recyclerView.layoutManager = LinearLayoutManager(requireContext(), HORIZONTAL, false)
         recyclerView.adapter = adapter
@@ -147,7 +148,7 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(), O
     }
 
     override fun setImage(image: String) {
-        currentSelectedPosition = alikeImageList.indexOfFirst { it.image == image }
+        currentSelectedPosition = alikeImageList.indexOfFirst { it == image }
         adapter.setSelectedPosition(currentSelectedPosition)
         Glide.with(requireContext())
             .load(image)

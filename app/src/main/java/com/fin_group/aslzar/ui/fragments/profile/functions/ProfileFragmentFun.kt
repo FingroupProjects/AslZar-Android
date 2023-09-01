@@ -7,8 +7,10 @@ import com.fin_group.aslzar.ui.dialogs.ChangePasswordProfileFragmentDialog
 import com.fin_group.aslzar.ui.fragments.profile.ProfileFragment
 import com.github.anastr.speedviewlib.components.Style
 
-fun ProfileFragment.speedometerView() {
-    speedometer.speedTo(52.5f)
+fun ProfileFragment.speedometerView(speed: Float) {
+
+
+    speedometer.speedTo(speed)
     speedometer.makeSections(3, Color.CYAN, Style.BUTT)
     speedometer.sections[0].color = Color.parseColor("#8e5234")
     speedometer.sections[1].color = Color.parseColor("#b66d32")

@@ -2,10 +2,15 @@
 
 package com.fin_group.aslzar.ui.fragments.dataProduct.functions
 
+import android.annotation.SuppressLint
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL
+import com.bumptech.glide.Glide
 import com.fin_group.aslzar.R
+import com.fin_group.aslzar.databinding.FragmentDataProductBinding
 import com.fin_group.aslzar.models.ImageDataModel
 import com.fin_group.aslzar.models.ImageDataModel2
 import com.fin_group.aslzar.models.ProductInCart
@@ -15,6 +20,7 @@ import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.SetInProductBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.WarningNoHaveProductFragmentDialog
 import com.fin_group.aslzar.ui.fragments.dataProduct.DataProductFragment
+import com.fin_group.aslzar.util.formatNumber
 
 fun DataProductFragment.callInStockDialog(id: String) {
     val fragmentManager = requireFragmentManager()
@@ -116,12 +122,7 @@ fun DataProductFragment.callSetInProduct(id: String){
 //}
 
 fun DataProductFragment.someImagesProduct() {
-    imageList = listOf(
-        ImageDataModel("http://convertolink.taskpro.tj/photoLink/public/storage/images/PlNk0wsmedvtLhkPu7wzj7Sk7OIiaKJosxy8NidO.png", "Test"),
-        ImageDataModel("http://convertolink.taskpro.tj/photoLink/public/storage/images/85cIg9T9cwf3fevuQJ8rnGxrrG80Jh5mHatHRZWr.png", "Test"),
-        ImageDataModel("http://convertolink.taskpro.tj/photoLink/public/storage/images/oB9W5AC6jBQeFScqr8YFjRs81tCekLKYRe8cHSrH.png", "Test"),
-        ImageDataModel("http://convertolink.taskpro.tj/photoLink/public/storage/images/hIu6UbR6WAiCK1YYLUqd6KvOKYU5lzMHoYrLmqjW.png", "Test")
-    )
+    imageList = product.img
     recyclerViewSomeImages.layoutManager = LinearLayoutManager(requireContext(), HORIZONTAL, false)
     recyclerViewSomeImages.adapter = productSomeImagesAdapter
     productSomeImagesAdapter.updateList(imageList)
@@ -182,4 +183,31 @@ fun  DataProductFragment.likeProducts(){
     recyclerViewLikeProducts.layoutManager = LinearLayoutManager(requireContext(), HORIZONTAL, false)
     recyclerViewLikeProducts.adapter = productAlikeAdapter
     productAlikeAdapter.updateList(alikeProductsList)
+}
+
+@SuppressLint("SetTextI18n")
+fun DataProductFragment.setDataProduct(product: Product, binding: FragmentDataProductBinding){
+    if (product.img.size <= 1){
+        binding.otherImgRv.visibility = GONE
+    } else {
+        binding.otherImgRv.visibility = VISIBLE
+    }
+    if (product.sale == 0){
+        binding.productSale.visibility = GONE
+    } else {
+        binding.productSale.text = "-${formatNumber(product.sale)}%"
+        binding.productSale.visibility = VISIBLE
+    }
+
+    binding.apply {
+        Glide.with(requireContext()).load(product.img[0]).into(binding.imageView2)
+//        dpTitle.text = product.full_name
+        dpCode.text = product.name
+        dpPrice.text = product.price.toString()
+        dpStone.text = product.stone_type
+        dpProbe.text = product.content
+        dpMetal.text = product.metal
+        dpWeight.text = product.weight
+        dpSize.text = product.size
+    }
 }

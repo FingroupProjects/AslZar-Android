@@ -56,7 +56,8 @@ class BarcodeScannerV2Fragment : Fragment() {
                     Toast.makeText(activity, it.text, Toast.LENGTH_LONG).show()
                     val action =
                         BarcodeScannerV2FragmentDirections.actionBarCodeScannerFragmentToDataProductFragment(
-                            it.text.toString()
+                            it.text.toString(),
+                            null
                         )
                     Navigation.findNavController(binding.root).navigate(action)
                 }
