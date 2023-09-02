@@ -1,6 +1,7 @@
 package com.fin_group.aslzar.ui.fragments.cartMain.cart
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
@@ -20,18 +21,22 @@ import com.fin_group.aslzar.adapter.ProductInCartAdapter
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentCartBinding
 import com.fin_group.aslzar.models.ProductInCart
+import com.fin_group.aslzar.ui.activities.MainActivity
 import com.fin_group.aslzar.ui.dialogs.DeleteAllProductFromCartFragmentDialog
 import com.fin_group.aslzar.ui.fragments.cartMain.cart.functions.cartObserver
 import com.fin_group.aslzar.ui.fragments.cartMain.cart.functions.deleteAllProductFromCart
 import com.fin_group.aslzar.ui.fragments.cartMain.cart.functions.fetchItemTouchHelper
 import com.fin_group.aslzar.ui.fragments.cartMain.cart.functions.fetchRV
 import com.fin_group.aslzar.ui.fragments.cartMain.cart.functions.itemTouchCallback
+import com.fin_group.aslzar.ui.fragments.cartMain.cart.functions.updateBadge
+import com.fin_group.aslzar.util.BadgeManager
 import com.fin_group.aslzar.util.CartObserver
 import com.fin_group.aslzar.util.EditProductInCart
 import com.fin_group.aslzar.util.OnProductAddedToCartListener
 import com.fin_group.aslzar.util.doubleFormat
 import com.fin_group.aslzar.util.formatNumber
 import com.fin_group.aslzar.viewmodel.SharedViewModel
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import kotlin.math.roundToInt
@@ -51,6 +56,10 @@ class CartFragment : Fragment(), EditProductInCart, OnProductAddedToCartListener
 
     lateinit var cartObserver: CartObserver
 
+    lateinit var mainActivity: MainActivity
+    lateinit var bottomNavigationView: BottomNavigationView
+    lateinit var badgeManager: BadgeManager
+
     private val sharedViewModel: SharedViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -69,6 +78,9 @@ class CartFragment : Fragment(), EditProductInCart, OnProductAddedToCartListener
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        mainActivity =
+            activity as? MainActivity ?: throw IllegalStateException("Activity is not MainActivity")
+
         sharedViewModel.productAdded.observe(viewLifecycleOwner) { product ->
             onProductAddedToCart(product)
         }
@@ -83,11 +95,10 @@ class CartFragment : Fragment(), EditProductInCart, OnProductAddedToCartListener
         deleteAllProductFromCart()
     }
 
-    private val Int.dp
-        get() = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP,
-            toFloat(), resources.displayMetrics
-        ).roundToInt()
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        badgeManager = BadgeManager(requireContext())
+    }
 
     override fun plusProductInCart(productInCart: ProductInCart) {
         Cart.plusProduct(productInCart.id, requireContext())
@@ -119,6 +130,13 @@ class CartFragment : Fragment(), EditProductInCart, OnProductAddedToCartListener
         Cart.notifyObservers()
         Cart.loadCartFromPrefs(requireContext())
     }
+
+    override fun onResume() {
+        super.onResume()
+        bottomNavigationView = mainActivity.findViewById(R.id.bottomNavigationView)
+        updateBadge()
+    }
+
     override fun onPause() {
         super.onPause()
         Cart.saveCartToPrefs(requireContext())

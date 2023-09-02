@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL
 import com.bumptech.glide.Glide
 import com.fin_group.aslzar.R
+import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentDataProductBinding
 import com.fin_group.aslzar.models.ImageDataModel
 import com.fin_group.aslzar.models.ImageDataModel2
@@ -212,6 +213,14 @@ fun DataProductFragment.setDataProduct(product: Product, binding: FragmentDataPr
 
         btnAddToCart.setOnClickListener {
             sharedViewModel.onProductAddedToCart(product, requireContext())
+
+            val addedProduct = Cart.getProductById(product.id)
+            if (addedProduct != null){
+                Toast.makeText(requireContext(), "Количество товара увеличено на +1", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(requireContext(), "Товар добавлен в корзину", Toast.LENGTH_SHORT).show()
+            }
+
         }
     }
 
