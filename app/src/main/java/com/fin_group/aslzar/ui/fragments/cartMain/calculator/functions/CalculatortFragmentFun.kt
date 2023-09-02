@@ -241,13 +241,15 @@ fun CalculatorFragment.createTable() {
     Log.d("TAG", "Счет а карзини Сухроб: $totalCart")
 
     getInstallment = listOf(
-        Installment("2", 20),
-        Installment("3", 30),
-//        Installment("4", 40),
+        Installment("2", 5),
+//        Installment("3", 30),
+        Installment("4", 10),
 //        Installment("5", 50),
-//        Installment("6", 60),
+        Installment("6", 15),
 //        Installment("7", 70),
-//        Installment("8", 80),
+        Installment("8", 25),
+        Installment("10", 31),
+        Installment("12", 42),
 //        Installment("9", 90)
     )
 

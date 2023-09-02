@@ -209,5 +209,11 @@ fun DataProductFragment.setDataProduct(product: Product, binding: FragmentDataPr
         dpMetal.text = product.metal
         dpWeight.text = product.weight
         dpSize.text = product.size
+
+        btnAddToCart.setOnClickListener {
+            sharedViewModel.onProductAddedToCart(product, requireContext())
+        }
     }
+
+
 }
