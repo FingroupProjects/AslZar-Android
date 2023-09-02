@@ -8,6 +8,7 @@ import android.view.View.VISIBLE
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.cart.Cart
+import com.fin_group.aslzar.databinding.FragmentMainBinding
 import com.fin_group.aslzar.models.ProductInCart
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.ui.dialogs.CheckCategoryFragmentDialog
@@ -88,8 +89,8 @@ fun MainFragment.filterFun(){
 }
 
 fun MainFragment.addProductToCart(product: Product){
-    updateBadge()
     sharedViewModel.onProductAddedToCart(product, requireContext())
+    updateBadge()
 }
 fun MainFragment.updateBadge(){
     val uniqueProductTypes = Cart.getUniqueProductTypesCount()
@@ -98,6 +99,47 @@ fun MainFragment.updateBadge(){
     val badge = bottomNavigationView.getOrCreateBadge(R.id.mainCartFragment)
     badge.isVisible = uniqueProductTypes > 0
     badge.number = uniqueProductTypes
+}
+
+fun MainFragment.savingAndFetchingCategory(binding: FragmentMainBinding){
+    val selectedCategoryId = preferences.getString("selectedCategory", "all")
+    selectCategory = allCategories.find { it.id == selectedCategoryId }
+
+    try {
+        if (selectCategory != null) {
+            if (selectCategory!!.id != "all"){
+                binding.apply {
+                    if (!searchBarChecked(viewSearch)) {
+                        viewSearch.visibility = GONE
+                    }
+                    materialCardViewCategory.setOnClickListener {
+                        categoryDialog()
+                    }
+                    fabClearCategory.setOnClickListener {
+                        viewCheckedCategory.visibility = GONE
+                        selectCategory = null
+                        preferences.edit()?.putString("selectedCategory", "all")?.apply()
+                        filterProducts()
+                    }
+                    viewCheckedCategory.visibility = VISIBLE
+                    checkedCategoryTv.text = selectCategory!!.name
+                }
+            } else {
+                if (selectCategory!!.id == "all") {
+                    viewCheckedCategory.visibility = GONE
+                }
+            }
+            filterProducts()
+        }
+    } catch (e: Exception){
+        Log.d("TAG", "onViewCreated: ${e.message}")
+    }
+}
+
+fun MainFragment.categoryDialog() {
+    val categoryDialog = CheckCategoryFragmentDialog()
+    categoryDialog.setCategoryClickListener(this)
+    categoryDialog.show(activity?.supportFragmentManager!!, "category check dialog")
 }
 
 fun MainFragment.filterProducts() {

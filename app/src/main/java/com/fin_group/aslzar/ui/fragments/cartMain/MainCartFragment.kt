@@ -40,8 +40,6 @@ class MainCartFragment : Fragment() {
         tableLayout = binding.tabLayout
         viewPager2 = binding.viewPager2
         bottomNavigationView = requireActivity().findViewById(R.id.bottomNavigationView)
-        Log.d("TAG", "onViewCreated: ${Cart.getTotalPriceWithSale()}")
-        Log.d("TAG", "onViewCreated: ${Cart.getTotalPriceWithoutSale()}")
 
         tableLayout.addTab(tableLayout.newTab().setText("Корзина"))
         tableLayout.addTab(tableLayout.newTab().setText("Калькулятор"))

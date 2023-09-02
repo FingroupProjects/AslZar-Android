@@ -2,7 +2,10 @@ package com.fin_group.aslzar.ui.fragments.main
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.preference.PreferenceManager
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.Menu
@@ -34,8 +37,10 @@ import com.fin_group.aslzar.util.CategoryClickListener
 import com.fin_group.aslzar.util.ProductOnClickListener
 import com.fin_group.aslzar.ui.fragments.main.functions.callInStockDialog
 import com.fin_group.aslzar.ui.fragments.main.functions.callOutStock
+import com.fin_group.aslzar.ui.fragments.main.functions.categoryDialog
 import com.fin_group.aslzar.ui.fragments.main.functions.filterFun
 import com.fin_group.aslzar.ui.fragments.main.functions.filterProducts
+import com.fin_group.aslzar.ui.fragments.main.functions.savingAndFetchingCategory
 import com.fin_group.aslzar.ui.fragments.main.functions.searchBarChecked
 import com.fin_group.aslzar.ui.fragments.main.functions.searchViewFun
 import com.fin_group.aslzar.ui.fragments.main.functions.updateBadge
@@ -55,6 +60,8 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
 
     lateinit var toolbar: MaterialToolbar
 
+    lateinit var preferences: SharedPreferences
+
     lateinit var viewSearch: ConstraintLayout
     var searchText: String = ""
     lateinit var searchView: SearchView
@@ -64,7 +71,7 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
     lateinit var myAdapter: ProductsAdapter
 
     lateinit var viewCheckedCategory: ConstraintLayout
-    private var allCategories: List<ProductV2> = emptyList()
+    var allCategories: List<Category> = emptyList()
     var selectCategory: Category? = null
 
     lateinit var mainActivity: MainActivity
@@ -77,13 +84,14 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
+        preferences = context?.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)!!
+
 //        toolbar = binding.toolbar
 //        (activity as AppCompatActivity?)!!.setSupportActionBar(toolbar as MaterialToolbar?)
 //        toolbar.title = "Главная"
         setHasOptionsMenu(true)
         viewSearch = binding.viewSearch
         viewCheckedCategory = binding.viewCheckedCategory
-//        bottomNavigationView = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView)
 
         binding.fabClearSearch.setOnClickListener {
             if (searchText != "") {
@@ -92,6 +100,18 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
             viewSearch.visibility = GONE
         }
 
+        allCategories = listOf(
+            Category("all", "Все"),
+            Category("00001", "Кольца"),
+            Category("00002", "Серьги"),
+            Category("00003", "Ожерелья"),
+            Category("00004", "Браслеты"),
+            Category("00005", "Подвески"),
+            Category("00006", "Часы"),
+        )
+
+
+
         return binding.root
     }
 
@@ -99,23 +119,20 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         super.onViewCreated(view, savedInstanceState)
         searchView = binding.searchViewMain
 
-        mainActivity =
-            activity as? MainActivity ?: throw IllegalStateException("Activity is not MainActivity")
-//        bottomNavigationView = view.findViewById(R.id.bottomNavigationView)
-        //updateBadge()
+        mainActivity = activity as? MainActivity ?: throw IllegalStateException("Activity is not MainActivity")
+
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return true
             }
-
             override fun onQueryTextChange(newText: String?): Boolean {
                 searchText = newText.toString()
                 filterProducts()
                 return true
             }
-        })
 
+        })
         allProducts = listOf(
             Product(
                 id = "00001",
@@ -352,6 +369,7 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
 
         )
         fetchRV(allProducts)
+        savingAndFetchingCategory(binding)
 
     }
 
@@ -392,13 +410,6 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun categoryDialog() {
-        val categoryDialog = CheckCategoryFragmentDialog()
-        categoryDialog.setCategoryClickListener(this)
-        categoryDialog.show(activity?.supportFragmentManager!!, "category check dialog")
-    }
-
-
     override fun onPause() {
         super.onPause()
         Cart.saveCartToPrefs(requireContext())
@@ -407,9 +418,12 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
     override fun onDestroyView() {
         super.onDestroyView()
         Cart.saveCartToPrefs(requireContext())
-        viewCheckedCategory.visibility = GONE
-        selectCategory = null
-        filterProducts()
+//        if (selectCategory != null){
+//            preferences.edit().putString("selected category", selectCategory!!.id)
+//        }
+//        viewCheckedCategory.visibility = GONE
+//        selectCategory = null
+//        filterProducts()
         _binding = null
     }
 
@@ -445,26 +459,32 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         }
     }
 
+    @SuppressLint("CommitPrefEdits")
     override fun onCategorySelected(selectedCategory: Category) {
         selectCategory = selectedCategory
-        binding.apply {
-            if (!searchBarChecked(viewSearch)) {
-                viewSearch.visibility = GONE
-            }
-            materialCardViewCategory.setOnClickListener {
-                categoryDialog()
-            }
-            if (selectedCategory.id == "all") {
-                viewCheckedCategory.visibility = GONE
-            }
-            fabClearCategory.setOnClickListener {
-                viewCheckedCategory.visibility = GONE
-                selectCategory = null
-                filterProducts()
-            }
-            viewCheckedCategory.visibility = VISIBLE
-            checkedCategoryTv.text = selectedCategory.name
-        }
-        filterProducts()
+        preferences.edit()?.putString("selectedCategory", selectedCategory.id)?.apply()
+
+        savingAndFetchingCategory(binding)
+
+//        binding.apply {
+//            if (!searchBarChecked(viewSearch)) {
+//                viewSearch.visibility = GONE
+//            }
+//            materialCardViewCategory.setOnClickListener {
+//                categoryDialog()
+//            }
+//            if (selectedCategory.id == "all") {
+//                viewCheckedCategory.visibility = GONE
+//            }
+//            fabClearCategory.setOnClickListener {
+//                viewCheckedCategory.visibility = GONE
+//                selectCategory = null
+//                preferences.edit()?.putString("selectedCategory", "all")?.apply()
+//                filterProducts()
+//            }
+//            viewCheckedCategory.visibility = VISIBLE
+//            checkedCategoryTv.text = selectedCategory.name
+//        }
+//        filterProducts()
     }
 }

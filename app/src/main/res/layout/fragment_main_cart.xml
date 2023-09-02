@@ -20,6 +20,8 @@
         app:tabIndicatorColor="@color/primary_color_2"
         app:tabIndicatorFullWidth="true"
         app:tabMode="fixed"
+        app:tabTextColor="@color/text_color_2"
+        app:tabSelectedTextColor="@color/text_color_1"
         app:tabRippleColor="@color/primary_color_2"
         app:tabTextAppearance="@style/MyTabTextAppearance"
         app:tabUnboundedRipple="false" />
