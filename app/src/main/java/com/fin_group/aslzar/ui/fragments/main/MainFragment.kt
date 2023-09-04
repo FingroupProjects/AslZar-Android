@@ -366,28 +366,6 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
 
         val selectedCategoryId = preferences.getString("selectedCategory", "all")
         selectCategory = allCategories.find { it.id == selectedCategoryId }
-        val firstRun = preferences.getBoolean("first_run", true)
-
-        Log.d("TAG", "onViewCreated: $firstRun")
-
-
-//        if (selectCategory!!.id != "all"){
-//            binding.apply {
-//                materialCardViewCategory.setOnClickListener {
-//                    categoryDialog()
-//                }
-//                fabClearCategory.setOnClickListener {
-//                    viewCheckedCategory.visibility = GONE
-//                    selectCategory = null
-//                    preferences.edit()?.putString("selectedCategory", "all")?.apply()
-//                    filterProducts()
-//                }
-//                viewCheckedCategory.visibility = VISIBLE
-//                binding.checkedCategoryTv.text = selectCategory!!.name
-//            }
-//        }
-        //savingAndFetchingCategory(binding)
-
     }
 
     fun hideCategoryView() {
@@ -447,8 +425,6 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         } else {
             savingAndFetchingCategory(binding)
         }
-
-
         Cart.loadCartFromPrefs(requireContext())
     }
 
