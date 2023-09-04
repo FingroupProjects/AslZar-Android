@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.CategoryAdapter
 import com.fin_group.aslzar.databinding.FragmentDialogCheckCategoryBinding
-import com.fin_group.aslzar.models.Category
+import com.fin_group.aslzar.response.Category
 import com.fin_group.aslzar.ui.fragments.main.MainFragment
 import com.fin_group.aslzar.util.BaseDialogFragment
 import com.fin_group.aslzar.util.CategoryClickListener
