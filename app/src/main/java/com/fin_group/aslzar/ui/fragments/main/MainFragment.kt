@@ -85,7 +85,6 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
     ): View {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
         preferences = context?.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)!!
-
 //        toolbar = binding.toolbar
 //        (activity as AppCompatActivity?)!!.setSupportActionBar(toolbar as MaterialToolbar?)
 //        toolbar.title = "Главная"
@@ -99,7 +98,6 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
             }
             viewSearch.visibility = GONE
         }
-
         allCategories = listOf(
             Category("all", "Все"),
             Category("00001", "Кольца"),
@@ -110,8 +108,6 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
             Category("00006", "Часы"),
         )
 
-
-
         return binding.root
     }
 
@@ -120,7 +116,6 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         searchView = binding.searchViewMain
 
         mainActivity = activity as? MainActivity ?: throw IllegalStateException("Activity is not MainActivity")
-
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -131,7 +126,6 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
                 filterProducts()
                 return true
             }
-
         })
         allProducts = listOf(
             Product(
@@ -369,8 +363,35 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
 
         )
         fetchRV(allProducts)
-        savingAndFetchingCategory(binding)
 
+        val selectedCategoryId = preferences.getString("selectedCategory", "all")
+        selectCategory = allCategories.find { it.id == selectedCategoryId }
+        val firstRun = preferences.getBoolean("first_run", true)
+
+        Log.d("TAG", "onViewCreated: $firstRun")
+
+
+//        if (selectCategory!!.id != "all"){
+//            binding.apply {
+//                materialCardViewCategory.setOnClickListener {
+//                    categoryDialog()
+//                }
+//                fabClearCategory.setOnClickListener {
+//                    viewCheckedCategory.visibility = GONE
+//                    selectCategory = null
+//                    preferences.edit()?.putString("selectedCategory", "all")?.apply()
+//                    filterProducts()
+//                }
+//                viewCheckedCategory.visibility = VISIBLE
+//                binding.checkedCategoryTv.text = selectCategory!!.name
+//            }
+//        }
+        //savingAndFetchingCategory(binding)
+
+    }
+
+    fun hideCategoryView() {
+        viewCheckedCategory.visibility = GONE
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -390,22 +411,13 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.search_item -> {
-                searchViewFun()
-            }
-
-            R.id.filter_item -> {
-                filterFun()
-            }
-
+            R.id.search_item -> {searchViewFun()}
+            R.id.filter_item -> {filterFun()}
             R.id.barcode_item -> {
                 val action = MainFragmentDirections.actionMainFragmentToBarCodeScannerFragment()
                 findNavController().navigate(action)
             }
-
-            R.id.profile_item -> {
-                findNavController().navigate(R.id.action_mainFragment_to_profileFragment)
-            }
+            R.id.profile_item -> {findNavController().navigate(R.id.action_mainFragment_to_profileFragment)}
         }
         return super.onOptionsItemSelected(item)
     }
@@ -418,28 +430,32 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
     override fun onDestroyView() {
         super.onDestroyView()
         Cart.saveCartToPrefs(requireContext())
-//        if (selectCategory != null){
-//            preferences.edit().putString("selected category", selectCategory!!.id)
-//        }
-//        viewCheckedCategory.visibility = GONE
-//        selectCategory = null
-//        filterProducts()
         _binding = null
+        preferences.edit()?.putBoolean("first_run", false)?.apply()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        preferences.edit()?.putBoolean("first_run", true)?.apply()
     }
 
     override fun onStart() {
         super.onStart()
+        val firstRun = preferences.getBoolean("first_run", true)
+        if (firstRun){
+            viewCheckedCategory.visibility = GONE
+        } else {
+            savingAndFetchingCategory(binding)
+        }
+
+
         Cart.loadCartFromPrefs(requireContext())
-        Cart.notifyObservers()
-//        showToolBar()
-//        showBottomNav()
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         badgeManager = BadgeManager(requireContext())
     }
-
 
     override fun onResume() {
         super.onResume()
@@ -465,26 +481,5 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         preferences.edit()?.putString("selectedCategory", selectedCategory.id)?.apply()
 
         savingAndFetchingCategory(binding)
-
-//        binding.apply {
-//            if (!searchBarChecked(viewSearch)) {
-//                viewSearch.visibility = GONE
-//            }
-//            materialCardViewCategory.setOnClickListener {
-//                categoryDialog()
-//            }
-//            if (selectedCategory.id == "all") {
-//                viewCheckedCategory.visibility = GONE
-//            }
-//            fabClearCategory.setOnClickListener {
-//                viewCheckedCategory.visibility = GONE
-//                selectCategory = null
-//                preferences.edit()?.putString("selectedCategory", "all")?.apply()
-//                filterProducts()
-//            }
-//            viewCheckedCategory.visibility = VISIBLE
-//            checkedCategoryTv.text = selectedCategory.name
-//        }
-//        filterProducts()
     }
 }

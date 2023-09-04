@@ -102,9 +102,6 @@ fun MainFragment.updateBadge(){
 }
 
 fun MainFragment.savingAndFetchingCategory(binding: FragmentMainBinding){
-    val selectedCategoryId = preferences.getString("selectedCategory", "all")
-    selectCategory = allCategories.find { it.id == selectedCategoryId }
-
     try {
         if (selectCategory != null) {
             if (selectCategory!!.id != "all"){
@@ -127,8 +124,11 @@ fun MainFragment.savingAndFetchingCategory(binding: FragmentMainBinding){
             } else {
                 if (selectCategory!!.id == "all") {
                     viewCheckedCategory.visibility = GONE
+                    filterProducts()
                 }
             }
+            filterProducts()
+        } else {
             filterProducts()
         }
     } catch (e: Exception){

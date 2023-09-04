@@ -1,6 +1,8 @@
 package com.fin_group.aslzar.ui.activities
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -16,6 +18,8 @@ import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.ActivityMainBinding
 import com.fin_group.aslzar.models.ProductInCart
 import com.fin_group.aslzar.ui.fragments.cartMain.cart.CartFragment
+import com.fin_group.aslzar.ui.fragments.main.MainFragment
+import com.fin_group.aslzar.ui.fragments.main.functions.savingAndFetchingCategory
 import com.fin_group.aslzar.util.BadgeManager
 import com.fin_group.aslzar.util.OnProductAddedToCartListener
 import com.fin_group.aslzar.viewmodel.SharedViewModel
@@ -34,10 +38,34 @@ class MainActivity : AppCompatActivity() {
     private lateinit var badgeManager: BadgeManager
 
     private val sharedViewModel: SharedViewModel by viewModels()
+    lateinit var preferences: SharedPreferences
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
+
+        preferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)!!
+
+        Log.d("TAG", "onCreate: ${preferences.getString("selectedCategory", "hello")}")
+        preferences.edit()?.putString("selectedCategory", "all")?.apply()
+
+        val isFirstRun = preferences.getBoolean("isFirstRun", true)
+        Log.d("TAG", "onCreate firstRun: $isFirstRun")
+
+        if (isFirstRun) {
+            Log.d("TAG", "Before setting isFirstRun to false: $isFirstRun")
+            val mainFragment = supportFragmentManager.findFragmentById(R.id.fragmentMain) as? MainFragment
+            mainFragment?.hideCategoryView()
+
+            preferences.edit()?.putBoolean("isFirstRun", false)?.apply()
+
+            val isFirstRunAfterChange = preferences.getBoolean("isFirstRun", true)
+            Log.d("TAG", "After setting isFirstRun to false: $isFirstRunAfterChange")
+        }
+
+        Log.d("TAG", "onCreate firstRun: $isFirstRun")
+
         setContentView(binding.root)
         toolbar = binding.toolbar
 
@@ -47,8 +75,7 @@ class MainActivity : AppCompatActivity() {
         bottomNavBar = binding.bottomNavigationView
         val navController =findNavController(R.id.fragmentMain)
 
-        val appBarConfiguration = AppBarConfiguration(
-            setOf(R.id.mainFragment, R.id.mainCartFragment))
+        val appBarConfiguration = AppBarConfiguration(setOf(R.id.mainFragment, R.id.mainCartFragment))
 
         setupActionBarWithNavController(navController,appBarConfiguration)
         bottomNavBar.setupWithNavController(navController)
@@ -68,15 +95,27 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         Cart.loadCartFromPrefs(this)
+        preferences.edit()?.putBoolean("first_run", true)?.apply()
+
+
+        Log.d("TAG", "onCreate: ${preferences.getString("selectedCategory", "hello")}")
+        preferences.edit()?.putString("selectedCategory", "all")?.apply()
     }
 
-    @SuppressLint("ResourceAsColor")
+    @SuppressLint("ResourceAsColor", "CommitPrefEdits")
     override fun onDestroy() {
         super.onDestroy()
         Cart.saveCartToPrefs(this)
 
         val badge = bottomNavBar.getOrCreateBadge(R.id.mainCartFragment)
         badgeManager.saveBadgeCount(badge.number)
+        preferences.edit()?.putString("selectedCategory", "all")?.apply()
+        preferences.edit()?.putBoolean("first_run", false)?.apply()
+
+//        val preferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+//        val editor = preferences.edit()
+//        editor.remove("selectedCategory")
+//        editor.apply()
     }
 
 //    override fun onProductAddedToCart(product: ProductInCart) {
