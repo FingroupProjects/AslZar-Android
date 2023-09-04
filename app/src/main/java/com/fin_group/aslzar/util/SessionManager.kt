@@ -32,9 +32,9 @@ class SessionManager(context: Context) {
         const val IS_LOGGED_IN_KEY = "is_logged_in"
     }
 
-    fun saveKey(key: SecretKeySpec){
+    fun saveKey(key: String){
         val editor = prefs.edit()
-        editor.putString(KEY, key.toString())
+        editor.putString(KEY, key)
         editor.apply()
     }
 
@@ -89,11 +89,13 @@ class SessionManager(context: Context) {
     }
 
 
-
     fun clearSession() {
         val editor = prefs.edit()
+        editor.remove(TOKEN)
+        editor.remove(KEY)
         editor.remove(USER_FIO)
         editor.remove(USER_LOGIN)
+        editor.remove(USER_LOCATION)
         editor.remove(PASSWORD_PREF)
         editor.putBoolean(IS_LOGGED_IN_KEY, false)
         editor.apply()

@@ -8,6 +8,10 @@ data class GetAllProductsResponse(
     val result: List<Product>
 )
 
+data class GetProductByIdResponse(
+    val result: List<Product>
+)
+
 @Parcelize
 data class Product(
     val id: String,

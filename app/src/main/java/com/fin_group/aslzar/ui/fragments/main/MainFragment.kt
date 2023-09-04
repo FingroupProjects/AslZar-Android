@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.util.Base64
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -24,30 +25,29 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.ProductsAdapter
 import com.fin_group.aslzar.cart.Cart
+import com.fin_group.aslzar.cipher.EncryptionManager
 import com.fin_group.aslzar.databinding.FragmentMainBinding
-import com.fin_group.aslzar.models.Category
-import com.fin_group.aslzar.models.ProductInCart
-import com.fin_group.aslzar.models.ProductV2
+import com.fin_group.aslzar.response.Category
 import com.fin_group.aslzar.response.InStock
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.ui.activities.MainActivity
-import com.fin_group.aslzar.ui.dialogs.CheckCategoryFragmentDialog
 import com.fin_group.aslzar.ui.fragments.main.functions.addProductToCart
 import com.fin_group.aslzar.util.CategoryClickListener
 import com.fin_group.aslzar.util.ProductOnClickListener
 import com.fin_group.aslzar.ui.fragments.main.functions.callInStockDialog
 import com.fin_group.aslzar.ui.fragments.main.functions.callOutStock
-import com.fin_group.aslzar.ui.fragments.main.functions.categoryDialog
 import com.fin_group.aslzar.ui.fragments.main.functions.filterFun
 import com.fin_group.aslzar.ui.fragments.main.functions.filterProducts
 import com.fin_group.aslzar.ui.fragments.main.functions.savingAndFetchingCategory
-import com.fin_group.aslzar.ui.fragments.main.functions.searchBarChecked
 import com.fin_group.aslzar.ui.fragments.main.functions.searchViewFun
 import com.fin_group.aslzar.ui.fragments.main.functions.updateBadge
 import com.fin_group.aslzar.util.BadgeManager
+import com.fin_group.aslzar.util.SessionManager
 import com.fin_group.aslzar.viewmodel.SharedViewModel
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import okio.ByteString.Companion.decodeBase64
+import javax.crypto.spec.SecretKeySpec
 
 
 @Suppress("DEPRECATION")
@@ -79,12 +79,17 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
 
     lateinit var badgeManager: BadgeManager
 
+    lateinit var sessionManager: SessionManager
+    lateinit var encryptionManager: EncryptionManager
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
         preferences = context?.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)!!
+        sessionManager = SessionManager(requireContext())
 //        toolbar = binding.toolbar
 //        (activity as AppCompatActivity?)!!.setSupportActionBar(toolbar as MaterialToolbar?)
 //        toolbar.title = "Главная"
@@ -107,6 +112,22 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
             Category("00005", "Подвески"),
             Category("00006", "Часы"),
         )
+
+        Log.d("TAG", "onCreateView: ${sessionManager.fetchLogin()}")
+        Log.d("TAG", "onCreateView: ${sessionManager.fetchPassword()}")
+
+        val key = sessionManager.fetchKey()
+        val keyBase64 = Base64.decode(key, Base64.DEFAULT)
+        val encryptionKey = SecretKeySpec(keyBase64, "AES")
+        encryptionManager = EncryptionManager(encryptionKey)
+
+        val login = encryptionManager.decryptData(sessionManager.fetchLogin()!!)
+        val password = encryptionManager.decryptData(sessionManager.fetchPassword()!!)
+
+        Log.d("TAG", "onCreateView login: $login")
+        Log.d("TAG", "onCreateView password: $password")
+
+
 
         return binding.root
     }
