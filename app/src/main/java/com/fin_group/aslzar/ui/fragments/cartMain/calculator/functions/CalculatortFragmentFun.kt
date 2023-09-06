@@ -21,6 +21,7 @@ import com.fin_group.aslzar.models.AllTypePay
 import com.fin_group.aslzar.models.Installment
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.CalculatorFragment
 import com.fin_group.aslzar.util.formatNumber
+import okhttp3.internal.format
 
 fun CalculatorFragment.fetViews(binding: FragmentCalculatorBinding) {
 
@@ -38,26 +39,27 @@ fun CalculatorFragment.fetViews(binding: FragmentCalculatorBinding) {
     summa = binding.summa
     tvBonusForClient = binding.tvBonusForClient
     editBonus = binding.editBonus
-
     tvTable = binding.tvTable
     monthTable = binding.monthTable
     percentTable = binding.percentTable
-
-
+    tvSale = binding.tvSale
     getInstallment = listOf()
-
-
-
-
 }
 
 @SuppressLint("SetTextI18n")
 fun CalculatorFragment.calculator() {
+
+    val getTotalCart = Cart.getTotalPrice()
+    summa.text = format(getTotalCart.toString())
+
+    val getTotalWithSale = Cart.getTotalPriceWithSale()
+    tvSale.text = "${formatNumber(getTotalWithSale)} UZS"
+
     val allClientType = listOf(
         AllClientType(1, "Розничный", 0),
-        AllClientType(2, "Шарифов Тохир", 50),
-        AllClientType(3, "Шахобов Нуриддин", 100),
-        AllClientType(4, "Гафуров Сухроб", 200)
+        AllClientType(2, "Шарифов Тохир", 200000),
+        AllClientType(3, "Шахобов Нуриддин", 300000),
+        AllClientType(4, "Гафуров Сухроб", 400000)
     )
 
     val allTypePay = listOf(
@@ -78,8 +80,8 @@ fun CalculatorFragment.calculator() {
         val selectClientTypeId = selectClientType.id
 
         if (selectClientTypeId == 1) {
-            val selectedClientBonus = "${selectClientType.bonus} UZS"
-            tvBonusForClient.text = selectedClientBonus
+            val selectedClientBonus = selectClientType.bonus
+            tvBonusForClient.text = "${formatNumber(selectedClientBonus)} UZS"
 
             checkboxForBonus.visibility = View.GONE
             bonus.visibility = View.GONE
@@ -122,7 +124,7 @@ fun CalculatorFragment.calculator() {
                     firstPayCalculator.editText?.addTextChangedListener {
                         val inputFirstPayCalculator = it.toString()
                         if (inputFirstPayCalculator.isNotEmpty()) {
-                            firstPay.text = "$inputFirstPayCalculator UZS"
+                            firstPay.text = "${formatNumber(inputFirstPayCalculator.toDouble())}  UZS"
                         } else {
                             firstPay.text = "0 UZS"
                         }
@@ -131,8 +133,8 @@ fun CalculatorFragment.calculator() {
             }
         } else {
 
-            val selectedClientBonus = "${selectClientType.bonus} UZS"
-            tvBonusForClient.text = selectedClientBonus
+            val selectedClientBonus = selectClientType.bonus
+            tvBonusForClient.text = "${formatNumber(selectedClientBonus)} UZS"
 
             bonus.editText?.setText("")
             editBonus.keyListener = null
@@ -173,7 +175,7 @@ fun CalculatorFragment.calculator() {
                     bonus.editText?.addTextChangedListener {
                         val inputBonus = it.toString()
                         if (inputBonus.isNotEmpty()) {
-                            payWithBonus.text = "$inputBonus UZS"
+                            payWithBonus.text = "${formatNumber(inputBonus.toDouble())} UZS"
                         } else {
                             payWithBonus.text = "0 UZS"
                         }
@@ -202,7 +204,7 @@ fun CalculatorFragment.calculator() {
                     bonus.editText?.addTextChangedListener {
                         val inputBonus = it.toString()
                         if (inputBonus.isNotEmpty()) {
-                            payWithBonus.text = "$inputBonus UZS"
+                            payWithBonus.text = "${formatNumber(inputBonus.toDouble())} UZS"
                         } else {
                             payWithBonus.text = "0 UZS"
                         }
@@ -221,7 +223,7 @@ fun CalculatorFragment.calculator() {
                     firstPayCalculator.editText?.addTextChangedListener {
                         val inputFirstPay = it.toString()
                         if (inputFirstPay.isNotEmpty()) {
-                            firstPay.text = "$inputFirstPay UZS"
+                            firstPay.text = "${formatNumber(inputFirstPay.toDouble())} UZS"
                         } else {
                             firstPay.text = "0 UZS"
                         }
@@ -238,19 +240,18 @@ fun CalculatorFragment.calculator() {
 fun CalculatorFragment.createTable() {
 
     val totalCart = Cart.getTotalPrice()
-    Log.d("TAG", "Счет а карзини Сухроб: $totalCart")
+    val getTotalWithSale = Cart.getTotalPriceWithSale()
+    tvSale.text = "${formatNumber(getTotalWithSale)} UZS"
 
     getInstallment = listOf(
-        Installment("2", 5),
-//        Installment("3", 30),
-        Installment("4", 10),
-//        Installment("5", 50),
-        Installment("6", 15),
-//        Installment("7", 70),
-        Installment("8", 25),
-        Installment("10", 31),
-        Installment("12", 42),
-//        Installment("9", 90)
+        Installment("2", 20),
+        Installment("3", 30),
+        Installment("4", 40),
+        Installment("5", 50),
+        Installment("6", 60),
+        Installment("7", 70),
+        Installment("8", 80),
+        Installment("9", 90)
     )
 
     val styleTextColor = ContextCompat.getColor(requireContext(), R.color.text_color_1)
@@ -278,47 +279,46 @@ fun CalculatorFragment.createTable() {
 
         //Расчет без первоначльного взноса
         val getMonth = getInstallment[i].month
-        Log.d("TAG", "Гирифтани мох аз DataClass: $getMonth")
-
         val getPercent = getInstallment[i].percent
-        Log.d("TAG", "Гирифтани процент аз DataClass: $getPercent")
-
-        val getPercentFromTotalCart = (totalCart.toInt() * getPercent.toInt()) / 100
-        Log.d("TAG", "Гирифтани процент аз счети сухроб: $getPercentFromTotalCart")
-
-        val plusPercent = totalCart.toInt() + getPercentFromTotalCart
-        Log.d("TAG", "Чамъ кадани процент ба счети Сухроб: $plusPercent")
-
-        val tablePercent : Double = plusPercent.toDouble() / getMonth.toInt()
-        Log.d("TAG", "Месячный платеж: $tablePercent")
-
+        val getPercentFromTotalCart = (totalCart.toDouble() * getPercent.toDouble()) / 100
+        val plusPercent = totalCart.toDouble() + getPercentFromTotalCart
+        val tablePercent = plusPercent / getMonth.toInt()
 
         // Create pay table
         val amountTextView = TextView(requireContext()).apply {
             layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
-            val a = getInstallment[i].percent.toString()
+            getInstallment[i].percent.toString()
 
             // Расчет с первональным взносом
+            checkBox.setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked) {
+                    tvFirstPayCalculator.inputType = InputType.TYPE_CLASS_NUMBER
+
+                } else {
+                    firstPayCalculator.visibility = View.GONE
+                    firstPayCalculator.editText?.setText("")
+                    tvFirstPayCalculator.keyListener = null
+                    summa.text = "${formatNumber(totalCart)} UZS"
+                    text = formatNumber(tablePercent)
+
+                }
+            }
+
             firstPayCalculator.editText?.addTextChangedListener {
                 val inputFirstPay = it.toString()
                 if (inputFirstPay.isNotEmpty()) {
-
                     val getFirstPay = inputFirstPay
-                    Log.d("TAG", "Первоначальный взнос: $getFirstPay")
-
-                    val minusFirstPay = totalCart.toInt() - getFirstPay.toInt()
-                    Log.d("TAG", "Минус первоначальный взнос: $minusFirstPay")
-
+                    val getTotalCart = totalCart.toDouble() - getFirstPay.toDouble()
+                    summa.text = "${formatNumber(getTotalCart)} UZS"
+                    val minusFirstPay = totalCart.toDouble() - getFirstPay.toDouble()
                     val getPercentFromTotalCart = (minusFirstPay * getPercent.toInt()) / 100
-                    Log.d("TAG", "Гирифтани процент аз счети сухроб: $getPercentFromTotalCart")
-
                     val plusPercent = minusFirstPay + getPercentFromTotalCart
-                    Log.d("TAG", "Чамъ кадани процент ба счети Сухроб: $plusPercent")
-                    val tablePercentWithFirstPay : Double = plusPercent.toDouble() / getMonth.toInt()
-                    Log.d("TAG", "Месячный платеж с первоначальный взносом: $tablePercentWithFirstPay")
+                    val tablePercentWithFirstPay = plusPercent / getMonth.toInt()
                     text = formatNumber(tablePercentWithFirstPay)
-                }else {
-                    firstPay.text = "0 UZS"
+
+                }else{
+                    summa.text = "${formatNumber(totalCart)} UZS"
+                    text = formatNumber(tablePercent)
                 }
             }
 
@@ -327,52 +327,41 @@ fun CalculatorFragment.createTable() {
                 val inputBonus = it.toString()
                 if (inputBonus.isNotEmpty()) {
                     val getPayWithBonus = inputBonus
-                    Log.d("TAG", "Бонус: $getPayWithBonus")
-
-                    val minusBonus = totalCart.toInt() - getPayWithBonus.toInt()
-                    Log.d("TAG", "Минус с учетом бонус: $minusBonus")
-
+                    val getTotalCart = totalCart.toDouble() - getPayWithBonus.toDouble()
+                    summa.text = "${formatNumber(getTotalCart)} UZS"
+                    val minusBonus = totalCart.toDouble() - getPayWithBonus.toDouble()
                     val getPercentFromTotalCart = (minusBonus * getPercent.toInt()) / 100
-                    Log.d("TAG", "Гирифтани процент аз счети сухроб: $getPercentFromTotalCart")
-
                     val plusPercent = minusBonus + getPercentFromTotalCart
-                    Log.d("TAG", "Чамъ кадани процент ба счети Сухроб: $plusPercent")
-
-                    val tablePercentWithFirstPay : Double = plusPercent.toDouble() / getMonth.toInt()
-                    Log.d("TAG", "Месячный платеж с бонусом: $tablePercentWithFirstPay")
+                    val tablePercentWithFirstPay = plusPercent / getMonth.toInt()
                     text = formatNumber(tablePercentWithFirstPay)
-
+                    payWithBonus.text = "${formatNumber(getPayWithBonus.toDouble())} UZS"
                 } else {
                     payWithBonus.text = "0 UZS"
+                    summa.text = "${formatNumber(totalCart)} UZS"
                 }
             }
 
             //Расчет с учетом бонуса и первоначального взноса
-
             bonus.editText?.addTextChangedListener {
                 val inputBonus = it.toString()
                 if (inputBonus.isNotEmpty()) {
-
                     firstPayCalculator.editText?.addTextChangedListener {
                         val inputFirstPay = it.toString()
                         if (inputFirstPay.isNotEmpty()) {
-
-                            val total = inputBonus.toInt() + inputFirstPay.toInt()
-                            Log.d("Tag", "Сумма бонуса и первоначального взноса $total")
-
-                            val totalWithOutBonusAndFirstPay = totalCart.toInt() - total
-                            Log.d("Tag", "Минус от каорзини Сухроба: $totalWithOutBonusAndFirstPay")
-
+                            val getSummaTotalCart = inputBonus.toDouble() + inputFirstPay.toDouble()
+                            val getTotalCart = totalCart.toDouble() - getSummaTotalCart
+                            summa.text = "${formatNumber(getTotalCart)} UZS"
+                            val total = inputBonus.toDouble() + inputFirstPay.toDouble()
+                            val totalWithOutBonusAndFirstPay = totalCart.toDouble() - total
                             val getPercentFromTotalCart = (totalWithOutBonusAndFirstPay * getPercent.toInt()) / 100
-                            Log.d("TAG", "Гирифтани процент аз счети сухроб: $getPercentFromTotalCart")
-
                             val plusPercent = totalWithOutBonusAndFirstPay + getPercentFromTotalCart
-                            Log.d("TAG", "Чамъ кадани процент ба счети Сухроб: $plusPercent")
-
-                            val tablePercentWithFirstPay : Double = plusPercent.toDouble() / getMonth.toInt()
-                            Log.d("TAG", "Месячный платеж с бонусом: $tablePercentWithFirstPay")
+                            val tablePercentWithFirstPay = plusPercent / getMonth.toInt()
                             text = formatNumber(tablePercentWithFirstPay)
 
+                        }else{
+                            tvSale.text = "0 UZS"
+                            firstPay.text = "0 UZS"
+                            summa.text = "${formatNumber(totalCart)} UZS"
                         }
                     }
                 }

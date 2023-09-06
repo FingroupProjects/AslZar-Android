@@ -38,8 +38,8 @@ class CalculatorFragment : Fragment() {
     lateinit var tvFirstPayCalculator: TextInputEditText
     lateinit var summa: TextView
     lateinit var tvBonusForClient: TextView
+    lateinit var tvSale: TextView
     lateinit var editBonus: TextInputEditText
-
     lateinit var getInstallment: List<Installment>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
