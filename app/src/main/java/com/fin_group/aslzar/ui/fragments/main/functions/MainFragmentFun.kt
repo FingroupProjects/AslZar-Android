@@ -5,11 +5,13 @@ package com.fin_group.aslzar.ui.fragments.main.functions
 import android.util.Log
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentMainBinding
 import com.fin_group.aslzar.models.ProductInCart
+import com.fin_group.aslzar.response.GetAllProductsResponse
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.ui.dialogs.CheckCategoryFragmentDialog
 import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
@@ -17,6 +19,9 @@ import com.fin_group.aslzar.ui.dialogs.WarningNoHaveProductFragmentDialog
 import com.fin_group.aslzar.ui.fragments.main.MainFragment
 import com.fin_group.aslzar.util.CategoryClickListener
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 fun MainFragment.callCategoryDialog(listener: CategoryClickListener) {
     val categoryDialog = CheckCategoryFragmentDialog()
@@ -157,4 +162,29 @@ fun MainFragment.filterProducts() {
         }
     }
     myAdapter.updateProducts(filteredProducts)
+}
+
+fun MainFragment.getAllProducts(){
+    val call = apiService.getApiService().getAllProducts("Bearer ${sessionManager.fetchToken()}")
+    call.enqueue(object : Callback<GetAllProductsResponse?> {
+        override fun onResponse(
+            call: Call<GetAllProductsResponse?>,
+            response: Response<GetAllProductsResponse?>
+        ) {
+            if (response.isSuccessful){
+                val getAllProducts = response.body()
+                if (getAllProducts?.result != null){
+                    Toast.makeText(requireContext(), "Работает", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(requireContext(), "Произошла ошибка", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Log.d("TAG", "onResponse if un success: ${response.raw()}")
+            }
+        }
+
+        override fun onFailure(call: Call<GetAllProductsResponse?>, t: Throwable) {
+            Log.d("TAG", "onFailure: ${t.message}")
+        }
+    })
 }

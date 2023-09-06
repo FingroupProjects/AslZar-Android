@@ -24,6 +24,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.ProductsAdapter
+import com.fin_group.aslzar.api.ApiClient
+import com.fin_group.aslzar.api.ApiService
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.cipher.EncryptionManager
 import com.fin_group.aslzar.databinding.FragmentMainBinding
@@ -38,6 +40,7 @@ import com.fin_group.aslzar.ui.fragments.main.functions.callInStockDialog
 import com.fin_group.aslzar.ui.fragments.main.functions.callOutStock
 import com.fin_group.aslzar.ui.fragments.main.functions.filterFun
 import com.fin_group.aslzar.ui.fragments.main.functions.filterProducts
+import com.fin_group.aslzar.ui.fragments.main.functions.getAllProducts
 import com.fin_group.aslzar.ui.fragments.main.functions.savingAndFetchingCategory
 import com.fin_group.aslzar.ui.fragments.main.functions.searchViewFun
 import com.fin_group.aslzar.ui.fragments.main.functions.updateBadge
@@ -80,6 +83,8 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
     lateinit var badgeManager: BadgeManager
 
     lateinit var sessionManager: SessionManager
+    lateinit var apiService: ApiClient
+
     lateinit var encryptionManager: EncryptionManager
 
 
@@ -90,6 +95,10 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
         preferences = context?.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)!!
         sessionManager = SessionManager(requireContext())
+        apiService = ApiClient()
+        apiService.init(sessionManager, binding.root)
+
+        getAllProducts()
 //        toolbar = binding.toolbar
 //        (activity as AppCompatActivity?)!!.setSupportActionBar(toolbar as MaterialToolbar?)
 //        toolbar.title = "Главная"
@@ -113,9 +122,9 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
             Category("00006", "Часы"),
         )
 
-        Log.d("TAG", "onCreateView: ${sessionManager.fetchLogin()}")
-        Log.d("TAG", "onCreateView: ${sessionManager.fetchPassword()}")
-
+//        Log.d("TAG", "onCreateView: ${sessionManager.fetchLogin()}")
+//        Log.d("TAG", "onCreateView: ${sessionManager.fetchPassword()}")
+//
         val key = sessionManager.fetchKey()
         val keyBase64 = Base64.decode(key, Base64.DEFAULT)
         val encryptionKey = SecretKeySpec(keyBase64, "AES")
@@ -124,10 +133,8 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         val login = encryptionManager.decryptData(sessionManager.fetchLogin()!!)
         val password = encryptionManager.decryptData(sessionManager.fetchPassword()!!)
 
-        Log.d("TAG", "onCreateView login: $login")
-        Log.d("TAG", "onCreateView password: $password")
-
-
+        val token = sessionManager.fetchToken()
+        Log.d("TAG", "onCreateView token: $token")
 
         return binding.root
     }

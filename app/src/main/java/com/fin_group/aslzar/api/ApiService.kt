@@ -21,7 +21,6 @@ interface ApiService {
     fun userLogin(): Call<Auth>
 
     @GET(Constants.GET_ALL_PRODUCTS)
-    @Headers("Accept:application/json", "Content-Type:application/json")
     fun getAllProducts(@Header("Authorization") token: String): Call<GetAllProductsResponse>
 
     @GET(Constants.GET_PRODUCT_BY_ID)
@@ -47,6 +46,5 @@ interface ApiService {
     @GET(Constants.GET_SALES_PLAN)
     @Headers("Accept:application/json", "Content-Type:application/json")
     fun getSalesPlan(@Header("Authorization") token: String): Call<SalesPlanResponse>
-
 
 }

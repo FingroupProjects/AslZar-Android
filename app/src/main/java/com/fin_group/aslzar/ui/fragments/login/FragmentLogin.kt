@@ -28,6 +28,7 @@ import android.view.View.VISIBLE
 import android.widget.ProgressBar
 import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.response.Auth
+import com.fin_group.aslzar.response.GetAllProductsResponse
 import com.fin_group.aslzar.util.FunCallback
 import com.fin_group.aslzar.util.SessionManager.Companion.IS_LOGGED_IN_KEY
 import com.fin_group.aslzar.util.SessionManager.Companion.PREFS_KEY
@@ -69,7 +70,7 @@ class FragmentLogin : Fragment() {
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
         sessionManager = SessionManager(requireContext())
         sessionManager = SessionManager(requireContext())
-        api = ApiClient
+        api = ApiClient()
         api.init(sessionManager, binding.root)
 
         sharedPreferences = requireActivity().getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE)
@@ -79,6 +80,13 @@ class FragmentLogin : Fragment() {
         passwordEt = binding.editPassword
         progressBar = binding.progressBar2
 
+        val secureRandom = SecureRandom()
+        val keyBytes = ByteArray(32)
+        secureRandom.nextBytes(keyBytes)
+        val encryptionKey = SecretKeySpec(keyBytes, "AES")
+        val savingKey = Base64.encodeToString(encryptionKey.encoded, Base64.DEFAULT)
+
+        encryptionManager = EncryptionManager(encryptionKey)
 
         binding.btnLogin.setOnClickListener {
             val login = loginEt.text.toString().trim()
@@ -98,6 +106,36 @@ class FragmentLogin : Fragment() {
 
             progressBar.visibility = VISIBLE
 
+//            val call = api.getApiServiceLogin(login, password).getAllProducts("Bearer ${sessionManager.fetchToken()}")
+//            call.enqueue(object : Callback<GetAllProductsResponse?> {
+//                override fun onResponse(
+//                    call: Call<GetAllProductsResponse?>,
+//                    response: Response<GetAllProductsResponse?>
+//                ) {
+//                    Log.d("TAG", "onResponse before if: ${response.body()}")
+//                    Log.d("TAG", "onResponse before if: ${response.code()}")
+//                    if (response.isSuccessful){
+//                        val getAllProducts = response.body()
+//                        if (getAllProducts?.result != null){
+//                            Toast.makeText(requireContext(), "Working", Toast.LENGTH_SHORT).show()
+//                            Log.d("TAG", "onResponse if success and notnull: ${response.body()}")
+//                            Log.d("TAG", "onResponse if success and notnull: ${response.code()}")
+//                        } else {
+//                            Log.d("TAG", "onResponse if success and null: ${response.body()}")
+//                            Log.d("TAG", "onResponse if success and null: ${response.code()}")
+//                            Log.d("TAG", "onResponse if success and null: ${response.headers()}")
+//                        }
+//                    } else {
+//                        Log.d("TAG", "onResponse if un success: ${response.body()}")
+//                        Log.d("TAG", "onResponse if un success: ${response.code()}")
+//                    }
+//                }
+//
+//                override fun onFailure(call: Call<GetAllProductsResponse?>, t: Throwable) {
+//                    Log.d("TAG", "onFailure: ${t.message}")
+//                }
+//            })
+
             val call = api.getApiServiceLogin(login, password).userLogin()
             call.enqueue(object : Callback<Auth?> {
                 override fun onResponse(call: Call<Auth?>, response: Response<Auth?>) {
@@ -105,16 +143,9 @@ class FragmentLogin : Fragment() {
                         if (response.isSuccessful){
                             val loginResponse = response.body()
                             if (loginResponse?.result != null){
-                                val secureRandom = SecureRandom()
-                                val keyBytes = ByteArray(32)
-                                secureRandom.nextBytes(keyBytes)
-                                val encryptionKey = SecretKeySpec(keyBytes, "AES")
-                                val savingKey = Base64.encodeToString(encryptionKey.encoded, Base64.DEFAULT)
-
-                                encryptionManager = EncryptionManager(encryptionKey)
-
                                 val encryptedLogin = encryptionManager.encryptData(login)
                                 val encryptedPassword = encryptionManager.encryptData(password)
+                                sessionManager.saveKey(savingKey)
 
                                 val editor: SharedPreferences.Editor = sharedPreferences.edit()
                                 editor.putBoolean(IS_LOGGED_IN_KEY, true)
@@ -122,7 +153,6 @@ class FragmentLogin : Fragment() {
 
                                 sessionManager.saveLogin(encryptedLogin)
                                 sessionManager.savePassword(encryptedPassword)
-                                sessionManager.saveKey(savingKey)
                                 sessionManager.saveToken(loginResponse.access_token)
                                 sessionManager.saveUserLocation(loginResponse.result.location)
                                 sessionManager.saveName(loginResponse.result.fio)
@@ -144,9 +174,6 @@ class FragmentLogin : Fragment() {
                             } else {
                                 progressBar.visibility = View.GONE
                                 Toast.makeText(requireContext(), "Ошибка при входе", Toast.LENGTH_SHORT).show()
-                                api.clearPassLogin()
-                            }
-                            if (sessionManager.isLoginAndPasswordSaved()) {
                                 api.clearPassLogin()
                             }
                             progressBar.visibility = View.GONE

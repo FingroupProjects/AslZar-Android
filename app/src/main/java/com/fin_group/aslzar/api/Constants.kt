@@ -2,6 +2,8 @@ package com.fin_group.aslzar.api
 
 object Constants {
     const val BASE_URL = "http://192.168.1.10:8080/AslZar/hs/Data/"
+    const val BASE_URL2 = "http://fingroup.taskpro.tj/tasks/public/api/"
+
 
     //profile
     const val LOGIN = "Auth"
