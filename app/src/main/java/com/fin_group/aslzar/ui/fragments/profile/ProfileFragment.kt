@@ -8,11 +8,17 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import com.fin_group.aslzar.R
+import com.fin_group.aslzar.api.ApiClient
+import com.fin_group.aslzar.api.ApiService
 import com.fin_group.aslzar.databinding.FragmentProfileBinding
+import com.fin_group.aslzar.response.SalesPlan
 import com.fin_group.aslzar.ui.dialogs.SignOutProfileFragmentDialog
+import com.fin_group.aslzar.ui.fragments.profile.functions.getSalesPlan
 import com.fin_group.aslzar.ui.fragments.profile.functions.goToChangePasswordDialog
 import com.fin_group.aslzar.ui.fragments.profile.functions.speedometerView
+import com.fin_group.aslzar.util.SessionManager
 import com.fin_group.aslzar.util.hideBottomNav
 import com.fin_group.aslzar.util.showBottomNav
 import com.github.anastr.speedviewlib.Speedometer
@@ -24,6 +30,12 @@ class ProfileFragment : Fragment() {
     private val binding get() = _binding!!
 
     lateinit var speedometer: Speedometer
+    var salesPlanNumber: Number? = 0
+
+    lateinit var progressBar: ProgressBar
+
+    lateinit var apiService: ApiClient
+    lateinit var sessionManager: SessionManager
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,10 +43,17 @@ class ProfileFragment : Fragment() {
     ): View {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
         speedometer = binding.speedView
+        progressBar = binding.progressBar5
         setHasOptionsMenu(true)
-        val asd: Number = 6.8
+        sessionManager = SessionManager(requireContext())
+        apiService = ApiClient()
+        apiService.init(sessionManager, binding.root)
 
-        speedometerView(asd.toFloat())
+        getSalesPlan()
+
+        val asd: Number? = salesPlanNumber
+
+        speedometerView(asd!!.toFloat())
         binding.btnChangePassword.setOnClickListener {
             goToChangePasswordDialog()
         }

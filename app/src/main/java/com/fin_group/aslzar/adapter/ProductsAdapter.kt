@@ -70,8 +70,6 @@ class ProductsAdapter(
                 saleTv.text = "-${formatNumber(product.sale)}%"
                 saleTv.visibility = VISIBLE
             }
-            Log.d("TAG", "bind: ${product.sale}")
-            Log.d("TAG", "bind: ${formatNumber(product.sale)}")
 
             if (product.counts.isEmpty()){
                 btnCheckingInStock.setImageResource(R.drawable.ic_clear_white)

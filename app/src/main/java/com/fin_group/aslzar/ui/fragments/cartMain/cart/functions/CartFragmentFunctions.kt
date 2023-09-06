@@ -6,12 +6,14 @@ import android.util.Log
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.ProductInCartAdapter
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentCartBinding
 import com.fin_group.aslzar.models.ProductInCart
 import com.fin_group.aslzar.ui.dialogs.DeleteAllProductFromCartFragmentDialog
 import com.fin_group.aslzar.ui.fragments.cartMain.cart.CartFragment
+import com.fin_group.aslzar.ui.fragments.main.MainFragment
 import com.fin_group.aslzar.util.CartObserver
 import com.fin_group.aslzar.util.formatNumber
 import com.google.android.material.snackbar.Snackbar
@@ -67,15 +69,28 @@ fun CartFragment.fetchItemTouchHelper(){
             allProducts = Cart.getAllProducts()
             myAdapter.updateList(allProducts)
             Cart.notifyObservers()
+            updateBadge()
+
 
             val snackBar = Snackbar.make(requireView(), "Товар удален", Snackbar.LENGTH_LONG)
             snackBar.setAction("Отменить") {
                 Cart.addProduct(productToRemove, requireContext())
                 allProducts = Cart.getAllProducts()
                 myAdapter.updateList(allProducts)
+                updateBadge()
                 Cart.notifyObservers()
             }
             snackBar.show()
+            updateBadge()
         }
     }
+}
+
+fun CartFragment.updateBadge(){
+    val uniqueProductTypes = Cart.getUniqueProductTypesCount()
+    badgeManager.saveBadgeCount(uniqueProductTypes)
+
+    val badge = bottomNavigationView.getOrCreateBadge(R.id.mainCartFragment)
+    badge.isVisible = uniqueProductTypes > 0
+    badge.number = uniqueProductTypes
 }

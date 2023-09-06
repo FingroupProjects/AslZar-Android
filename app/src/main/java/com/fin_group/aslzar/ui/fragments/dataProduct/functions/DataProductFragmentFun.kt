@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL
 import com.bumptech.glide.Glide
 import com.fin_group.aslzar.R
+import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentDataProductBinding
 import com.fin_group.aslzar.models.ImageDataModel
 import com.fin_group.aslzar.models.ImageDataModel2
@@ -128,7 +129,7 @@ fun DataProductFragment.someImagesProduct() {
     productSomeImagesAdapter.updateList(imageList)
 }
 
-fun  DataProductFragment.likeProducts(){
+fun DataProductFragment.likeProducts(){
     val inStockList = listOf(
         InStock("Магазин 1", "Витрина 3", 8, 0),
         InStock("Магазин 2", "Витрина 8", 8, 0),
@@ -209,5 +210,19 @@ fun DataProductFragment.setDataProduct(product: Product, binding: FragmentDataPr
         dpMetal.text = product.metal
         dpWeight.text = product.weight
         dpSize.text = product.size
+
+        btnAddToCart.setOnClickListener {
+            sharedViewModel.onProductAddedToCart(product, requireContext())
+
+            val addedProduct = Cart.getProductById(product.id)
+            if (addedProduct != null){
+                Toast.makeText(requireContext(), "Количество товара увеличено на +1", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(requireContext(), "Товар добавлен в корзину", Toast.LENGTH_SHORT).show()
+            }
+
+        }
     }
+
+
 }

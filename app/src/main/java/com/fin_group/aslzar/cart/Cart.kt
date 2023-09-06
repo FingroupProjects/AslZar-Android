@@ -8,7 +8,7 @@ import com.google.gson.Gson
 
 object Cart {
     private val products: MutableList<ProductInCart> = mutableListOf()
-    private const val PREFS_NAME = "my_app_prefs"
+    private const val PREFS_NAME = "my_cart_prefs"
     private const val CART_KEY = "cart"
     private val observers = mutableListOf<CartObserver>()
 

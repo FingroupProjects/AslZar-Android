@@ -1,6 +1,8 @@
 package com.fin_group.aslzar.ui.fragments.login
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -17,10 +19,22 @@ import com.fin_group.aslzar.cipher.EncryptionManager
 import com.fin_group.aslzar.cipher.KeystoreManager
 import com.fin_group.aslzar.databinding.FragmentLoginBinding
 import com.fin_group.aslzar.ui.activities.MainActivity
+import com.fin_group.aslzar.util.SessionManager
 import com.google.android.material.textfield.TextInputEditText
 import java.security.SecureRandom
 import java.security.spec.KeySpec
-import java.util.Base64
+import android.util.Base64
+import android.view.View.VISIBLE
+import android.widget.ProgressBar
+import com.fin_group.aslzar.api.ApiClient
+import com.fin_group.aslzar.response.Auth
+import com.fin_group.aslzar.response.GetAllProductsResponse
+import com.fin_group.aslzar.util.FunCallback
+import com.fin_group.aslzar.util.SessionManager.Companion.IS_LOGGED_IN_KEY
+import com.fin_group.aslzar.util.SessionManager.Companion.PREFS_KEY
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
@@ -37,60 +51,144 @@ class FragmentLogin : Fragment() {
     lateinit var loginEt: TextInputEditText
     lateinit var passwordEt: TextInputEditText
 
+    lateinit var progressBar: ProgressBar
+
     private lateinit var keystoreManager: KeystoreManager
     private lateinit var encryptionManager: EncryptionManager
+
+    private lateinit var sessionManager: SessionManager
+
+    lateinit var api: ApiClient
+    lateinit var sharedPreferences: SharedPreferences
+
+    private var isLoggedIn = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
+        sessionManager = SessionManager(requireContext())
+        sessionManager = SessionManager(requireContext())
+        api = ApiClient()
+        api.init(sessionManager, binding.root)
+
+        sharedPreferences = requireActivity().getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE)
+        isLoggedIn = sharedPreferences.getBoolean(IS_LOGGED_IN_KEY, false)
+
         loginEt = binding.editLogin
         passwordEt = binding.editPassword
+        progressBar = binding.progressBar2
+
+        val secureRandom = SecureRandom()
+        val keyBytes = ByteArray(32)
+        secureRandom.nextBytes(keyBytes)
+        val encryptionKey = SecretKeySpec(keyBytes, "AES")
+        val savingKey = Base64.encodeToString(encryptionKey.encoded, Base64.DEFAULT)
+
+        encryptionManager = EncryptionManager(encryptionKey)
 
         binding.btnLogin.setOnClickListener {
             val login = loginEt.text.toString().trim()
             val password = passwordEt.text.toString().trim()
 
-//            if (login.isEmpty()) {
-//                loginEt.error = "Введите имя пользователя"
-//                loginEt.requestFocus()
-//                return@setOnClickListener
-//            }
-//
-//            if (password.isEmpty()) {
-//                passwordEt.error = "Введите пароль"
-//                passwordEt.requestFocus()
-//                return@setOnClickListener
-//            }
-//
-//            val secureRandom = SecureRandom()
-//            val keyBytes = ByteArray(32) // 256 битовый ключ
-//            secureRandom.nextBytes(keyBytes)
-//
-//            val encryptionKey = SecretKeySpec(keyBytes, "AES")
-//
-//            encryptionManager = EncryptionManager(encryptionKey)
-//
-//            val encryptedLogin = encryptionManager.encryptData(login)
-//            val decryptedLogin = encryptionManager.decryptData(encryptedLogin)
-//
-//            val encryptedPassword = encryptionManager.encryptData(password)
-//            val decryptedPassword = encryptionManager.decryptData(encryptedPassword)
-//
-//            Log.d("TAG", "onCreateView: Original Login: $login")
-//            Log.d("TAG", "onCreateView: Encrypted Login: $encryptedLogin")
-//            Log.d("TAG", "onCreateView: Decrypted Login: $decryptedLogin")
-//
-//            Log.d("TAG", "onCreateView: Original Password: $password")
-//            Log.d("TAG", "onCreateView: Encrypted Password: $encryptedPassword")
-//            Log.d("TAG", "onCreateView: Decrypted Password: $decryptedPassword")
-//
-//            Log.d("TAG", "onCreateView: key $encryptionKey")
+            if (login.isEmpty()) {
+                loginEt.error = "Введите имя пользователя"
+                loginEt.requestFocus()
+                return@setOnClickListener
+            }
 
-            val i = Intent(requireActivity(), MainActivity::class.java)
-            startActivity(i)
-            requireActivity().finish()
+            if (password.isEmpty()) {
+                passwordEt.error = "Введите пароль"
+                passwordEt.requestFocus()
+                return@setOnClickListener
+            }
+
+            progressBar.visibility = VISIBLE
+
+//            val call = api.getApiServiceLogin(login, password).getAllProducts("Bearer ${sessionManager.fetchToken()}")
+//            call.enqueue(object : Callback<GetAllProductsResponse?> {
+//                override fun onResponse(
+//                    call: Call<GetAllProductsResponse?>,
+//                    response: Response<GetAllProductsResponse?>
+//                ) {
+//                    Log.d("TAG", "onResponse before if: ${response.body()}")
+//                    Log.d("TAG", "onResponse before if: ${response.code()}")
+//                    if (response.isSuccessful){
+//                        val getAllProducts = response.body()
+//                        if (getAllProducts?.result != null){
+//                            Toast.makeText(requireContext(), "Working", Toast.LENGTH_SHORT).show()
+//                            Log.d("TAG", "onResponse if success and notnull: ${response.body()}")
+//                            Log.d("TAG", "onResponse if success and notnull: ${response.code()}")
+//                        } else {
+//                            Log.d("TAG", "onResponse if success and null: ${response.body()}")
+//                            Log.d("TAG", "onResponse if success and null: ${response.code()}")
+//                            Log.d("TAG", "onResponse if success and null: ${response.headers()}")
+//                        }
+//                    } else {
+//                        Log.d("TAG", "onResponse if un success: ${response.body()}")
+//                        Log.d("TAG", "onResponse if un success: ${response.code()}")
+//                    }
+//                }
+//
+//                override fun onFailure(call: Call<GetAllProductsResponse?>, t: Throwable) {
+//                    Log.d("TAG", "onFailure: ${t.message}")
+//                }
+//            })
+
+            val call = api.getApiServiceLogin(login, password).userLogin()
+            call.enqueue(object : Callback<Auth?> {
+                override fun onResponse(call: Call<Auth?>, response: Response<Auth?>) {
+                    try {
+                        if (response.isSuccessful){
+                            val loginResponse = response.body()
+                            if (loginResponse?.result != null){
+                                val encryptedLogin = encryptionManager.encryptData(login)
+                                val encryptedPassword = encryptionManager.encryptData(password)
+                                sessionManager.saveKey(savingKey)
+
+                                val editor: SharedPreferences.Editor = sharedPreferences.edit()
+                                editor.putBoolean(IS_LOGGED_IN_KEY, true)
+                                editor.apply()
+
+                                sessionManager.saveLogin(encryptedLogin)
+                                sessionManager.savePassword(encryptedPassword)
+                                sessionManager.saveToken(loginResponse.access_token)
+                                sessionManager.saveUserLocation(loginResponse.result.location)
+                                sessionManager.saveName(loginResponse.result.fio)
+                                progressBar.visibility = VISIBLE
+
+                                Toast.makeText(requireContext(), "Добро пожаловать ${loginResponse.result.fio}!", Toast.LENGTH_SHORT).show()
+
+                                val i = Intent(requireContext(), MainActivity::class.java)
+                                startActivity(i)
+                                requireActivity().finish()
+                            }
+                        } else {
+                            if (response.code() == 401) {
+                                binding.progressBar2.visibility = View.GONE
+                                Toast.makeText(requireContext(),"Логин или пароль введены неправильно!",Toast.LENGTH_SHORT).show()
+                                api.clearPassLogin()
+                                loginEt.setText("")
+                                passwordEt.setText("")
+                            } else {
+                                progressBar.visibility = View.GONE
+                                Toast.makeText(requireContext(), "Ошибка при входе", Toast.LENGTH_SHORT).show()
+                                api.clearPassLogin()
+                            }
+                            progressBar.visibility = View.GONE
+                        }
+                    }catch (e: Exception){
+                        progressBar.visibility = View.GONE
+                        e.printStackTrace()
+                        Log.d("TAG", "onResponse: ${e.message}")
+                    }
+                }
+
+                override fun onFailure(call: Call<Auth?>, t: Throwable) {
+                    Log.d("TAG", "onFailure: ${t.message}")
+                }
+            })
         }
 
         requireActivity().onBackPressedDispatcher.addCallback(
@@ -112,4 +210,18 @@ class FragmentLogin : Fragment() {
 
         return binding.root
     }
+
+    override fun onStart() {
+        super.onStart()
+        if (isLoggedIn) {
+            val i = Intent(requireActivity(), MainActivity::class.java)
+            startActivity(i)
+            requireActivity().finish()
+        }
+    }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
 }

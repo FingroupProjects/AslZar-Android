@@ -23,6 +23,7 @@ import com.fin_group.aslzar.adapter.ProductSomeImagesAdapter
 import com.fin_group.aslzar.databinding.FragmentDataProductBinding
 import com.fin_group.aslzar.models.ImageDataModel
 import com.fin_group.aslzar.models.ImageDataModel2
+import com.fin_group.aslzar.response.InStock
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.ui.dialogs.AlikeProductBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.callInStockDialog
@@ -73,7 +74,36 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentDataProductBinding.inflate(inflater, container, false)
-        product = args.product!!
+        if (args.product != null){
+            product = args.product!!
+        } else {
+            product = Product(
+                id = "000011",
+                full_name = "Кольцо золотое «Бабочка»",
+                name = "(1.4.1.1.336.3_17,5)",
+                price = 3005000,
+                category_id = "00001",
+                sale = 8.0,
+                color = "Золотой",
+                stone_type = "Бриллиант, изумруд",
+                metal = "Золото 18K",
+                content = "558",
+                size = "Стандартный",
+                weight = "10 г",
+                country_of_origin = "Франция",
+                provider = "Jewel Emporium",
+                counts = listOf(
+                    InStock("Центральный склад", "Москва", 15, 4),
+                    InStock("Региональный склад", "Санкт-Петербург", 10, 2)
+                ),
+                img = listOf(
+                    "http://convertolink.taskpro.tj/photoLink/public/storage/images/nGDDpEI7PUHSzhexPDFij3Iu2zcNr2J5AheI2iNO.png",
+                    "http://convertolink.taskpro.tj/photoLink/public/storage/images/dgXCKEY98znc61F5gknVWSTZjWlaHhTBMMYsqkUm.png",
+                    "http://convertolink.taskpro.tj/photoLink/public/storage/images/d4qhKaEwLFx9cxHBJp3lR29hPbo6oicCx1flCzFi.png",
+                    "http://convertolink.taskpro.tj/photoLink/public/storage/images/Ul5HXUtSBtMSkveAh3tyStBqQOM8d3jergkAol6B.png"
+                )
+            )
+        }
 //        toolbar = binding.toolbar
 //        (activity as AppCompatActivity?)!!.setSupportActionBar(toolbar as MaterialToolbar?)
 //        toolbar.title = "Данные товара"

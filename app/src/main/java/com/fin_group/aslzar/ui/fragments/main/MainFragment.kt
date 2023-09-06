@@ -2,7 +2,11 @@ package com.fin_group.aslzar.ui.fragments.main
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.preference.PreferenceManager
+import android.util.Base64
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.Menu
@@ -20,15 +24,15 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.ProductsAdapter
+import com.fin_group.aslzar.api.ApiClient
+import com.fin_group.aslzar.api.ApiService
 import com.fin_group.aslzar.cart.Cart
+import com.fin_group.aslzar.cipher.EncryptionManager
 import com.fin_group.aslzar.databinding.FragmentMainBinding
-import com.fin_group.aslzar.models.Category
-import com.fin_group.aslzar.models.ProductInCart
-import com.fin_group.aslzar.models.ProductV2
+import com.fin_group.aslzar.response.Category
 import com.fin_group.aslzar.response.InStock
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.ui.activities.MainActivity
-import com.fin_group.aslzar.ui.dialogs.CheckCategoryFragmentDialog
 import com.fin_group.aslzar.ui.fragments.main.functions.addProductToCart
 import com.fin_group.aslzar.util.CategoryClickListener
 import com.fin_group.aslzar.util.ProductOnClickListener
@@ -36,13 +40,17 @@ import com.fin_group.aslzar.ui.fragments.main.functions.callInStockDialog
 import com.fin_group.aslzar.ui.fragments.main.functions.callOutStock
 import com.fin_group.aslzar.ui.fragments.main.functions.filterFun
 import com.fin_group.aslzar.ui.fragments.main.functions.filterProducts
-import com.fin_group.aslzar.ui.fragments.main.functions.searchBarChecked
+import com.fin_group.aslzar.ui.fragments.main.functions.getAllProducts
+import com.fin_group.aslzar.ui.fragments.main.functions.savingAndFetchingCategory
 import com.fin_group.aslzar.ui.fragments.main.functions.searchViewFun
 import com.fin_group.aslzar.ui.fragments.main.functions.updateBadge
 import com.fin_group.aslzar.util.BadgeManager
+import com.fin_group.aslzar.util.SessionManager
 import com.fin_group.aslzar.viewmodel.SharedViewModel
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import okio.ByteString.Companion.decodeBase64
+import javax.crypto.spec.SecretKeySpec
 
 
 @Suppress("DEPRECATION")
@@ -55,6 +63,8 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
 
     lateinit var toolbar: MaterialToolbar
 
+    lateinit var preferences: SharedPreferences
+
     lateinit var viewSearch: ConstraintLayout
     var searchText: String = ""
     lateinit var searchView: SearchView
@@ -64,7 +74,7 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
     lateinit var myAdapter: ProductsAdapter
 
     lateinit var viewCheckedCategory: ConstraintLayout
-    private var allCategories: List<ProductV2> = emptyList()
+    var allCategories: List<Category> = emptyList()
     var selectCategory: Category? = null
 
     lateinit var mainActivity: MainActivity
@@ -72,18 +82,29 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
 
     lateinit var badgeManager: BadgeManager
 
+    lateinit var sessionManager: SessionManager
+    lateinit var apiService: ApiClient
+
+    lateinit var encryptionManager: EncryptionManager
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
+        preferences = context?.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)!!
+        sessionManager = SessionManager(requireContext())
+        apiService = ApiClient()
+        apiService.init(sessionManager, binding.root)
+
+        getAllProducts()
 //        toolbar = binding.toolbar
 //        (activity as AppCompatActivity?)!!.setSupportActionBar(toolbar as MaterialToolbar?)
 //        toolbar.title = "Главная"
         setHasOptionsMenu(true)
         viewSearch = binding.viewSearch
         viewCheckedCategory = binding.viewCheckedCategory
-//        bottomNavigationView = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView)
 
         binding.fabClearSearch.setOnClickListener {
             if (searchText != "") {
@@ -91,6 +112,29 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
             }
             viewSearch.visibility = GONE
         }
+        allCategories = listOf(
+            Category("all", "Все"),
+            Category("00001", "Кольца"),
+            Category("00002", "Серьги"),
+            Category("00003", "Ожерелья"),
+            Category("00004", "Браслеты"),
+            Category("00005", "Подвески"),
+            Category("00006", "Часы"),
+        )
+
+//        Log.d("TAG", "onCreateView: ${sessionManager.fetchLogin()}")
+//        Log.d("TAG", "onCreateView: ${sessionManager.fetchPassword()}")
+//
+        val key = sessionManager.fetchKey()
+        val keyBase64 = Base64.decode(key, Base64.DEFAULT)
+        val encryptionKey = SecretKeySpec(keyBase64, "AES")
+        encryptionManager = EncryptionManager(encryptionKey)
+
+        val login = encryptionManager.decryptData(sessionManager.fetchLogin()!!)
+        val password = encryptionManager.decryptData(sessionManager.fetchPassword()!!)
+
+        val token = sessionManager.fetchToken()
+        Log.d("TAG", "onCreateView token: $token")
 
         return binding.root
     }
@@ -99,23 +143,18 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         super.onViewCreated(view, savedInstanceState)
         searchView = binding.searchViewMain
 
-        mainActivity =
-            activity as? MainActivity ?: throw IllegalStateException("Activity is not MainActivity")
-//        bottomNavigationView = view.findViewById(R.id.bottomNavigationView)
-        //updateBadge()
+        mainActivity = activity as? MainActivity ?: throw IllegalStateException("Activity is not MainActivity")
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return true
             }
-
             override fun onQueryTextChange(newText: String?): Boolean {
                 searchText = newText.toString()
                 filterProducts()
                 return true
             }
         })
-
         allProducts = listOf(
             Product(
                 id = "00001",
@@ -328,7 +367,7 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
                 full_name = "Кольцо золотое «Бабочка»",
                 name = "(1.4.1.1.336.3_17,5)",
                 price = 3005000,
-                category_id = "00004",
+                category_id = "00001",
                 sale = 8.0,
                 color = "Золотой",
                 stone_type = "Бриллиант, изумруд",
@@ -353,6 +392,12 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         )
         fetchRV(allProducts)
 
+        val selectedCategoryId = preferences.getString("selectedCategory", "all")
+        selectCategory = allCategories.find { it.id == selectedCategoryId }
+    }
+
+    fun hideCategoryView() {
+        viewCheckedCategory.visibility = GONE
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -372,32 +417,16 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.search_item -> {
-                searchViewFun()
-            }
-
-            R.id.filter_item -> {
-                filterFun()
-            }
-
+            R.id.search_item -> {searchViewFun()}
+            R.id.filter_item -> {filterFun()}
             R.id.barcode_item -> {
                 val action = MainFragmentDirections.actionMainFragmentToBarCodeScannerFragment()
                 findNavController().navigate(action)
             }
-
-            R.id.profile_item -> {
-                findNavController().navigate(R.id.action_mainFragment_to_profileFragment)
-            }
+            R.id.profile_item -> {findNavController().navigate(R.id.action_mainFragment_to_profileFragment)}
         }
         return super.onOptionsItemSelected(item)
     }
-
-    private fun categoryDialog() {
-        val categoryDialog = CheckCategoryFragmentDialog()
-        categoryDialog.setCategoryClickListener(this)
-        categoryDialog.show(activity?.supportFragmentManager!!, "category check dialog")
-    }
-
 
     override fun onPause() {
         super.onPause()
@@ -407,25 +436,30 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
     override fun onDestroyView() {
         super.onDestroyView()
         Cart.saveCartToPrefs(requireContext())
-        viewCheckedCategory.visibility = GONE
-        selectCategory = null
-        filterProducts()
         _binding = null
+        preferences.edit()?.putBoolean("first_run", false)?.apply()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        preferences.edit()?.putBoolean("first_run", true)?.apply()
     }
 
     override fun onStart() {
         super.onStart()
+        val firstRun = preferences.getBoolean("first_run", true)
+        if (firstRun){
+            viewCheckedCategory.visibility = GONE
+        } else {
+            savingAndFetchingCategory(binding)
+        }
         Cart.loadCartFromPrefs(requireContext())
-        Cart.notifyObservers()
-//        showToolBar()
-//        showBottomNav()
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         badgeManager = BadgeManager(requireContext())
     }
-
 
     override fun onResume() {
         super.onResume()
@@ -445,26 +479,11 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         }
     }
 
+    @SuppressLint("CommitPrefEdits")
     override fun onCategorySelected(selectedCategory: Category) {
         selectCategory = selectedCategory
-        binding.apply {
-            if (!searchBarChecked(viewSearch)) {
-                viewSearch.visibility = GONE
-            }
-            materialCardViewCategory.setOnClickListener {
-                categoryDialog()
-            }
-            if (selectedCategory.id == "all") {
-                viewCheckedCategory.visibility = GONE
-            }
-            fabClearCategory.setOnClickListener {
-                viewCheckedCategory.visibility = GONE
-                selectCategory = null
-                filterProducts()
-            }
-            viewCheckedCategory.visibility = VISIBLE
-            checkedCategoryTv.text = selectedCategory.name
-        }
-        filterProducts()
+        preferences.edit()?.putString("selectedCategory", selectedCategory.id)?.apply()
+
+        savingAndFetchingCategory(binding)
     }
 }

@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.fin_group.aslzar.databinding.RowItemCategoryCheckBinding
-import com.fin_group.aslzar.models.Category
+import com.fin_group.aslzar.response.Category
 
 class CategoryAdapter(private val categories: List<Category>, private val onCategoryClickListener: (Category) -> Unit)
     : RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
