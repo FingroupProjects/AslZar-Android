@@ -50,7 +50,7 @@ fun CalculatorFragment.fetViews(binding: FragmentCalculatorBinding) {
 fun CalculatorFragment.calculator() {
 
     val getTotalCart = Cart.getTotalPrice()
-    summa.text = format(getTotalCart.toString())
+    summa.text = "${formatNumber(getTotalCart)} UZS"
 
     val getTotalWithSale = Cart.getTotalPriceWithSale()
     tvSale.text = "${formatNumber(getTotalWithSale)} UZS"
@@ -67,12 +67,10 @@ fun CalculatorFragment.calculator() {
         AllTypePay(2, "В рассрочку")
     )
 
-    val arrayAdapterTypeClient =
-        ArrayAdapter(requireContext(), R.layout.spinner_item, allClientType.map { it.name })
+    val arrayAdapterTypeClient = ArrayAdapter(requireContext(), R.layout.spinner_item, allClientType.map { it.name })
     typeClient.setAdapter(arrayAdapterTypeClient)
 
-    val arrayAdapterTypePay =
-        ArrayAdapter(requireContext(), R.layout.spinner_item, allTypePay.map { it.name })
+    val arrayAdapterTypePay = ArrayAdapter(requireContext(), R.layout.spinner_item, allTypePay.map { it.name })
     typePay.setAdapter(arrayAdapterTypePay)
 
     typeClient.setOnItemClickListener { _, _, position, _ ->
@@ -82,6 +80,8 @@ fun CalculatorFragment.calculator() {
         if (selectClientTypeId == 1) {
             val selectedClientBonus = selectClientType.bonus
             tvBonusForClient.text = "${formatNumber(selectedClientBonus)} UZS"
+
+            payWithBonus.text = "${formatNumber(0.00)} UZS"
 
             checkboxForBonus.visibility = View.GONE
             bonus.visibility = View.GONE
@@ -308,14 +308,21 @@ fun CalculatorFragment.createTable() {
                 val inputFirstPay = it.toString()
                 if (inputFirstPay.isNotEmpty()) {
                     val getFirstPay = inputFirstPay
-                    val getTotalCart = totalCart.toDouble() - getFirstPay.toDouble()
-                    summa.text = "${formatNumber(getTotalCart)} UZS"
-                    val minusFirstPay = totalCart.toDouble() - getFirstPay.toDouble()
-                    val getPercentFromTotalCart = (minusFirstPay * getPercent.toInt()) / 100
-                    val plusPercent = minusFirstPay + getPercentFromTotalCart
-                    val tablePercentWithFirstPay = plusPercent / getMonth.toInt()
-                    text = formatNumber(tablePercentWithFirstPay)
 
+                    val realPercent = totalCart.toDouble() / 2
+
+                    if (getFirstPay.toDouble() > realPercent){
+                        firstPayCalculator.error = "Первоначальный взнос должен составлять не менее 50% от суммы покупки!"
+                        firstPay.text = "0,00 UZS"
+                    }else{
+                        val getTotalCart = totalCart.toDouble() - getFirstPay.toDouble()
+                        summa.text = "${formatNumber(getTotalCart)} UZS"
+                        val minusFirstPay = totalCart.toDouble() - getFirstPay.toDouble()
+                        val getPercentFromTotalCart = (minusFirstPay * getPercent.toInt()) / 100
+                        val plusPercent = minusFirstPay + getPercentFromTotalCart
+                        val tablePercentWithFirstPay = plusPercent / getMonth.toInt()
+                        text = formatNumber(tablePercentWithFirstPay)
+                    }
                 }else{
                     summa.text = "${formatNumber(totalCart)} UZS"
                     text = formatNumber(tablePercent)
