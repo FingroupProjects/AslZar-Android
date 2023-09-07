@@ -9,6 +9,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.api.ApiService
@@ -33,6 +34,7 @@ class ProfileFragment : Fragment() {
     var salesPlanNumber: Number? = 0
 
     lateinit var progressBar: ProgressBar
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     lateinit var apiService: ApiClient
     lateinit var sessionManager: SessionManager
@@ -43,21 +45,28 @@ class ProfileFragment : Fragment() {
     ): View {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
         speedometer = binding.speedView
-        progressBar = binding.progressBar5
+        swipeRefreshLayout = binding.swipeRefreshLayout
         setHasOptionsMenu(true)
         sessionManager = SessionManager(requireContext())
         apiService = ApiClient()
         apiService.init(sessionManager, binding.root)
 
-        getSalesPlan()
+        return binding.root
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        swipeRefreshLayout.setOnRefreshListener {
+            getSalesPlan()
+        }
+
+        getSalesPlan()
         val asd: Number? = salesPlanNumber
 
         speedometerView(asd!!.toFloat())
         binding.btnChangePassword.setOnClickListener {
             goToChangePasswordDialog()
         }
-        return binding.root
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

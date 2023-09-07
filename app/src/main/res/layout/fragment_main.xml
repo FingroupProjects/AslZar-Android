@@ -1,166 +1,175 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipeRefreshLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_view_1"
     tools:context=".ui.fragments.main.MainFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/mainRecyclerView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
-
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/view_search"
+            android:id="@+id/constraintLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fab_clear_search"
-                style="?attr/floatingActionButtonSmallStyle"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/view_search"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
-                android:backgroundTint="@color/white"
-                android:src="@drawable/ic_clear"
-                app:layout_constraintBottom_toBottomOf="@+id/materialCardView_search"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/materialCardView_search"
-                app:tint="@color/background_2"
-                tools:ignore="SpeakableTextPresentCheck" />
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/materialCardView_search"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="10dp"
-                android:backgroundTint="@color/white"
-                app:cardElevation="5dp"
-                app:checkedIcon="@color/background_2"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/fab_clear_search"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:strokeColor="@android:color/transparent">
+                app:layout_constraintTop_toTopOf="parent">
 
-                <androidx.appcompat.widget.SearchView
-                    android:id="@+id/searchViewMain"
-                    android:layout_width="match_parent"
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/fab_clear_search"
+                    style="?attr/floatingActionButtonSmallStyle"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:background="@android:color/transparent"
-                    android:imeOptions="actionSearch"
-                    android:queryBackground="@android:color/transparent"
-                    app:iconifiedByDefault="false"
+                    android:layout_marginEnd="10dp"
+                    android:backgroundTint="@color/white"
+                    android:src="@drawable/ic_clear"
+                    app:layout_constraintBottom_toBottomOf="@+id/materialCardView_search"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/materialCardView_search"
+                    app:tint="@color/background_2"
+                    tools:ignore="SpeakableTextPresentCheck" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/materialCardView_search"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:backgroundTint="@color/white"
+                    app:cardElevation="5dp"
+                    app:checkedIcon="@color/background_2"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/fab_clear_search"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:queryHint="Поиск" />
+                    app:strokeColor="@android:color/transparent">
 
-            </com.google.android.material.card.MaterialCardView>
+                    <androidx.appcompat.widget.SearchView
+                        android:id="@+id/searchViewMain"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:imeOptions="actionSearch"
+                        android:queryBackground="@android:color/transparent"
+                        app:iconifiedByDefault="false"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:queryHint="Поиск" />
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/view_checked_category"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/view_search">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/materialCardView_category"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:backgroundTint="@color/white"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
+                    app:cardElevation="5dp"
+                    app:checkedIcon="@color/background_2"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/fab_clear_category"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:strokeColor="@android:color/transparent">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/textView8"
+                            style="@style/forTextView.16"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:minHeight="48dp"
+                            android:paddingStart="15dp"
+                            android:text="Категория:"
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/checked_category_tv"
+                            style="@style/forTextView.16"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end"
+                            android:gravity="center_vertical"
+                            android:minHeight="48dp"
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/fab_clear_category"
+                    style="?attr/floatingActionButtonSmallStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:backgroundTint="@color/white"
+                    android:src="@drawable/ic_clear"
+                    app:layout_constraintBottom_toBottomOf="@+id/materialCardView_category"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/materialCardView_category"
+                    app:tint="@color/background_2"
+                    tools:ignore="SpeakableTextPresentCheck" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/view_checked_category"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/mainRecyclerView"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
+            android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/view_search">
+            app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
 
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/materialCardView_category"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="10dp"
-                android:backgroundTint="@color/white"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?attr/selectableItemBackgroundBorderless"
-                app:cardElevation="5dp"
-                app:checkedIcon="@color/background_2"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/fab_clear_category"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:strokeColor="@android:color/transparent">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/textView8"
-                        style="@style/forTextView.16"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:minHeight="48dp"
-                        android:paddingStart="15dp"
-                        android:text="Категория:"
-                        android:textStyle="bold"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/checked_category_tv"
-                        style="@style/forTextView.16"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:gravity="center_vertical"
-                        android:minHeight="48dp"
-                        android:textStyle="bold"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                </LinearLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fab_clear_category"
-                style="?attr/floatingActionButtonSmallStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
-                android:backgroundTint="@color/white"
-                android:src="@drawable/ic_clear"
-                app:layout_constraintBottom_toBottomOf="@+id/materialCardView_category"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/materialCardView_category"
-                app:tint="@color/background_2"
-                tools:ignore="SpeakableTextPresentCheck" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

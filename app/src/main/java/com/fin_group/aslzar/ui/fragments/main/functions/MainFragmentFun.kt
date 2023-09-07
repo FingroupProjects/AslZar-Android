@@ -165,26 +165,33 @@ fun MainFragment.filterProducts() {
 }
 
 fun MainFragment.getAllProducts(){
-    val call = apiService.getApiService().getAllProducts("Bearer ${sessionManager.fetchToken()}")
-    call.enqueue(object : Callback<GetAllProductsResponse?> {
-        override fun onResponse(
-            call: Call<GetAllProductsResponse?>,
-            response: Response<GetAllProductsResponse?>
-        ) {
-            if (response.isSuccessful){
-                val getAllProducts = response.body()
-                if (getAllProducts?.result != null){
-                    Toast.makeText(requireContext(), "Работает", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(requireContext(), "Произошла ошибка", Toast.LENGTH_SHORT).show()
-                }
-            } else {
-                Log.d("TAG", "onResponse if un success: ${response.raw()}")
-            }
-        }
+    try {
+        val call = apiService.getApiService().getAllProducts("Bearer ${sessionManager.fetchToken()}")
+        call.enqueue(object : Callback<GetAllProductsResponse?> {
+            override fun onResponse(
+                call: Call<GetAllProductsResponse?>,
+                response: Response<GetAllProductsResponse?>
+            ) {
+                if (response.isSuccessful){
+                    val getAllProducts = response.body()
+                    if (getAllProducts?.result != null){
+                        allProducts = getAllProducts.result
+                        filterProducts()
 
-        override fun onFailure(call: Call<GetAllProductsResponse?>, t: Throwable) {
-            Log.d("TAG", "onFailure: ${t.message}")
-        }
-    })
+                        Toast.makeText(requireContext(), "Работает", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(requireContext(), "Произошла ошибка", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Log.d("TAG", "onResponse if un success: ${response.raw()}")
+                }
+            }
+
+            override fun onFailure(call: Call<GetAllProductsResponse?>, t: Throwable) {
+                Log.d("TAG", "onFailure: ${t.message}")
+            }
+        })
+    } catch (e: Exception){
+        Log.d("TAG", "getAllProducts: ${e.message}")
+    }
 }

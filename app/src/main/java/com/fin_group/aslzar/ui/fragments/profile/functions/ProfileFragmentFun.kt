@@ -37,8 +37,7 @@ fun ProfileFragment.goToChangePasswordDialog() {
 }
 
 fun ProfileFragment.getSalesPlan(){
-    progressBar.visibility = VISIBLE
-
+    swipeRefreshLayout.isRefreshing = true
     try {
         val call = apiService.getApiService().getSalesPlan(token = "Bearer ${sessionManager.fetchToken()}")
         call.enqueue(object : Callback<SalesPlanResponse?> {
@@ -55,14 +54,15 @@ fun ProfileFragment.getSalesPlan(){
                         Toast.makeText(requireContext(), "Ответ пустой", Toast.LENGTH_SHORT).show()
                     }
                 }
+                swipeRefreshLayout.isRefreshing = false
             }
             override fun onFailure(call: Call<SalesPlanResponse?>, t: Throwable) {
                 Log.d("TAG", "onFailure: ${t.message}")
-                progressBar.visibility = GONE
+                swipeRefreshLayout.isRefreshing = false
             }
         })
     }catch (e: Exception){
         Log.d("TAG", "getSalesPlan: ${e.message}")
-        progressBar.visibility = GONE
+        swipeRefreshLayout.isRefreshing = false
     }
 }
