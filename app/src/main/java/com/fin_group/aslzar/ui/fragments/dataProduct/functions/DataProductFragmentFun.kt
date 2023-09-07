@@ -12,9 +12,6 @@ import com.bumptech.glide.Glide
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentDataProductBinding
-import com.fin_group.aslzar.models.ImageDataModel
-import com.fin_group.aslzar.models.ImageDataModel2
-import com.fin_group.aslzar.models.ProductInCart
 import com.fin_group.aslzar.response.InStock
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
@@ -142,6 +139,7 @@ fun DataProductFragment.likeProducts(){
             full_name = "Кольцо 1",
             name = "Серьги с аметистом 1",
             price = 120000,
+            barcode = "",
             category_id = "jewelry",
             sale = 8,
             color = "фиолетовый",
@@ -163,6 +161,7 @@ fun DataProductFragment.likeProducts(){
             full_name = "Кольцо 2",
             name = "Серьги с аметистом 2",
             price = 1200,
+            barcode = "",
             category_id = "jewelry",
             sale = 10,
             color = "фиолетовый",
@@ -193,7 +192,7 @@ fun DataProductFragment.setDataProduct(product: Product, binding: FragmentDataPr
     } else {
         binding.otherImgRv.visibility = VISIBLE
     }
-    if (product.sale == 0){
+    if (product.sale.toDouble() <= 0.0){
         binding.productSale.visibility = GONE
     } else {
         binding.productSale.text = "-${formatNumber(product.sale)}%"

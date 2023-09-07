@@ -1,7 +1,6 @@
 package com.fin_group.aslzar.ui.fragments.dataProduct
 
 import android.annotation.SuppressLint
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -9,11 +8,8 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -21,8 +17,6 @@ import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.AlikeProductsAdapter
 import com.fin_group.aslzar.adapter.ProductSomeImagesAdapter
 import com.fin_group.aslzar.databinding.FragmentDataProductBinding
-import com.fin_group.aslzar.models.ImageDataModel
-import com.fin_group.aslzar.models.ImageDataModel2
 import com.fin_group.aslzar.response.InStock
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.ui.dialogs.AlikeProductBottomSheetDialogFragment
@@ -35,7 +29,6 @@ import com.fin_group.aslzar.util.OnAlikeProductClickListener
 import com.fin_group.aslzar.util.OnImageClickListener
 import com.fin_group.aslzar.util.hideBottomNav
 import com.fin_group.aslzar.util.showBottomNav
-import com.fin_group.aslzar.util.showToolBar
 import com.fin_group.aslzar.viewmodel.SharedViewModel
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.chip.ChipGroup
@@ -82,6 +75,7 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
                 full_name = "Кольцо золотое «Бабочка»",
                 name = "(1.4.1.1.336.3_17,5)",
                 price = 3005000,
+                barcode = "",
                 category_id = "00001",
                 sale = 8.0,
                 color = "Золотой",

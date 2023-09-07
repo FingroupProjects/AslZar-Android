@@ -18,6 +18,7 @@ data class Product(
     val full_name: String,
     val name: String,
     val price: Number,
+    val barcode: String,
     val category_id: String,
     val sale: Number,
     val color: String,

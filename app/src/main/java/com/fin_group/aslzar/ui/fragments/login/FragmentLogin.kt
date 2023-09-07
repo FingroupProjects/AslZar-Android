@@ -106,35 +106,7 @@ class FragmentLogin : Fragment() {
 
             progressBar.visibility = VISIBLE
 
-//            val call = api.getApiServiceLogin(login, password).getAllProducts("Bearer ${sessionManager.fetchToken()}")
-//            call.enqueue(object : Callback<GetAllProductsResponse?> {
-//                override fun onResponse(
-//                    call: Call<GetAllProductsResponse?>,
-//                    response: Response<GetAllProductsResponse?>
-//                ) {
-//                    Log.d("TAG", "onResponse before if: ${response.body()}")
-//                    Log.d("TAG", "onResponse before if: ${response.code()}")
-//                    if (response.isSuccessful){
-//                        val getAllProducts = response.body()
-//                        if (getAllProducts?.result != null){
-//                            Toast.makeText(requireContext(), "Working", Toast.LENGTH_SHORT).show()
-//                            Log.d("TAG", "onResponse if success and notnull: ${response.body()}")
-//                            Log.d("TAG", "onResponse if success and notnull: ${response.code()}")
-//                        } else {
-//                            Log.d("TAG", "onResponse if success and null: ${response.body()}")
-//                            Log.d("TAG", "onResponse if success and null: ${response.code()}")
-//                            Log.d("TAG", "onResponse if success and null: ${response.headers()}")
-//                        }
-//                    } else {
-//                        Log.d("TAG", "onResponse if un success: ${response.body()}")
-//                        Log.d("TAG", "onResponse if un success: ${response.code()}")
-//                    }
-//                }
-//
-//                override fun onFailure(call: Call<GetAllProductsResponse?>, t: Throwable) {
-//                    Log.d("TAG", "onFailure: ${t.message}")
-//                }
-//            })
+
 
             val call = api.getApiServiceLogin(login, password).userLogin()
             call.enqueue(object : Callback<Auth?> {
@@ -142,7 +114,7 @@ class FragmentLogin : Fragment() {
                     try {
                         if (response.isSuccessful){
                             val loginResponse = response.body()
-                            if (loginResponse?.result != null){
+                            if (loginResponse != null){
                                 val encryptedLogin = encryptionManager.encryptData(login)
                                 val encryptedPassword = encryptionManager.encryptData(password)
                                 sessionManager.saveKey(savingKey)
@@ -154,11 +126,12 @@ class FragmentLogin : Fragment() {
                                 sessionManager.saveLogin(encryptedLogin)
                                 sessionManager.savePassword(encryptedPassword)
                                 sessionManager.saveToken(loginResponse.access_token)
-                                sessionManager.saveUserLocation(loginResponse.result.location)
-                                sessionManager.saveName(loginResponse.result.fio)
+                                sessionManager.saveUserLocation(loginResponse.location)
+                                sessionManager.saveName(loginResponse.fio)
+                                sessionManager.saveSalesPlan(loginResponse.sales_plan)
                                 progressBar.visibility = VISIBLE
 
-                                Toast.makeText(requireContext(), "Добро пожаловать ${loginResponse.result.fio}!", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(requireContext(), "Добро пожаловать ${loginResponse.fio}!", Toast.LENGTH_SHORT).show()
 
                                 val i = Intent(requireContext(), MainActivity::class.java)
                                 startActivity(i)

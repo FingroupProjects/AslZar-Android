@@ -16,8 +16,6 @@ import retrofit2.Callback
 import retrofit2.Response
 
 fun ProfileFragment.speedometerView(speed: Float) {
-
-
     speedometer.speedTo(speed)
     speedometer.makeSections(3, Color.CYAN, Style.BUTT)
     speedometer.sections[0].color = Color.parseColor("#8e5234")
@@ -36,33 +34,32 @@ fun ProfileFragment.goToChangePasswordDialog() {
     }
 }
 
-fun ProfileFragment.getSalesPlan(){
-    swipeRefreshLayout.isRefreshing = true
-    try {
-        val call = apiService.getApiService().getSalesPlan(token = "Bearer ${sessionManager.fetchToken()}")
-        call.enqueue(object : Callback<SalesPlanResponse?> {
-            override fun onResponse(
-                call: Call<SalesPlanResponse?>,
-                response: Response<SalesPlanResponse?>
-            ) {
-                progressBar.visibility = GONE
-                if (response.isSuccessful){
-                    val salesPlan = response.body()
-                    if (salesPlan?.result != null){
-                        salesPlanNumber = salesPlan.result.percent
-                    } else {
-                        Toast.makeText(requireContext(), "Ответ пустой", Toast.LENGTH_SHORT).show()
-                    }
-                }
-                swipeRefreshLayout.isRefreshing = false
-            }
-            override fun onFailure(call: Call<SalesPlanResponse?>, t: Throwable) {
-                Log.d("TAG", "onFailure: ${t.message}")
-                swipeRefreshLayout.isRefreshing = false
-            }
-        })
-    }catch (e: Exception){
-        Log.d("TAG", "getSalesPlan: ${e.message}")
-        swipeRefreshLayout.isRefreshing = false
-    }
-}
+//fun ProfileFragment.getSalesPlan(){
+//    swipeRefreshLayout.isRefreshing = true
+//    try {
+//        val call = apiService.getApiService().getSalesPlan(token = "Bearer ${sessionManager.fetchToken()}")
+//        call.enqueue(object : Callback<SalesPlanResponse?> {
+//            override fun onResponse(
+//                call: Call<SalesPlanResponse?>,
+//                response: Response<SalesPlanResponse?>
+//            ) {
+//                swipeRefreshLayout.isRefreshing = false
+//                if (response.isSuccessful){
+//                    val salesPlan = response.body()
+//                    if (salesPlan?.result != null){
+//                        salesPlanNumber = salesPlan.result.percent
+//                    } else {
+//                        Toast.makeText(requireContext(), "Ответ пустой", Toast.LENGTH_SHORT).show()
+//                    }
+//                }
+//            }
+//            override fun onFailure(call: Call<SalesPlanResponse?>, t: Throwable) {
+//                Log.d("TAG", "onFailure: ${t.message}")
+//                swipeRefreshLayout.isRefreshing = false
+//            }
+//        })
+//    }catch (e: Exception){
+//        Log.d("TAG", "getSalesPlan: ${e.message}")
+//        swipeRefreshLayout.isRefreshing = false
+//    }
+//}
