@@ -201,7 +201,11 @@ fun DataProductFragment.setDataProduct(product: Product, binding: FragmentDataPr
     }
 
     binding.apply {
-        Glide.with(requireContext()).load(product.img[0]).into(binding.imageView2)
+        if (product.img.isNotEmpty()){
+            Glide.with(requireContext()).load(product.img[0]).into(binding.imageView2)
+        } else {
+            imageView2.setImageResource(R.drawable.ic_no_image)
+        }
 //        dpTitle.text = product.full_name
         dpCode.text = product.name
         dpPrice.text = product.price.toString()

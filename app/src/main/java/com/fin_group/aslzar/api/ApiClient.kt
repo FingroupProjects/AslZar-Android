@@ -124,6 +124,12 @@ class ApiClient {
 
     fun getApiServiceLogin(login: String, password: String): ApiService {
         val credentials = Credentials.basic(login, password)
+        okHttpClient = OkHttpClient.Builder().addInterceptor { chain ->
+            val originalRequest = chain.request()
+            val authenticatedRequest =
+                originalRequest.newBuilder().header("Authorization", credentials).build()
+            chain.proceed(authenticatedRequest)
+        }.build()
         val updatedClient = okHttpClient.newBuilder()
             .addInterceptor { chain ->
                 val originalRequest = chain.request()
