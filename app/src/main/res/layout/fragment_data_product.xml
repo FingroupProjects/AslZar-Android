@@ -39,7 +39,7 @@
                     android:paddingEnd="2dp"
                     android:text="-40.0%"
                     android:textColor="@color/white"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 

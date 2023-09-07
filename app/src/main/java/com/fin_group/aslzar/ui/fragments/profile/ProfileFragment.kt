@@ -1,6 +1,7 @@
 package com.fin_group.aslzar.ui.fragments.profile
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.Menu
@@ -16,7 +17,6 @@ import com.fin_group.aslzar.api.ApiService
 import com.fin_group.aslzar.databinding.FragmentProfileBinding
 import com.fin_group.aslzar.response.SalesPlan
 import com.fin_group.aslzar.ui.dialogs.SignOutProfileFragmentDialog
-import com.fin_group.aslzar.ui.fragments.profile.functions.getSalesPlan
 import com.fin_group.aslzar.ui.fragments.profile.functions.goToChangePasswordDialog
 import com.fin_group.aslzar.ui.fragments.profile.functions.speedometerView
 import com.fin_group.aslzar.util.SessionManager
@@ -33,9 +33,6 @@ class ProfileFragment : Fragment() {
     lateinit var speedometer: Speedometer
     var salesPlanNumber: Number? = 0
 
-    lateinit var progressBar: ProgressBar
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-
     lateinit var apiService: ApiClient
     lateinit var sessionManager: SessionManager
 
@@ -45,7 +42,6 @@ class ProfileFragment : Fragment() {
     ): View {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
         speedometer = binding.speedView
-        swipeRefreshLayout = binding.swipeRefreshLayout
         setHasOptionsMenu(true)
         sessionManager = SessionManager(requireContext())
         apiService = ApiClient()
@@ -56,11 +52,12 @@ class ProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        swipeRefreshLayout.setOnRefreshListener {
-            getSalesPlan()
-        }
+//        swipeRefreshLayout.setOnRefreshListener {
+//            getSalesPlan()
+//        }
 
-        getSalesPlan()
+//        getSalesPlan()
+        salesPlanNumber = sessionManager.fetchSalesPlan()
         val asd: Number? = salesPlanNumber
 
         speedometerView(asd!!.toFloat())

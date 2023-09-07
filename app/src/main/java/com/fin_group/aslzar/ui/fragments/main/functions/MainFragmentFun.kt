@@ -10,7 +10,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentMainBinding
-import com.fin_group.aslzar.models.ProductInCart
 import com.fin_group.aslzar.response.GetAllProductsResponse
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.ui.dialogs.CheckCategoryFragmentDialog
@@ -18,7 +17,6 @@ import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.WarningNoHaveProductFragmentDialog
 import com.fin_group.aslzar.ui.fragments.main.MainFragment
 import com.fin_group.aslzar.util.CategoryClickListener
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -165,6 +163,7 @@ fun MainFragment.filterProducts() {
 }
 
 fun MainFragment.getAllProducts(){
+    swipeRefreshLayout.isRefreshing = true
     try {
         val call = apiService.getApiService().getAllProducts("Bearer ${sessionManager.fetchToken()}")
         call.enqueue(object : Callback<GetAllProductsResponse?> {
@@ -172,13 +171,12 @@ fun MainFragment.getAllProducts(){
                 call: Call<GetAllProductsResponse?>,
                 response: Response<GetAllProductsResponse?>
             ) {
+                swipeRefreshLayout.isRefreshing = false
                 if (response.isSuccessful){
                     val getAllProducts = response.body()
                     if (getAllProducts?.result != null){
                         allProducts = getAllProducts.result
                         filterProducts()
-
-                        Toast.makeText(requireContext(), "Работает", Toast.LENGTH_SHORT).show()
                     } else {
                         Toast.makeText(requireContext(), "Произошла ошибка", Toast.LENGTH_SHORT).show()
                     }
@@ -189,9 +187,12 @@ fun MainFragment.getAllProducts(){
 
             override fun onFailure(call: Call<GetAllProductsResponse?>, t: Throwable) {
                 Log.d("TAG", "onFailure: ${t.message}")
+                swipeRefreshLayout.isRefreshing = false
             }
         })
     } catch (e: Exception){
         Log.d("TAG", "getAllProducts: ${e.message}")
+        swipeRefreshLayout.isRefreshing = false
     }
 }
+

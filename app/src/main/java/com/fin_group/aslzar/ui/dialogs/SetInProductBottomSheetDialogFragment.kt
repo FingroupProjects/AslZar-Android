@@ -1,7 +1,6 @@
 package com.fin_group.aslzar.ui.dialogs
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.fin_group.aslzar.adapter.SetInProductAdapter
 import com.fin_group.aslzar.databinding.FragmentSheetDialogSetInProductBottomBinding
-import com.fin_group.aslzar.models.ImageDataModel2
 import com.fin_group.aslzar.response.InStock
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.util.OnProductClickListener
@@ -76,6 +74,7 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnPro
                 full_name = "Кольцо 1",
                 name = "Серьги с аметистом 1",
                 price = 120000,
+                barcode = "",
                 category_id = "jewelry",
                 sale = 8,
                 color = "фиолетовый",
@@ -97,6 +96,7 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnPro
                 full_name = "Кольцо 2",
                 name = "Серьги с аметистом 2",
                 price = 1200,
+                barcode = "",
                 category_id = "jewelry",
                 sale = 10,
                 color = "фиолетовый",

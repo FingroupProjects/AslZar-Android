@@ -53,17 +53,17 @@ class ApiClient {
 //        }.build()
 //    }
 
-    private fun createRetrofit() {
-        val gson = GsonBuilder().setLenient().create()
-
-        val retrofit = Retrofit.Builder()
-            .baseUrl(Constants.BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .client(okHttpClient)
-            .build()
-
-        apiService = retrofit.create(ApiService::class.java)
-    }
+//    private fun createRetrofit() {
+//        val gson = GsonBuilder().setLenient().create()
+//
+//        val retrofit = Retrofit.Builder()
+//            .baseUrl(Constants.BASE_URL)
+//            .addConverterFactory(GsonConverterFactory.create(gson))
+//            .client(okHttpClient)
+//            .build()
+//
+//        apiService = retrofit.create(ApiService::class.java)
+//    }
 
 
 //    fun getApiService(): ApiService {

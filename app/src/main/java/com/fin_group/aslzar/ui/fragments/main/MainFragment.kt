@@ -4,9 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.preference.PreferenceManager
-import android.util.Base64
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.Menu
@@ -14,7 +11,6 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
@@ -26,12 +22,10 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.ProductsAdapter
 import com.fin_group.aslzar.api.ApiClient
-import com.fin_group.aslzar.api.ApiService
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.cipher.EncryptionManager
 import com.fin_group.aslzar.databinding.FragmentMainBinding
 import com.fin_group.aslzar.response.Category
-import com.fin_group.aslzar.response.InStock
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.ui.activities.MainActivity
 import com.fin_group.aslzar.ui.fragments.main.functions.addProductToCart
@@ -50,8 +44,6 @@ import com.fin_group.aslzar.util.SessionManager
 import com.fin_group.aslzar.viewmodel.SharedViewModel
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import okio.ByteString.Companion.decodeBase64
-import javax.crypto.spec.SecretKeySpec
 
 
 @Suppress("DEPRECATION")
@@ -100,10 +92,6 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         apiService = ApiClient()
         apiService.init(sessionManager, binding.root)
         swipeRefreshLayout = binding.swipeRefreshLayout
-
-//        toolbar = binding.toolbar
-//        (activity as AppCompatActivity?)!!.setSupportActionBar(toolbar as MaterialToolbar?)
-//        toolbar.title = "Главная"
         setHasOptionsMenu(true)
         viewSearch = binding.viewSearch
         viewCheckedCategory = binding.viewCheckedCategory
@@ -113,6 +101,9 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
                 searchView.setQuery("", false)
             }
             viewSearch.visibility = GONE
+        }
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            getAllProducts()
         }
         allCategories = listOf(
             Category("all", "Все"),

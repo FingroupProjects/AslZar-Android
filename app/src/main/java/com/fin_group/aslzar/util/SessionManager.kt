@@ -7,6 +7,7 @@ import android.security.keystore.KeyProperties
 import android.util.Base64
 import android.util.Log
 import com.fin_group.aslzar.R
+import com.fin_group.aslzar.response.SalesPlan
 import java.security.KeyStore
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
@@ -28,6 +29,7 @@ class SessionManager(context: Context) {
         const val USER_FIO = "user_name"
         const val USER_LOCATION = "user_location"
         const val USER_LOGIN = "user_login"
+        const val USER_SALES_PLAN = "user_sales_plan"
         const val PASSWORD_PREF = "password_pref"
         const val IS_LOGGED_IN_KEY = "is_logged_in"
     }
@@ -47,6 +49,12 @@ class SessionManager(context: Context) {
     fun saveName(name: String) {
         val editor = prefs.edit()
         editor.putString(USER_FIO, name)
+        editor.apply()
+    }
+
+    fun saveSalesPlan(salesPlan: Number){
+        val editor = prefs.edit()
+        editor.putFloat(USER_SALES_PLAN, salesPlan.toFloat())
         editor.apply()
     }
 
@@ -86,6 +94,10 @@ class SessionManager(context: Context) {
 
     fun fetchPassword(): String? {
         return prefs.getString(PASSWORD_PREF, null)
+    }
+
+    fun fetchSalesPlan(): Number {
+        return prefs.getFloat(USER_SALES_PLAN, 0f)
     }
 
 

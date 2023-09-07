@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.fin_group.aslzar.databinding.RowSliderItem2Binding
-import com.fin_group.aslzar.models.ImageDataModel2
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.util.OnAlikeProductClickListener
 

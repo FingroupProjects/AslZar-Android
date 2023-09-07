@@ -13,10 +13,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.ProductSomeImagesAdapter
-import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentAlikeProductBottomSheetDialogBinding
-import com.fin_group.aslzar.models.ImageDataModel
-import com.fin_group.aslzar.models.ProductInCart
 import com.fin_group.aslzar.response.InStock
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.util.BaseBottomSheetDialogFragment

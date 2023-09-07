@@ -6,10 +6,12 @@ import com.fin_group.aslzar.response.GetAllClientsResponse
 import com.fin_group.aslzar.response.GetAllProductsResponse
 import com.fin_group.aslzar.response.GetProductByIdResponse
 import com.fin_group.aslzar.response.GetSimilarProductsResponse
+import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.response.SalesPlanResponse
 import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Path
@@ -25,7 +27,7 @@ interface ApiService {
 
     @GET(Constants.GET_PRODUCT_BY_ID)
     @Headers("Accept:application/json", "Content-Type:application/json")
-    fun getProductByID(@Header("Authorization") token: String, @Path("id") id: String): Call<GetProductByIdResponse>
+    fun getProductByID(@Header("Authorization") token: String, @Path("id") id: String): Call<Product>
 
     @GET(Constants.SIMILAR_PRODUCTS)
     @Headers("Accept:application/json", "Content-Type:application/json")
