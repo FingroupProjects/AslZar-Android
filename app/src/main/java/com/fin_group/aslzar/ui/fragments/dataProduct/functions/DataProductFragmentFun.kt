@@ -3,6 +3,7 @@
 package com.fin_group.aslzar.ui.fragments.dataProduct.functions
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Toast
@@ -10,15 +11,20 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL
 import com.bumptech.glide.Glide
 import com.fin_group.aslzar.R
+import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentDataProductBinding
+import com.fin_group.aslzar.response.GetSimilarProductsResponse
 import com.fin_group.aslzar.response.InStock
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.SetInProductBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.WarningNoHaveProductFragmentDialog
 import com.fin_group.aslzar.ui.fragments.dataProduct.DataProductFragment
+import retrofit2.Callback
 import com.fin_group.aslzar.util.formatNumber
+import retrofit2.Call
+import retrofit2.Response
 
 fun DataProductFragment.callInStockDialog(id: String) {
     val fragmentManager = requireFragmentManager()
@@ -133,52 +139,53 @@ fun DataProductFragment.likeProducts(){
         InStock("Магазин 12", "Витрина 7", 8, 0),
         InStock("Магазин 5", "Витрина 6", 8, 0)
     )
-    alikeProductsList = listOf(
-        Product(
-            id = "00001323022",
-            full_name = "Кольцо 1",
-            name = "Серьги с аметистом 1",
-            price = 120000,
-            barcode = "",
-            category_id = "jewelry",
-            sale = 8,
-            color = "фиолетовый",
-            stone_type = "аметист",
-            metal = "Золото",
-            content = "Серьги с натуральным аметистом",
-            size = "21 мм",
-            weight = "5 г",
-            country_of_origin = "Турция",
-            provider = "Украшения Востока",
-            counts = inStockList,
-            img = listOf(
-                "http://convertolink.taskpro.tj/photoLink/public/storage/images/mixGa5sQn5AqcURSKl2Lm3tayf2Xb6SEUupuJQXV.png",
-                "http://convertolink.taskpro.tj/photoLink/public/storage/images/EI2sNF9keTbJRHDRqSnPhf8uPNs500V6oOyNDGur.png"
-            )
-        ),
-        Product(
-            id = "0000032421",
-            full_name = "Кольцо 2",
-            name = "Серьги с аметистом 2",
-            price = 1200,
-            barcode = "",
-            category_id = "jewelry",
-            sale = 10,
-            color = "фиолетовый",
-            stone_type = "аметист",
-            metal = "серебро",
-            content = "Серьги с натуральным аметистом",
-            size = "17 мм",
-            weight = "5 г",
-            country_of_origin = "Индия",
-            provider = "Украшения Востока",
-            counts = inStockList,
-            img = listOf(
-                "http://convertolink.taskpro.tj/photoLink/public/storage/images/EI2sNF9keTbJRHDRqSnPhf8uPNs500V6oOyNDGur.png",
-                "http://convertolink.taskpro.tj/photoLink/public/storage/images/mixGa5sQn5AqcURSKl2Lm3tayf2Xb6SEUupuJQXV.png"
-            )
-        )
-    )
+//    alikeProductsList = listOf(
+//        Product(
+//            id = "00001323022",
+//            full_name = "Кольцо 1",
+//            name = "Серьги с аметистом 1",
+//            price = 120000,
+//            barcode = "",
+//            category_id = "jewelry",
+//            sale = 8,
+//            color = "фиолетовый",
+//            stone_type = "аметист",
+//            metal = "Золото",
+//            content = "Серьги с натуральным аметистом",
+//            size = "21 мм",
+//            weight = "5 г",
+//            country_of_origin = "Турция",
+//            provider = "Украшения Востока",
+//            counts = inStockList,
+//            img = listOf(
+//                "http://convertolink.taskpro.tj/photoLink/public/storage/images/mixGa5sQn5AqcURSKl2Lm3tayf2Xb6SEUupuJQXV.png",
+//                "http://convertolink.taskpro.tj/photoLink/public/storage/images/EI2sNF9keTbJRHDRqSnPhf8uPNs500V6oOyNDGur.png"
+//            )
+//        ),
+//        Product(
+//            id = "0000032421",
+//            full_name = "Кольцо 2",
+//            name = "Серьги с аметистом 2",
+//            price = 1200,
+//            barcode = "",
+//            category_id = "jewelry",
+//            sale = 10,
+//            color = "фиолетовый",
+//            stone_type = "аметист",
+//            metal = "серебро",
+//            content = "Серьги с натуральным аметистом",
+//            size = "17 мм",
+//            weight = "5 г",
+//            country_of_origin = "Индия",
+//            provider = "Украшения Востока",
+//            counts = inStockList,
+//            img = listOf(
+//                "http://convertolink.taskpro.tj/photoLink/public/storage/images/EI2sNF9keTbJRHDRqSnPhf8uPNs500V6oOyNDGur.png",
+//                "http://convertolink.taskpro.tj/photoLink/public/storage/images/mixGa5sQn5AqcURSKl2Lm3tayf2Xb6SEUupuJQXV.png"
+//            )
+//        )
+//    )
+
 
     recyclerViewLikeProducts.layoutManager = LinearLayoutManager(requireContext(), HORIZONTAL, false)
     recyclerViewLikeProducts.adapter = productAlikeAdapter
@@ -226,6 +233,37 @@ fun DataProductFragment.setDataProduct(product: Product, binding: FragmentDataPr
 
         }
     }
+}
 
+fun DataProductFragment.getSimilarProducts(){
+    val call = apiService.getApiService().getSimilarProducts("Bearer ${sessionManager.fetchToken()}", product.id)
 
+    try {
+        call.enqueue(object : Callback<GetSimilarProductsResponse?>{
+            override fun onResponse(
+                call: Call<GetSimilarProductsResponse?>,
+                response: Response<GetSimilarProductsResponse?>
+            ) {
+                if (response.isSuccessful){
+                    val result = response.body()
+                    if (result != null){
+                        val similarProduct = result.result
+                        Log.d("Tag", "onResponse: ${response.code()}")
+                        Log.d("Tag", "onResponse: ${response.body()}")
+                        getSimilarProduct = similarProduct
+                        productAlikeAdapter.updateList(getSimilarProduct)
+                    }else{
+                        Toast.makeText(requireContext(), "Не удалось, повторите попытку еще раз!", Toast.LENGTH_SHORT).show()
+                        Log.d("TAG", "onResponse: ${response.code()}")
+                        Log.d("TAG", "onResponse: ${response.body()}")
+                    }
+                }
+            }
+            override fun onFailure(call: Call<GetSimilarProductsResponse?>, t: Throwable) {
+                TODO("Not yet implemented")
+            }
+        })
+    }catch (e: Exception){
+        Log.d("TAG", "getSimilarProducts: ${e.message}")
+    }
 }
