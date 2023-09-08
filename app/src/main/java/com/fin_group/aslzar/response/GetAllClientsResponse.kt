@@ -5,8 +5,8 @@ data class GetAllClientsResponse(
 )
 
 data class Client(
-    val bonus: Double,
-    val client_name: String,
     val id: String,
+    val client_name: String,
+    val bonus: Number,
     val status: String
 )

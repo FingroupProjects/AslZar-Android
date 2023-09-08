@@ -5,7 +5,6 @@ package com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions
 import android.annotation.SuppressLint
 import android.graphics.Typeface
 import android.text.InputType
-import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.ArrayAdapter
@@ -19,30 +18,35 @@ import com.fin_group.aslzar.databinding.FragmentCalculatorBinding
 import com.fin_group.aslzar.models.AllClientType
 import com.fin_group.aslzar.models.AllTypePay
 import com.fin_group.aslzar.models.Installment
+import com.fin_group.aslzar.response.Client
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.CalculatorFragment
+import com.fin_group.aslzar.util.CartObserver
 import com.fin_group.aslzar.util.formatNumber
-import okhttp3.internal.format
 
 fun CalculatorFragment.fetViews(binding: FragmentCalculatorBinding) {
+    tvBonusForClient = binding.tvBonusForClient
+    firstPay = binding.tvFirstPay
+    tvSale = binding.tvSale
+
+    payWithBonus = binding.tvPayWithBonus
+    summa = binding.summa
 
     typeClient = binding.spinnerClientType
     typePay = binding.spinnerPayType
+
     checkBox = binding.checkbox
     firstPayCalculator = binding.firstPayCalculator
     checkboxForBonus = binding.checkboxForBonus
-    bonus = binding.bonus
-    tableSale = binding.tableSale
-    firstPay = binding.tvFirstPay
-    sale = binding.tvSale
-    payWithBonus = binding.tvPayWithBonus
     tvFirstPayCalculator = binding.tvFirstPayCalculator
-    summa = binding.summa
-    tvBonusForClient = binding.tvBonusForClient
+
+    bonus = binding.bonus
     editBonus = binding.editBonus
+
     tvTable = binding.tvTable
     monthTable = binding.monthTable
     percentTable = binding.percentTable
-    tvSale = binding.tvSale
+    tableSale = binding.tableSale
+
     getInstallment = listOf()
 }
 
@@ -56,10 +60,10 @@ fun CalculatorFragment.calculator() {
     tvSale.text = "${formatNumber(getTotalWithSale)} UZS"
 
     val allClientType = listOf(
-        AllClientType(1, "Розничный", 0),
-        AllClientType(2, "Шарифов Тохир", 200000),
-        AllClientType(3, "Шахобов Нуриддин", 300000),
-        AllClientType(4, "Гафуров Сухроб", 400000)
+        Client("1", "Розничный", 0, "Silver"),
+        Client("2", "Шарифов Тохир", 200000, "Silver"),
+        Client("3", "Шахобов Нуриддин", 300000, "Silver"),
+        Client("4", "Гафуров Сухроб", 400000, "Silver")
     )
 
     val allTypePay = listOf(
@@ -67,7 +71,7 @@ fun CalculatorFragment.calculator() {
         AllTypePay(2, "В рассрочку")
     )
 
-    val arrayAdapterTypeClient = ArrayAdapter(requireContext(), R.layout.spinner_item, allClientType.map { it.name })
+    val arrayAdapterTypeClient = ArrayAdapter(requireContext(), R.layout.spinner_item, allClientType.map { it.client_name })
     typeClient.setAdapter(arrayAdapterTypeClient)
 
     val arrayAdapterTypePay = ArrayAdapter(requireContext(), R.layout.spinner_item, allTypePay.map { it.name })
@@ -77,7 +81,7 @@ fun CalculatorFragment.calculator() {
         val selectClientType = allClientType[position]
         val selectClientTypeId = selectClientType.id
 
-        if (selectClientTypeId == 1) {
+        if (selectClientTypeId == "1") {
             val selectedClientBonus = selectClientType.bonus
             tvBonusForClient.text = "${formatNumber(selectedClientBonus)} UZS"
 
@@ -236,13 +240,22 @@ fun CalculatorFragment.calculator() {
     }
 }
 
+fun CalculatorFragment.cartObserver(binding: FragmentCalculatorBinding){
+    val totalPriceWithSaleTv = binding.tvSale
+    val totalPriceTv = binding.summa
+
+    cartObserver = object : CartObserver {
+        @SuppressLint("SetTextI18n")
+        override fun onCartChanged(totalPriceWithoutSale: Number, totalPriceWithSale: Number, totalCount: Int, totalPrice: Number) {
+            totalPriceWithSaleTv.text = "${formatNumber(totalPriceWithSale)} USZ"
+            totalPriceTv.text = "${formatNumber(totalPrice)} UZS"
+            totalCart = totalPrice
+        }
+    }
+}
+
 @SuppressLint("SetTextI18n")
 fun CalculatorFragment.createTable() {
-
-    val totalCart = Cart.getTotalPrice()
-    val getTotalWithSale = Cart.getTotalPriceWithSale()
-    tvSale.text = "${formatNumber(getTotalWithSale)} UZS"
-
     getInstallment = listOf(
         Installment("2", 20),
         Installment("3", 30),
@@ -261,10 +274,12 @@ fun CalculatorFragment.createTable() {
     val boldTypeface = Typeface.defaultFromStyle(Typeface.BOLD)
 
     for (i in getInstallment.indices) {
-
         // Create month table
         val monthTextView = TextView(requireContext()).apply {
-            layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
             text = "${getInstallment[i].month} платежей"
             gravity = Gravity.CENTER
             setTextColor(styleTextColor)
@@ -286,7 +301,10 @@ fun CalculatorFragment.createTable() {
 
         // Create pay table
         val amountTextView = TextView(requireContext()).apply {
-            layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
             getInstallment[i].percent.toString()
 
             // Расчет с первональным взносом
@@ -311,10 +329,11 @@ fun CalculatorFragment.createTable() {
 
                     val realPercent = totalCart.toDouble() / 2
 
-                    if (getFirstPay.toDouble() > realPercent){
-                        firstPayCalculator.error = "Первоначальный взнос должен составлять не менее 50% от суммы покупки!"
+                    if (getFirstPay.toDouble() > realPercent) {
+                        firstPayCalculator.error =
+                            "Первоначальный взнос должен составлять менее 50% от суммы покупки!"
                         firstPay.text = "0,00 UZS"
-                    }else{
+                    } else {
                         val getTotalCart = totalCart.toDouble() - getFirstPay.toDouble()
                         summa.text = "${formatNumber(getTotalCart)} UZS"
                         val minusFirstPay = totalCart.toDouble() - getFirstPay.toDouble()
@@ -323,7 +342,7 @@ fun CalculatorFragment.createTable() {
                         val tablePercentWithFirstPay = plusPercent / getMonth.toInt()
                         text = formatNumber(tablePercentWithFirstPay)
                     }
-                }else{
+                } else {
                     summa.text = "${formatNumber(totalCart)} UZS"
                     text = formatNumber(tablePercent)
                 }
@@ -360,12 +379,13 @@ fun CalculatorFragment.createTable() {
                             summa.text = "${formatNumber(getTotalCart)} UZS"
                             val total = inputBonus.toDouble() + inputFirstPay.toDouble()
                             val totalWithOutBonusAndFirstPay = totalCart.toDouble() - total
-                            val getPercentFromTotalCart = (totalWithOutBonusAndFirstPay * getPercent.toInt()) / 100
+                            val getPercentFromTotalCart =
+                                (totalWithOutBonusAndFirstPay * getPercent.toInt()) / 100
                             val plusPercent = totalWithOutBonusAndFirstPay + getPercentFromTotalCart
                             val tablePercentWithFirstPay = plusPercent / getMonth.toInt()
                             text = formatNumber(tablePercentWithFirstPay)
 
-                        }else{
+                        } else {
                             tvSale.text = "0 UZS"
                             firstPay.text = "0 UZS"
                             summa.text = "${formatNumber(totalCart)} UZS"
