@@ -16,6 +16,7 @@ import com.fin_group.aslzar.adapter.ProductSomeImagesAdapter
 import com.fin_group.aslzar.databinding.FragmentAlikeProductBottomSheetDialogBinding
 import com.fin_group.aslzar.response.InStock
 import com.fin_group.aslzar.response.Product
+import com.fin_group.aslzar.response.SimilarProduct
 import com.fin_group.aslzar.util.BaseBottomSheetDialogFragment
 import com.fin_group.aslzar.util.OnImageClickListener
 import com.fin_group.aslzar.viewmodel.SharedViewModel
@@ -34,10 +35,11 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(), O
     private var currentSelectedPosition = RecyclerView.NO_POSITION
     var alikeImageList: List<String> = emptyList()
     lateinit var adapter: ProductSomeImagesAdapter
-    lateinit var similarProduct: Product
+    lateinit var similarProduct: SimilarProduct
+    lateinit var fullSimilarProduct: Product
 
     companion object {
-        fun newInstance(product: Product): AlikeProductBottomSheetDialogFragment {
+        fun newInstance(product: SimilarProduct): AlikeProductBottomSheetDialogFragment {
             val dialog = AlikeProductBottomSheetDialogFragment()
             val args = Bundle()
             args.putSerializable(ARG_PRODUCT, product)
@@ -68,7 +70,7 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(), O
         }
 //        binding.lpTitle.text = alikeProductID
         adapter = ProductSomeImagesAdapter(alikeImageList, this)
-        setDataProduct(similarProduct)
+        //setDataProduct(similarProduct)
 
         return binding.root
     }
@@ -110,7 +112,7 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(), O
         binding.apply {
             close.setOnClickListener { dismiss() }
             addToCart.setOnClickListener {
-                sharedViewModel.onProductAddedToCart(similarProduct, requireContext())
+                sharedViewModel.onProductAddedToCart(fullSimilarProduct, requireContext())
                 Toast.makeText(requireContext(), "Товар добавлен ", Toast.LENGTH_SHORT).show()
             }
         }

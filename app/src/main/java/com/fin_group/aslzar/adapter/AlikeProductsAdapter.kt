@@ -6,11 +6,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.fin_group.aslzar.databinding.RowSliderItem2Binding
-import com.fin_group.aslzar.response.Product
+import com.fin_group.aslzar.response.SimilarProduct
 import com.fin_group.aslzar.util.OnAlikeProductClickListener
 
 class AlikeProductsAdapter(
-    var alikeProductsList: List<Product>,
+    var alikeProductsList: List<SimilarProduct>,
     val listener: OnAlikeProductClickListener
 ) : RecyclerView.Adapter<AlikeProductsAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -29,14 +29,14 @@ class AlikeProductsAdapter(
     inner class ViewHolder(binding: RowSliderItem2Binding) : RecyclerView.ViewHolder(binding.root) {
         val imageView = binding.imageView
         @SuppressLint("CheckResult")
-        fun bindItems(likeProduct: Product) {
+        fun bindItems(likeProduct: SimilarProduct) {
             Glide.with(itemView.context).load(likeProduct.img[0]).override(180, 180).into(imageView)
 
 //            imageView.setImageResource(likeProduct.image)
         }
     }
     @SuppressLint("NotifyDataSetChanged")
-    fun updateList(newList: List<Product>) {
+    fun updateList(newList: List<SimilarProduct>) {
         alikeProductsList = newList
         notifyDataSetChanged()
     }

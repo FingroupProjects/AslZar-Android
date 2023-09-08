@@ -16,9 +16,11 @@ import com.bumptech.glide.Glide
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.AlikeProductsAdapter
 import com.fin_group.aslzar.adapter.ProductSomeImagesAdapter
+import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.databinding.FragmentDataProductBinding
 import com.fin_group.aslzar.response.InStock
 import com.fin_group.aslzar.response.Product
+import com.fin_group.aslzar.response.SimilarProduct
 import com.fin_group.aslzar.ui.dialogs.AlikeProductBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.callInStockDialog
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.callSetInProduct
@@ -27,6 +29,7 @@ import com.fin_group.aslzar.ui.fragments.dataProduct.functions.setDataProduct
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.someImagesProduct
 import com.fin_group.aslzar.util.OnAlikeProductClickListener
 import com.fin_group.aslzar.util.OnImageClickListener
+import com.fin_group.aslzar.util.SessionManager
 import com.fin_group.aslzar.util.hideBottomNav
 import com.fin_group.aslzar.util.showBottomNav
 import com.fin_group.aslzar.viewmodel.SharedViewModel
@@ -52,7 +55,7 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
     lateinit var toolbar: MaterialToolbar
 
     var imageList: List<String> = emptyList()
-    var alikeProductsList: List<Product> = emptyList()
+    var alikeProductsList: List<SimilarProduct> = emptyList()
     lateinit var productSomeImagesAdapter: ProductSomeImagesAdapter
     lateinit var productAlikeAdapter: AlikeProductsAdapter
 
@@ -62,11 +65,20 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
     lateinit var sizeChipGroup: ChipGroup
     var sizeSelected: String? = ""
 
+    var getSimilarProduct: List<SimilarProduct> = emptyList()
+    lateinit var sessionManager: SessionManager
+
+    lateinit var apiService: ApiClient
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentDataProductBinding.inflate(inflater, container, false)
+        sessionManager = SessionManager(requireContext())
+        apiService = ApiClient()
+        apiService.init(sessionManager, binding.root)
+
         if (args.product != null){
             product = args.product!!
         } else {
@@ -163,7 +175,7 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         Glide.with(requireContext()).load(image).into(binding.imageView2)
     }
 
-    override fun callBottomDialog(product: Product) {
+    override fun callBottomDialog(product: SimilarProduct) {
         val fragmentManager = requireFragmentManager()
         val tag = "alike_product_dialog"
         val existingFragment = fragmentManager.findFragmentByTag(tag)
