@@ -33,9 +33,9 @@ interface ApiService {
     @Headers("Accept:application/json", "Content-Type:application/json")
     fun getSimilarProducts(@Header("Authorization") token: String, @Path("id") id: String): Call<GetSimilarProductsResponse>
 
-//    @GET(Constants.SET_IN_PRODUCT)
-//    @Headers("Accept:application/json", "Content-Type:application/json")
-//    fun getSetInProduct(@Header("Authorization") token: String, @Path("id") id: String): Call<>
+    @GET(Constants.SET_IN_PRODUCT)
+    @Headers("Accept:application/json", "Content-Type:application/json")
+    fun getSetInProduct(@Header("Authorization") token: String, @Path("id") id: String): Call<GetAllProductsResponse>
 
     @GET(Constants.GET_CATEGORY)
     @Headers("Accept:application/json", "Content-Type:application/json")

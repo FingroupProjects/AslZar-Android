@@ -236,14 +236,16 @@ fun DataProductFragment.setDataProduct(product: Product, binding: FragmentDataPr
 }
 
 fun DataProductFragment.getSimilarProducts(){
-    val call = apiService.getApiService().getSimilarProducts("Bearer ${sessionManager.fetchToken()}", product.id)
+    swipeRefreshLayout.isRefreshing = true
 
+    val call = apiService.getApiService().getSimilarProducts("Bearer ${sessionManager.fetchToken()}", product.id)
     try {
         call.enqueue(object : Callback<GetSimilarProductsResponse?>{
             override fun onResponse(
                 call: Call<GetSimilarProductsResponse?>,
                 response: Response<GetSimilarProductsResponse?>
             ) {
+                swipeRefreshLayout.isRefreshing = false
                 if (response.isSuccessful){
                     val result = response.body()
                     if (result != null){
@@ -260,10 +262,38 @@ fun DataProductFragment.getSimilarProducts(){
                 }
             }
             override fun onFailure(call: Call<GetSimilarProductsResponse?>, t: Throwable) {
-                TODO("Not yet implemented")
+                Log.d("TAG", "onFailure: ${t.message}")
+                swipeRefreshLayout.isRefreshing = false
             }
         })
     }catch (e: Exception){
+        swipeRefreshLayout.isRefreshing = false
         Log.d("TAG", "getSimilarProducts: ${e.message}")
+    }
+}
+
+fun DataProductFragment.getProductByID(){
+    swipeRefreshLayout.isRefreshing = true
+
+    try {
+        val call = apiService.getApiService().getProductByID("Bearer ${sessionManager.fetchToken()}", args.productId)
+        call.enqueue(object : Callback<Product?> {
+            override fun onResponse(call: Call<Product?>, response: Response<Product?>) {
+                swipeRefreshLayout.isRefreshing = false
+                if (response.isSuccessful){
+                    val productResponse = response.body()
+                    if (productResponse != null){
+                        product = productResponse
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<Product?>, t: Throwable) {
+                swipeRefreshLayout.isRefreshing = false
+            }
+        })
+    } catch (e: Exception){
+        swipeRefreshLayout.isRefreshing = false
+        Log.d("TAG", "getProductByID: ${e.message}")
     }
 }

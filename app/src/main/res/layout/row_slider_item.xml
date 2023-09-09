@@ -10,6 +10,7 @@
     card_view:cardUseCompatPadding="true">
 
     <LinearLayout
+        android:background="@drawable/slider_img_bg"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:orientation="vertical">
