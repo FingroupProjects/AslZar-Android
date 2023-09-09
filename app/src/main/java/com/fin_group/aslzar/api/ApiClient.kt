@@ -37,35 +37,7 @@ class ApiClient {
     fun init(sessionManager: SessionManager, view: View) {
         this.sessionManager = sessionManager
         this.rootView = view
-
-//        createHttpClient()
-//        createRetrofit()
     }
-//
-//    private fun createHttpClient() {
-//        val username = sessionManager.fetchLogin() ?: ""
-//        val password = sessionManager.fetchPassword() ?: ""
-//        val credentials = Credentials.basic(username, password)
-//        okHttpClient = OkHttpClient.Builder().addInterceptor { chain ->
-//            val originalRequest = chain.request()
-//            val authenticatedRequest = originalRequest.newBuilder().header("Authorization", credentials).build()
-//            chain.proceed(authenticatedRequest)
-//        }.build()
-//    }
-
-//    private fun createRetrofit() {
-//        val gson = GsonBuilder().setLenient().create()
-//
-//        val retrofit = Retrofit.Builder()
-//            .baseUrl(Constants.BASE_URL)
-//            .addConverterFactory(GsonConverterFactory.create(gson))
-//            .client(okHttpClient)
-//            .build()
-//
-//        apiService = retrofit.create(ApiService::class.java)
-//    }
-
-
 //    fun getApiService(): ApiService {
 ////        val username = sessionManager.fetchLogin() ?: ""
 ////        val password = sessionManager.fetchPassword() ?: ""

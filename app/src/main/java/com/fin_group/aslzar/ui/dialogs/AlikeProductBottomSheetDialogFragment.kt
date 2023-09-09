@@ -1,9 +1,11 @@
 package com.fin_group.aslzar.ui.dialogs
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,12 +15,16 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.ProductSomeImagesAdapter
+import com.fin_group.aslzar.api.ApiClient
+import com.fin_group.aslzar.api.ApiService
 import com.fin_group.aslzar.databinding.FragmentAlikeProductBottomSheetDialogBinding
+import com.fin_group.aslzar.response.Client
 import com.fin_group.aslzar.response.InStock
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.response.SimilarProduct
 import com.fin_group.aslzar.util.BaseBottomSheetDialogFragment
 import com.fin_group.aslzar.util.OnImageClickListener
+import com.fin_group.aslzar.util.SessionManager
 import com.fin_group.aslzar.viewmodel.SharedViewModel
 
 @Suppress("DEPRECATION")
@@ -34,9 +40,14 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(), O
 
     private var currentSelectedPosition = RecyclerView.NO_POSITION
     var alikeImageList: List<String> = emptyList()
+
     lateinit var adapter: ProductSomeImagesAdapter
     lateinit var similarProduct: SimilarProduct
     lateinit var fullSimilarProduct: Product
+
+    lateinit var progressBar: ProgressBar
+    private lateinit var apiClient: ApiClient
+    private lateinit var sessionManager: SessionManager
 
     companion object {
         fun newInstance(product: SimilarProduct): AlikeProductBottomSheetDialogFragment {
@@ -63,12 +74,15 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(), O
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentAlikeProductBottomSheetDialogBinding.inflate(inflater, container, false)
-
+        apiClient = ApiClient()
+        sessionManager = SessionManager(requireContext())
+        apiClient.init(sessionManager, binding.root)
         arguments?.let {
 //            alikeProductID = it.getString("likeProductId", "")
             similarProduct = it.getParcelable(ARG_PRODUCT)!!
         }
 //        binding.lpTitle.text = alikeProductID
+
         adapter = ProductSomeImagesAdapter(alikeImageList, this)
         //setDataProduct(similarProduct)
 
@@ -132,6 +146,14 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(), O
         recyclerView.adapter = adapter
         adapter.updateList(alikeImageList)
     }
+
+//    private fun getSimilarProduct(){
+//        try {
+//            val call =
+//        } catch (e: Exception){
+//            Log.d("TAG", "getSimilarProduct: ${e.message}")
+//        }
+//    }
 
     private fun setDataProduct(product: Product){
         binding.apply {
