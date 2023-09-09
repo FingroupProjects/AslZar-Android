@@ -38,5 +38,4 @@ data class InStock(
     val store_house: String,
     val subsidiary: String,
     val count: Number,
-    val sale: Number
 ) : Parcelable, Serializable

@@ -56,15 +56,15 @@ class InStockBottomSheetDialogFragment : BaseBottomSheetDialogFragment() {
         //inStockList = product.counts
 
         inStockList = listOf(
-            InStock("Магазин 1", "Витрина 3", 8, 0),
-            InStock("Магазин 2", "Витрина 8", 8, 0),
-            InStock("Магазин 12", "Витрина 7", 8, 0),
-            InStock("Магазин 5", "Витрина 6", 8, 0),
-            InStock("Магазин 8", "Витрина 3", 8, 0),
-            InStock("Магазин 4", "Витрина 5", 8, 0),
-            InStock("Магазин 6", "Витрина 3", 8, 0),
-            InStock("Магазин 3", "Витрина 4", 8, 0),
-            InStock("Магазин 7", "Витрина 3", 8, 0)
+            InStock("Магазин 1", "Витрина 3", 8),
+            InStock("Магазин 2", "Витрина 8", 8),
+            InStock("Магазин 12", "Витрина 7", 8),
+            InStock("Магазин 5", "Витрина 6", 8),
+            InStock("Магазин 8", "Витрина 3", 8),
+            InStock("Магазин 4", "Витрина 5", 8),
+            InStock("Магазин 6", "Витрина 3", 8),
+            InStock("Магазин 3", "Витрина 4", 8),
+            InStock("Магазин 7", "Витрина 3", 8)
         )
 
         return binding.root

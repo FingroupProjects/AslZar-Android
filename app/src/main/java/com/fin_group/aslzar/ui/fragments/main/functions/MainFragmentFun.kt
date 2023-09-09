@@ -148,7 +148,7 @@ fun MainFragment.categoryDialog() {
 fun MainFragment.filterProducts() {
     filteredProducts = if (searchText.isNotEmpty()){
         allProducts.filter { product ->
-            product.name.contains(searchText, ignoreCase = true) || product.id.contains(searchText, ignoreCase = true)
+            product.name.contains(searchText, ignoreCase = true) || product.id.contains(searchText, ignoreCase = true) || product.full_name.contains(searchText, ignoreCase = true)
         }
     } else {
         if (selectCategory?.id == "all" || selectCategory == null) {

@@ -2,6 +2,7 @@ package com.fin_group.aslzar.ui.fragments.dataProduct
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -79,8 +80,13 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         apiService = ApiClient()
         apiService.init(sessionManager, binding.root)
 
+        val productResponse = arguments?.getParcelable<Product>("productResponse")
+        Log.d("TAG", "onCreateView: ${args.product}")
+
         if (args.product != null){
             product = args.product!!
+            Log.d("TAG", "onCreateView: $product")
+//            setDataProduct(product, binding)
         } else {
             product = Product(
                 id = "000011",
@@ -99,8 +105,8 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
                 country_of_origin = "Франция",
                 provider = "Jewel Emporium",
                 counts = listOf(
-                    InStock("Центральный склад", "Москва", 15, 4),
-                    InStock("Региональный склад", "Санкт-Петербург", 10, 2)
+                    InStock("Центральный склад", "Москва", 15),
+                    InStock("Региональный склад", "Санкт-Петербург", 10)
                 ),
                 img = listOf(
                     "http://convertolink.taskpro.tj/photoLink/public/storage/images/nGDDpEI7PUHSzhexPDFij3Iu2zcNr2J5AheI2iNO.png",
