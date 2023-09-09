@@ -18,6 +18,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.ProductSomeImagesAdapter
 import com.fin_group.aslzar.api.ApiClient
+import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentAlikeProductBottomSheetDialogBinding
 import com.fin_group.aslzar.response.InStock
 import com.fin_group.aslzar.response.Product
@@ -26,6 +27,7 @@ import com.fin_group.aslzar.util.BaseBottomSheetDialogFragment
 import com.fin_group.aslzar.util.OnImageClickListener
 import com.fin_group.aslzar.util.SessionManager
 import com.fin_group.aslzar.viewmodel.SharedViewModel
+import com.google.android.material.appbar.MaterialToolbar
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -81,65 +83,97 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(),
         apiClient = ApiClient()
         sessionManager = SessionManager(requireContext())
         apiClient.init(sessionManager, binding.root)
+        progressBar = binding.progressLinearDeterminate
         arguments?.let {
 //            alikeProductID = it.getString("likeProductId", "")
             similarProduct = it.getParcelable(ARG_PRODUCT)!!
         }
-//        binding.lpTitle.text = alikeProductID
-
+        recyclerView = binding.lpSomeImagesRv
         adapter = ProductSomeImagesAdapter(alikeImageList, this)
-        //setDataProduct(similarProduct)
-
+        setProductImages(similarProduct.img)
+        getSimilarProduct()
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        recyclerView = binding.lpSomeImagesRv
-        getSimilarProduct()
-        val inStockList = listOf(
-            InStock("Магазин 1", "Витрина 3", 8),
-            InStock("Магазин 2", "Витрина 8", 8),
-            InStock("Магазин 12", "Витрина 7", 8),
-            InStock("Магазин 5", "Витрина 6", 8)
-        )
 
-//        similarProduct = Product(
-//            id = "0000022",
-//            full_name = "Кольцо с аметистом",
-//            name = "23..789.77",
-//            price = 120.0,
-//            category_id = "jewelry",
-//            sale = 0.2,
-//            color = "фиолетовый",
-//            stone_type = "аметист",
-//            metal = "серебро",
-//            content = "Серьги с натуральным аметистом",
-//            size = "малый",
-//            weight = "5 г",
-//            country_of_origin = "Индия",
-//            provider = "Украшения Востока",
-//            counts = inStockList,
-//            img = listOf(
-//                "https://cdn2.thecatapi.com/images/2n3.jpg",
-//                "https://cdn2.thecatapi.com/images/2qo.jpg"
-//            )
-//        )
-
+//        setInitialProductAndInterface()
+        binding.apTitle.text = similarProduct.full_name
 
         binding.apply {
             close.setOnClickListener { dismiss() }
             addToCart.setOnClickListener {
-                sharedViewModel.onProductAddedToCart(fullSimilarProduct, requireContext())
-                Toast.makeText(requireContext(), "Товар добавлен ", Toast.LENGTH_SHORT).show()
+                if (fullSimilarProduct != null){
+                    sharedViewModel.onProductAddedToCart(fullSimilarProduct, requireContext())
+
+                    val addedProduct = Cart.getProductById(similarProduct.id)
+                    if (addedProduct != null){
+                        Toast.makeText(requireContext(), "Количество товара увеличено на +1", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(requireContext(), "Товар добавлен в корзину", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Toast.makeText(requireContext(), "Не удалось добавить товар, загрузите данные заново и повторите попытку.", Toast.LENGTH_SHORT).show()
+                }
+
+            }
+            refresh.setOnClickListener {
+                getSimilarProduct()
             }
         }
     }
 
+
+    private fun setInitialProductAndInterface() {
+        setDataProduct(fullSimilarProduct)
+        adapter.setSelectedPosition(0)
+        adapter.updateList(similarProduct.img)
+    }
+
     private fun setProductImages(imageList: List<String>) {
+        Glide.with(requireContext())
+            .load(imageList[0])
+            .transform(RoundedCorners(10))
+            .error(R.drawable.ic_no_image)
+            .into(binding.lpMainIv)
         recyclerView.layoutManager = LinearLayoutManager(requireContext(), HORIZONTAL, false)
         recyclerView.adapter = adapter
         adapter.updateList(imageList)
+    }
+
+    private fun setDataProduct(product: Product) {
+        if (product.img.size <= 1){
+            binding.lpSomeImagesRv.visibility = GONE
+        } else {
+            binding.lpSomeImagesRv.visibility = VISIBLE
+        }
+
+        binding.apply {
+            apTitle.text = product.full_name
+            apCode.text = product.name
+            apPrice.text = product.price.toString()
+            apStone.text = product.stone_type
+            apProbe.text = product.content
+            apMetal.text = product.metal
+            apWeight.text = product.weight
+            apSize.text = product.size
+        }
+    }
+
+    override fun setImage(image: String) {
+        currentSelectedPosition = similarProduct.img.indexOfFirst { it == image }
+        adapter.setSelectedPosition(currentSelectedPosition)
+        Glide.with(requireContext())
+            .load(image)
+            .transform(RoundedCorners(10))
+            .error(R.drawable.ic_no_image)
+            .into(binding.lpMainIv)
+        adapter.notifyItemChanged(currentSelectedPosition)
+
+//        currentSelectedPosition = similarProduct.img.indexOfFirst { it == image }
+//        productSomeImagesAdapter.setSelectedPosition(currentSelectedPosition)
+//        Glide.with(requireContext()).load(image).into(binding.imageView2)
     }
 
     private fun getSimilarProduct() {
@@ -157,7 +191,8 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(),
                         if (similarProductResponse != null) {
                             fullSimilarProduct = similarProductResponse
                             setDataProduct(fullSimilarProduct)
-                            setProductImages(fullSimilarProduct.img)
+                            setInitialProductAndInterface()
+//                            setProductImages(fullSimilarProduct.img)
                         }
                     }
                 }
@@ -174,28 +209,4 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(),
         }
     }
 
-    private fun setDataProduct(product: Product) {
-        binding.apply {
-            apTitle.text = product.full_name
-            apCode.text = product.name
-            apPrice.text = product.price.toString()
-            apStone.text = product.stone_type
-            apProbe.text = product.content
-            apMetal.text = product.metal
-            apWeight.text = product.weight
-            apSize.text = product.size
-        }
-    }
-
-    override fun setImage(image: String) {
-        currentSelectedPosition = alikeImageList.indexOfFirst { it == image }
-        adapter.setSelectedPosition(currentSelectedPosition)
-        Glide.with(requireContext())
-            .load(image)
-            .transform(RoundedCorners(10))
-            .error(R.drawable.ic_no_image)
-            .into(binding.lpMainIv)
-        //binding.lpMainIv.setImageResource(image)
-        adapter.notifyItemChanged(currentSelectedPosition)
-    }
 }

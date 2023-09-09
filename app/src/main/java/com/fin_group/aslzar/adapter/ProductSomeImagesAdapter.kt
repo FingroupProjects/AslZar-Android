@@ -1,5 +1,6 @@
 package com.fin_group.aslzar.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,7 +40,7 @@ class ProductSomeImagesAdapter(var imageDataModelList: List<String>, private val
         notifyDataSetChanged()
     }
 
-
+    @SuppressLint("NotifyDataSetChanged")
     fun setSelectedPosition(position: Int) {
         selectedItemPosition = position
         notifyDataSetChanged()
