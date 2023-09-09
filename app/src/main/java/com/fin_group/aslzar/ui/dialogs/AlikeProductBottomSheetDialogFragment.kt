@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.Toast
@@ -16,9 +18,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.ProductSomeImagesAdapter
 import com.fin_group.aslzar.api.ApiClient
-import com.fin_group.aslzar.api.ApiService
 import com.fin_group.aslzar.databinding.FragmentAlikeProductBottomSheetDialogBinding
-import com.fin_group.aslzar.response.Client
 import com.fin_group.aslzar.response.InStock
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.response.SimilarProduct
@@ -26,9 +26,13 @@ import com.fin_group.aslzar.util.BaseBottomSheetDialogFragment
 import com.fin_group.aslzar.util.OnImageClickListener
 import com.fin_group.aslzar.util.SessionManager
 import com.fin_group.aslzar.viewmodel.SharedViewModel
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 @Suppress("DEPRECATION")
-class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(), OnImageClickListener {
+class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(),
+    OnImageClickListener {
 
     private var _binding: FragmentAlikeProductBottomSheetDialogBinding? = null
     private val binding get() = _binding!!
@@ -42,8 +46,8 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(), O
     var alikeImageList: List<String> = emptyList()
 
     lateinit var adapter: ProductSomeImagesAdapter
-    lateinit var similarProduct: SimilarProduct
-    lateinit var fullSimilarProduct: Product
+    private lateinit var similarProduct: SimilarProduct
+    private lateinit var fullSimilarProduct: Product
 
     lateinit var progressBar: ProgressBar
     private lateinit var apiClient: ApiClient
@@ -92,12 +96,12 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(), O
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         recyclerView = binding.lpSomeImagesRv
-
+        getSimilarProduct()
         val inStockList = listOf(
-            InStock("Магазин 1", "Витрина 3", 8, 0),
-            InStock("Магазин 2", "Витрина 8", 8, 0),
-            InStock("Магазин 12", "Витрина 7", 8, 0),
-            InStock("Магазин 5", "Витрина 6", 8, 0)
+            InStock("Магазин 1", "Витрина 3", 8),
+            InStock("Магазин 2", "Витрина 8", 8),
+            InStock("Магазин 12", "Витрина 7", 8),
+            InStock("Магазин 5", "Витрина 6", 8)
         )
 
 //        similarProduct = Product(
@@ -121,7 +125,7 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(), O
 //                "https://cdn2.thecatapi.com/images/2qo.jpg"
 //            )
 //        )
-        
+
 
         binding.apply {
             close.setOnClickListener { dismiss() }
@@ -130,32 +134,47 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(), O
                 Toast.makeText(requireContext(), "Товар добавлен ", Toast.LENGTH_SHORT).show()
             }
         }
-
-        setProducts()
     }
 
-    private fun setProducts() {
-        alikeImageList = listOf(
-            "http://convertolink.taskpro.tj/photoLink/public/storage/images/PlNk0wsmedvtLhkPu7wzj7Sk7OIiaKJosxy8NidO.png",
-            "http://convertolink.taskpro.tj/photoLink/public/storage/images/85cIg9T9cwf3fevuQJ8rnGxrrG80Jh5mHatHRZWr.png",
-            "http://convertolink.taskpro.tj/photoLink/public/storage/images/7HwYLvcR5CSUYmp5rbdpjDzus9VwZQN8aZkjdz7O.png",
-            "http://convertolink.taskpro.tj/photoLink/public/storage/images/oB9W5AC6jBQeFScqr8YFjRs81tCekLKYRe8cHSrH.png",
-            "http://convertolink.taskpro.tj/photoLink/public/storage/images/hIu6UbR6WAiCK1YYLUqd6KvOKYU5lzMHoYrLmqjW.png"
-        )
+    private fun setProductImages(imageList: List<String>) {
         recyclerView.layoutManager = LinearLayoutManager(requireContext(), HORIZONTAL, false)
         recyclerView.adapter = adapter
-        adapter.updateList(alikeImageList)
+        adapter.updateList(imageList)
     }
 
-//    private fun getSimilarProduct(){
-//        try {
-//            val call =
-//        } catch (e: Exception){
-//            Log.d("TAG", "getSimilarProduct: ${e.message}")
-//        }
-//    }
+    private fun getSimilarProduct() {
+        progressBar.visibility = VISIBLE
+        try {
+            val call = apiClient.getApiService().getProductByID("Bearer ${sessionManager.fetchToken()}", similarProduct.id)
+            call.enqueue(object : Callback<Product?> {
+                override fun onResponse(
+                    call: Call<Product?>,
+                    response: Response<Product?>
+                ) {
+                    progressBar.visibility = GONE
+                    if (response.isSuccessful) {
+                        val similarProductResponse = response.body()
+                        if (similarProductResponse != null) {
+                            fullSimilarProduct = similarProductResponse
+                            setDataProduct(fullSimilarProduct)
+                            setProductImages(fullSimilarProduct.img)
+                        }
+                    }
+                }
 
-    private fun setDataProduct(product: Product){
+                override fun onFailure(call: Call<Product?>, t: Throwable) {
+                    Toast.makeText(requireContext(), "Загрузка прошла не успешно, пожалуйста повторите попытку", Toast.LENGTH_SHORT).show()
+                    progressBar.visibility = GONE
+                    Log.d("TAG", "onFailure: ${t.message}")
+                }
+            })
+        } catch (e: Exception) {
+            progressBar.visibility = GONE
+            Log.d("TAG", "getSimilarProduct: ${e.message}")
+        }
+    }
+
+    private fun setDataProduct(product: Product) {
         binding.apply {
             apTitle.text = product.full_name
             apCode.text = product.name

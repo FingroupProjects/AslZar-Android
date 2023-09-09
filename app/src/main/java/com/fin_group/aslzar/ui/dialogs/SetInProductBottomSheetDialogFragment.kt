@@ -62,10 +62,10 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnPro
         super.onViewCreated(view, savedInstanceState)
 
         val inStockList = listOf(
-            InStock("Магазин 1", "Витрина 3", 8, 0),
-            InStock("Магазин 2", "Витрина 8", 8, 0),
-            InStock("Магазин 12", "Витрина 7", 8, 0),
-            InStock("Магазин 5", "Витрина 6", 8, 0)
+            InStock("Магазин 1", "Витрина 3", 8),
+            InStock("Магазин 2", "Витрина 8", 8),
+            InStock("Магазин 12", "Витрина 7", 8),
+            InStock("Магазин 5", "Витрина 6", 8)
         )
 
         allProducts = listOf(

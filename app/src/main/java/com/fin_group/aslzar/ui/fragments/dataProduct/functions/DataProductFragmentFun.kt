@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL
 import com.bumptech.glide.Glide
 import com.fin_group.aslzar.R
-import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentDataProductBinding
 import com.fin_group.aslzar.response.GetSimilarProductsResponse
@@ -134,10 +133,10 @@ fun DataProductFragment.someImagesProduct() {
 
 fun DataProductFragment.likeProducts(){
     val inStockList = listOf(
-        InStock("Магазин 1", "Витрина 3", 8, 0),
-        InStock("Магазин 2", "Витрина 8", 8, 0),
-        InStock("Магазин 12", "Витрина 7", 8, 0),
-        InStock("Магазин 5", "Витрина 6", 8, 0)
+        InStock("Магазин 1", "Витрина 3", 8),
+        InStock("Магазин 2", "Витрина 8", 8),
+        InStock("Магазин 12", "Витрина 7", 8),
+        InStock("Магазин 5", "Витрина 6", 8)
     )
 //    alikeProductsList = listOf(
 //        Product(
@@ -199,12 +198,13 @@ fun DataProductFragment.setDataProduct(product: Product, binding: FragmentDataPr
     } else {
         binding.otherImgRv.visibility = VISIBLE
     }
-    if (product.sale.toDouble() <= 0.0){
-        binding.productSale.visibility = GONE
-    } else {
-        binding.productSale.text = "-${formatNumber(product.sale)}%"
+    if (product.sale.toString().isNotEmpty() && product.sale.toDouble() > 0.0){
+        binding.productSale.text = "-${formatNumber(product.sale.toDouble())}%"
         binding.productSale.visibility = VISIBLE
+    } else {
+        binding.productSale.visibility = GONE
     }
+
 
     binding.apply {
         if (product.img.isNotEmpty()){
