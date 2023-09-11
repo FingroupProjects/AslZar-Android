@@ -13,6 +13,7 @@ import com.fin_group.aslzar.databinding.FragmentCalculatorBinding
 import com.fin_group.aslzar.models.AllTypePay
 import com.fin_group.aslzar.models.Installment
 import com.fin_group.aslzar.response.Client
+import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.all
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.calculator
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.cartObserver
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.createTable
@@ -70,8 +71,10 @@ class CalculatorFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         fetViews(binding)
-        calculator()
+        //calculator()
         createTable()
+        all()
+
         super.onViewCreated(view, savedInstanceState)
     }
 
