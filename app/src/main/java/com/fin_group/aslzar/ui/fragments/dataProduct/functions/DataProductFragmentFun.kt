@@ -198,12 +198,15 @@ fun DataProductFragment.setDataProduct(product: Product, binding: FragmentDataPr
     } else {
         binding.otherImgRv.visibility = VISIBLE
     }
-    if (product.sale.toString().isNotEmpty() && product.sale.toDouble() > 0.0){
-        binding.productSale.text = "-${formatNumber(product.sale.toDouble())}%"
-        binding.productSale.visibility = VISIBLE
-    } else {
-        binding.productSale.visibility = GONE
+    if (product.sale != 0){
+        if (product.sale.toString().isNotEmpty() && product.sale!!.toDouble() > 0.0){
+            binding.productSale.text = "-${formatNumber(product.sale.toDouble())}%"
+            binding.productSale.visibility = VISIBLE
+        } else {
+            binding.productSale.visibility = GONE
+        }
     }
+
 
 
     binding.apply {
@@ -220,16 +223,16 @@ fun DataProductFragment.setDataProduct(product: Product, binding: FragmentDataPr
         dpMetal.text = product.metal
         dpWeight.text = product.weight
         dpSize.text = product.size
+        dpInstallmentPrice.text = "(${((product.price.toDouble() * 0.06) + product.price.toDouble()) / 4} UZS/мес)"
 
         btnAddToCart.setOnClickListener {
-            sharedViewModel.onProductAddedToCart(product, requireContext())
-
             val addedProduct = Cart.getProductById(product.id)
             if (addedProduct != null){
                 Toast.makeText(requireContext(), "Количество товара увеличено на +1", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(requireContext(), "Товар добавлен в корзину", Toast.LENGTH_SHORT).show()
             }
+            sharedViewModel.onProductAddedToCart(product, requireContext())
 
         }
     }
@@ -284,6 +287,7 @@ fun DataProductFragment.getProductByID(){
                     val productResponse = response.body()
                     if (productResponse != null){
                         product = productResponse
+                        setDataProduct(product, binding)
                     }
                 }
             }

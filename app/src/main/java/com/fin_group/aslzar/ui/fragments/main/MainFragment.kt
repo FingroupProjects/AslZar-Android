@@ -90,7 +90,7 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         preferences = context?.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)!!
         sessionManager = SessionManager(requireContext())
         apiService = ApiClient()
-        apiService.init(sessionManager, binding.root)
+        apiService.init(sessionManager)
         swipeRefreshLayout = binding.swipeRefreshLayout
         setHasOptionsMenu(true)
         viewSearch = binding.viewSearch

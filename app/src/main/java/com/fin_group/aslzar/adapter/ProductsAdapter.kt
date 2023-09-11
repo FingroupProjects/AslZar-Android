@@ -63,7 +63,7 @@ class ProductsAdapter(
                 image.setImageResource(R.drawable.ic_no_image)
             }
 
-            if (product.sale.toDouble() <= 0){
+            if (product.sale?.toDouble()!! <= 0){
                 saleTv.visibility = GONE
             } else {
                 saleTv.text = "-${formatNumber(product.sale)}%"

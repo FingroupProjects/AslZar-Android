@@ -1,7 +1,7 @@
 package com.fin_group.aslzar.ui.fragments.profile
 
 import android.os.Bundle
-import android.util.Log
+import android.util.Base64
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.Menu
@@ -9,13 +9,10 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.api.ApiClient
-import com.fin_group.aslzar.api.ApiService
+import com.fin_group.aslzar.cipher.EncryptionManager
 import com.fin_group.aslzar.databinding.FragmentProfileBinding
-import com.fin_group.aslzar.response.SalesPlan
 import com.fin_group.aslzar.ui.dialogs.SignOutProfileFragmentDialog
 import com.fin_group.aslzar.ui.fragments.profile.functions.goToChangePasswordDialog
 import com.fin_group.aslzar.ui.fragments.profile.functions.speedometerView
@@ -23,6 +20,7 @@ import com.fin_group.aslzar.util.SessionManager
 import com.fin_group.aslzar.util.hideBottomNav
 import com.fin_group.aslzar.util.showBottomNav
 import com.github.anastr.speedviewlib.Speedometer
+import javax.crypto.spec.SecretKeySpec
 
 @Suppress("DEPRECATION")
 class ProfileFragment : Fragment() {
@@ -45,7 +43,7 @@ class ProfileFragment : Fragment() {
         setHasOptionsMenu(true)
         sessionManager = SessionManager(requireContext())
         apiService = ApiClient()
-        apiService.init(sessionManager, binding.root)
+        apiService.init(sessionManager)
 
         return binding.root
     }
@@ -59,6 +57,18 @@ class ProfileFragment : Fragment() {
 //        getSalesPlan()
         salesPlanNumber = sessionManager.fetchSalesPlan()
         val asd: Number? = salesPlanNumber
+        binding.apply {
+            editName.text = sessionManager.fetchName()
+            editLogin.text = sessionManager.fetchLogin()
+            editFilial.text = sessionManager.fetchLocation()
+
+            val key = sessionManager.fetchKey()
+            val keyBase64 = Base64.decode(key, Base64.DEFAULT)
+            val encryptionKey = SecretKeySpec(keyBase64, "AES")
+            val encryptionManager = EncryptionManager(encryptionKey)
+
+            editLogin.text = encryptionManager.decryptData(sessionManager.fetchLogin()!!)
+        }
 
         speedometerView(asd!!.toFloat())
         binding.btnChangePassword.setOnClickListener {

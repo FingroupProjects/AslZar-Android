@@ -20,14 +20,12 @@ import com.fin_group.aslzar.adapter.ProductSomeImagesAdapter
 import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentAlikeProductBottomSheetDialogBinding
-import com.fin_group.aslzar.response.InStock
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.response.SimilarProduct
 import com.fin_group.aslzar.util.BaseBottomSheetDialogFragment
 import com.fin_group.aslzar.util.OnImageClickListener
 import com.fin_group.aslzar.util.SessionManager
 import com.fin_group.aslzar.viewmodel.SharedViewModel
-import com.google.android.material.appbar.MaterialToolbar
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -82,7 +80,7 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(),
         _binding = FragmentAlikeProductBottomSheetDialogBinding.inflate(inflater, container, false)
         apiClient = ApiClient()
         sessionManager = SessionManager(requireContext())
-        apiClient.init(sessionManager, binding.root)
+        apiClient.init(sessionManager)
         progressBar = binding.progressLinearDeterminate
         arguments?.let {
 //            alikeProductID = it.getString("likeProductId", "")
@@ -124,7 +122,6 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(),
         }
     }
 
-
     private fun setInitialProductAndInterface() {
         setDataProduct(fullSimilarProduct)
         adapter.setSelectedPosition(0)
@@ -140,6 +137,21 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(),
         recyclerView.layoutManager = LinearLayoutManager(requireContext(), HORIZONTAL, false)
         recyclerView.adapter = adapter
         adapter.updateList(imageList)
+    }
+
+    private fun addToCart(product: Product, productId: String){
+        binding.apply {
+            addToCart.setOnClickListener {
+                Log.d("TAG", "onViewCreated: $product")
+                val addedProduct = Cart.getProductById(productId)
+                if (addedProduct != null){
+                    Toast.makeText(requireContext(), "Количество товара увеличено на +1", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(requireContext(), "Товар добавлен в корзину", Toast.LENGTH_SHORT).show()
+                }
+                sharedViewModel.onProductAddedToCart(product, requireContext())
+            }
+        }
     }
 
     private fun setDataProduct(product: Product) {

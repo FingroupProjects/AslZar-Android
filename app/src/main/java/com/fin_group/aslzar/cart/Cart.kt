@@ -1,6 +1,7 @@
 package com.fin_group.aslzar.cart
 
 import android.content.Context
+import android.util.Log
 import com.fin_group.aslzar.models.Installment
 import com.fin_group.aslzar.models.ProductInCart
 import com.fin_group.aslzar.util.CartObserver
@@ -26,7 +27,14 @@ object Cart {
         val totalCount = getTotalCount()
         val totalPrice = getTotalPrice()
 
-        observers.forEach { it.onCartChanged(totalPriceWithoutSale, totalSalePrice, totalCount, totalPrice) }
+        observers.forEach {
+            it.onCartChanged(
+                totalPriceWithoutSale,
+                totalSalePrice,
+                totalCount,
+                totalPrice
+            )
+        }
     }
 
     fun getAllProducts(): MutableList<ProductInCart> {
@@ -58,18 +66,22 @@ object Cart {
     }
 
     fun addProduct(product: ProductInCart, context: Context) {
-        val existingProduct = getProductById(product.id)
+        try {
+            val existingProduct = getProductById(product.id)
 
-        if (existingProduct == null) {
-            products.add(product)
-            //Toast.makeText(context, "Товар добавлен в корзину", Toast.LENGTH_SHORT).show()
-            saveCartToPrefs(context)
-        } else {
-            plusProduct(product.id, context)
-            //Toast.makeText(context, "Товар увеличен на 1", Toast.LENGTH_SHORT).show()
-            saveCartToPrefs(context)
+            if (existingProduct == null) {
+                products.add(product)
+                //Toast.makeText(context, "Товар добавлен в корзину", Toast.LENGTH_SHORT).show()
+                saveCartToPrefs(context)
+            } else {
+                plusProduct(product.id, context)
+                //Toast.makeText(context, "Товар увеличен на 1", Toast.LENGTH_SHORT).show()
+                saveCartToPrefs(context)
+            }
+            notifyObservers()
+        } catch (e: Exception){
+            Log.d("TAG", "addProduct: ${e.message}")
         }
-        notifyObservers()
     }
 
     fun plusProduct(productId: String, context: Context) {

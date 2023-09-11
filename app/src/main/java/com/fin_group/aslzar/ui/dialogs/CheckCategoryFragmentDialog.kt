@@ -2,7 +2,6 @@ package com.fin_group.aslzar.ui.dialogs
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -13,13 +12,11 @@ import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.CategoryAdapter
 import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.databinding.FragmentDialogCheckCategoryBinding
 import com.fin_group.aslzar.response.Category
 import com.fin_group.aslzar.response.GetAllCategoriesResponse
-import com.fin_group.aslzar.ui.fragments.main.MainFragment
 import com.fin_group.aslzar.util.BaseDialogFragment
 import com.fin_group.aslzar.util.CategoryClickListener
 import com.fin_group.aslzar.util.SessionManager
@@ -49,7 +46,7 @@ class CheckCategoryFragmentDialog : BaseDialogFragment() {
         _binding = FragmentDialogCheckCategoryBinding.inflate(inflater, container, false)
         sessionManager = SessionManager(requireContext())
         apiService = ApiClient()
-        apiService.init(sessionManager, binding.root)
+        apiService.init(sessionManager)
         recyclerView = binding.rvCategories
         progressBar = binding.progressLinearDeterminate
 
