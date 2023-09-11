@@ -6,8 +6,6 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.security.keystore.KeyGenParameterSpec
-import android.security.keystore.KeyProperties
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -22,24 +20,16 @@ import com.fin_group.aslzar.ui.activities.MainActivity
 import com.fin_group.aslzar.util.SessionManager
 import com.google.android.material.textfield.TextInputEditText
 import java.security.SecureRandom
-import java.security.spec.KeySpec
 import android.util.Base64
 import android.view.View.VISIBLE
 import android.widget.ProgressBar
 import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.response.Auth
-import com.fin_group.aslzar.response.GetAllProductsResponse
-import com.fin_group.aslzar.util.FunCallback
 import com.fin_group.aslzar.util.SessionManager.Companion.IS_LOGGED_IN_KEY
 import com.fin_group.aslzar.util.SessionManager.Companion.PREFS_KEY
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import javax.crypto.Cipher
-import javax.crypto.KeyGenerator
-import javax.crypto.SecretKey
-import javax.crypto.SecretKeyFactory
-import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
 
 class FragmentLogin : Fragment() {
@@ -71,7 +61,7 @@ class FragmentLogin : Fragment() {
         sessionManager = SessionManager(requireContext())
         sessionManager = SessionManager(requireContext())
         api = ApiClient()
-        api.init(sessionManager, binding.root)
+        api.init(sessionManager)
 
         sharedPreferences = requireActivity().getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE)
         isLoggedIn = sharedPreferences.getBoolean(IS_LOGGED_IN_KEY, false)

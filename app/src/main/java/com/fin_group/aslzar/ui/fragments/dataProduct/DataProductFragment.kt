@@ -20,12 +20,12 @@ import com.fin_group.aslzar.adapter.AlikeProductsAdapter
 import com.fin_group.aslzar.adapter.ProductSomeImagesAdapter
 import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.databinding.FragmentDataProductBinding
-import com.fin_group.aslzar.response.InStock
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.response.SimilarProduct
 import com.fin_group.aslzar.ui.dialogs.AlikeProductBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.callInStockDialog
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.callSetInProduct
+import com.fin_group.aslzar.ui.fragments.dataProduct.functions.getProductByID
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.getSimilarProducts
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.likeProducts
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.setDataProduct
@@ -44,7 +44,7 @@ import com.google.android.material.chip.ChipGroup
 class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClickListener {
 
     private var _binding: FragmentDataProductBinding? = null
-    private val binding get() = _binding!!
+    val binding get() = _binding!!
 
     val args by navArgs<DataProductFragmentArgs>()
     val sharedViewModel: SharedViewModel by activityViewModels()
@@ -81,14 +81,14 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         _binding = FragmentDataProductBinding.inflate(inflater, container, false)
         sessionManager = SessionManager(requireContext())
         apiService = ApiClient()
-        apiService.init(sessionManager, binding.root)
+        apiService.init(sessionManager)
         swipeRefreshLayout = binding.swipeRefreshLayout
 
         if (args.product != null){
             product = args.product!!
             Log.d("TAG", "onCreateView: $product")
         } else {
-
+            getProductByID()
         }
 
         val toolbar = requireActivity().findViewById<MaterialToolbar>(R.id.toolbar)
@@ -123,6 +123,10 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         super.onViewCreated(view, savedInstanceState)
         setDataProduct(product, binding)
         getSimilarProducts()
+
+        swipeRefreshLayout.setOnRefreshListener {
+            getProductByID()
+        }
 //        val weightList = listOf("1.5", "1.7", "1.8", "2.0", "2.1", "2.3")
 //        val sizeList = listOf("10.5", "12.1", "13.5", "13.7", "14", "14.8")
 //        callWeightChipGroup(weightList)

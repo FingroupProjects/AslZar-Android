@@ -7,7 +7,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -45,7 +44,9 @@ class BarcodeScannerV2Fragment : Fragment() {
         _binding = FragmentBarcodeScannerV2Binding.inflate(inflater, container, false)
         apiClient = ApiClient()
         sessionManager = SessionManager(requireContext())
-        apiClient.init(sessionManager, binding.root)
+        apiClient.init(sessionManager)
+        codeScanner = CodeScanner(requireActivity(), binding.scannerView)
+
         return binding.root
     }
 
@@ -73,14 +74,15 @@ class BarcodeScannerV2Fragment : Fragment() {
 //                codeScanner.startPreview()
 //            }
             }
-        }catch (e: Exception){
+        } catch (e: Exception) {
             Log.d("TAG", "onViewCreated: ${e.message}")
         }
     }
 
     private fun getSimilarProduct(productId: String) {
         try {
-            val call = apiClient.getApiService().getProductByID("Bearer ${sessionManager.fetchToken()}", productId)
+            val call = apiClient.getApiService()
+                .getProductByID("Bearer ${sessionManager.fetchToken()}", productId)
             call.enqueue(object : Callback<Product?> {
                 override fun onResponse(
                     call: Call<Product?>,
@@ -100,20 +102,32 @@ class BarcodeScannerV2Fragment : Fragment() {
                             Log.d("TAG", "onResponse: ${response.body()}")
                             Log.d("TAG", "onResponse: $productResponse")
                             Log.d("TAG", "onResponse: ${response.code()}")
-                        } else if (response.body() == null){
-                            Toast.makeText(requireContext(), "Товар с таким идентификатором не найден", Toast.LENGTH_SHORT).show()
+                        } else if (response.body() == null) {
+                            Toast.makeText(
+                                requireContext(),
+                                "Товар с таким идентификатором не найден",
+                                Toast.LENGTH_SHORT
+                            ).show()
                             Navigation.findNavController(binding.root).popBackStack()
                             showBottomNav()
                         }
                     } else {
-                        Toast.makeText(requireContext(), "Товар с таким идентификатором не найден", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            requireContext(),
+                            "Товар с таким идентификатором не найден",
+                            Toast.LENGTH_SHORT
+                        ).show()
                         Navigation.findNavController(binding.root).popBackStack()
                         showBottomNav()
                     }
                 }
 
                 override fun onFailure(call: Call<Product?>, t: Throwable) {
-                    Toast.makeText(requireContext(), "Загрузка прошла не успешно, пожалуйста повторите попытку", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Загрузка прошла не успешно, пожалуйста повторите попытку",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     Log.d("TAG", "onFailure: ${t.message}")
                 }
             })
@@ -132,7 +146,9 @@ class BarcodeScannerV2Fragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        codeScanner.startPreview()
+        if (::codeScanner.isInitialized) {
+            codeScanner.startPreview()
+        }
     }
 
     override fun onPause() {

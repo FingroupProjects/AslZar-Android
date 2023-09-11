@@ -88,6 +88,10 @@ class SessionManager(context: Context) {
         return prefs.getString(USER_FIO, null)
     }
 
+    fun fetchLocation(): String? {
+        return prefs.getString(USER_LOCATION, null)
+    }
+
     fun fetchLogin(): String? {
         return prefs.getString(USER_LOGIN, null)
     }
