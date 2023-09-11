@@ -61,18 +61,16 @@ class BarcodeScannerV2Fragment : Fragment() {
                 askForCameraPermission()
             } else {
                 //setupControls()
-                val scannerView = view.findViewById<CodeScannerView>(R.id.scanner_view)
-                val activity = requireActivity()
-                codeScanner = CodeScanner(activity, scannerView)
                 codeScanner.decodeCallback = DecodeCallback {
-                    activity.runOnUiThread {
-//                        Toast.makeText(activity, it.text, Toast.LENGTH_LONG).show()
+                    requireActivity().runOnUiThread {
+                        Toast.makeText(activity, it.text, Toast.LENGTH_LONG).show()
                         getSimilarProduct(it.text)
+                        Log.d("TAG", "onViewCreated: ${it.text}")
                     }
                 }
-//            scannerView.setOnClickListener {
-//                codeScanner.startPreview()
-//            }
+                binding.scannerView.setOnClickListener {
+                    codeScanner.startPreview()
+                }
             }
         } catch (e: Exception) {
             Log.d("TAG", "onViewCreated: ${e.message}")
@@ -114,7 +112,7 @@ class BarcodeScannerV2Fragment : Fragment() {
                     } else {
                         Toast.makeText(
                             requireContext(),
-                            "Товар с таким идентификатором не найден",
+                            "",
                             Toast.LENGTH_SHORT
                         ).show()
                         Navigation.findNavController(binding.root).popBackStack()
@@ -146,9 +144,7 @@ class BarcodeScannerV2Fragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        if (::codeScanner.isInitialized) {
-            codeScanner.startPreview()
-        }
+        codeScanner.startPreview()
     }
 
     override fun onPause() {
