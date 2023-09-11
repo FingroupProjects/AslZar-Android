@@ -19,4 +19,6 @@ object Constants {
     //clients
     const val GET_CLIENTS = "GetClients"
 
+    //
+    const val GET_COEFFICIENT = "GetСoefficientPlan"
 }

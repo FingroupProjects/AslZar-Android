@@ -6,6 +6,7 @@ import com.fin_group.aslzar.response.GetAllClientsResponse
 import com.fin_group.aslzar.response.GetAllProductsResponse
 import com.fin_group.aslzar.response.GetProductByIdResponse
 import com.fin_group.aslzar.response.GetSimilarProductsResponse
+import com.fin_group.aslzar.response.PercentInstallment
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.response.SalesPlanResponse
 import retrofit2.http.Headers
@@ -44,6 +45,10 @@ interface ApiService {
     @GET(Constants.GET_CLIENTS)
     @Headers("Accept:application/json", "Content-Type:application/json")
     fun getAllClients(@Header("Authorization") token: String): Call<GetAllClientsResponse>
+
+    @GET(Constants.GET_COEFFICIENT)
+    @Headers("Accept:application/json", "Content-Type:application/json")
+    fun getPercentAndMonth(@Header("Authorization") token: String): Call<PercentInstallment>
 
     @GET(Constants.GET_SALES_PLAN)
     @Headers("Accept:application/json", "Content-Type:application/json")
