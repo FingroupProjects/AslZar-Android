@@ -1,33 +1,52 @@
 package com.fin_group.aslzar.ui.fragments.cartMain.calculator
 
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.preference.PreferenceManager
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.TextView
 import androidx.appcompat.widget.LinearLayoutCompat
+import com.fin_group.aslzar.R
+import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentCalculatorBinding
 import com.fin_group.aslzar.models.AllTypePay
 import com.fin_group.aslzar.models.Installment
 import com.fin_group.aslzar.response.Client
+import com.fin_group.aslzar.response.GetAllClientsResponse
+import com.fin_group.aslzar.response.Percent
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.all
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.cartObserver
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.createTable
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.fetViews
+import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.fetchClient
+import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.fetchClientFromApi
+import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.fetchClientNameFromPrefs
+import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.getForPercentAndMonth
 import com.fin_group.aslzar.util.CartObserver
+import com.fin_group.aslzar.util.SessionManager
 import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
+@Suppress("DEPRECATION")
 class CalculatorFragment : Fragment() {
 
     private var _binding: FragmentCalculatorBinding? = null
     private val binding get() = _binding!!
 
-    lateinit var typeClient: AutoCompleteTextView
     lateinit var typePay: AutoCompleteTextView
     lateinit var checkBox: MaterialCheckBox
     lateinit var firstPayCalculator: TextInputLayout
@@ -38,22 +57,20 @@ class CalculatorFragment : Fragment() {
     lateinit var monthTable: LinearLayoutCompat
     lateinit var percentTable: LinearLayoutCompat
     lateinit var firstPay: TextView
-    lateinit var sale: TextView
     lateinit var payWithBonus: TextView
     lateinit var tvFirstPayCalculator: TextInputEditText
     lateinit var summa: TextView
     lateinit var tvBonusForClient: TextView
     lateinit var tvSale: TextView
     lateinit var editBonus: TextInputEditText
-
-    lateinit var getInstallment: List<Installment>
-
-    var allClientType: List<Client> = emptyList()
-    var allTypePay: List<AllTypePay> = emptyList()
-
-
-    var totalCart: Number = 0
+    lateinit var spinnerClientType : AutoCompleteTextView
+    lateinit var getAllClient: List<Client>
+    lateinit var getPercentAndMonth: List<Percent>
     lateinit var cartObserver: CartObserver
+    lateinit var  api : ApiClient
+    lateinit var sessionManager: SessionManager
+    lateinit var prefs: SharedPreferences
+    var totalCart: Number = 0
 
 
     override fun onCreateView(
@@ -62,6 +79,10 @@ class CalculatorFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentCalculatorBinding.inflate(inflater, container, false)
+
+        prefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
+        sessionManager = SessionManager(requireContext())
+
         cartObserver(binding)
         Cart.registerObserver(cartObserver)
 
@@ -70,13 +91,14 @@ class CalculatorFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         fetViews(binding)
-        //calculator()
         createTable()
         all()
-
+        getForPercentAndMonth()
+        fetchClientFromApi()
+        fetchClientNameFromPrefs()
+        fetchClient(getAllClient)
         super.onViewCreated(view, savedInstanceState)
     }
-
     override fun onStart() {
         super.onStart()
         Cart.notifyObservers()
