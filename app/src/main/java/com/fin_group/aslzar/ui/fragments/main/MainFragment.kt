@@ -233,7 +233,7 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
 
     override fun inStock(product: Product) {
         if (product.counts.isNotEmpty()) {
-            callInStockDialog(product.id)
+            callInStockDialog(product.full_name, product.counts)
         } else {
             callOutStock(product.id)
         }

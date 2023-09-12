@@ -15,6 +15,7 @@ import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentDataProductBinding
 import com.fin_group.aslzar.response.GetSimilarProductsResponse
 import com.fin_group.aslzar.response.InStock
+import com.fin_group.aslzar.response.InStockList
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.SetInProductBottomSheetDialogFragment
@@ -25,13 +26,13 @@ import com.fin_group.aslzar.util.formatNumber
 import retrofit2.Call
 import retrofit2.Response
 
-fun DataProductFragment.callInStockDialog(id: String) {
+fun DataProductFragment.callInStockDialog(name: String, counts: List<InStock>) {
     val fragmentManager = requireFragmentManager()
     val tag = "Product in stock Dialog"
     val existingFragment = fragmentManager.findFragmentByTag(tag)
 
     if (existingFragment == null) {
-        val bottomSheetFragment = InStockBottomSheetDialogFragment.newInstance(id)
+        val bottomSheetFragment = InStockBottomSheetDialogFragment.newInstance(name, counts)
         bottomSheetFragment.show(fragmentManager, tag)
     }
 }
@@ -133,10 +134,10 @@ fun DataProductFragment.someImagesProduct() {
 
 fun DataProductFragment.likeProducts(){
     val inStockList = listOf(
-        InStock("Магазин 1", "Витрина 3", 8),
-        InStock("Магазин 2", "Витрина 8", 8),
-        InStock("Магазин 12", "Витрина 7", 8),
-        InStock("Магазин 5", "Витрина 6", 8)
+        InStock("Магазин 1", "Витрина 3", 8, 0),
+        InStock("Магазин 2", "Витрина 8", 8, 0),
+        InStock("Магазин 12", "Витрина 7", 8, 0),
+        InStock("Магазин 5", "Витрина 6", 8, 0)
     )
 //    alikeProductsList = listOf(
 //        Product(

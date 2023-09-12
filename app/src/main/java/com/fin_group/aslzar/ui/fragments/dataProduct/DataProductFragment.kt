@@ -20,6 +20,7 @@ import com.fin_group.aslzar.adapter.AlikeProductsAdapter
 import com.fin_group.aslzar.adapter.ProductSomeImagesAdapter
 import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.databinding.FragmentDataProductBinding
+import com.fin_group.aslzar.response.InStockList
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.response.SimilarProduct
 import com.fin_group.aslzar.ui.dialogs.AlikeProductBottomSheetDialogFragment
@@ -143,7 +144,7 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
             callSetInProduct(args.productId)
         }
         if (item.itemId == R.id.product_in_stock_item){
-            callInStockDialog(args.productId)
+            callInStockDialog(product.name, product.counts)
         }
         return super.onOptionsItemSelected(item)
     }

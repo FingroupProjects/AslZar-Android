@@ -11,6 +11,8 @@ import com.fin_group.aslzar.R
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentMainBinding
 import com.fin_group.aslzar.response.GetAllProductsResponse
+import com.fin_group.aslzar.response.InStock
+import com.fin_group.aslzar.response.InStockList
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.ui.dialogs.CheckCategoryFragmentDialog
 import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
@@ -27,13 +29,13 @@ fun MainFragment.callCategoryDialog(listener: CategoryClickListener) {
     categoryDialog.show(activity?.supportFragmentManager!!, "category check dialog")
 }
 
-fun MainFragment.callInStockDialog(id: String){
+fun MainFragment.callInStockDialog(name: String, counts: List<InStock>){
     val fragmentManager = requireFragmentManager()
     val tag = "Product in stock Dialog"
     val existingFragment = fragmentManager.findFragmentByTag(tag)
 
     if (existingFragment == null) {
-        val bottomSheetFragment = InStockBottomSheetDialogFragment.newInstance(id)
+        val bottomSheetFragment = InStockBottomSheetDialogFragment.newInstance(name, counts)
         bottomSheetFragment.show(fragmentManager, tag)
     }
 }

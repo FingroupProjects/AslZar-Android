@@ -63,9 +63,8 @@ class BarcodeScannerV2Fragment : Fragment() {
                 //setupControls()
                 codeScanner.decodeCallback = DecodeCallback {
                     requireActivity().runOnUiThread {
-                        Toast.makeText(activity, it.text, Toast.LENGTH_LONG).show()
+//                        Toast.makeText(activity, it.text, Toast.LENGTH_LONG).show()
                         getSimilarProduct(it.text)
-                        Log.d("TAG", "onViewCreated: ${it.text}")
                     }
                 }
                 binding.scannerView.setOnClickListener {
@@ -86,8 +85,6 @@ class BarcodeScannerV2Fragment : Fragment() {
                     call: Call<Product?>,
                     response: Response<Product?>
                 ) {
-                    Log.d("TAG", "onResponse: ${response.body()}")
-                    Log.d("TAG", "onResponse: ${response.code()}")
                     if (response.isSuccessful) {
                         val productResponse = response.body()
                         if (productResponse != null) {
@@ -97,35 +94,19 @@ class BarcodeScannerV2Fragment : Fragment() {
                                     productResponse
                                 )
                             Navigation.findNavController(binding.root).navigate(action)
-                            Log.d("TAG", "onResponse: ${response.body()}")
-                            Log.d("TAG", "onResponse: $productResponse")
-                            Log.d("TAG", "onResponse: ${response.code()}")
                         } else if (response.body() == null) {
-                            Toast.makeText(
-                                requireContext(),
-                                "Товар с таким идентификатором не найден",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            Toast.makeText(requireContext(),"Товар с таким идентификатором не найден",Toast.LENGTH_SHORT).show()
                             Navigation.findNavController(binding.root).popBackStack()
                             showBottomNav()
                         }
                     } else {
-                        Toast.makeText(
-                            requireContext(),
-                            "",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Toast.makeText(requireContext(),"",Toast.LENGTH_SHORT).show()
                         Navigation.findNavController(binding.root).popBackStack()
                         showBottomNav()
                     }
                 }
-
                 override fun onFailure(call: Call<Product?>, t: Throwable) {
-                    Toast.makeText(
-                        requireContext(),
-                        "Загрузка прошла не успешно, пожалуйста повторите попытку",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Toast.makeText(requireContext(),"Загрузка прошла не успешно, пожалуйста повторите попытку",Toast.LENGTH_SHORT).show()
                     Log.d("TAG", "onFailure: ${t.message}")
                 }
             })
