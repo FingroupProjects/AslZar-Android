@@ -5,8 +5,10 @@ package com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions
 import android.annotation.SuppressLint
 import android.graphics.Typeface
 import android.text.InputType
+import android.util.Log
 import android.view.Gravity
 import android.view.View
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -19,36 +21,38 @@ import com.fin_group.aslzar.models.AllClientType
 import com.fin_group.aslzar.models.AllTypePay
 import com.fin_group.aslzar.models.Installment
 import com.fin_group.aslzar.response.Client
+import com.fin_group.aslzar.response.GetAllClientsResponse
+import com.fin_group.aslzar.response.PercentInstallment
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.CalculatorFragment
 import com.fin_group.aslzar.util.CartObserver
 import com.fin_group.aslzar.util.formatNumber
 import com.google.android.gms.common.api.GoogleApi
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 fun CalculatorFragment.fetViews(binding: FragmentCalculatorBinding) {
     tvBonusForClient = binding.tvBonusForClient
     firstPay = binding.tvFirstPay
     tvSale = binding.tvSale
-
     payWithBonus = binding.tvPayWithBonus
     summa = binding.summa
-
-    typeClient = binding.spinnerClientType
     typePay = binding.spinnerPayType
-
     checkBox = binding.checkbox
     firstPayCalculator = binding.firstPayCalculator
     checkboxForBonus = binding.checkboxForBonus
     tvFirstPayCalculator = binding.tvFirstPayCalculator
-
     bonus = binding.bonus
     editBonus = binding.editBonus
-
     tvTable = binding.tvTable
     monthTable = binding.monthTable
     percentTable = binding.percentTable
     tableSale = binding.tableSale
-
-    getInstallment = listOf()
+    spinnerClientType = binding.spinnerClientType
+    getAllClient = listOf()
+    getPercentAndMonth = listOf()
 }
 
 fun CalculatorFragment.cartObserver(binding: FragmentCalculatorBinding) {
@@ -75,16 +79,16 @@ fun CalculatorFragment.createTable() {
 
     val totalCart = Cart.getTotalPrice()
 
-    getInstallment = listOf(
-        Installment("2", 20),
-        Installment("3", 30),
-        Installment("4", 40),
-        Installment("5", 50),
-        Installment("6", 60),
-        Installment("7", 70),
-        Installment("8", 80),
-        Installment("9", 90)
-    )
+//    getInstallment = listOf(
+//        Installment("2", 20),
+//        Installment("3", 30),
+//        Installment("4", 40),
+//        Installment("5", 50),
+//        Installment("6", 60),
+//        Installment("7", 70),
+//        Installment("8", 80),
+//        Installment("9", 90)
+//    )
 
     val styleTextColor = ContextCompat.getColor(requireContext(), R.color.text_color_1)
     val styleTextSize = 15f
@@ -92,16 +96,16 @@ fun CalculatorFragment.createTable() {
     val styleTextAlignment = TextView.TEXT_ALIGNMENT_CENTER
     val boldTypeface = Typeface.defaultFromStyle(Typeface.BOLD)
 
-    for (i in getInstallment.indices) {
+    for (i in getPercentAndMonth.indices) {
 
         // CREATE MONTH TABLE
         val monthTextView = TextView(requireContext()).apply {
             layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
-            text = "${getInstallment[i].month} платежей"
+            text = "${getPercentAndMonth[i].mounth} платежей"
             gravity = Gravity.CENTER
             setTextColor(styleTextColor)
             textSize = styleTextSize
-            if (i < getInstallment.size - 1) {
+            if (i < getPercentAndMonth.size - 1) {
                 setBackgroundResource(styleBackground)
             }
             textAlignment = styleTextAlignment
@@ -110,11 +114,11 @@ fun CalculatorFragment.createTable() {
         monthTable.addView(monthTextView)
 
         //Расчет без первоначльного взноса
-        val getMonth = getInstallment[i].month
-        val getPercent = getInstallment[i].percent
-        val getPercentFromTotalCart = (totalCart.toDouble() * getPercent.toDouble()) / 100
+        val getMonth = getPercentAndMonth[i].mounth
+        val getPercent = getPercentAndMonth[i].coefficient
+        val getPercentFromTotalCart = (totalCart.toDouble() * getPercent) / 100
         val plusPercent = totalCart.toDouble() + getPercentFromTotalCart
-        val tablePercent = plusPercent / getMonth.toInt()
+        val tablePercent = plusPercent / getMonth
 
         // CREATE PERCENT TABLE
         val amountTextView = TextView(requireContext()).apply {
@@ -137,7 +141,7 @@ fun CalculatorFragment.createTable() {
                         summa.text = "${formatNumber(minusFirstPay)} UZS"
                         val getPercentFromTotalCart = (minusFirstPay * getPercent.toInt()) / 100
                         val plusPercent = minusFirstPay + getPercentFromTotalCart
-                        val tablePercentWithFirstPay = plusPercent / getMonth.toInt()
+                        val tablePercentWithFirstPay = plusPercent / getMonth
                         text = formatNumber(tablePercentWithFirstPay)
                     }
                 } else {
@@ -154,7 +158,7 @@ fun CalculatorFragment.createTable() {
                     val minusBonus = totalCart.toDouble() - getPayWithBonus.toDouble()
                     val getPercentFromTotalCart = (minusBonus * getPercent.toInt()) / 100
                     val plusPercent = minusBonus + getPercentFromTotalCart
-                    val tablePercentWithFirstPay = plusPercent / getMonth.toInt()
+                    val tablePercentWithFirstPay = plusPercent / getMonth
                     text = formatNumber(tablePercentWithFirstPay)
                 }
             }
@@ -170,7 +174,7 @@ fun CalculatorFragment.createTable() {
                             val totalWithOutBonusAndFirstPay = totalCart.toDouble() - total
                             val getPercentFromTotalCart = (totalWithOutBonusAndFirstPay * getPercent.toInt()) / 100
                             val plusPercent = totalWithOutBonusAndFirstPay + getPercentFromTotalCart
-                            val tablePercentWithFirstPay = plusPercent / getMonth.toInt()
+                            val tablePercentWithFirstPay = plusPercent / getMonth
                             text = formatNumber(tablePercentWithFirstPay)
                         }
                     }
@@ -180,7 +184,7 @@ fun CalculatorFragment.createTable() {
             gravity = Gravity.CENTER
             setTextColor(styleTextColor)
             textSize = styleTextSize
-            if (i < getInstallment.size - 1) {
+            if (i < getPercentAndMonth.size - 1) {
                 setBackgroundResource(styleBackground)
             }
             textAlignment = styleTextAlignment
@@ -199,28 +203,21 @@ fun CalculatorFragment.all() {
     val getTotalWithSale = Cart.getTotalPriceWithSale()
     tvSale.text = "${formatNumber(getTotalWithSale)} UZS"
 
-    val allClientType = listOf(
-        Client("1", "Розничный", 0, "Silver"),
-        Client("2", "Шарифов Тохир", 300, "Silver"),
-        Client("3", "Шахобов Нуриддин", 100, "Silver"),
-        Client("4", "Гафуров Сухроб", 200, "Silver")
-    )
-
     val allTypePay = listOf(
         AllTypePay(1, "Наличными"),
         AllTypePay(2, "В рассрочку")
     )
 
-    val arrayAdapterTypeClient = ArrayAdapter(requireContext(), R.layout.spinner_item, allClientType.map { it.client_name })
-    typeClient.setAdapter(arrayAdapterTypeClient)
+    val arrayAdapterTypeClient = ArrayAdapter(requireContext(), R.layout.spinner_item, getAllClient.map { it.client_name })
+    spinnerClientType.setAdapter(arrayAdapterTypeClient)
 
     val arrayAdapterTypePay = ArrayAdapter(requireContext(), R.layout.spinner_item, allTypePay.map { it.name })
     typePay.setAdapter(arrayAdapterTypePay)
 
-    typeClient.setOnItemClickListener { _, _, position, _ ->
-        val selectClientType = allClientType[position]
+    spinnerClientType.setOnItemClickListener { _, _, position, _ ->
+        val selectClientType = getAllClient[position]
 
-        val contains = "розничный"
+        val contains = "розничный покупатель"
         val containsSubstring = selectClientType.client_name.contains(contains, true)
 
         if (containsSubstring){
@@ -273,7 +270,6 @@ fun CalculatorFragment.all() {
 
                     firstPayCalculator.editText?.setText("")
 
-
                     tableSale.visibility = View.VISIBLE
                     tvTable.visibility = View.VISIBLE
 
@@ -322,7 +318,7 @@ fun CalculatorFragment.all() {
             tvSale.text = "${formatNumber(getTotalWithSale)} UZS"
 
             checkboxForBonus.visibility = View.VISIBLE
-            checkBox.visibility = View.VISIBLE
+            checkBox.visibility = View.GONE
 
             editBonus.inputType = InputType.TYPE_CLASS_NUMBER
 
@@ -467,7 +463,6 @@ fun CalculatorFragment.all() {
 
                         }
                     }
-
                     tableSale.visibility = View.VISIBLE
                     tvTable.visibility = View.VISIBLE
                 }
@@ -476,3 +471,100 @@ fun CalculatorFragment.all() {
     }
 }
 
+
+
+fun CalculatorFragment.getForPercentAndMonth(){
+    try {
+        val call = api.getApiService().getPercentAndMonth("Bearer ${sessionManager.fetchToken()}")
+        call.enqueue(object : Callback<PercentInstallment?>{
+            override fun onResponse(
+                call: Call<PercentInstallment?>,
+                response: Response<PercentInstallment?>
+            ) {
+                Log.d("TAG", "onResponse: ${response.code()}")
+                Log.d("TAG", "onResponse: ${response.errorBody()?.string()}")
+                if (response.isSuccessful){
+                    val percentAndMonth = response.body()
+                    if (percentAndMonth != null){
+                        getPercentAndMonth = percentAndMonth.result
+                        val monthAndPercent = Gson().toJson(getAllClient)
+                        prefs.edit().putString("percentAndMonth", monthAndPercent).apply()
+                    }
+                }else{
+                    Log.d("TAG", "onResponse: ${response.code()}")
+                    Log.d("TAG", "onResponse: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<PercentInstallment?>, t: Throwable) {
+                Log.d("TAG", "onFailure: ${t.message}")
+            }
+
+        })
+    }catch (e : Exception){
+        Log.d("TAG", "getPercentAndMonth: ${e.message}")
+    }
+}
+
+fun CalculatorFragment.fetchClientFromApi(){
+    try {
+        val call = api.getApiService().getAllClients("Bearer ${sessionManager.fetchToken()}")
+        call.enqueue(object : Callback<GetAllClientsResponse?> {
+            override fun onResponse(
+                call: Call<GetAllClientsResponse?>,
+                response: Response<GetAllClientsResponse?>
+            ) {
+                if (response.isSuccessful){
+                    val clientName = response.body()
+                    if (clientName != null){
+                        getAllClient = clientName.result
+                        val nameClient = Gson().toJson(getAllClient)
+                        prefs.edit().putString("clientName", nameClient).apply()
+                        fetchClient(getAllClient)
+                    }
+                }else{
+                    Log.d("TAG", "onResponse: ${response.code()}")
+                    Log.d("TAG", "onResponse: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<GetAllClientsResponse?>, t: Throwable) {
+                Log.d("TAG", "onFailure: ${t.message}")                }
+        })
+    }catch (e: Exception){
+        Log.d("TAG", "fetchClientNameFromApi: ${e.message}")
+    }
+}
+
+fun CalculatorFragment.fetchClient(client: List<Client>){
+    val arrayAdapterClient = ArrayAdapter(requireContext(), R.layout.spinner_item, client.map { it.client_name })
+    spinnerClientType.setAdapter(arrayAdapterClient)
+
+    spinnerClientType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        override fun onItemSelected(
+            parent: AdapterView<*>?,
+            view: View?,
+            position: Int,
+            id: Long
+        ) {}
+
+        override fun onNothingSelected(parent: AdapterView<*>?) {}
+    }
+}
+
+fun CalculatorFragment.fetchClientNameFromPrefs(){
+    try {
+        val clientNameJason = prefs.getString("clientName", null)
+        if (clientNameJason != null){
+            val clientNameListType = object : TypeToken<List<Client>>(){}.type
+            val nameClient = Gson().fromJson<List<Client>>(clientNameJason,clientNameListType)
+            getAllClient = nameClient
+            Log.d("TAG", "fetchNameClientFromPrefs: $nameClient")
+            fetchClient(getAllClient)
+        }else{
+            fetchClientFromApi()
+        }
+    }catch (e:Exception){
+        Log.d("TAG", "fetchNameClientFromPrefs: ${e.message}")
+    }
+}
