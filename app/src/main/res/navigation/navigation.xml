@@ -36,11 +36,13 @@
         android:name="com.fin_group.aslzar.ui.fragments.cartMain.MainCartFragment"
         tools:layout="@layout/fragment_main_cart">
         <action
-            android:id="@+id/action_mainCartFragment_to_cartFragment"
-            app:destination="@id/cartFragment" />
-        <action
-            android:id="@+id/action_mainCartFragment_to_calculatorFragment"
-            app:destination="@id/calculatorFragment" />
+            android:id="@+id/action_mainCartFragment_to_dataProductFragment"
+            app:destination="@id/dataProductFragment"
+            app:enterAnim="@anim/from_right"
+            app:exitAnim="@anim/to_left"
+            app:popEnterAnim="@anim/from_left"
+            app:popExitAnim="@anim/to_right"
+            app:popUpTo="@id/mainFragment" />
     </fragment>
     <fragment
         android:id="@+id/barCodeScannerFragment"
@@ -50,18 +52,12 @@
         <action
             android:id="@+id/action_barCodeScannerFragment_to_dataProductFragment"
             app:destination="@id/dataProductFragment"
+            app:enterAnim="@anim/from_right"
+            app:exitAnim="@anim/to_left"
+            app:popEnterAnim="@anim/from_left"
+            app:popExitAnim="@anim/to_right"
             app:popUpTo="@id/mainFragment" />
     </fragment>
-    <fragment
-        android:id="@+id/calculatorFragment"
-        android:name="com.fin_group.aslzar.ui.fragments.cartMain.calculator.CalculatorFragment"
-        android:label="Калькулятор"
-        tools:layout="@layout/fragment_calculator" />
-    <fragment
-        android:id="@+id/cartFragment"
-        android:name="com.fin_group.aslzar.ui.fragments.cartMain.cart.CartFragment"
-        android:label="Корзина"
-        tools:layout="@layout/fragment_cart" />
     <fragment
         android:id="@+id/dataProductFragment"
         android:name="com.fin_group.aslzar.ui.fragments.dataProduct.DataProductFragment"

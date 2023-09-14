@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL
 import com.bumptech.glide.Glide
 import com.fin_group.aslzar.R
+import com.fin_group.aslzar.adapter.ProductSomeImagesAdapter
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentDataProductBinding
 import com.fin_group.aslzar.response.GetSimilarProductsResponse
@@ -22,6 +23,8 @@ import com.fin_group.aslzar.ui.dialogs.WarningNoHaveProductFragmentDialog
 import com.fin_group.aslzar.ui.fragments.dataProduct.DataProductFragment
 import retrofit2.Callback
 import com.fin_group.aslzar.util.formatNumber
+import com.google.android.material.badge.BadgeDrawable
+import com.google.android.material.badge.BadgeUtils
 import retrofit2.Call
 import retrofit2.Response
 
@@ -199,15 +202,13 @@ fun DataProductFragment.setDataProduct(product: Product, binding: FragmentDataPr
         binding.otherImgRv.visibility = VISIBLE
     }
     if (product.sale != 0){
-        if (product.sale.toString().isNotEmpty() && product.sale!!.toDouble() > 0.0){
+        if (product.sale.toString().isNotEmpty() && product.sale.toDouble() > 0.0){
             binding.productSale.text = "-${formatNumber(product.sale.toDouble())}%"
             binding.productSale.visibility = VISIBLE
         } else {
             binding.productSale.visibility = GONE
         }
     }
-
-
 
     binding.apply {
         if (product.img.isNotEmpty()){
@@ -281,6 +282,7 @@ fun DataProductFragment.getProductByID(){
     try {
         val call = apiService.getApiService().getProductByID("Bearer ${sessionManager.fetchToken()}", args.productId)
         call.enqueue(object : Callback<Product?> {
+            @SuppressLint("UnsafeOptInUsageError")
             override fun onResponse(call: Call<Product?>, response: Response<Product?>) {
                 swipeRefreshLayout.isRefreshing = false
                 if (response.isSuccessful){
@@ -288,12 +290,22 @@ fun DataProductFragment.getProductByID(){
                     if (productResponse != null){
                         product = productResponse
                         setDataProduct(product, binding)
+                        productSomeImagesAdapter.updateList(product.img)
+
+                        if (product.is_set){
+                            filterBadge = BadgeDrawable.create(requireContext())
+                            filterBadge?.isVisible = true
+                            BadgeUtils.attachBadgeDrawable(filterBadge!!, toolbar, R.id.product_set_item)
+                        }
+
+
                     }
                 }
             }
 
             override fun onFailure(call: Call<Product?>, t: Throwable) {
                 swipeRefreshLayout.isRefreshing = false
+                Log.d("TAG", "onFailure: ${t.message}")
             }
         })
     } catch (e: Exception){

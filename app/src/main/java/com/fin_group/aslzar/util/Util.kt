@@ -55,6 +55,8 @@ interface EditProductInCart{
     fun plusProductInCart(productInCart: ProductInCart)
     fun minusProductInCart(productInCart: ProductInCart)
 
+    fun openDialogDataProduct(productInCart: ProductInCart)
+
     fun onCartCleared()
 }
 

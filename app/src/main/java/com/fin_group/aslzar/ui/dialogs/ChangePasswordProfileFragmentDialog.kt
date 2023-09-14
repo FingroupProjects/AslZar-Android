@@ -35,8 +35,6 @@ class ChangePasswordProfileFragmentDialog : BaseDialogFragment() {
         newPasswordEditText = binding.editNewPasswordChange
         passwordCheck()
 
-
-
         binding.floatingActionButton.setOnClickListener {
             dismiss()
         }
