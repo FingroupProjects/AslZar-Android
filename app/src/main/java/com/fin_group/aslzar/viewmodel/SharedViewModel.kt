@@ -35,4 +35,7 @@ class SharedViewModel: ViewModel() {
     fun setHideCategory(hide: Boolean) {
         _hideCategory.value = hide
     }
+
+
+
 }

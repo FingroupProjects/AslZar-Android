@@ -9,6 +9,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
@@ -19,8 +20,8 @@ import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.AlikeProductsAdapter
 import com.fin_group.aslzar.adapter.ProductSomeImagesAdapter
 import com.fin_group.aslzar.api.ApiClient
+import com.fin_group.aslzar.databinding.FragmentCalculatorBinding
 import com.fin_group.aslzar.databinding.FragmentDataProductBinding
-import com.fin_group.aslzar.response.InStockList
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.response.SimilarProduct
 import com.fin_group.aslzar.ui.dialogs.AlikeProductBottomSheetDialogFragment
@@ -38,6 +39,8 @@ import com.fin_group.aslzar.util.hideBottomNav
 import com.fin_group.aslzar.util.showBottomNav
 import com.fin_group.aslzar.viewmodel.SharedViewModel
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.badge.BadgeDrawable
+import com.google.android.material.badge.BadgeUtils
 import com.google.android.material.chip.ChipGroup
 
 
@@ -75,6 +78,10 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
 
     lateinit var apiService: ApiClient
 
+    private var isFilterOn: Boolean = false
+    private var filterBadge: BadgeDrawable? = null
+
+    @SuppressLint("UnsafeOptInUsageError")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -91,9 +98,15 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         } else {
             getProductByID()
         }
-
-        val toolbar = requireActivity().findViewById<MaterialToolbar>(R.id.toolbar)
+        toolbar = requireActivity().findViewById(R.id.toolbar)
         toolbar.title = product.full_name
+
+        if (product.is_set){
+            filterBadge = BadgeDrawable.create(requireContext())
+            filterBadge?.isVisible = true
+            BadgeUtils.attachBadgeDrawable(filterBadge!!, toolbar, R.id.product_set_item)
+        }
+
 //        toolbar = binding.toolbar
 //        (activity as AppCompatActivity?)!!.setSupportActionBar(toolbar as MaterialToolbar?)
 //        toolbar.title = "Данные товара"
@@ -139,12 +152,33 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         super.onCreateOptionsMenu(menu, inflater)
     }
 
+    @SuppressLint("UnsafeOptInUsageError")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.product_set_item){
-            callSetInProduct(args.productId)
+            if (product.is_set) {
+                callSetInProduct(args.productId)
+                isFilterOn = !isFilterOn
+                if (isFilterOn) {
+                    if (filterBadge == null) {
+                        filterBadge = BadgeDrawable.create(requireContext())
+                        filterBadge?.isVisible = true
+                        BadgeUtils.attachBadgeDrawable(filterBadge!!, toolbar, R.id.product_set_item)
+                    }
+                } else {
+                    filterBadge?.isVisible = false
+                    BadgeUtils.attachBadgeDrawable(filterBadge!!, toolbar, R.id.product_set_item)
+                }
+            }else {
+                Toast.makeText(requireContext(), "У данного продукта нет комплекта", Toast.LENGTH_SHORT).show()
+            }
         }
+
         if (item.itemId == R.id.product_in_stock_item){
-            callInStockDialog(product.name, product.counts)
+            if (product.counts.isNotEmpty()){
+                callInStockDialog(product.name, product.counts)
+            } else {
+                Toast.makeText(requireContext(), "Данного продукта нет в наличии", Toast.LENGTH_SHORT).show()
+            }
         }
         return super.onOptionsItemSelected(item)
     }
@@ -162,6 +196,16 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
 //        viewAdapter.notifyItemChanged(currentSelectedPosition)
 //        Toast.makeText(requireContext(), currentSelectedPosition, Toast.LENGTH_SHORT).show()
 
+    }
+
+    @SuppressLint("UnsafeOptInUsageError")
+    override fun onDestroyView() {
+        super.onDestroyView()
+
+        if (filterBadge != null) {
+            filterBadge?.isVisible = false
+            BadgeUtils.attachBadgeDrawable(filterBadge!!, toolbar, R.id.product_set_item)
+        }
     }
 
     override fun callBottomDialog(product: SimilarProduct) {

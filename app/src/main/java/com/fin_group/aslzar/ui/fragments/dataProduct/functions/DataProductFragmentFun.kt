@@ -15,7 +15,6 @@ import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentDataProductBinding
 import com.fin_group.aslzar.response.GetSimilarProductsResponse
 import com.fin_group.aslzar.response.InStock
-import com.fin_group.aslzar.response.InStockList
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.SetInProductBottomSheetDialogFragment
