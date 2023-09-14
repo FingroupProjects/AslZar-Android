@@ -79,7 +79,7 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
     lateinit var apiService: ApiClient
 
     private var isFilterOn: Boolean = false
-    private var filterBadge: BadgeDrawable? = null
+    var filterBadge: BadgeDrawable? = null
 
     @SuppressLint("UnsafeOptInUsageError")
     override fun onCreateView(
@@ -92,12 +92,17 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         apiService.init(sessionManager)
         swipeRefreshLayout = binding.swipeRefreshLayout
 
-        if (args.product != null){
+
+        if (args.product != null) {
             product = args.product!!
             Log.d("TAG", "onCreateView: $product")
         } else {
             getProductByID()
         }
+        if (product.category_id == ""){
+            getProductByID()
+        }
+        Log.d("TAG", "onCreateView: $product")
         toolbar = requireActivity().findViewById(R.id.toolbar)
         toolbar.title = product.full_name
 

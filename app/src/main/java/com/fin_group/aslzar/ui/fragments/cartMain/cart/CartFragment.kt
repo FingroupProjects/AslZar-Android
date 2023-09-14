@@ -13,6 +13,9 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.Navigation
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,8 +24,11 @@ import com.fin_group.aslzar.adapter.ProductInCartAdapter
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentCartBinding
 import com.fin_group.aslzar.models.ProductInCart
+import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.ui.activities.MainActivity
+import com.fin_group.aslzar.ui.dialogs.DataProductInCartFragment
 import com.fin_group.aslzar.ui.dialogs.DeleteAllProductFromCartFragmentDialog
+import com.fin_group.aslzar.ui.fragments.cartMain.MainCartFragmentDirections
 import com.fin_group.aslzar.ui.fragments.cartMain.cart.functions.cartObserver
 import com.fin_group.aslzar.ui.fragments.cartMain.cart.functions.deleteAllProductFromCart
 import com.fin_group.aslzar.ui.fragments.cartMain.cart.functions.fetchItemTouchHelper
@@ -47,7 +53,7 @@ class CartFragment : Fragment(), EditProductInCart, OnProductAddedToCartListener
     private var _binding: FragmentCartBinding? = null
     private val binding get() = _binding!!
 
-//    lateinit var myAdapter: ProductInCartAdapter
+    //    lateinit var myAdapter: ProductInCartAdapter
     var myAdapter = ProductInCartAdapter(emptyList(), this)
 
     var allProducts: List<ProductInCart> = emptyList()
@@ -82,7 +88,10 @@ class CartFragment : Fragment(), EditProductInCart, OnProductAddedToCartListener
             activity as? MainActivity ?: throw IllegalStateException("Activity is not MainActivity")
 
         sharedViewModel.productAdded.observe(viewLifecycleOwner) { product ->
-            onProductAddedToCart(product)
+            product?.let {
+                onProductAddedToCart(product)
+
+            }
         }
         cartObserver(binding)
         Cart.registerObserver(cartObserver)
@@ -107,22 +116,77 @@ class CartFragment : Fragment(), EditProductInCart, OnProductAddedToCartListener
         Cart.notifyObservers()
 
     }
+
     override fun minusProductInCart(productInCart: ProductInCart) {
         Cart.minusProduct(productInCart.id, requireContext())
         allProducts = Cart.getAllProducts()
         myAdapter.updateList(allProducts)
         Cart.notifyObservers()
     }
+
+    override fun openDialogDataProduct(productInCart: ProductInCart) {
+
+        val product = Product(
+            productInCart.id,
+            productInCart.name,
+            productInCart.code,
+            productInCart.price,
+            "",
+            "",
+            productInCart.sale,
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            false,
+            emptyList(),
+            productInCart.image,
+        )
+
+        try {
+            val action =
+                MainCartFragmentDirections.actionMainCartFragmentToDataProductFragment(productInCart.id, product)
+            Navigation.findNavController(binding.root).navigate(action)
+        } catch (e: Exception){
+            Log.d("TAG", "openDialogDataProduct: ${e.message}")
+        }
+
+
+
+
+//        val fragmentManager = requireFragmentManager()
+//        val tag = "Product in stock Dialog"
+//        val existingFragment = fragmentManager.findFragmentByTag(tag)
+//
+//        if (existingFragment == null) {
+//            val bottomSheetFragment = DataProductInCartFragment.newInstance(productInCart)
+//            bottomSheetFragment.show(fragmentManager, tag)
+//        }
+
+//        val action =
+//            CartFragmentDirections.actionCartFragmentToDataProductFragment(
+//                productInCart.id,
+//                null
+//            )
+//        findNavController().navigate(action)
+    }
+
     override fun onProductAddedToCart(product: ProductInCart) {
         allProducts = Cart.getAllProducts()
         myAdapter.updateList(allProducts)
         Cart.notifyObservers()
     }
+
     override fun onCartCleared() {
         allProducts = Cart.getAllProducts()
         myAdapter.updateList(allProducts)
         Cart.notifyObservers()
     }
+
     override fun onStart() {
         super.onStart()
         allProducts = Cart.getAllProducts()
@@ -141,6 +205,7 @@ class CartFragment : Fragment(), EditProductInCart, OnProductAddedToCartListener
         super.onPause()
         Cart.saveCartToPrefs(requireContext())
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         Cart.unregisterObserver(cartObserver)

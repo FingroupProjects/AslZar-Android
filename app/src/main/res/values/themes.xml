@@ -12,7 +12,7 @@
 
         <item name="alertDialogTheme">@style/DialogFragmentTheme</item>
         <item name="bottomSheetDialogTheme">@style/BottomSheetDialogTheme</item>
-        <item name="fontFamily">@font/palanquin</item>
+<!--        <item name="fontFamily">@font/palanquin</item>-->
 
         <item name="chipStyle">@style/Widget.App.Chip</item>
 

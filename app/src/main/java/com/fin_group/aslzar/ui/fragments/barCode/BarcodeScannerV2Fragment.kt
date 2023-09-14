@@ -12,9 +12,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.Navigation
 import com.budiyev.android.codescanner.CodeScanner
-import com.budiyev.android.codescanner.CodeScannerView
 import com.budiyev.android.codescanner.DecodeCallback
-import com.fin_group.aslzar.R
 import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.databinding.FragmentBarcodeScannerV2Binding
 import com.fin_group.aslzar.response.Product
@@ -63,8 +61,7 @@ class BarcodeScannerV2Fragment : Fragment() {
                 //setupControls()
                 codeScanner.decodeCallback = DecodeCallback {
                     requireActivity().runOnUiThread {
-//                        Toast.makeText(activity, it.text, Toast.LENGTH_LONG).show()
-                        getSimilarProduct(it.text)
+                        getProductByID(it.text)
                     }
                 }
                 binding.scannerView.setOnClickListener {
@@ -76,7 +73,7 @@ class BarcodeScannerV2Fragment : Fragment() {
         }
     }
 
-    private fun getSimilarProduct(productId: String) {
+    private fun getProductByID(productId: String) {
         try {
             val call = apiClient.getApiService()
                 .getProductByID("Bearer ${sessionManager.fetchToken()}", productId)
@@ -111,7 +108,7 @@ class BarcodeScannerV2Fragment : Fragment() {
                 }
             })
         } catch (e: Exception) {
-            Log.d("TAG", "getSimilarProduct: ${e.message}")
+            Log.d("TAG", "getProductByID: ${e.message}")
         }
     }
 

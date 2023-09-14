@@ -1,11 +1,141 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     tools:context=".ui.dialogs.DataProductInCartFragment">
 
 
+    <TextView
+        android:id="@+id/dc_fullName"
+        style="@style/forTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="Серьги золотые с бриллиантом"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/dc_close"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/dc_plusProduct"
+        style="?attr/floatingActionButtonSmallStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:src="@drawable/ic_add_1"
+        app:backgroundTint="@color/white"
+        app:elevation="0dp"
+        app:layout_constraintBottom_toBottomOf="@+id/dc_minusProduc"
+        app:layout_constraintStart_toEndOf="@+id/dc_count"
+        app:layout_constraintTop_toTopOf="@+id/dc_minusProduc"
+        app:tint="@color/background_2" />
+
+    <ImageButton
+        android:id="@+id/dc_minusProduc"
+        style="?attr/floatingActionButtonSmallStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:src="@drawable/ic_minus_1"
+        app:backgroundTint="@color/white"
+        app:elevation="0dp"
+        app:layout_constraintBottom_toBottomOf="@+id/dc_mainImageView"
+        app:layout_constraintEnd_toStartOf="@+id/dc_count"
+        app:layout_constraintStart_toEndOf="@+id/dc_mainImageView"
+        app:tint="@color/background_2" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/dc_close"
+        style="?attr/floatingActionButtonSmallStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/ic_clear"
+        app:backgroundTint="@color/white"
+        app:elevation="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/dc_fullName"
+        app:tint="@color/background_2" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/dc_delete"
+        style="?attr/floatingActionButtonSmallStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/ic_delete"
+        android:visibility="gone"
+        app:backgroundTint="@color/white"
+        app:elevation="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dc_close"
+        app:tint="@color/background_2" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/dc_goToData"
+        style="?attr/floatingActionButtonSmallStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/ic_next"
+        app:backgroundTint="@color/white"
+        app:elevation="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dc_delete"
+        app:tint="@color/background_2" />
+
+    <ImageView
+        android:id="@+id/dc_mainImageView"
+        android:layout_width="130dp"
+        android:layout_height="130dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/earrings"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dc_fullName" />
+
+    <TextView
+        android:id="@+id/dc_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="1000"
+        android:textColor="@color/primary_color_2"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/dc_plusProduct"
+        app:layout_constraintStart_toEndOf="@+id/dc_minusProduc"
+        app:layout_constraintTop_toTopOf="@+id/dc_plusProduct" />
+
+    <TextView
+        android:id="@+id/dc_code"
+        style="@style/forTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="8dp"
+        android:text="Код: 2.1.2.4.5"
+        app:layout_constraintEnd_toStartOf="@id/dc_close"
+        app:layout_constraintStart_toEndOf="@+id/dc_mainImageView"
+        app:layout_constraintTop_toTopOf="@+id/dc_mainImageView" />
+
+    <TextView
+        android:id="@+id/dc_price"
+        style="@style/forTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="16dp"
+        android:text="Цена: 555105151 UZS"
+        app:layout_constraintEnd_toStartOf="@id/dc_close"
+        app:layout_constraintStart_toEndOf="@+id/dc_mainImageView"
+        app:layout_constraintTop_toBottomOf="@+id/dc_code" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
