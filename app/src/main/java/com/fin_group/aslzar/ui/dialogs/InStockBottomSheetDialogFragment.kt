@@ -64,7 +64,6 @@ class InStockBottomSheetDialogFragment : BaseBottomSheetDialogFragment() {
         setDialogHeightPercent(50)
 
         binding.btnCloseInStock.setOnClickListener { dismiss() }
-
         val recyclerView = binding.rvInStock
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = InStockAdapter(inStockList)

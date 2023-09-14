@@ -29,6 +29,7 @@ data class Product(
     val weight: String,
     val country_of_origin: String,
     val provider: String,
+    val is_set: Boolean,
     val counts: List<InStock>,
     val img: List<String>
 ) : Parcelable, Serializable

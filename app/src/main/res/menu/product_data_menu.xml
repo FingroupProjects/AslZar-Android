@@ -4,12 +4,12 @@
 
     <item
         android:id="@+id/product_set_item"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:title="В комплекте" />
+        android:icon="@drawable/ic_set"
+        android:title="В комплекте"
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/product_in_stock_item"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:title="В наличии" />
+        android:icon="@drawable/ic_in_stock"
+        android:title="В наличии"
+        app:showAsAction="ifRoom" />
 </menu>

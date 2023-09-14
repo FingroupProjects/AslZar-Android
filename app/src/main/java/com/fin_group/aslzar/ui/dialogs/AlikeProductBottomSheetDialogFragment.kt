@@ -5,8 +5,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
+import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
@@ -16,12 +18,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.fin_group.aslzar.R
+import com.fin_group.aslzar.adapter.InStockAdapter
 import com.fin_group.aslzar.adapter.ProductSomeImagesAdapter
 import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentAlikeProductBottomSheetDialogBinding
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.response.SimilarProduct
+import com.fin_group.aslzar.ui.fragments.cartMain.calculator.CalculatorFragment
 import com.fin_group.aslzar.util.BaseBottomSheetDialogFragment
 import com.fin_group.aslzar.util.OnImageClickListener
 import com.fin_group.aslzar.util.SessionManager
@@ -62,16 +66,7 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(),
             return dialog
         }
 
-//        fun newInstance(likeProductId: String): AlikeProductBottomSheetDialogFragment {
-//            val dialog = AlikeProductBottomSheetDialogFragment()
-//            val args = Bundle()
-//            args.putString("likeProductId", likeProductId)
-//            dialog.arguments = args
-//            return dialog
-//        }
-
         private const val ARG_PRODUCT = "alikeProduct"
-
     }
 
     override fun onCreateView(
@@ -98,7 +93,7 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(),
 
 //        setInitialProductAndInterface()
         binding.apTitle.text = similarProduct.full_name
-
+        Log.d("TAG", "onViewCreated: $similarProduct")
         binding.apply {
             close.setOnClickListener { dismiss() }
             addToCart.setOnClickListener {
@@ -119,11 +114,38 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(),
             refresh.setOnClickListener {
                 getSimilarProduct()
             }
+
+            toggleButton.addOnButtonCheckedListener { group, checkedId, isChecked ->
+                if (isChecked) {
+                    val isDataProductSelected = checkedId == R.id.dataProductBtn2
+                    dataProductLayout2.visibility = if (isDataProductSelected) VISIBLE else View.INVISIBLE
+                    inStockProductLayout2.visibility = if (isDataProductSelected) View.INVISIBLE else VISIBLE
+                }
+            }
         }
     }
 
     private fun setInitialProductAndInterface() {
         setDataProduct(fullSimilarProduct)
+        Log.d("TAG", "setInitialProductAndInterface: $fullSimilarProduct")
+
+        if (fullSimilarProduct.counts.isEmpty()){
+            binding.apply {
+                inStockProductLayout2.visibility = GONE
+                dataProductLayout2.visibility = VISIBLE
+                toggleButton.visibility = GONE
+            }
+        } else {
+            binding.inStockProductLayout2.visibility = INVISIBLE
+            binding.dataProductLayout2.visibility = VISIBLE
+            binding.toggleButton.visibility = VISIBLE
+            binding.rvInStock.visibility = VISIBLE
+            binding.inStockError2.visibility = GONE
+            binding.textView43.visibility = VISIBLE
+            binding.textView44.visibility = VISIBLE
+            binding.textView45.visibility = VISIBLE
+        }
+
         adapter.setSelectedPosition(0)
         adapter.updateList(similarProduct.img)
     }
@@ -182,10 +204,6 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(),
             .error(R.drawable.ic_no_image)
             .into(binding.lpMainIv)
         adapter.notifyItemChanged(currentSelectedPosition)
-
-//        currentSelectedPosition = similarProduct.img.indexOfFirst { it == image }
-//        productSomeImagesAdapter.setSelectedPosition(currentSelectedPosition)
-//        Glide.with(requireContext()).load(image).into(binding.imageView2)
     }
 
     private fun getSimilarProduct() {
@@ -204,7 +222,10 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(),
                             fullSimilarProduct = similarProductResponse
                             setDataProduct(fullSimilarProduct)
                             setInitialProductAndInterface()
-//                            setProductImages(fullSimilarProduct.img)
+
+                            binding.inStockError2.visibility = GONE
+                            binding.rvInStock.layoutManager = LinearLayoutManager(requireContext())
+                            binding.rvInStock.adapter = InStockAdapter(fullSimilarProduct.counts)
                         }
                     }
                 }

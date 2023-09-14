@@ -6,169 +6,6 @@
     android:layout_height="wrap_content"
     tools:context=".ui.dialogs.SetInProductBottomSheetDialogFragment">
 
-    <TextView
-        android:id="@+id/textView36"
-        style="@style/forTextView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="5dp"
-        android:text="Код: "
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/spSomeImagesRv" />
-
-    <TextView
-        android:id="@+id/textView37"
-        style="@style/forTextView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="3dp"
-        android:text="Цена: "
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView36" />
-
-    <TextView
-        android:id="@+id/textView38"
-        style="@style/forTextView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="3dp"
-        android:text="Камень: "
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView37" />
-
-    <TextView
-        android:id="@+id/textView39"
-        style="@style/forTextView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="5dp"
-        android:text="Проба: "
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView38" />
-
-    <TextView
-        android:id="@+id/textView40"
-        style="@style/forTextView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="5dp"
-        android:text="Металл: "
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView39" />
-
-    <TextView
-        android:id="@+id/textView41"
-        style="@style/forTextView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="5dp"
-        android:text="Вес:"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView40" />
-
-    <TextView
-        android:id="@+id/textView42"
-        style="@style/forTextView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="3dp"
-        android:layout_marginBottom="10dp"
-        android:text="Размер:"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView41" />
-
-    <TextView
-        android:id="@+id/sip_code"
-        style="@style/forTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@id/textView36"
-        app:layout_constraintStart_toEndOf="@id/textView36"
-        app:layout_constraintTop_toTopOf="@id/textView36" />
-
-    <TextView
-        android:id="@+id/sip_price"
-        style="@style/forTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@id/textView37"
-        app:layout_constraintStart_toEndOf="@id/textView37"
-        app:layout_constraintTop_toTopOf="@id/textView37" />
-
-    <TextView
-        android:id="@+id/sip_stone"
-        style="@style/forTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@id/textView38"
-        app:layout_constraintStart_toEndOf="@id/textView38"
-        app:layout_constraintTop_toTopOf="@id/textView38" />
-
-    <TextView
-        android:id="@+id/sip_probe"
-        style="@style/forTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@id/textView39"
-        app:layout_constraintStart_toEndOf="@id/textView39"
-        app:layout_constraintTop_toTopOf="@id/textView39" />
-
-    <TextView
-        android:id="@+id/sip_metal"
-        style="@style/forTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@id/textView40"
-        app:layout_constraintStart_toEndOf="@id/textView40"
-        app:layout_constraintTop_toTopOf="@id/textView40" />
-
-    <TextView
-        android:id="@+id/sip_weight"
-        style="@style/forTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@id/textView41"
-        app:layout_constraintStart_toEndOf="@id/textView41"
-        app:layout_constraintTop_toTopOf="@id/textView41" />
-
-    <TextView
-        android:id="@+id/sip_size"
-        style="@style/forTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@id/textView42"
-        app:layout_constraintStart_toEndOf="@id/textView42"
-        app:layout_constraintTop_toTopOf="@id/textView42" />
-
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/materialCardViewComplect"
         android:layout_width="match_parent"
@@ -182,6 +19,60 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/spSomeImagesRv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:orientation="horizontal"
+                android:paddingBottom="3dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/progressLinearDeterminate2"
+                tools:ignore="SpeakableTextPresentCheck"
+                tools:listitem="@layout/list_item">
+
+            </androidx.recyclerview.widget.RecyclerView>
+
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/toggleButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="8dp"
+                app:checkedButton="@+id/dataProductBtn"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/spSomeImagesRv"
+                app:singleSelection="true">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/dataProductBtn"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Данные товара"
+                    app:backgroundTint="@color/button_background_selector"
+                    app:buttonTint="@color/chip_background_selector"
+                    app:cornerRadius="12dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/inStockProductBtn"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Товары в наличии"
+                    app:backgroundTint="@color/button_background_selector"
+                    app:buttonTint="@color/chip_background_selector"
+                    app:cornerRadius="12dp" />
+            </com.google.android.material.button.MaterialButtonToggleGroup>
 
             <com.google.android.material.progressindicator.LinearProgressIndicator
                 android:id="@+id/progressLinearDeterminate2"
@@ -245,10 +136,9 @@
                 android:layout_width="180dp"
                 android:layout_height="180dp"
                 android:layout_marginStart="60dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="60dp"
-                android:layout_marginBottom="10dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:src="@drawable/earrings"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/sip_full_name" />
@@ -260,6 +150,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
+                android:text="Серьги золотые с бриллиантом"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -278,20 +169,277 @@
 
     </com.google.android.material.card.MaterialCardView>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/spSomeImagesRv"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout3"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="5dp"
-        android:orientation="horizontal"
-        android:paddingBottom="3dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:layout_marginBottom="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/materialCardViewComplect"
-        tools:ignore="SpeakableTextPresentCheck"
-        tools:listitem="@layout/list_item" />
+        app:layout_constraintTop_toBottomOf="@+id/materialCardViewComplect">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/inStockProductLayout"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@+id/dataProductLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/textView33"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
+                android:text="Магазин"
+                android:textColor="@color/background_disable"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toStartOf="@id/guideline4"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/titleProduct" />
+
+            <TextView
+                android:id="@+id/textView34"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Витрина"
+                android:textColor="@color/background_disable"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toStartOf="@id/guideline5"
+                app:layout_constraintStart_toStartOf="@id/guideline4"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textView35"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Кол-во"
+                android:textColor="@color/background_disable"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="@id/guideline5"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.38" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.8" />
+
+            <TextView
+                android:id="@+id/inStockError"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Товара нет в наличии"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvInStock"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView34"
+                tools:listitem="@layout/row_item_haveing_in_store" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/dataProductLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/textView36"
+                style="@style/forTextView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="5dp"
+                android:text="Код: "
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textView37"
+                style="@style/forTextView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="3dp"
+                android:text="Цена: "
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textView36" />
+
+            <TextView
+                android:id="@+id/textView38"
+                style="@style/forTextView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="3dp"
+                android:text="Камень: "
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textView37" />
+
+            <TextView
+                android:id="@+id/textView39"
+                style="@style/forTextView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="5dp"
+                android:text="Проба: "
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textView38" />
+
+            <TextView
+                android:id="@+id/textView40"
+                style="@style/forTextView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="5dp"
+                android:text="Металл: "
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textView39" />
+
+            <TextView
+                android:id="@+id/textView41"
+                style="@style/forTextView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="5dp"
+                android:text="Вес:"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textView40" />
+
+            <TextView
+                android:id="@+id/textView42"
+                style="@style/forTextView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="5dp"
+                android:text="Размер:"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textView41" />
+
+            <TextView
+                android:id="@+id/sip_code"
+                style="@style/forTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:text="(2.7.2.1.096.1_7,9_0)"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/textView36"
+                app:layout_constraintStart_toEndOf="@id/textView36"
+                app:layout_constraintTop_toTopOf="@id/textView36" />
+
+            <TextView
+                android:id="@+id/sip_price"
+                style="@style/forTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:text="3232000 UZS"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/textView37"
+                app:layout_constraintStart_toEndOf="@id/textView37"
+                app:layout_constraintTop_toTopOf="@id/textView37" />
+
+            <TextView
+                android:id="@+id/sip_stone"
+                style="@style/forTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:text="Бриллиант"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/textView38"
+                app:layout_constraintStart_toEndOf="@id/textView38"
+                app:layout_constraintTop_toTopOf="@id/textView38" />
+
+            <TextView
+                android:id="@+id/sip_probe"
+                style="@style/forTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:text="585"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/textView39"
+                app:layout_constraintStart_toEndOf="@id/textView39"
+                app:layout_constraintTop_toTopOf="@id/textView39" />
+
+            <TextView
+                android:id="@+id/sip_metal"
+                style="@style/forTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:text="Золото"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/textView40"
+                app:layout_constraintStart_toEndOf="@id/textView40"
+                app:layout_constraintTop_toTopOf="@id/textView40" />
+
+            <TextView
+                android:id="@+id/sip_weight"
+                style="@style/forTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:text="14,8 мм"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/textView41"
+                app:layout_constraintStart_toEndOf="@id/textView41"
+                app:layout_constraintTop_toTopOf="@id/textView41" />
+
+            <TextView
+                android:id="@+id/sip_size"
+                style="@style/forTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:text="1.5 г"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/textView42"
+                app:layout_constraintStart_toEndOf="@id/textView42"
+                app:layout_constraintTop_toTopOf="@id/textView42" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
