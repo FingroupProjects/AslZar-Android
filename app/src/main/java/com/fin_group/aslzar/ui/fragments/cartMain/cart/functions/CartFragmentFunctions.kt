@@ -3,12 +3,14 @@ package com.fin_group.aslzar.ui.fragments.cartMain.cart.functions
 import android.widget.Toast
 import android.annotation.SuppressLint
 import android.util.Log
+import android.view.View
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.ProductInCartAdapter
 import com.fin_group.aslzar.cart.Cart
+import com.fin_group.aslzar.databinding.FragmentCalculatorBinding
 import com.fin_group.aslzar.databinding.FragmentCartBinding
 import com.fin_group.aslzar.models.ProductInCart
 import com.fin_group.aslzar.ui.dialogs.DeleteAllProductFromCartFragmentDialog
@@ -45,6 +47,7 @@ fun CartFragment.cartObserver(binding: FragmentCartBinding){
     }
 }
 
+@SuppressLint("SetTextI18n")
 fun CartFragment.deleteAllProductFromCart(){
     btnDeleteAllProducts.setOnClickListener {
         if (!Cart.isCartEmpty()){
