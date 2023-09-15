@@ -22,11 +22,11 @@ import com.fin_group.aslzar.models.Installment
 import com.fin_group.aslzar.response.Client
 import com.fin_group.aslzar.response.GetAllClientsResponse
 import com.fin_group.aslzar.response.Percent
+import com.fin_group.aslzar.response.PercentInstallment
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.all
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.cartObserver
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.createTable
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.fetViews
-import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.fetchClient
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.fetchClientFromApi
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.fetchClientNameFromPrefs
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.getForPercentAndMonth
@@ -66,6 +66,7 @@ class CalculatorFragment : Fragment() {
     lateinit var spinnerClientType : AutoCompleteTextView
     lateinit var getAllClient: List<Client>
     lateinit var getPercentAndMonth: List<Percent>
+    lateinit var getFirstPay: PercentInstallment
     lateinit var cartObserver: CartObserver
     lateinit var  api : ApiClient
     lateinit var sessionManager: SessionManager
@@ -82,7 +83,9 @@ class CalculatorFragment : Fragment() {
 
         prefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
         sessionManager = SessionManager(requireContext())
-
+        api = ApiClient()
+        api.init(sessionManager)
+        getForPercentAndMonth()
         cartObserver(binding)
         Cart.registerObserver(cartObserver)
 
@@ -91,12 +94,11 @@ class CalculatorFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         fetViews(binding)
-        createTable()
         all()
-        getForPercentAndMonth()
+        createTable()
+        //getForPercentAndMonth()
         fetchClientFromApi()
         fetchClientNameFromPrefs()
-        fetchClient(getAllClient)
         super.onViewCreated(view, savedInstanceState)
     }
     override fun onStart() {
