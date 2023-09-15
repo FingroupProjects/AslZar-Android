@@ -78,7 +78,7 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
 
     lateinit var apiService: ApiClient
 
-    private var isFilterOn: Boolean = false
+    var isFilterOn: Boolean = false
     var filterBadge: BadgeDrawable? = null
 
     @SuppressLint("UnsafeOptInUsageError")
@@ -162,17 +162,6 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         if (item.itemId == R.id.product_set_item){
             if (product.is_set) {
                 callSetInProduct(args.productId)
-                isFilterOn = !isFilterOn
-                if (isFilterOn) {
-                    if (filterBadge == null) {
-                        filterBadge = BadgeDrawable.create(requireContext())
-                        filterBadge?.isVisible = true
-                        BadgeUtils.attachBadgeDrawable(filterBadge!!, toolbar, R.id.product_set_item)
-                    }
-                } else {
-                    filterBadge?.isVisible = false
-                    BadgeUtils.attachBadgeDrawable(filterBadge!!, toolbar, R.id.product_set_item)
-                }
             }else {
                 Toast.makeText(requireContext(), "У данного продукта нет комплекта", Toast.LENGTH_SHORT).show()
             }
