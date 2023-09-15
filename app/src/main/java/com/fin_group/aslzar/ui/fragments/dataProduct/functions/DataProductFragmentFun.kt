@@ -194,13 +194,29 @@ fun DataProductFragment.likeProducts(){
     productAlikeAdapter.updateList(alikeProductsList)
 }
 
-@SuppressLint("SetTextI18n")
+@SuppressLint("SetTextI18n", "UnsafeOptInUsageError")
 fun DataProductFragment.setDataProduct(product: Product, binding: FragmentDataProductBinding){
     if (product.img.size <= 1){
         binding.otherImgRv.visibility = GONE
     } else {
         binding.otherImgRv.visibility = VISIBLE
     }
+
+    if (product.is_set){
+        isFilterOn = !isFilterOn
+        if (isFilterOn) {
+            if (filterBadge == null) {
+                filterBadge = BadgeDrawable.create(requireContext())
+                filterBadge?.isVisible = true
+                BadgeUtils.attachBadgeDrawable(filterBadge!!, toolbar, R.id.product_set_item)
+            }
+        } else {
+            filterBadge?.isVisible = false
+        }
+    } else {
+        filterBadge?.isVisible = false
+    }
+
     if (product.sale != 0){
         if (product.sale.toString().isNotEmpty() && product.sale.toDouble() > 0.0){
             binding.productSale.text = "-${formatNumber(product.sale.toDouble())}%"

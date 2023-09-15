@@ -77,8 +77,6 @@ class DataProductInCartFragment : BaseBottomSheetDialogFragment() {
             dcFullName.text = product.name
             dcCode.text = "Код: ${product.code}"
 
-
-
             if (product.image.isNotEmpty()){
                 Glide.with(requireContext()).load(product.image[0]).into(dcMainImageView)
             } else {
