@@ -18,6 +18,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.ProductsAdapter
@@ -33,9 +34,13 @@ import com.fin_group.aslzar.util.CategoryClickListener
 import com.fin_group.aslzar.util.ProductOnClickListener
 import com.fin_group.aslzar.ui.fragments.main.functions.callInStockDialog
 import com.fin_group.aslzar.ui.fragments.main.functions.callOutStock
+import com.fin_group.aslzar.ui.fragments.main.functions.fetchRV
 import com.fin_group.aslzar.ui.fragments.main.functions.filterFun
 import com.fin_group.aslzar.ui.fragments.main.functions.filterProducts
-import com.fin_group.aslzar.ui.fragments.main.functions.getAllProducts
+import com.fin_group.aslzar.ui.fragments.main.functions.getAllCategoriesFromApi
+import com.fin_group.aslzar.ui.fragments.main.functions.getAllCategoriesPrefs
+import com.fin_group.aslzar.ui.fragments.main.functions.getAllProductFromPrefs
+import com.fin_group.aslzar.ui.fragments.main.functions.getAllProductsFromApi
 import com.fin_group.aslzar.ui.fragments.main.functions.savingAndFetchingCategory
 import com.fin_group.aslzar.ui.fragments.main.functions.searchViewFun
 import com.fin_group.aslzar.ui.fragments.main.functions.updateBadge
@@ -79,6 +84,8 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
     lateinit var sessionManager: SessionManager
     lateinit var apiService: ApiClient
 
+    lateinit var recyclerView: RecyclerView
+
     lateinit var encryptionManager: EncryptionManager
 
 
@@ -95,6 +102,7 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         setHasOptionsMenu(true)
         viewSearch = binding.viewSearch
         viewCheckedCategory = binding.viewCheckedCategory
+        recyclerView = binding.mainRecyclerView
 
         binding.fabClearSearch.setOnClickListener {
             if (searchText != "") {
@@ -103,31 +111,8 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
             viewSearch.visibility = GONE
         }
         binding.swipeRefreshLayout.setOnRefreshListener {
-            getAllProducts()
+            fetchDataAndFilterProducts()
         }
-        allCategories = listOf(
-            Category("all", "Все"),
-            Category("00001", "Кольца"),
-            Category("00002", "Серьги"),
-            Category("00003", "Ожерелья"),
-            Category("00004", "Браслеты"),
-            Category("00005", "Подвески"),
-            Category("00006", "Часы"),
-        )
-
-//        Log.d("TAG", "onCreateView: ${sessionManager.fetchLogin()}")
-//        Log.d("TAG", "onCreateView: ${sessionManager.fetchPassword()}")
-//
-//        val key = sessionManager.fetchKey()
-//        val keyBase64 = Base64.decode(key, Base64.DEFAULT)
-//        val encryptionKey = SecretKeySpec(keyBase64, "AES")
-//        encryptionManager = EncryptionManager(encryptionKey)
-//
-//        val login = encryptionManager.decryptData(sessionManager.fetchLogin()!!)
-//        val password = encryptionManager.decryptData(sessionManager.fetchPassword()!!)
-//
-//        val token = sessionManager.fetchToken()
-//        Log.d("TAG", "onCreateView token: $token")
 
         return binding.root
     }
@@ -135,8 +120,10 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         searchView = binding.searchViewMain
-
         mainActivity = activity as? MainActivity ?: throw IllegalStateException("Activity is not MainActivity")
+
+        getAllCategoriesPrefs()
+        getAllProductFromPrefs()
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -149,24 +136,12 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
             }
         })
         fetchRV(allProducts)
-        getAllProducts()
-
-
         val selectedCategoryId = preferences.getString("selectedCategory", "all")
         selectCategory = allCategories.find { it.id == selectedCategoryId }
     }
 
     fun hideCategoryView() {
         viewCheckedCategory.visibility = GONE
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    private fun fetchRV(productList: List<Product>) {
-        val recyclerView = binding.mainRecyclerView
-        recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
-        myAdapter = ProductsAdapter(productList, this)
-        recyclerView.adapter = myAdapter
-        myAdapter.notifyDataSetChanged()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -229,6 +204,12 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
 
     override fun addToCart(product: Product) {
         addProductToCart(product)
+    }
+
+    private fun fetchDataAndFilterProducts() {
+        getAllProductsFromApi()
+        getAllCategoriesFromApi()
+        filterProducts()
     }
 
     override fun inStock(product: Product) {

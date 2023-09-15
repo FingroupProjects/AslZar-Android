@@ -314,7 +314,6 @@ fun DataProductFragment.getProductByID(){
                             BadgeUtils.attachBadgeDrawable(filterBadge!!, toolbar, R.id.product_set_item)
                         }
 
-
                     }
                 }
             }

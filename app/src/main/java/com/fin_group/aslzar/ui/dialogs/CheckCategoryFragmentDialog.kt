@@ -1,6 +1,8 @@
 package com.fin_group.aslzar.ui.dialogs
 
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -17,10 +19,14 @@ import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.databinding.FragmentDialogCheckCategoryBinding
 import com.fin_group.aslzar.response.Category
 import com.fin_group.aslzar.response.GetAllCategoriesResponse
+import com.fin_group.aslzar.ui.fragments.main.MainFragment
+import com.fin_group.aslzar.ui.fragments.main.functions.getAllCategoriesFromApi
 import com.fin_group.aslzar.util.BaseDialogFragment
 import com.fin_group.aslzar.util.CategoryClickListener
 import com.fin_group.aslzar.util.SessionManager
 import com.fin_group.aslzar.util.setWidthPercent
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -39,6 +45,8 @@ class CheckCategoryFragmentDialog : BaseDialogFragment() {
     private var categories: List<Category> = emptyList()
     private var categoryClickListener: CategoryClickListener? = null
 
+    private lateinit var preferences: SharedPreferences
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -49,6 +57,8 @@ class CheckCategoryFragmentDialog : BaseDialogFragment() {
         apiService.init(sessionManager)
         recyclerView = binding.rvCategories
         progressBar = binding.progressLinearDeterminate
+        preferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
+
 
 
 
@@ -97,6 +107,24 @@ class CheckCategoryFragmentDialog : BaseDialogFragment() {
 //        }
 //    }
 
+    fun getAllCategoriesPrefs() {
+        try {
+            val categoriesListJson = preferences.getString("categoryList", null)
+            if (categoriesListJson != null){
+                val categoryListType = object : TypeToken<List<Category>>() {}.type
+                val categoryList = Gson().fromJson<List<Category>>(categoriesListJson, categoryListType)
+                val firstCategory = Category("all", "Все")
+                categories = categoryList
+                categories = mutableListOf(firstCategory).plus(categories)
+                fetchRV(categories)
+            } else {
+                getAllCategoriesFromApi()
+            }
+        }catch (e: Exception){
+            Log.d("TAG", "getAllCategoriesPrefs: ${e.message}")
+        }
+    }
+
     private fun getAllCategoriesFromApi(){
         binding.view.visibility = INVISIBLE
         progressBar.visibility = VISIBLE
@@ -116,6 +144,9 @@ class CheckCategoryFragmentDialog : BaseDialogFragment() {
                             categories = categoryList
                             categories = mutableListOf(firstCategory).plus(categories)
                             fetchRV(categories)
+
+                            val categoryListJson = Gson().toJson(categories)
+                            preferences.edit().putString("categoryList", categoryListJson).apply()
                         } else {
                             Toast.makeText(requireContext(), "Категории не найдены", Toast.LENGTH_SHORT).show()
                         }

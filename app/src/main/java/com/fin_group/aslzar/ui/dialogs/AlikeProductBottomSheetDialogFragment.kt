@@ -215,7 +215,7 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(),
                     call: Call<Product?>,
                     response: Response<Product?>
                 ) {
-                    progressBar.visibility = GONE
+                    progressBar.visibility = INVISIBLE
                     if (response.isSuccessful) {
                         val similarProductResponse = response.body()
                         if (similarProductResponse != null) {
@@ -232,12 +232,12 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(),
 
                 override fun onFailure(call: Call<Product?>, t: Throwable) {
                     Toast.makeText(requireContext(), "Загрузка прошла не успешно, пожалуйста повторите попытку", Toast.LENGTH_SHORT).show()
-                    progressBar.visibility = GONE
+                    progressBar.visibility = INVISIBLE
                     Log.d("TAG", "onFailure: ${t.message}")
                 }
             })
         } catch (e: Exception) {
-            progressBar.visibility = GONE
+            progressBar.visibility = INVISIBLE
             Log.d("TAG", "getSimilarProduct: ${e.message}")
         }
     }
