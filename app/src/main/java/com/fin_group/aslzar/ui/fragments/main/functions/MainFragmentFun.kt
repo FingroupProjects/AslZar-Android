@@ -2,14 +2,21 @@
 
 package com.fin_group.aslzar.ui.fragments.main.functions
 
+import android.annotation.SuppressLint
 import android.util.Log
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.recyclerview.widget.GridLayoutManager
 import com.fin_group.aslzar.R
+import com.fin_group.aslzar.adapter.ProductsAdapter
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentMainBinding
+import com.fin_group.aslzar.response.Category
+import com.fin_group.aslzar.response.GetAllCategoriesResponse
 import com.fin_group.aslzar.response.GetAllProductsResponse
 import com.fin_group.aslzar.response.InStock
 import com.fin_group.aslzar.response.InStockList
@@ -19,6 +26,8 @@ import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.WarningNoHaveProductFragmentDialog
 import com.fin_group.aslzar.ui.fragments.main.MainFragment
 import com.fin_group.aslzar.util.CategoryClickListener
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -90,6 +99,7 @@ fun MainFragment.filterFun(){
         }
         viewSearch.visibility = GONE
     }
+
     callCategoryDialog(this)
 }
 
@@ -164,7 +174,42 @@ fun MainFragment.filterProducts() {
     myAdapter.updateProducts(filteredProducts)
 }
 
-fun MainFragment.getAllProducts(){
+fun MainFragment.getAllProductFromPrefs(){
+    try {
+        val products = preferences.getString("productList", null)
+        if (products != null){
+            val productsListType = object : TypeToken<List<Product>>() {}.type
+            val productList = Gson().fromJson<List<Product>>(products, productsListType)
+            allProducts = productList
+            fetchRV(allProducts)
+        } else {
+            getAllProductsFromApi()
+        }
+        filteredProducts = retrieveFilteredProducts()
+        fetchRV(filteredProducts)
+    } catch (e: Exception){
+        Log.d("TAG", "getAllProductFromPrefs: ${e.message}")
+    }
+}
+
+fun MainFragment.retrieveFilteredProducts(): List<Product> {
+    val productJson = preferences.getString("filteredProducts", null)
+    return if (productJson != null) {
+        val productListType = object : TypeToken<List<Product>>() {}.type
+        Gson().fromJson(productJson, productListType)
+    } else {
+        emptyList()
+    }
+}
+
+@SuppressLint("NotifyDataSetChanged")
+fun MainFragment.fetchRV(productList: List<Product>) {
+    recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
+    myAdapter = ProductsAdapter(productList, this)
+    recyclerView.adapter = myAdapter
+    myAdapter.notifyDataSetChanged()
+}
+fun MainFragment.getAllProductsFromApi(){
     swipeRefreshLayout.isRefreshing = true
     try {
         val call = apiService.getApiService().getAllProducts("Bearer ${sessionManager.fetchToken()}")
@@ -178,6 +223,9 @@ fun MainFragment.getAllProducts(){
                     val getAllProducts = response.body()
                     if (getAllProducts?.result != null){
                         allProducts = getAllProducts.result
+
+                        val productListJson = Gson().toJson(allProducts)
+                        preferences.edit().putString("productList", productListJson).apply()
                         filterProducts()
                     } else {
                         Toast.makeText(requireContext(), "Произошла ошибка", Toast.LENGTH_SHORT).show()
@@ -198,3 +246,56 @@ fun MainFragment.getAllProducts(){
     }
 }
 
+
+fun MainFragment.getAllCategoriesPrefs() {
+    try {
+        val categoriesListJson = preferences.getString("categoryList", null)
+        if (categoriesListJson != null){
+            val categoryListType = object : TypeToken<List<Category>>() {}.type
+            val categoryList = Gson().fromJson<List<Category>>(categoriesListJson, categoryListType)
+            val firstCategory = Category("all", "Все")
+            allCategories = categoryList
+            allCategories = mutableListOf(firstCategory).plus(allCategories)
+        } else {
+            getAllCategoriesFromApi()
+        }
+    }catch (e: Exception){
+        Log.d("TAG", "getAllCategoriesPrefs: ${e.message}")
+    }
+}
+
+fun MainFragment.getAllCategoriesFromApi(){
+    swipeRefreshLayout.isRefreshing = true
+    try {
+        val call = apiService.getApiService().getAllCategories("Bearer ${sessionManager.fetchToken()}")
+        call.enqueue(object : Callback<GetAllCategoriesResponse?> {
+            override fun onResponse(
+                call: Call<GetAllCategoriesResponse?>,
+                response: Response<GetAllCategoriesResponse?>
+            ) {
+                swipeRefreshLayout.isRefreshing = false
+                if (response.isSuccessful){
+                    val categoryList = response.body()?.result
+                    if (categoryList != null) {
+                        val firstCategory = Category("all", "Все")
+                        allCategories = categoryList
+                        allCategories = mutableListOf(firstCategory).plus(allCategories)
+                    } else {
+                        Toast.makeText(requireContext(), "Категории не найдены", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Toast.makeText(requireContext(), "Ошибка, повторите попытку", Toast.LENGTH_SHORT).show()
+                }
+            }
+            override fun onFailure(call: Call<GetAllCategoriesResponse?>, t: Throwable) {
+                Log.d("TAG", "onFailure: ${t.message}")
+                swipeRefreshLayout.isRefreshing = false
+
+            }
+        })
+    }catch (e: Exception){
+        Log.d("TAG", "getAllCategories: ${e.message}")
+        swipeRefreshLayout.isRefreshing = false
+
+    }
+}

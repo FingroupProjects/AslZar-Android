@@ -8,24 +8,29 @@ import android.util.Log
 import android.view.Menu
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.fin_group.aslzar.R
+import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.ActivityMainBinding
-import com.fin_group.aslzar.models.ProductInCart
-import com.fin_group.aslzar.ui.fragments.cartMain.cart.CartFragment
+import com.fin_group.aslzar.response.GetAllCategoriesResponse
+import com.fin_group.aslzar.response.GetAllClientsResponse
+import com.fin_group.aslzar.response.GetAllProductsResponse
+import com.fin_group.aslzar.response.PercentInstallment
 import com.fin_group.aslzar.ui.fragments.main.MainFragment
-import com.fin_group.aslzar.ui.fragments.main.functions.savingAndFetchingCategory
 import com.fin_group.aslzar.util.BadgeManager
-import com.fin_group.aslzar.util.OnProductAddedToCartListener
+import com.fin_group.aslzar.util.SessionManager
 import com.fin_group.aslzar.viewmodel.SharedViewModel
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.gson.Gson
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 class MainActivity : AppCompatActivity() {
@@ -38,22 +43,34 @@ class MainActivity : AppCompatActivity() {
     private lateinit var badgeManager: BadgeManager
 
     private val sharedViewModel: SharedViewModel by viewModels()
-    lateinit var preferences: SharedPreferences
+    lateinit var prefs: SharedPreferences
+
+    private lateinit var apiClient: ApiClient
+    private lateinit var sessionManager: SessionManager
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
+        apiClient = ApiClient()
+        sessionManager = SessionManager(this)
+        apiClient.init(sessionManager)
 
-        preferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)!!
+        prefs = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)!!
 
-        preferences.edit()?.putString("selectedCategory", "all")?.apply()
-        val isFirstRun = preferences.getBoolean("isFirstRun", true)
+        prefs.edit()?.putString("selectedCategory", "all")?.apply()
+        val isFirstRun = prefs.getBoolean("isFirstRun", true)
 
         if (isFirstRun) {
             val mainFragment = supportFragmentManager.findFragmentById(R.id.fragmentMain) as? MainFragment
             mainFragment?.hideCategoryView()
-            preferences.edit()?.putBoolean("isFirstRun", false)?.apply()
+            prefs.edit()?.putBoolean("isFirstRun", false)?.apply()
+        }
+
+        checkAndFetchData()
+
+        if (savedInstanceState == null) {
+            clearSavedPreferences()
         }
 
         setContentView(binding.root)
@@ -73,6 +90,146 @@ class MainActivity : AppCompatActivity() {
         //addBadgeToBottomNavigationItem(R.id.mainCartFragment, 5)
     }
 
+    private fun clearSavedPreferences() {
+        with(prefs.edit()) {
+            remove("productList")
+            remove("clientList")
+            remove("categoryList")
+            remove("requestList")
+            remove("coefficientPlan")
+            apply()
+        }
+    }
+
+    private fun checkAndFetchData() {
+        val productListJson = prefs.getString("productList", null)
+        val clientListJson = prefs.getString("clientList", null)
+        val categoriesJson = prefs.getString("categoryList", null)
+        val coefficientPlanJson = prefs.getString("coefficientPlan", null)
+
+        val fetchDataList = mutableListOf<Pair<String, () -> Unit>>()
+
+        if (productListJson == null) {
+            fetchDataList.add("productList" to ::fetchProductsFromApi)
+        }
+        if (categoriesJson == null) {
+            fetchDataList.add("categoryList" to ::fetchCategoriesFromApi)
+        }
+        if (clientListJson == null) {
+            fetchDataList.add("clientList" to ::fetchClientsFromApi)
+        }
+        if (coefficientPlanJson == null){
+            fetchDataList.add("coefficientPlan" to ::fetchCoefficientPlanFromApi)
+        }
+
+        fetchDataList.forEach { (key, fetchMethod) ->
+            fetchMethod.invoke()
+        }
+    }
+
+    private fun fetchProductsFromApi() {
+        try {
+            val call = apiClient.getApiService().getAllProducts("Bearer ${sessionManager.fetchToken()}")
+            call.enqueue(object : Callback<GetAllProductsResponse?> {
+                override fun onResponse(
+                    call: Call<GetAllProductsResponse?>,
+                    response: Response<GetAllProductsResponse?>
+                ) {
+                    if (response.isSuccessful) {
+                        val productList = response.body()
+                        if (productList != null) {
+                            val productListJson = Gson().toJson(productList.result)
+                            prefs.edit().putString("productList", productListJson).apply()
+                        }
+                    }
+                }
+                override fun onFailure(call: Call<GetAllProductsResponse?>, t: Throwable) {
+                    Log.d("TAG", "onViewCreated fetchProductsFromApi: ${t.message}")
+                }
+            })
+        } catch (e: Exception) {
+            Log.d("TAG", "fetchProductsFromApi: ${e.message}")
+        }
+    }
+
+    private fun fetchClientsFromApi() {
+        try {
+            val call = apiClient.getApiService().getAllClients("Bearer ${sessionManager.fetchToken()}")
+            call.enqueue(object : Callback<GetAllClientsResponse?> {
+                override fun onResponse(
+                    call: Call<GetAllClientsResponse?>,
+                    response: Response<GetAllClientsResponse?>
+                ) {
+                    if (response.isSuccessful) {
+                        val clientList = response.body()
+                        if (clientList != null) {
+                            val clientListJson = Gson().toJson(clientList.result)
+                            prefs.edit().putString("clientList", clientListJson).apply()
+                        }
+                    }
+                }
+                override fun onFailure(call: Call<GetAllClientsResponse?>, t: Throwable) {
+                    Log.d("TAG", "onViewCreated fetchClientsFromApi: ${t.message}")
+                }
+            })
+        } catch (e: Exception) {
+            Log.d("TAG", "fetchClientsFromApi: ${e.message}")
+        }
+    }
+
+    private fun fetchCategoriesFromApi() {
+        try {
+            val call = apiClient.getApiService().getAllCategories("Bearer ${sessionManager.fetchToken()}")
+            call.enqueue(object : Callback<GetAllCategoriesResponse?> {
+                override fun onResponse(
+                    call: Call<GetAllCategoriesResponse?>,
+                    response: Response<GetAllCategoriesResponse?>
+                ) {
+                    if (response.isSuccessful) {
+                        val categoryList = response.body()
+                        if (categoryList != null) {
+                            val categoryListJson = Gson().toJson(categoryList.result)
+                            prefs.edit().putString("categoryList", categoryListJson).apply()
+                        }
+                    }
+                }
+                override fun onFailure(call: Call<GetAllCategoriesResponse?>, t: Throwable) {
+                    Log.d("TAG", "onFailure fetchCategoriesFromApi: ${t.message}")
+                }
+            })
+        } catch (e: Exception) {
+            Log.d("TAG", "fetchCategoriesFromApi: ${e.message}")
+        }
+    }
+
+    private fun fetchCoefficientPlanFromApi() {
+        try {
+            val call = apiClient.getApiService().getPercentAndMonth("Bearer ${sessionManager.fetchToken()}")
+            call.enqueue(object : Callback<PercentInstallment?> {
+                override fun onResponse(
+                    call: Call<PercentInstallment?>,
+                    response: Response<PercentInstallment?>
+                ) {
+                    if (response.isSuccessful) {
+                        val coefficientPlanList = response.body()
+                        if (coefficientPlanList != null) {
+                            Log.d("TAG", "onResponse: $coefficientPlanList")
+                            Log.d("TAG", "onResponse: ${response.body()}")
+                            Log.d("TAG", "onResponse: ${response.raw()}")
+
+                            val coefficientPlanJson = Gson().toJson(coefficientPlanList.result)
+                            prefs.edit().putString("coefficientPlan", coefficientPlanJson).apply()
+                        }
+                    }
+                }
+                override fun onFailure(call: Call<PercentInstallment?>, t: Throwable) {
+                    Log.d("TAG", "onFailure fetchCategoriesFromApi: ${t.message}")
+                }
+            })
+        } catch (e: Exception) {
+            Log.d("TAG", "fetchCategoriesFromApi: ${e.message}")
+        }
+    }
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.fragmentMain)
         return navController.navigateUp() || super.onSupportNavigateUp()
@@ -85,8 +242,8 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         Cart.loadCartFromPrefs(this)
-        preferences.edit()?.putBoolean("first_run", true)?.apply()
-        preferences.edit()?.putString("selectedCategory", "all")?.apply()
+        prefs.edit()?.putBoolean("first_run", true)?.apply()
+        prefs.edit()?.putString("selectedCategory", "all")?.apply()
     }
 
     @SuppressLint("ResourceAsColor", "CommitPrefEdits")
@@ -96,7 +253,7 @@ class MainActivity : AppCompatActivity() {
 
         val badge = bottomNavBar.getOrCreateBadge(R.id.mainCartFragment)
         badgeManager.saveBadgeCount(badge.number)
-        preferences.edit()?.putString("selectedCategory", "all")?.apply()
-        preferences.edit()?.putBoolean("first_run", false)?.apply()
+        prefs.edit()?.putString("selectedCategory", "all")?.apply()
+        prefs.edit()?.putBoolean("first_run", false)?.apply()
     }
 }

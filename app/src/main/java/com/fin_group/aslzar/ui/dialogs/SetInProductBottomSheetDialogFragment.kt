@@ -205,7 +205,7 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnPro
                 ) {
                     Log.d("TAG", "onResponse: ${response.code()}")
                     Log.d("TAG", "onResponse: ${response.body()}")
-                    progressBar.visibility = GONE
+                    progressBar.visibility = INVISIBLE
                     if (response.isSuccessful){
                         Log.d("TAG", "onResponse: ${response.code()}")
                         Log.d("TAG", "onResponse: ${response.body()}")
@@ -233,10 +233,11 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnPro
 
                 override fun onFailure(call: Call<GetAllProductsResponse?>, t: Throwable) {
                     Log.d("TAG", "onFailure: ${t.message}")
+                    progressBar.visibility = INVISIBLE
                 }
             })
         } catch (e: Exception){
-            progressBar.visibility = GONE
+            progressBar.visibility = INVISIBLE
             Log.d("TAG", "getSetInProduct: ${e.message}")
         }
     }
