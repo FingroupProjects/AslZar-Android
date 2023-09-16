@@ -102,10 +102,7 @@ fun CalculatorFragment.createTable() {
 
         // CREATE MONTH TABLE
         val monthTextView = TextView(requireContext()).apply {
-            layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-            )
+            layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
             text = "${getInstallment[i].month} платежей"
             gravity = Gravity.CENTER
             setTextColor(styleTextColor)
@@ -120,7 +117,7 @@ fun CalculatorFragment.createTable() {
 
         //Расчет без первоначльного взноса
         val getMonth = getInstallment[i].month.toDouble()
-        Log.d("TAG", "get month: $getMonth")
+        Log.d("TAG","get month: $getMonth")
         val getPercent = getInstallment[i].percent.toDouble()
         Log.d("Tag", "get percent: $getPercent")
         val getPercentFromTotalCart = (totalCart.toDouble() * getPercent) / 100
@@ -129,21 +126,46 @@ fun CalculatorFragment.createTable() {
 
         // CREATE PERCENT TABLE
         val amountTextView = TextView(requireContext()).apply {
-            layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-            )
+            layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
 
             firstPayCalculator.editText?.addTextChangedListener {
                 val inputFirstPay = it.toString()
                 if (inputFirstPay.isNotEmpty()) {
-                    val getFirstPay = inputFirstPay
+                    val getFirstPay = inputFirstPay.toDouble()
+
+                    val realPercent = (totalCart.toDouble() * 15) / 100
+                    Log.d("TAG","AAAAAAAAAAAAAAAAAAAAAAAAAAAA: $realPercent")
+
+                    if (getFirstPay > realPercent && getFirstPay <= totalCart.toDouble()){
+                        firstPayCalculator.error = null
+                        val minusFirstPay = totalCart.toDouble() - getFirstPay
+                        summa.text = "${formatNumber(minusFirstPay)} UZS"
+                        val getPercentFromTotalCart = (minusFirstPay * getPercent.toInt()) / 100
+                        val plusPercent = minusFirstPay + getPercentFromTotalCart
+                        val tablePercentWithFirstPay = plusPercent / getMonth
+                        text = formatNumber(tablePercentWithFirstPay)
+                        firstPay.text = "${formatNumber(getFirstPay)} UZS"
+                        tvFirstPayCalculator.setText(realPercent.toString())
+                    }
+
+                    else if (getFirstPay <= realPercent) {
+                        firstPayCalculator.error = "Первоначальный взнос должен составлять не менее 15% от суммы покупки!"
+                        firstPay.text = "${formatNumber(0.00)} UZS"
+                        text = formatNumber(tablePercent)
+                        summa.text = "${formatNumber(totalCart)} UZS"
+                    } else if (getFirstPay > totalCart.toDouble()) {
+                        firstPayCalculator.error = "Первоначальный взнос не должен превышать сумму покупки!"
+                        val minusFirstPay = totalCart.toDouble() - getFirstPay
+                        summa.text = "${formatNumber(minusFirstPay)} UZS"
+                        val getPercentFromTotalCart = (minusFirstPay * getPercent.toInt()) / 100
+                        val plusPercent = minusFirstPay + getPercentFromTotalCart
+                        val tablePercentWithFirstPay = plusPercent / getMonth
+                        text = formatNumber(tablePercentWithFirstPay)
+                    }
+                } else {
                     firstPayCalculator.error = null
-                    val minusFirstPay = totalCart.toDouble() - getFirstPay.toDouble()
-                    val getPercentFromTotalCart = (minusFirstPay * getPercent.toInt()) / 100
-                    val plusPercent = minusFirstPay + getPercentFromTotalCart
-                    val tablePercentWithFirstPay = plusPercent / getMonth
-                    text = formatNumber(tablePercentWithFirstPay)
+                    summa.text = "${formatNumber(totalCart)} UZS"
+                    text = formatNumber(tablePercent)
                 }
             }
 
@@ -167,32 +189,13 @@ fun CalculatorFragment.createTable() {
                     firstPayCalculator.editText?.addTextChangedListener {
                         val inputFirstPay = it.toString()
                         if (inputFirstPay.isNotEmpty()) {
-                            val minusBonus = totalCart.toDouble() - inputBonus.toDouble()
-                            summa.text = "${formatNumber(minusBonus)} UZS"
-                            val total = minusBonus - inputFirstPay.toDouble()
-                            summa.text = "${formatNumber(total)} UZS"
-                            val getPercentFromTotalCart = (total * getPercent.toInt()) / 100
-                            val plusPercent = total + getPercentFromTotalCart
+                            val total = inputBonus.toDouble() + inputFirstPay.toDouble()
+                            val totalWithOutBonusAndFirstPay = totalCart.toDouble() - total
+                            val getPercentFromTotalCart = (totalWithOutBonusAndFirstPay * getPercent.toInt()) / 100
+                            val plusPercent = totalWithOutBonusAndFirstPay + getPercentFromTotalCart
                             val tablePercentWithFirstPay = plusPercent / getMonth
                             text = formatNumber(tablePercentWithFirstPay)
-                        }else{
-                            val minusBonus = totalCart.toDouble() - inputBonus.toDouble()
-                            val getPercentFromTotalCart = (minusBonus * getPercent.toInt()) / 100
-                            val plusPercent = minusBonus + getPercentFromTotalCart
-                            val tablePercentWithFirstPay = plusPercent / getMonth
-                            text = formatNumber(tablePercentWithFirstPay)
-                            summa.text = "${formatNumber(minusBonus)} UZS"
                         }
-                    }
-                }else{
-                    val inputFirstPay = it.toString()
-                    if (inputFirstPay.isNotEmpty()) {
-                        val minusFirstPay = totalCart.toDouble() - inputFirstPay.toDouble()
-                        val getPercentFromTotalCart = (minusFirstPay * getPercent.toInt()) / 100
-                        val plusPercent = minusFirstPay + getPercentFromTotalCart
-                        val tablePercentWithFirstPay = plusPercent / getMonth
-                        text = formatNumber(tablePercentWithFirstPay)
-                        summa.text = "${formatNumber(minusFirstPay)} UZS"
                     }
                 }
             }
@@ -212,306 +215,340 @@ fun CalculatorFragment.createTable() {
 
 @SuppressLint("SetTextI18n")
 fun CalculatorFragment.all() {
-    val totalCart = Cart.getTotalPrice().toDouble()
+
+    val totalCart = Cart.getTotalPrice()
     summa.text = "${formatNumber(totalCart)} UZS"
+
+    val getTotalWithSale = Cart.getTotalPriceWithSale()
+    tvSale.text = "${formatNumber(getTotalWithSale)} UZS"
 
     val allTypePay = listOf(
         AllTypePay(1, "Наличными"),
         AllTypePay(2, "В рассрочку")
     )
 
-
-    val arrayAdapterTypeClient =
-        ArrayAdapter(requireContext(), R.layout.spinner_item, getAllClient.map { it.client_name })
+    val arrayAdapterTypeClient = ArrayAdapter(requireContext(), R.layout.spinner_item, getAllClient.map { it.client_name })
     spinnerClientType.setAdapter(arrayAdapterTypeClient)
 
-    val arrayAdapterTypePay =
-        ArrayAdapter(requireContext(), R.layout.spinner_item, allTypePay.map { it.name })
+    val arrayAdapterTypePay = ArrayAdapter(requireContext(), R.layout.spinner_item, allTypePay.map { it.name })
     typePay.setAdapter(arrayAdapterTypePay)
 
     spinnerClientType.setOnItemClickListener { _, _, position, _ ->
         val selectClientType = getAllClient[position]
 
-        val autoCompleteTextView = typePay.findViewById<AutoCompleteTextView>(R.id.spinnerPayType)
+        val contains = "розничный покупатель"
+        val containsSubstring = selectClientType.client_name.contains(contains, true)
 
-        val selectedPayType = allTypePay.find { it.name == autoCompleteTextView.text.toString() }
+        if (containsSubstring){
 
-        if (selectedPayType != null) {
-            if (selectClientType.client_name.contains("розничный покупатель", true)) {
-                handleRetailClient(selectedPayType, totalCart)
-            } else {
-                handleNonRetailClient(selectClientType, selectedPayType, totalCart)
-            }
-        }
-    }
-}
+            checkboxForBonus.visibility = View.GONE
+            bonus.visibility = View.GONE
 
-@SuppressLint("SetTextI18n")
-private fun CalculatorFragment.handleRetailClient(selectedPayType: AllTypePay, totalCart: Double) {
+            checkBox.visibility = View.GONE
+            firstPayCalculator.visibility = View.GONE
 
-    if (selectedPayType.id == 1) {
-        // Розничные клиенты, которые платят наличными
+            tableSale.visibility = View.GONE
+            tvTable.visibility = View.GONE
 
-        tvBonusForClient.text = "${formatNumber(0.00)} UZS"
-        firstPay.text = "${formatNumber(0.00)} UZS"
-        tvSale.text = "${formatNumber(0.00)} UZS"
-        payWithBonus.text = "${formatNumber(0.00)} UZS"
-        summa.text = "${formatNumber(totalCart)} UZS"
+            val selectedClientBonus = selectClientType.bonus
+            tvBonusForClient.text = "${formatNumber(selectedClientBonus)} UZS"
 
-        checkboxForBonus.visibility = View.GONE
-        checkboxForBonus.isChecked = false
+            firstPay.text = "${formatNumber(0.00)} UZS"
+            payWithBonus.text = "${formatNumber(0.00)} UZS"
+            summa.text = "${formatNumber(totalCart)} UZS"
 
-        bonus.visibility = View.GONE
-        bonus.editText?.setText("")
+            typePay.setOnItemClickListener { _, _, position, _ ->
+                val selectPayType = allTypePay[position]
+                val selectPayTypeId = selectPayType.id
 
-        editBonus.keyListener = null
+                if (selectPayTypeId == 1){
 
-        checkBox.visibility = View.GONE
-        checkBox.isChecked = false
+                    checkboxForBonus.visibility = View.GONE
+                    checkboxForBonus.isChecked = false
 
-        firstPayCalculator.visibility = View.GONE
-        firstPayCalculator.editText?.setText("")
+                    bonus.visibility = View.GONE
+                    bonus.editText?.setText("")
 
-        tvFirstPayCalculator.keyListener = null
+                    checkBox.visibility = View.GONE
+                    checkBox.isChecked = false
 
-        tableSale.visibility = View.GONE
-        tvTable.visibility = View.GONE
+                    firstPayCalculator.visibility = View.GONE
+                    firstPayCalculator.editText?.setText("")
 
+                    tableSale.visibility = View.GONE
+                    tvTable.visibility = View.GONE
 
-    } else if (selectedPayType.id == 2) {
-        // Розничные клиенты, которые платят в рассрочку
+                    payWithBonus.text = "${formatNumber(0.00)} UZS"
 
-        tvBonusForClient.text = "${formatNumber(0.00)} UZS"
-        firstPay.text = "${formatNumber(0.00)} UZS"
-        tvSale.text = "${formatNumber(0.00)} UZS"
-        payWithBonus.text = "${formatNumber(0.00)} UZS"
-        summa.text = "${formatNumber(totalCart)} UZS"
+                }else{
 
-        checkboxForBonus.visibility = View.GONE
-        checkboxForBonus.isChecked = false
+                    checkboxForBonus.visibility = View.GONE
+                    checkboxForBonus.isChecked = false
 
-        bonus.visibility = View.GONE
-        bonus.editText?.setText("")
+                    bonus.visibility = View.GONE
+                    bonus.editText?.setText("")
 
-        editBonus.keyListener = null
+                    checkBox.visibility = View.VISIBLE
+                    checkBox.isChecked = false
 
-        checkBox.visibility = View.VISIBLE
-        checkBox.isChecked = false
-        checkBox.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                tvFirstPayCalculator.inputType = InputType.TYPE_CLASS_NUMBER
-                firstPayCalculator.visibility = View.VISIBLE
-                firstPayCalculator.editText?.addTextChangedListener {
-                    val getTextFirstPayCalculator = it.toString()
-                    if (getTextFirstPayCalculator.isNotEmpty()) {
-                        val toNumber = getTextFirstPayCalculator.toDouble()
-                        Log.d("TAG", "Первоначальный взнос: $toNumber")
-                        val getPercent = (totalCart * 15) / 100
-                        Log.d("TAG", "15% от первоначального взноса: $getPercent")
-                        if (toNumber in getPercent..totalCart) {
-                            firstPay.text = "${formatNumber(toNumber)} UZS"
-                            val minusFirstPay = totalCart - toNumber
-                            Log.d("TAG", "Минус первоначального взноса от суммы: $minusFirstPay")
-                            summa.text = "${formatNumber(minusFirstPay)} UZS"
-                            tableSale.visibility = View.VISIBLE
-                            tvTable.visibility = View.VISIBLE
-                        } else if (toNumber < getPercent){
-                            firstPayCalculator.error = "Первоначальный взнос должен составлять не менее 15% от суммы покупки!"
-                            tableSale.visibility = View.GONE
-                            tvTable.visibility = View.GONE
+                    firstPayCalculator.editText?.setText("")
+
+                    tableSale.visibility = View.VISIBLE
+                    tvTable.visibility = View.VISIBLE
+
+                    checkBox.setOnCheckedChangeListener { _, isChecked ->
+                        if (isChecked){
+                            firstPayCalculator.visibility = View.VISIBLE
+                            tvFirstPayCalculator.inputType = InputType.TYPE_CLASS_NUMBER
+                            firstPayCalculator.editText?.addTextChangedListener {
+                                val textFirstPayCalculator = it.toString()
+                                if (textFirstPayCalculator.isNotEmpty()){
+
+                                    val getFirstPay = textFirstPayCalculator.toDouble()
+
+                                    val realPercent = (totalCart.toDouble() * 15) / 100
+                                    Log.d("TAG","AAAAAAAAAAAAAAAAAAAAAAAAAAAA: $realPercent")
+
+                                    if (getFirstPay > realPercent && getFirstPay <= totalCart.toDouble()){
+                                        firstPayCalculator.error = null
+                                        tvFirstPayCalculator.setText(realPercent.toString())
+                                        val minusFirstPay = totalCart.toDouble() - getFirstPay
+                                        summa.text = "${formatNumber(minusFirstPay)} UZS"
+                                        firstPay.text = "${formatNumber(getFirstPay)} UZS"
+
+                                    }
+
+                                    else if (getFirstPay <= realPercent) {
+                                        firstPayCalculator.error = "Первоначальный взнос должен составлять не менее 15% от суммы покупки!"
+                                        firstPay.text = "${formatNumber(0.00)} UZS"
+                                        summa.text = "${formatNumber(totalCart)} UZS"
+                                    } else if (getFirstPay > totalCart.toDouble()) {
+                                        firstPayCalculator.error = "Первоначальный взнос не должен превышать сумму покупки!"
+                                        val minusFirstPay = totalCart.toDouble() - getFirstPay
+                                        summa.text = "${formatNumber(minusFirstPay)} UZS"
+                                    }
+                                }else{
+                                    firstPay.text = "${formatNumber(0.00)} UZS"
+                                    summa.text = "${formatNumber(totalCart)} UZS"
+                                }
+                            }
+                        }else{
+                            firstPayCalculator.error = null
+                            firstPayCalculator.visibility = View.GONE
+                            firstPayCalculator.editText?.setText("")
+                            tvFirstPayCalculator.keyListener = null
+                            firstPay.text = "${formatNumber(0.00)} UZS"
+                            summa.text = "${formatNumber(totalCart)} UZS"
                         }
-                        else if (toNumber > totalCart){
-                            firstPayCalculator.error = "Первоначальный взнос не должен превышать сумму покупки!"
-                            tableSale.visibility = View.GONE
-                            tvTable.visibility = View.GONE
+                    }
+                }
+            }
+        }else{
+
+            val selectedClientBonus = selectClientType.bonus
+            tvBonusForClient.text = "${formatNumber(selectedClientBonus)} UZS"
+
+            val getTotalWithSale = Cart.getTotalPriceWithSale()
+            tvSale.text = "${formatNumber(getTotalWithSale)} UZS"
+
+            checkboxForBonus.visibility = View.VISIBLE
+            checkBox.visibility = View.GONE
+
+            editBonus.inputType = InputType.TYPE_CLASS_NUMBER
+
+            checkBox.visibility = View.GONE
+            firstPayCalculator.visibility = View.GONE
+
+            tableSale.visibility = View.GONE
+            tvTable.visibility = View.GONE
+
+            bonus.editText?.addTextChangedListener {
+                val getText = it.toString()
+                if (getText.isNotEmpty()){
+                    val getTextBonus = getText.toDouble()
+                    payWithBonus.text = "${formatNumber(getTextBonus)} UZS"
+                }
+            }
+
+            typePay.setOnItemClickListener { _, _, position, _ ->
+                val selectPayType = allTypePay[position]
+                val selectPayTypeId = selectPayType.id
+
+                if (selectPayTypeId == 1){
+                    checkboxForBonus.visibility = View.VISIBLE
+                    checkboxForBonus.isChecked = false
+
+                    checkBox.visibility = View.GONE
+                    firstPayCalculator.visibility = View.GONE
+
+                    tableSale.visibility = View.GONE
+                    tvTable.visibility = View.GONE
+
+                    editBonus.inputType = InputType.TYPE_CLASS_NUMBER
+
+                    firstPay.text = "${formatNumber(0.00)} UZS"
+                    payWithBonus.text = "${formatNumber(0.00)} UZS"
+
+                    summa.text = "${formatNumber(totalCart)} UZS"
+
+
+                    checkboxForBonus.setOnCheckedChangeListener { _, isChecked ->
+                        if (isChecked){
+                            bonus.visibility = View.VISIBLE
+                            bonus.editText?.addTextChangedListener {
+                                val getText = it.toString()
+                                if (getText.isNotEmpty()){
+                                    val getTextBonus = getText.toDouble()
+                                    val getTotalCart = totalCart.toDouble() - getTextBonus
+                                    payWithBonus.text = "${formatNumber(getTextBonus)} UZS"
+                                    summa.text = "${formatNumber(getTotalCart)} UZS"
+                                }else{
+                                    summa.text = "${formatNumber(totalCart)} UZS"
+                                    payWithBonus.text = "${formatNumber(0.00)} UZS"
+                                }
+                            }
+                        }else{
+                            editBonus.keyListener = null
+                            bonus.visibility = View.GONE
+                            bonus.editText?.setText("")
+                            summa.text = "${formatNumber(totalCart)} UZS"
+                            payWithBonus.text = "${formatNumber(0.00)} UZS"
                         }
-                    } else {
-                        firstPayCalculator.error = null
-                        firstPay.text = "${formatNumber(0.00)} UZS"
-                        summa.text = "${formatNumber(totalCart)} UZS"
-                        tableSale.visibility = View.VISIBLE
-                        tvTable.visibility = View.VISIBLE
-                    }
-                }
-            } else {
-                firstPayCalculator.visibility = View.GONE
-                firstPayCalculator.editText?.setText("")
-                tvFirstPayCalculator.keyListener = null
-                firstPay.text = "${formatNumber(0.00)} UZS"
-                summa.text = "${formatNumber(totalCart)} UZS"
-            }
-        }
-        tableSale.visibility = View.VISIBLE
-        tvTable.visibility = View.VISIBLE
-    }
-}
-
-@SuppressLint("SetTextI18n")
-private fun CalculatorFragment.handleNonRetailClient(
-    selectedClientType: Client,
-    selectedPayType: AllTypePay,
-    totalCart: Double
-) {
-
-    if (selectedPayType.id == 1) {
-        //Не-розничные клиенты, которые платят наличными
-
-        val getBonusClient = selectedClientType.bonus.toDouble()
-
-        tvBonusForClient.text = "${formatNumber(getBonusClient)} UZS"
-        firstPay.text = "${formatNumber(0.00)} UZS"
-        tvSale.text = "${formatNumber(0.00)} UZS"
-        payWithBonus.text = "${formatNumber(0.00)} UZS"
-        summa.text = "${formatNumber(totalCart)} UZS"
-
-        checkboxForBonus.visibility = View.VISIBLE
-        checkboxForBonus.isChecked = false
-        checkboxForBonus.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                editBonus.inputType = InputType.TYPE_CLASS_NUMBER
-                bonus.visibility = View.VISIBLE
-                bonus.editText?.addTextChangedListener {
-                    val getTextBonus = it.toString()
-                    if (getTextBonus.isNotEmpty()) {
-                        val getNumber = getTextBonus.toDouble()
-                        payWithBonus.text = "${formatNumber(getNumber)} UZS"
-                        Log.d("TAG", "Бонус: $getNumber")
-                        val minusBonus = totalCart - getNumber
-                        Log.d("TAG", "Минус бонуса от суммы: $minusBonus")
-                        summa.text = "${formatNumber(minusBonus)} UZS"
-                    } else {
-                        tvBonusForClient.text = "${formatNumber(0.00)} UZS"
-                        summa.text = "${formatNumber(totalCart)} UZS"
-                    }
-                }
-            } else {
-                bonus.visibility = View.GONE
-                bonus.editText?.setText("")
-                editBonus.keyListener = null
-                payWithBonus.text = "${formatNumber(0.00)} UZS"
-                summa.text = "${formatNumber(totalCart)} UZS"
-            }
-        }
-
-        checkBox.visibility = View.GONE
-        checkBox.isChecked = false
-
-        firstPayCalculator.visibility = View.GONE
-        firstPayCalculator.editText?.setText("")
-
-        tvFirstPayCalculator.keyListener = null
-
-        tableSale.visibility = View.GONE
-        tvTable.visibility = View.GONE
-
-    } else if (selectedPayType.id == 2) {
-        //Не-розничные клиенты, которые платят в рассрочку
-
-        val getBonusClient = selectedClientType.bonus.toDouble()
-
-        tvBonusForClient.text = "${formatNumber(getBonusClient)} UZS"
-        firstPay.text = "${formatNumber(0.00)} UZS"
-        tvSale.text = "${formatNumber(0.00)} UZS"
-        payWithBonus.text = "${formatNumber(0.00)} UZS"
-        summa.text = "${formatNumber(totalCart)} UZS"
-
-        checkBox.visibility = View.GONE
-
-        checkboxForBonus.visibility = View.VISIBLE
-        checkboxForBonus.isChecked = false
-        checkboxForBonus.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                editBonus.inputType = InputType.TYPE_CLASS_NUMBER
-                bonus.visibility = View.VISIBLE
-                bonus.editText?.addTextChangedListener {
-                    val getTextBonus = it.toString()
-                    if (getTextBonus.isNotEmpty()) {
-                        val getNumber = getTextBonus.toDouble()
-                        payWithBonus.text = "${formatNumber(getNumber)} UZS"
-                    } else {
-                        payWithBonus.text = "${formatNumber(0.00)} UZS"
-                    }
-                }
-            } else {
-                bonus.visibility = View.GONE
-                bonus.editText?.setText("")
-                editBonus.keyListener = null
-                tvBonusForClient.text = "${formatNumber(0.00)} UZS"
-            }
-        }
-
-        checkBox.visibility = View.VISIBLE
-        checkBox.isChecked = false
-        checkBox.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                tvFirstPayCalculator.inputType = InputType.TYPE_CLASS_NUMBER
-                firstPayCalculator.visibility = View.VISIBLE
-                firstPayCalculator.editText?.addTextChangedListener {
-                    val getTextFirstPayCalculator = it.toString()
-                    if (getTextFirstPayCalculator.isNotEmpty()) {
-                        val toNumber = getTextFirstPayCalculator.toDouble()
-                        Log.d("TAG", "Первоначальный взнос: $toNumber")
-                        val getPercent = (totalCart * 15) / 100
-                        Log.d("TAG", "15% от первоначального взноса: $getPercent")
-                        if (toNumber >= getPercent) {
-                            firstPay.text = "${formatNumber(toNumber)} UZS"
-                        } else {
-                            firstPayCalculator.error = "Первоначальный взнос должен составлять не менее 15% от суммы покупки!"
-                        }
-                    } else {
-                        firstPay.text = "${formatNumber(0.00)} UZS"
-                        firstPayCalculator.error = null
-                    }
-                }
-            } else {
-                firstPayCalculator.error = null
-                firstPayCalculator.visibility = View.GONE
-                firstPayCalculator.editText?.setText("")
-                tvFirstPayCalculator.keyListener = null
-                firstPay.text = "${formatNumber(0.00)} UZS"
-            }
-        }
-
-        tableSale.visibility = View.VISIBLE
-        tvTable.visibility = View.VISIBLE
-    }
-}
-
-
-fun CalculatorFragment.getForPercentAndMonth(){
-    try {
-        val call = api.getApiService().getPercentAndMonth("Bearer ${sessionManager.fetchToken()}")
-        call.enqueue(object : Callback<PercentInstallment?>{
-            override fun onResponse(
-                call: Call<PercentInstallment?>,
-                response: Response<PercentInstallment?>
-            ) {
-                Log.d("TAG", "1: ${response.code()}")
-                Log.d("TAG", "2: ${response.body()}")
-                if (response.isSuccessful){
-                    val percentAndMonth = response.body()
-                    if (percentAndMonth != null){
-                        getPercentAndMonth = percentAndMonth.result
-                        val monthAndPercent = Gson().toJson(getPercentAndMonth)
-                        prefs.edit().putString("percentAndMonth", monthAndPercent).apply()
                     }
                 }else{
-                    Log.d("TAG", "onResponse: ${response.code()}")
-                    Log.d("TAG", "onResponse: ${response.body()}")
+                    checkBox.visibility = View.VISIBLE
+                    checkBox.isChecked = false
+                    checkBox .setOnCheckedChangeListener { _, isChecked ->
+                        if (isChecked){
+                            firstPayCalculator.visibility = View.VISIBLE
+                            tvFirstPayCalculator.inputType = InputType.TYPE_CLASS_NUMBER
+                        }else{
+                            firstPayCalculator.visibility = View.GONE
+                            firstPayCalculator.editText?.setText("")
+                            tvFirstPayCalculator.keyListener = null
+                        }
+                    }
+
+                    checkboxForBonus.setOnCheckedChangeListener { _, isChecked ->
+                        if (isChecked){
+                            bonus.visibility = View.VISIBLE
+                            editBonus.inputType = InputType.TYPE_CLASS_NUMBER
+
+                            bonus.editText?.addTextChangedListener {
+                                val getText = it.toString()
+                                if (getText.isNotEmpty()){
+                                    val getTextBonus = getText.toDouble()
+
+                                    val getTotalCart = totalCart.toDouble() - getTextBonus
+                                    summa.text = "${formatNumber(getTotalCart)} UZS"
+
+                                    checkBox.visibility = View.VISIBLE
+                                    checkBox.isChecked = false
+
+                                    checkBox.setOnCheckedChangeListener { _, isChecked ->
+                                        if (isChecked){
+                                            firstPayCalculator.visibility = View.VISIBLE
+                                            tvFirstPayCalculator.inputType = InputType.TYPE_CLASS_NUMBER
+                                            firstPayCalculator.editText?.addTextChangedListener {
+                                                val getText = it.toString()
+                                                if (getText.isNotEmpty()){
+                                                    val getTextFirstPay = getText.toDouble()
+                                                    val getTotalCart = totalCart.toDouble() - (getTextBonus + getTextFirstPay)
+                                                    summa.text = "${formatNumber(getTotalCart)} UZS"
+                                                    firstPay.text = "${formatNumber(getTextFirstPay)} UZS"
+                                                    payWithBonus.text = "${formatNumber(getTextBonus)} UZS"
+                                                }
+                                            }
+                                        }else{
+                                            firstPayCalculator.visibility = View.GONE
+                                            firstPayCalculator.editText?.setText("")
+                                            tvFirstPayCalculator.keyListener = null
+                                            firstPay.text = "${formatNumber(0.00)} UZS"
+                                            val getTotalCart = totalCart.toDouble() - getTextBonus
+                                            summa.text = "${formatNumber(getTotalCart)} UZS"
+
+                                        }
+                                    }
+                                }
+                            }
+                            checkBox.visibility = View.VISIBLE
+                            checkBox.isChecked = false
+
+                        }else{
+                            bonus.visibility = View.GONE
+                            bonus.editText?.setText("")
+                            editBonus.keyListener = null
+                            checkBox.visibility = View.VISIBLE
+                            firstPayCalculator.visibility = View.VISIBLE
+                            checkBox.setOnCheckedChangeListener { _, isChecked ->
+                                if (isChecked){
+                                    firstPayCalculator.visibility = View.VISIBLE
+                                    tvFirstPayCalculator.inputType = InputType.TYPE_CLASS_NUMBER
+                                    firstPayCalculator.editText?.addTextChangedListener {
+                                        val getText = it.toString()
+                                        if (getText.isNotEmpty()){
+                                            val getTextFirstPay = getText.toDouble()
+                                            val getTotalCart = totalCart.toDouble() -  getTextFirstPay
+                                            summa.text = "${formatNumber(getTotalCart)} UZS"
+                                            firstPay.text = "${formatNumber(getTextFirstPay)} UZS"
+                                            payWithBonus.text = "${formatNumber(0.00)} UZS"
+                                        }
+                                    }
+                                }else{
+                                    firstPayCalculator.visibility = View.GONE
+                                    firstPayCalculator.editText?.setText("")
+                                    tvFirstPayCalculator.keyListener = null
+                                    payWithBonus.text = "${formatNumber(0.00)} UZS"
+                                    summa.text = "${formatNumber(totalCart)} UZS"
+
+                                }
+                            }
+                        }
+                    }
+                    tableSale.visibility = View.VISIBLE
+                    tvTable.visibility = View.VISIBLE
                 }
             }
-
-            override fun onFailure(call: Call<PercentInstallment?>, t: Throwable) {
-                Log.d("TAG", "onFailure: ${t.message}")
-            }
-
-        })
-    }catch (e : Exception){
-        Log.d("TAG", "getPercentAndMonth: ${e.message}")
+        }
     }
 }
 
-fun CalculatorFragment.fetchClientFromApi() {
+
+
+//fun CalculatorFragment.getForPercentAndMonth(){
+//    try {
+//        val call = api.getApiService().getPercentAndMonth("Bearer ${sessionManager.fetchToken()}")
+//        call.enqueue(object : Callback<PercentInstallment?>{
+//            override fun onResponse(
+//                call: Call<PercentInstallment?>,
+//                response: Response<PercentInstallment?>
+//            ) {
+//                Log.d("TAG", "1: ${response.code()}")
+//                Log.d("TAG", "2: ${response.errorBody()}")
+//                if (response.isSuccessful){
+//                    val percentAndMonth = response.body()
+//                    if (percentAndMonth != null){
+//                        getPercentAndMonth = percentAndMonth.result
+//                        val monthAndPercent = Gson().toJson(getPercentAndMonth)
+//                        prefs.edit().putString("percentAndMonth", monthAndPercent).apply()
+//                    }
+//                }else{
+//                    Log.d("TAG", "onResponse: ${response.code()}")
+//                    Log.d("TAG", "onResponse: ${response.errorBody()}")
+//                }
+//            }
+//
+//            override fun onFailure(call: Call<PercentInstallment?>, t: Throwable) {
+//                Log.d("TAG", "onFailure: ${t.message}")
+//            }
+//
+//        })
+//    }catch (e : Exception){
+//        Log.d("TAG", "getPercentAndMonth: ${e.message}")
+//    }
+//}
+
+fun CalculatorFragment.fetchClientFromApi(){
     try {
         val call = api.getApiService().getAllClients("Bearer ${sessionManager.fetchToken()}")
         call.enqueue(object : Callback<GetAllClientsResponse?> {
@@ -519,32 +556,30 @@ fun CalculatorFragment.fetchClientFromApi() {
                 call: Call<GetAllClientsResponse?>,
                 response: Response<GetAllClientsResponse?>
             ) {
-                if (response.isSuccessful) {
+                if (response.isSuccessful){
                     val clientName = response.body()
-                    if (clientName != null) {
+                    if (clientName != null){
                         getAllClient = clientName.result
                         val nameClient = Gson().toJson(getAllClient)
                         prefs.edit().putString("clientName", nameClient).apply()
                         fetchClient(getAllClient)
                     }
-                } else {
+                }else{
                     Log.d("TAG", "onResponse: ${response.code()}")
                     Log.d("TAG", "onResponse: ${response.errorBody()}")
                 }
             }
 
             override fun onFailure(call: Call<GetAllClientsResponse?>, t: Throwable) {
-                Log.d("TAG", "onFailure: ${t.message}")
-            }
+                Log.d("TAG", "onFailure: ${t.message}")                }
         })
-    } catch (e: Exception) {
+    }catch (e: Exception){
         Log.d("TAG", "fetchClientNameFromApi: ${e.message}")
     }
 }
 
-fun CalculatorFragment.fetchClient(client: List<Client>) {
-    val arrayAdapterClient =
-        ArrayAdapter(requireContext(), R.layout.spinner_item, client.map { it.client_name })
+fun CalculatorFragment.fetchClient(client: List<Client>){
+    val arrayAdapterClient = ArrayAdapter(requireContext(), R.layout.spinner_item, client.map { it.client_name })
     spinnerClientType.setAdapter(arrayAdapterClient)
 
     spinnerClientType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -553,23 +588,22 @@ fun CalculatorFragment.fetchClient(client: List<Client>) {
             view: View?,
             position: Int,
             id: Long
-        ) {
-        }
+        ) {}
 
         override fun onNothingSelected(parent: AdapterView<*>?) {}
     }
 }
 
-fun CalculatorFragment.fetchClientNameFromPrefs() {
+fun CalculatorFragment.fetchClientNameFromPrefs(){
     try {
         val clientNameJason = prefs.getString("clientName", null)
-        if (clientNameJason != null) {
-            val clientNameListType = object : TypeToken<List<Client>>() {}.type
-            val nameClient = Gson().fromJson<List<Client>>(clientNameJason, clientNameListType)
+        if (clientNameJason != null){
+            val clientNameListType = object : TypeToken<List<Client>>(){}.type
+            val nameClient = Gson().fromJson<List<Client>>(clientNameJason,clientNameListType)
             getAllClient = nameClient
             Log.d("TAG", "fetchNameClientFromPrefs: $nameClient")
             fetchClient(getAllClient)
-        } else {
+        }else{
             fetchClientFromApi()
         }
     } catch (e: Exception) {

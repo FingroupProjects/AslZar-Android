@@ -29,7 +29,6 @@ import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.createTab
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.fetViews
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.fetchClientFromApi
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.fetchClientNameFromPrefs
-import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.getForPercentAndMonth
 import com.fin_group.aslzar.util.CartObserver
 import com.fin_group.aslzar.util.SessionManager
 import com.google.android.material.checkbox.MaterialCheckBox
@@ -85,7 +84,6 @@ class CalculatorFragment : Fragment() {
         sessionManager = SessionManager(requireContext())
         api = ApiClient()
         api.init(sessionManager)
-        getForPercentAndMonth()
         cartObserver(binding)
         Cart.registerObserver(cartObserver)
 
