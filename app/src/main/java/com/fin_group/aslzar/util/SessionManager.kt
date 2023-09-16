@@ -31,6 +31,8 @@ class SessionManager(context: Context) {
         const val USER_LOGIN = "user_login"
         const val USER_SALES_PLAN = "user_sales_plan"
         const val PASSWORD_PREF = "password_pref"
+        const val USER_EMAIL = "user_email"
+        const val USER_NUMBER = "user_number_phone"
         const val IS_LOGGED_IN_KEY = "is_logged_in"
     }
 
@@ -76,6 +78,18 @@ class SessionManager(context: Context) {
         editor.apply()
     }
 
+    fun saveEmail(email: String){
+        val editor = prefs.edit()
+        editor.putString(USER_EMAIL, email)
+        editor.apply()
+    }
+
+    fun saveNumberPhone(number: String){
+        val editor = prefs.edit()
+        editor.putString(USER_NUMBER, number)
+        editor.apply()
+    }
+
     fun fetchKey(): String?{
         return prefs.getString(KEY, null)
     }
@@ -86,6 +100,14 @@ class SessionManager(context: Context) {
 
     fun fetchName(): String? {
         return prefs.getString(USER_FIO, null)
+    }
+
+    fun fetchEmail(): String? {
+        return prefs.getString(USER_EMAIL, null)
+    }
+
+    fun fetchNumber(): String? {
+        return prefs.getString(USER_NUMBER, null)
     }
 
     fun fetchLocation(): String? {

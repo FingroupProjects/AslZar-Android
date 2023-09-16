@@ -213,10 +213,6 @@ class MainActivity : AppCompatActivity() {
                     if (response.isSuccessful) {
                         val coefficientPlanList = response.body()
                         if (coefficientPlanList != null) {
-                            Log.d("TAG", "onResponse: $coefficientPlanList")
-                            Log.d("TAG", "onResponse: ${response.body()}")
-                            Log.d("TAG", "onResponse: ${response.raw()}")
-
                             val coefficientPlanJson = Gson().toJson(coefficientPlanList.result)
                             prefs.edit().putString("coefficientPlan", coefficientPlanJson).apply()
                         }

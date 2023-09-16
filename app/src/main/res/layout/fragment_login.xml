@@ -15,9 +15,10 @@
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="250dp"
-            android:layout_height="200dp"
+            android:layout_height="150dp"
             android:layout_marginTop="20dp"
             android:src="@drawable/logo_full"
+            android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -54,7 +55,7 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="30dp"
+            android:layout_marginBottom="50dp"
             android:hint="Пароль"
             app:boxBackgroundMode="outline"
             app:boxStrokeColor="@color/background_2"
@@ -87,22 +88,11 @@
             app:layout_constraintEnd_toEndOf="@+id/password"
             app:layout_constraintStart_toStartOf="@+id/password" />
 
-        <ImageView
-            android:id="@+id/imageView5"
-            android:layout_width="0dp"
-            android:layout_height="200dp"
-            android:scaleType="fitStart"
-            android:src="@drawable/logo_form2"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView" />
-
         <TextView
             android:id="@+id/textView11"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="40dp"
-            android:layout_marginTop="-15dp"
             android:text="Вход"
             android:textColor="@color/primary_color_4"
             android:textSize="32sp"
@@ -146,6 +136,33 @@
             app:layout_constraintEnd_toEndOf="@+id/view6"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView29" />
+
+        <TextView
+            android:id="@+id/textView46"
+            style="@style/forTextView2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:paddingVertical="5dp"
+            android:text="Забыли пароль?"
+            android:textAlignment="textEnd"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="@+id/password"
+            app:layout_constraintStart_toStartOf="@+id/password"
+            app:layout_constraintTop_toBottomOf="@+id/password" />
+
+        <ImageView
+            android:id="@+id/imageView5"
+            android:layout_width="0dp"
+            android:layout_height="200dp"
+            android:layout_marginTop="10dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/logo_form2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageView" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.core.widget.NestedScrollView>
