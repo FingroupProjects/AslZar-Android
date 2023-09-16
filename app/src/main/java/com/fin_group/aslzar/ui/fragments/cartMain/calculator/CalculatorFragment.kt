@@ -3,6 +3,8 @@ package com.fin_group.aslzar.ui.fragments.cartMain.calculator
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -87,12 +89,14 @@ class CalculatorFragment : Fragment() {
         cartObserver(binding)
         Cart.registerObserver(cartObserver)
 
+
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         fetViews(binding)
-        all()
+        all(binding)
         createTable()
         //getForPercentAndMonth()
         fetchClientFromApi()

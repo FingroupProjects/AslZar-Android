@@ -74,7 +74,6 @@ fun CartFragment.fetchItemTouchHelper(){
             Cart.notifyObservers()
             updateBadge()
 
-
             val snackBar = Snackbar.make(requireView(), "Товар удален", Snackbar.LENGTH_LONG)
             snackBar.setAction("Отменить") {
                 Cart.addProduct(productToRemove, requireContext())

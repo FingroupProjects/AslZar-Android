@@ -244,7 +244,6 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            android:background="@color/white"
             app:boxBackgroundMode="outline"
             app:boxStrokeColor="@color/background_2"
             app:hintTextColor="@color/text_color_1"
@@ -256,6 +255,7 @@
                 android:id="@+id/spinnerClientType"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="@drawable/bg_for_et_calculator"
                 android:inputType="text" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -278,7 +278,6 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            android:background="@color/white"
             app:boxBackgroundMode="outline"
             app:boxStrokeColor="@color/background_2"
             app:hintTextColor="@color/text_color_1"
@@ -290,6 +289,7 @@
                 android:id="@+id/spinnerPayType"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="@drawable/bg_for_et_calculator"
                 android:inputType="none" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -317,7 +317,6 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="-10dp"
             android:layout_marginEnd="16dp"
-            android:background="@color/white"
             android:checked="true"
             android:visibility="gone"
             app:boxBackgroundMode="outline"
@@ -331,6 +330,7 @@
                 android:id="@+id/editBonus"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/bg_for_et_calculator"
                 android:inputType="number" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -359,7 +359,6 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="-10dp"
             android:layout_marginEnd="16dp"
-            android:background="@color/white"
             android:checked="true"
             android:visibility="gone"
             app:boxBackgroundMode="outline"
@@ -373,6 +372,7 @@
                 android:id="@+id/tvFirstPayCalculator"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/bg_for_et_calculator"
                 android:inputType="number" />
         </com.google.android.material.textfield.TextInputLayout>
 
