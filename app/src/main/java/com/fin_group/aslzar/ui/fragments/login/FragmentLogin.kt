@@ -96,8 +96,6 @@ class FragmentLogin : Fragment() {
 
             progressBar.visibility = VISIBLE
 
-
-
             val call = api.getApiServiceLogin(login, password).userLogin()
             call.enqueue(object : Callback<Auth?> {
                 override fun onResponse(call: Call<Auth?>, response: Response<Auth?>) {
