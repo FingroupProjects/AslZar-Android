@@ -195,6 +195,7 @@
 
                 <TextView
                     android:id="@+id/textView25"
+                    style="@style/forTextView.18"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
@@ -202,8 +203,6 @@
                     android:layout_marginEnd="2dp"
                     android:layout_marginBottom="10dp"
                     android:text="Итого"
-                    android:textColor="@color/text_color_1"
-                    android:textSize="18sp"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/summa"
@@ -212,12 +211,11 @@
 
                 <TextView
                     android:id="@+id/summa"
+                    style="@style/forTextView.18"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="16dp"
-                    android:text="0 UZS"
-                    android:textColor="@color/text_color_1"
-                    android:textSize="18sp"
+                    android:text="50 000,00 UZS"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="@+id/textView25"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -246,8 +244,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            app:boxBackgroundMode="outline"
             android:background="@color/white"
+            app:boxBackgroundMode="outline"
             app:boxStrokeColor="@color/background_2"
             app:hintTextColor="@color/text_color_1"
             app:layout_constraintEnd_toEndOf="parent"
@@ -280,8 +278,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            app:boxBackgroundMode="outline"
             android:background="@color/white"
+            app:boxBackgroundMode="outline"
             app:boxStrokeColor="@color/background_2"
             app:hintTextColor="@color/text_color_1"
             app:layout_constraintEnd_toEndOf="parent"
@@ -442,9 +440,6 @@
             </androidx.appcompat.widget.LinearLayoutCompat>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
-
-
-
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

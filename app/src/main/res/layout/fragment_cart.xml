@@ -2,11 +2,11 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cartFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/cartFragment"
     tools:context=".ui.fragments.cartMain.cart.CartFragment">
-    
+
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/materialCardView2"
         android:layout_width="match_parent"
@@ -20,9 +20,9 @@
         app:strokeColor="@null">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_marginTop="15dp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_marginTop="15dp">
 
             <TextView
                 android:id="@+id/textView3"
@@ -55,12 +55,12 @@
 
             <TextView
                 android:id="@+id/textView22"
+                style="@style/forTextView2"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="2dp"
                 android:text="Скидка"
-                android:textColor="@color/text_color_2"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toStartOf="@+id/cartTvTotalSale"
                 app:layout_constraintStart_toStartOf="@+id/textView10"
@@ -68,25 +68,25 @@
 
             <TextView
                 android:id="@+id/textView23"
+                style="@style/forTextView2"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="2dp"
                 android:text="Общая цена"
-                android:textColor="@color/text_color_2"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toStartOf="@+id/cartTvTotalPriceWithoutSale"
                 app:layout_constraintStart_toStartOf="@+id/textView22"
-                app:layout_constraintTop_toBottomOf="@+id/textView10" />
+                app:layout_constraintTop_toBottomOf="@+id/firstDivided" />
 
             <TextView
                 android:id="@+id/textView24"
+                style="@style/forTextView2"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="2dp"
                 android:text="Доставка"
-                android:textColor="@color/text_color_2"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toStartOf="@+id/cartTvDeliveryPrice"
                 app:layout_constraintStart_toStartOf="@id/textView22"
@@ -207,7 +207,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
-                android:text="5000000 UZS"
+                android:text="50 000,00 UZS"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/textView18"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -240,10 +240,10 @@
         android:src="@drawable/ic_deleta"
         app:backgroundTint="@color/background_view_1"
         app:elevation="0dp"
-        app:tint="#D05757"
         app:layout_constraintBottom_toBottomOf="@+id/textView26"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/textView26" />
+        app:layout_constraintTop_toTopOf="@+id/textView26"
+        app:tint="#D05757" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/cartRvItemsInCart"
