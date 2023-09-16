@@ -53,9 +53,7 @@ class ProfileFragment : Fragment() {
 //        swipeRefreshLayout.setOnRefreshListener {
 //            getSalesPlan()
 //        }
-
-//        getSalesPlan()
-        salesPlanNumber = sessionManager.fetchSalesPlan()
+        salesPlanNumber = 47.5
         val asd: Number? = salesPlanNumber
         binding.apply {
             editName.text = sessionManager.fetchName()

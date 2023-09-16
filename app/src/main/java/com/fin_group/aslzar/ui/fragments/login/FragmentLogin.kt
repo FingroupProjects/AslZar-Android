@@ -27,6 +27,8 @@ import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.response.Auth
 import com.fin_group.aslzar.util.SessionManager.Companion.IS_LOGGED_IN_KEY
 import com.fin_group.aslzar.util.SessionManager.Companion.PREFS_KEY
+import com.fin_group.aslzar.util.hideKeyboard
+import com.google.android.material.internal.ViewUtils.hideKeyboard
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -69,6 +71,12 @@ class FragmentLogin : Fragment() {
         loginEt = binding.editLogin
         passwordEt = binding.editPassword
         progressBar = binding.progressBar2
+
+        binding.root.setOnClickListener{
+            it.hideKeyboard()
+        }
+
+        requireContext().hideKeyboard(binding.root)
 
         val secureRandom = SecureRandom()
         val keyBytes = ByteArray(32)

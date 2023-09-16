@@ -1,5 +1,6 @@
 package com.fin_group.aslzar.util
 
+import android.app.Activity
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Bitmap
@@ -108,6 +109,10 @@ fun View.hideKeyboard() {
     imm.hideSoftInputFromWindow(windowToken, 0)
 }
 
+fun Context.hideKeyboard(view: View) {
+    val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+    inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+}
 fun Fragment.hideToolBar(){
     val toolbar = requireActivity().findViewById<MaterialToolbar>(R.id.toolbar)
     val hideAnim: Animation = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_out)

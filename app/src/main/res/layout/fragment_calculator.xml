@@ -47,12 +47,14 @@
                 <TextView
                     android:id="@+id/bonusForClient"
                     style="@style/forTextView2"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
+                    android:layout_marginEnd="2dp"
                     android:text="Бонус клиента"
                     android:textStyle="bold"
+                    app:layout_constraintEnd_toStartOf="@+id/tvBonusForClient"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/check" />
 
@@ -82,12 +84,14 @@
                 <TextView
                     android:id="@+id/firstPay"
                     style="@style/forTextView2"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
+                    android:layout_marginEnd="2dp"
                     android:text="Первоначальный взнос"
                     android:textStyle="bold"
+                    app:layout_constraintEnd_toStartOf="@+id/tvFirstPay"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/firstDivided" />
 
@@ -116,13 +120,15 @@
 
                 <TextView
                     android:id="@+id/sale"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
+                    android:layout_marginEnd="2dp"
                     android:text="Скидка"
                     android:textColor="@color/text_color_2"
                     android:textStyle="bold"
+                    app:layout_constraintEnd_toStartOf="@+id/tvSale"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/secondDivided" />
 
@@ -151,13 +157,15 @@
 
                 <TextView
                     android:id="@+id/payWithBonus"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
+                    android:layout_marginEnd="2dp"
                     android:text="Оплата с бонусами"
                     android:textColor="@color/text_color_2"
                     android:textStyle="bold"
+                    app:layout_constraintEnd_toStartOf="@+id/tvPayWithBonus"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/thirdDivided" />
 
@@ -187,16 +195,18 @@
 
                 <TextView
                     android:id="@+id/textView25"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="10dp"
+                    android:layout_marginEnd="2dp"
                     android:layout_marginBottom="10dp"
                     android:text="Итого"
                     android:textColor="@color/text_color_1"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/summa"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/fourthDivided" />
 

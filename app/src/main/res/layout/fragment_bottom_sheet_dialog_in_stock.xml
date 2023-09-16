@@ -35,6 +35,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView31"
             tools:listitem="@layout/row_item_haveing_in_store" />
@@ -68,13 +69,12 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="5dp"
             android:text="Магазин"
             android:textColor="@color/background_disable"
             android:textSize="12sp"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/titleProduct" />
+            app:layout_constraintTop_toTopOf="@+id/textView31" />
 
         <TextView
             android:id="@+id/textView31"
@@ -86,18 +86,17 @@
             android:textSize="12sp"
             app:layout_constraintEnd_toStartOf="@+id/guideline3"
             app:layout_constraintStart_toStartOf="@+id/guideline2"
-            app:layout_constraintTop_toBottomOf="@+id/titleProduct" />
+            app:layout_constraintTop_toBottomOf="@+id/btnCloseInStock" />
 
         <TextView
             android:id="@+id/textView32"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
             android:text="Кол-во"
             android:textColor="@color/background_disable"
             android:textSize="12sp"
             app:layout_constraintStart_toStartOf="@+id/guideline3"
-            app:layout_constraintTop_toBottomOf="@+id/titleProduct" />
+            app:layout_constraintTop_toTopOf="@+id/textView31" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline2"

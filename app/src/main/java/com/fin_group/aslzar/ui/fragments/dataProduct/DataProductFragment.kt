@@ -169,7 +169,7 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
 
         if (item.itemId == R.id.product_in_stock_item){
             if (product.counts.isNotEmpty()){
-                callInStockDialog(product.name, product.counts)
+                callInStockDialog(product.full_name, product.counts)
             } else {
                 Toast.makeText(requireContext(), "Данного продукта нет в наличии", Toast.LENGTH_SHORT).show()
             }

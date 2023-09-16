@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.Menu
@@ -27,6 +28,7 @@ import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.cipher.EncryptionManager
 import com.fin_group.aslzar.databinding.FragmentMainBinding
 import com.fin_group.aslzar.response.Category
+import com.fin_group.aslzar.response.InStock
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.ui.activities.MainActivity
 import com.fin_group.aslzar.ui.fragments.main.functions.addProductToCart
@@ -41,6 +43,7 @@ import com.fin_group.aslzar.ui.fragments.main.functions.getAllCategoriesFromApi
 import com.fin_group.aslzar.ui.fragments.main.functions.getAllCategoriesPrefs
 import com.fin_group.aslzar.ui.fragments.main.functions.getAllProductFromPrefs
 import com.fin_group.aslzar.ui.fragments.main.functions.getAllProductsFromApi
+import com.fin_group.aslzar.ui.fragments.main.functions.savingAndFetchSearch
 import com.fin_group.aslzar.ui.fragments.main.functions.savingAndFetchingCategory
 import com.fin_group.aslzar.ui.fragments.main.functions.searchViewFun
 import com.fin_group.aslzar.ui.fragments.main.functions.updateBadge
@@ -113,7 +116,6 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         binding.swipeRefreshLayout.setOnRefreshListener {
             fetchDataAndFilterProducts()
         }
-
         return binding.root
     }
 
@@ -122,8 +124,8 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         searchView = binding.searchViewMain
         mainActivity = activity as? MainActivity ?: throw IllegalStateException("Activity is not MainActivity")
 
-        getAllCategoriesPrefs()
-        getAllProductFromPrefs()
+//        getAllCategoriesPrefs()
+//        getAllProductFromPrefs()
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -131,10 +133,12 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
             }
             override fun onQueryTextChange(newText: String?): Boolean {
                 searchText = newText.toString()
+                Log.d("TAG", "onQueryTextChange: $searchText")
                 filterProducts()
                 return true
             }
         })
+        savingAndFetchSearch(binding)
         fetchRV(allProducts)
         val selectedCategoryId = preferences.getString("selectedCategory", "all")
         selectCategory = allCategories.find { it.id == selectedCategoryId }
@@ -188,6 +192,7 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         } else {
             savingAndFetchingCategory(binding)
         }
+        savingAndFetchSearch(binding)
         Cart.loadCartFromPrefs(requireContext())
     }
 

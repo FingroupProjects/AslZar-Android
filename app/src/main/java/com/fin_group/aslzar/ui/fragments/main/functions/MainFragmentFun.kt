@@ -38,7 +38,7 @@ fun MainFragment.callCategoryDialog(listener: CategoryClickListener) {
     categoryDialog.show(activity?.supportFragmentManager!!, "category check dialog")
 }
 
-fun MainFragment.callInStockDialog(name: String, counts: List<InStock>){
+fun MainFragment.callInStockDialog(name: String, counts: List<InStock>) {
     val fragmentManager = requireFragmentManager()
     val tag = "Product in stock Dialog"
     val existingFragment = fragmentManager.findFragmentByTag(tag)
@@ -49,7 +49,7 @@ fun MainFragment.callInStockDialog(name: String, counts: List<InStock>){
     }
 }
 
-fun MainFragment.callOutStock(id: String){
+fun MainFragment.callOutStock(id: String) {
     val fragmentManager = requireFragmentManager()
     val tag = "Product no have dialog"
     val existingFragment = fragmentManager.findFragmentByTag(tag)
@@ -68,8 +68,8 @@ fun MainFragment.categoryChecked(view: ConstraintLayout): Boolean {
     return view.visibility != VISIBLE
 }
 
-fun MainFragment.searchViewFun(){
-    if (selectCategory != null){
+fun MainFragment.searchViewFun() {
+    if (selectCategory != null) {
         viewCheckedCategory.visibility = GONE
         selectCategory = null
         filterProducts()
@@ -92,9 +92,9 @@ fun MainFragment.searchViewFun(){
     }
 }
 
-fun MainFragment.filterFun(){
+fun MainFragment.filterFun() {
     if (searchBarChecked(viewSearch)) {
-        if (searchText != ""){
+        if (searchText != "") {
             searchView.setQuery("", false)
         }
         viewSearch.visibility = GONE
@@ -103,11 +103,12 @@ fun MainFragment.filterFun(){
     callCategoryDialog(this)
 }
 
-fun MainFragment.addProductToCart(product: Product){
+fun MainFragment.addProductToCart(product: Product) {
     sharedViewModel.onProductAddedToCart(product, requireContext())
     updateBadge()
 }
-fun MainFragment.updateBadge(){
+
+fun MainFragment.updateBadge() {
     val uniqueProductTypes = Cart.getUniqueProductTypesCount()
     badgeManager.saveBadgeCount(uniqueProductTypes)
 
@@ -116,12 +117,15 @@ fun MainFragment.updateBadge(){
     badge.number = uniqueProductTypes
 }
 
-fun MainFragment.savingAndFetchingCategory(binding: FragmentMainBinding){
+fun MainFragment.savingAndFetchingCategory(binding: FragmentMainBinding) {
     try {
         if (selectCategory != null) {
-            if (selectCategory!!.id != "all"){
+            if (selectCategory!!.id != "all") {
                 binding.apply {
                     if (!searchBarChecked(viewSearch)) {
+                        if (searchText != "") {
+                            searchView.setQuery("", false)
+                        }
                         viewSearch.visibility = GONE
                     }
                     materialCardViewCategory.setOnClickListener {
@@ -146,8 +150,29 @@ fun MainFragment.savingAndFetchingCategory(binding: FragmentMainBinding){
         } else {
             filterProducts()
         }
-    } catch (e: Exception){
+    } catch (e: Exception) {
         Log.d("TAG", "onViewCreated: ${e.message}")
+    }
+}
+
+fun MainFragment.savingAndFetchSearch(binding: FragmentMainBinding) {
+    try {
+        if (searchText.isNotEmpty()) {
+            binding.apply {
+                viewCheckedCategory.visibility = GONE
+                viewSearch.visibility = VISIBLE
+
+                fabClearSearch.setOnClickListener {
+                    if (searchText != "") {
+                        searchView.setQuery("", false)
+                    }
+                    viewSearch.visibility = GONE
+                }
+                filterProducts()
+            }
+        }
+    } catch (e: Exception) {
+        Log.d("TAG", "savingAndFetchSearch: ${e.message}")
     }
 }
 
@@ -158,9 +183,12 @@ fun MainFragment.categoryDialog() {
 }
 
 fun MainFragment.filterProducts() {
-    filteredProducts = if (searchText.isNotEmpty()){
+    filteredProducts = if (searchText.isNotEmpty()) {
         allProducts.filter { product ->
-            product.name.contains(searchText, ignoreCase = true) || product.id.contains(searchText, ignoreCase = true) || product.full_name.contains(searchText, ignoreCase = true)
+            product.name.contains(searchText, ignoreCase = true) || product.id.contains(
+                searchText,
+                ignoreCase = true
+            ) || product.full_name.contains(searchText, ignoreCase = true)
         }
     } else {
         if (selectCategory?.id == "all" || selectCategory == null) {
@@ -174,10 +202,10 @@ fun MainFragment.filterProducts() {
     myAdapter.updateProducts(filteredProducts)
 }
 
-fun MainFragment.getAllProductFromPrefs(){
+fun MainFragment.getAllProductFromPrefs() {
     try {
         val products = preferences.getString("productList", null)
-        if (products != null){
+        if (products != null) {
             val productsListType = object : TypeToken<List<Product>>() {}.type
             val productList = Gson().fromJson<List<Product>>(products, productsListType)
             allProducts = productList
@@ -187,7 +215,7 @@ fun MainFragment.getAllProductFromPrefs(){
         }
         filteredProducts = retrieveFilteredProducts()
         fetchRV(filteredProducts)
-    } catch (e: Exception){
+    } catch (e: Exception) {
         Log.d("TAG", "getAllProductFromPrefs: ${e.message}")
     }
 }
@@ -209,26 +237,29 @@ fun MainFragment.fetchRV(productList: List<Product>) {
     recyclerView.adapter = myAdapter
     myAdapter.notifyDataSetChanged()
 }
-fun MainFragment.getAllProductsFromApi(){
+
+fun MainFragment.getAllProductsFromApi() {
     swipeRefreshLayout.isRefreshing = true
     try {
-        val call = apiService.getApiService().getAllProducts("Bearer ${sessionManager.fetchToken()}")
+        val call =
+            apiService.getApiService().getAllProducts("Bearer ${sessionManager.fetchToken()}")
         call.enqueue(object : Callback<GetAllProductsResponse?> {
             override fun onResponse(
                 call: Call<GetAllProductsResponse?>,
                 response: Response<GetAllProductsResponse?>
             ) {
                 swipeRefreshLayout.isRefreshing = false
-                if (response.isSuccessful){
+                if (response.isSuccessful) {
                     val getAllProducts = response.body()
-                    if (getAllProducts?.result != null){
+                    if (getAllProducts?.result != null) {
                         allProducts = getAllProducts.result
 
                         val productListJson = Gson().toJson(allProducts)
                         preferences.edit().putString("productList", productListJson).apply()
                         filterProducts()
                     } else {
-                        Toast.makeText(requireContext(), "Произошла ошибка", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), "Произошла ошибка", Toast.LENGTH_SHORT)
+                            .show()
                     }
                 } else {
                     Log.d("TAG", "onResponse if un success: ${response.raw()}")
@@ -240,7 +271,7 @@ fun MainFragment.getAllProductsFromApi(){
                 swipeRefreshLayout.isRefreshing = false
             }
         })
-    } catch (e: Exception){
+    } catch (e: Exception) {
         Log.d("TAG", "getAllProducts: ${e.message}")
         swipeRefreshLayout.isRefreshing = false
     }
@@ -250,7 +281,7 @@ fun MainFragment.getAllProductsFromApi(){
 fun MainFragment.getAllCategoriesPrefs() {
     try {
         val categoriesListJson = preferences.getString("categoryList", null)
-        if (categoriesListJson != null){
+        if (categoriesListJson != null) {
             val categoryListType = object : TypeToken<List<Category>>() {}.type
             val categoryList = Gson().fromJson<List<Category>>(categoriesListJson, categoryListType)
             val firstCategory = Category("all", "Все")
@@ -259,41 +290,48 @@ fun MainFragment.getAllCategoriesPrefs() {
         } else {
             getAllCategoriesFromApi()
         }
-    }catch (e: Exception){
+    } catch (e: Exception) {
         Log.d("TAG", "getAllCategoriesPrefs: ${e.message}")
     }
 }
 
-fun MainFragment.getAllCategoriesFromApi(){
+fun MainFragment.getAllCategoriesFromApi() {
     swipeRefreshLayout.isRefreshing = true
     try {
-        val call = apiService.getApiService().getAllCategories("Bearer ${sessionManager.fetchToken()}")
+        val call =
+            apiService.getApiService().getAllCategories("Bearer ${sessionManager.fetchToken()}")
         call.enqueue(object : Callback<GetAllCategoriesResponse?> {
             override fun onResponse(
                 call: Call<GetAllCategoriesResponse?>,
                 response: Response<GetAllCategoriesResponse?>
             ) {
                 swipeRefreshLayout.isRefreshing = false
-                if (response.isSuccessful){
+                if (response.isSuccessful) {
                     val categoryList = response.body()?.result
                     if (categoryList != null) {
                         val firstCategory = Category("all", "Все")
                         allCategories = categoryList
                         allCategories = mutableListOf(firstCategory).plus(allCategories)
                     } else {
-                        Toast.makeText(requireContext(), "Категории не найдены", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), "Категории не найдены", Toast.LENGTH_SHORT)
+                            .show()
                     }
                 } else {
-                    Toast.makeText(requireContext(), "Ошибка, повторите попытку", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Ошибка, повторите попытку",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
+
             override fun onFailure(call: Call<GetAllCategoriesResponse?>, t: Throwable) {
                 Log.d("TAG", "onFailure: ${t.message}")
                 swipeRefreshLayout.isRefreshing = false
 
             }
         })
-    }catch (e: Exception){
+    } catch (e: Exception) {
         Log.d("TAG", "getAllCategories: ${e.message}")
         swipeRefreshLayout.isRefreshing = false
 
