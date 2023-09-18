@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.google.android.material.card.MaterialCardView
+        <androidx.cardview.widget.CardView
             android:id="@+id/materialCardViewCalculator"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -32,9 +32,9 @@
                     android:id="@+id/cd_check"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
-                    android:layout_marginEnd="16dp"
+                    android:layout_marginEnd="8dp"
                     android:text="Чек"
                     android:textColor="@color/text_color_1"
                     android:textSize="18sp"
@@ -44,28 +44,67 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/cd_bonusClient"
+                    android:id="@+id/tvBonusClient"
                     style="@style/forTextView2"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
+                    android:layout_marginEnd="2dp"
                     android:text="Бонус клиента"
                     android:textStyle="bold"
+                    app:layout_constraintEnd_toStartOf="@+id/bonusClient"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/cd_check" />
 
                 <TextView
-                    android:id="@+id/tvBonusForClient"
+                    android:id="@+id/bonusClient"
                     style="@style/forTextView2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="16dp"
                     android:text="0,00 UZS"
                     android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="@+id/cd_bonusClient"
+                    app:layout_constraintBottom_toBottomOf="@+id/tvBonusClient"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/cd_bonusClient" />
+                    app:layout_constraintTop_toTopOf="@+id/tvBonusClient" />
+
+                <View
+                    android:id="@+id/nullableDiveded"
+                    android:layout_width="0dp"
+                    android:layout_height="3dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@drawable/bg_for_et"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tvBonusClient" />
+
+                <TextView
+                    android:id="@+id/tvTotalPrice"
+                    style="@style/forTextView2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="2dp"
+                    android:text="Общая цена"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toStartOf="@+id/totalPriceWithoutSale"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/nullableDiveded" />
+
+                <TextView
+                    android:id="@+id/totalPriceWithoutSale"
+                    style="@style/forTextView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:text="0,00 UZS"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/tvTotalPrice"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/tvTotalPrice" />
 
                 <View
                     android:id="@+id/firstDivided"
@@ -76,31 +115,33 @@
                     android:background="@drawable/bg_for_et"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/cd_bonusClient" />
+                    app:layout_constraintTop_toBottomOf="@+id/tvTotalPrice" />
 
                 <TextView
-                    android:id="@+id/firstPay"
+                    android:id="@+id/tvFirstPay"
                     style="@style/forTextView2"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
+                    android:layout_marginEnd="2dp"
                     android:text="Первоначальный взнос"
                     android:textStyle="bold"
+                    app:layout_constraintEnd_toStartOf="@+id/payWithFirstPay"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/firstDivided" />
 
                 <TextView
-                    android:id="@+id/tvFirstPay"
+                    android:id="@+id/payWithFirstPay"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="16dp"
                     android:text="0,00 UZS"
                     android:textColor="@color/text_color_2"
                     android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="@+id/firstPay"
+                    app:layout_constraintBottom_toBottomOf="@+id/tvFirstPay"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/firstPay" />
+                    app:layout_constraintTop_toTopOf="@+id/tvFirstPay" />
 
                 <View
                     android:id="@+id/secondDivided"
@@ -111,31 +152,33 @@
                     android:background="@drawable/bg_for_et"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/firstPay" />
+                    app:layout_constraintTop_toBottomOf="@+id/payWithFirstPay" />
 
                 <TextView
-                    android:id="@+id/sale"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/tvSale"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
+                    android:layout_marginEnd="2dp"
                     android:text="Скидка"
                     android:textColor="@color/text_color_2"
                     android:textStyle="bold"
+                    app:layout_constraintEnd_toStartOf="@+id/sumSale"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/secondDivided" />
 
                 <TextView
-                    android:id="@+id/tvSale"
+                    android:id="@+id/sumSale"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="16dp"
                     android:text="0,00 UZS"
                     android:textColor="@color/text_color_2"
                     android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="@+id/sale"
+                    app:layout_constraintBottom_toBottomOf="@+id/tvSale"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/sale" />
+                    app:layout_constraintTop_toTopOf="@+id/tvSale" />
 
                 <View
                     android:id="@+id/thirdDivided"
@@ -146,31 +189,33 @@
                     android:background="@drawable/bg_for_et"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/sale" />
+                    app:layout_constraintTop_toBottomOf="@+id/tvSale" />
 
                 <TextView
-                    android:id="@+id/payWithBonus"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/tvPayWithBonus"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
+                    android:layout_marginEnd="2dp"
                     android:text="Оплата с бонусами"
                     android:textColor="@color/text_color_2"
                     android:textStyle="bold"
+                    app:layout_constraintEnd_toStartOf="@+id/payWithBonus"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/thirdDivided" />
 
                 <TextView
-                    android:id="@+id/tvPayWithBonus"
+                    android:id="@+id/payWithBonus"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="16dp"
                     android:text="0,00 UZS"
                     android:textColor="@color/text_color_2"
                     android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="@+id/payWithBonus"
+                    app:layout_constraintBottom_toBottomOf="@+id/tvPayWithBonus"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/payWithBonus" />
+                    app:layout_constraintTop_toTopOf="@+id/tvPayWithBonus" />
 
                 <View
                     android:id="@+id/fourthDivided"
@@ -186,25 +231,27 @@
 
                 <TextView
                     android:id="@+id/textView25"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="10dp"
+                    android:layout_marginEnd="5dp"
                     android:layout_marginBottom="10dp"
                     android:text="Итого"
                     android:textColor="@color/text_color_1"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/totalPrice"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/fourthDivided" />
 
                 <TextView
-                    android:id="@+id/summa"
+                    android:id="@+id/totalPrice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="16dp"
-                    android:text="0 UZS"
+                    android:text="0,00 UZS"
                     android:textColor="@color/text_color_1"
                     android:textSize="18sp"
                     android:textStyle="bold"
@@ -214,8 +261,221 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </com.google.android.material.card.MaterialCardView>
+        </androidx.cardview.widget.CardView>
 
+        <TextView
+            android:id="@+id/tvClient"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="Клиент"
+            android:textColor="@color/text_color_1"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/materialCardViewCalculator" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_clientType"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            app:boxBackgroundMode="outline"
+            app:boxStrokeColor="@color/background_2"
+            app:hintTextColor="@color/text_color_1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvClient">
+
+            <AutoCompleteTextView
+                android:id="@+id/clientType"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_for_et_calculator"
+                android:inputType="text"
+                android:text="Реферальный покупатель"
+                tools:ignore="SpeakableTextPresentCheck" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/tvTypePay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="Способ оплаты"
+            android:textColor="@color/text_color_1"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/til_clientType" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_typePay"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            app:boxBackgroundMode="outline"
+            app:boxStrokeColor="@color/background_2"
+            app:hintTextColor="@color/text_color_1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvTypePay">
+
+            <AutoCompleteTextView
+                android:id="@+id/typePay"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_for_et_calculator"
+                android:inputType="none"
+                android:text="В рассрочку"
+                tools:ignore="SpeakableTextPresentCheck" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/tv_firstPay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="Введите первоначальный взнос/UZS"
+            android:textColor="@color/text_color_1"
+            android:textStyle="bold"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/til_typePay" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/fil_firstPay"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:checked="true"
+            android:visibility="visible"
+            app:boxBackgroundMode="outline"
+            app:boxStrokeColor="@color/background_2"
+            app:hintTextColor="@color/text_color_1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_firstPay">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/firstPay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_for_et_calculator"
+                android:inputType="number"
+                tools:ignore="SpeakableTextPresentCheck" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/cb_bonus"
+            style="@style/Widget.App.CheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="10dp"
+            android:checked="false"
+            android:clickable="true"
+            android:text="Использовать бонус"
+            android:textColor="@color/text_color_1"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/fil_firstPay" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_bonus"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="-10dp"
+            android:layout_marginEnd="16dp"
+            android:checked="true"
+            android:visibility="gone"
+            app:boxBackgroundMode="outline"
+            app:boxStrokeColor="@color/background_2"
+            app:hintTextColor="@color/text_color_1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cb_bonus">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/bonus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_for_et_calculator"
+                android:inputType="number"
+                tools:ignore="SpeakableTextPresentCheck" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/tv_table"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="Таблица рассрочки"
+            android:textColor="@color/text_color_1"
+            android:textStyle="bold"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/til_bonus" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/tvTable"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/bg_table_calculator"
+            android:orientation="horizontal"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_table">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/monthTable"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/tableTextFirst"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Количество платежей" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/border_color_2" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/percentTable"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/tableTextFirst"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Сумма/UZS/мес" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

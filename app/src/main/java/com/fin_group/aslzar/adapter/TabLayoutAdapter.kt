@@ -5,6 +5,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.CalculatorFragment
+import com.fin_group.aslzar.ui.fragments.cartMain.calculator.CalculatorFragmentV2
 import com.fin_group.aslzar.ui.fragments.cartMain.cart.CartFragment
 
 
@@ -17,7 +18,7 @@ class TabLayoutAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle) :
         return if (position == 0) {
             CartFragment()
         } else {
-            CalculatorFragment()
+            CalculatorFragmentV2()
         }
     }
 }

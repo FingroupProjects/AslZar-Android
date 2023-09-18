@@ -13,7 +13,6 @@ import android.view.View
 import android.view.View.GONE
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -21,18 +20,14 @@ import androidx.core.widget.addTextChangedListener
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentCalculatorBinding
-import com.fin_group.aslzar.models.AllClientType
-import com.fin_group.aslzar.models.AllTypePay
+import com.fin_group.aslzar.models.TypePay
 import com.fin_group.aslzar.models.Installment
 import com.fin_group.aslzar.response.Client
 import com.fin_group.aslzar.response.GetAllClientsResponse
-import com.fin_group.aslzar.response.Percent
-import com.fin_group.aslzar.response.PercentInstallment
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.CalculatorFragment
 import com.fin_group.aslzar.util.CartObserver
 import com.fin_group.aslzar.util.doubleFormat
 import com.fin_group.aslzar.util.formatNumber
-import com.google.android.gms.common.api.GoogleApi
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import retrofit2.Call
@@ -87,7 +82,7 @@ fun CalculatorFragment.createTable() {
 
     val getInstallment = listOf(
         Installment("4", 7),
-        Installment("6", 12),
+        Installment("6", 0),
         Installment("8", 15),
         Installment("10", 21),
         Installment("12", 27),
@@ -209,8 +204,8 @@ fun CalculatorFragment.all(binding: FragmentCalculatorBinding) {
     tvSale.text = "${formatNumber(getTotalWithSale)} UZS"
 
     val allTypePay = listOf(
-        AllTypePay(1, "Наличными"),
-        AllTypePay(2, "В рассрочку")
+        TypePay(1, "Наличными"),
+        TypePay(2, "В рассрочку")
     )
 
     val arrayAdapterTypeClient =

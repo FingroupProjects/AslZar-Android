@@ -3,26 +3,17 @@ package com.fin_group.aslzar.ui.fragments.cartMain.calculator
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.TextView
 import androidx.appcompat.widget.LinearLayoutCompat
-import com.fin_group.aslzar.R
 import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentCalculatorBinding
-import com.fin_group.aslzar.models.AllTypePay
-import com.fin_group.aslzar.models.Installment
 import com.fin_group.aslzar.response.Client
-import com.fin_group.aslzar.response.GetAllClientsResponse
 import com.fin_group.aslzar.response.Percent
 import com.fin_group.aslzar.response.PercentInstallment
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.all
@@ -36,11 +27,6 @@ import com.fin_group.aslzar.util.SessionManager
 import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 @Suppress("DEPRECATION")
 class CalculatorFragment : Fragment() {
