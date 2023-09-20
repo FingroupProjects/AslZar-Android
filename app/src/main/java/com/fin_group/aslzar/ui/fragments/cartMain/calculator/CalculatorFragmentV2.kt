@@ -13,10 +13,12 @@ import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentCalculatorV2Binding
 import com.fin_group.aslzar.models.TypePay
 import com.fin_group.aslzar.response.Client
+import com.fin_group.aslzar.response.PercentInstallment
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.cartObserver
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.fetchClientsAndTypePay
 import com.fin_group.aslzar.util.CartObserver
 import com.fin_group.aslzar.util.SessionManager
+import java.lang.reflect.Type
 
 @Suppress("DEPRECATION")
 class CalculatorFragmentV2 : Fragment() {
@@ -30,10 +32,16 @@ class CalculatorFragmentV2 : Fragment() {
     lateinit var cartObserver: CartObserver
 
     lateinit var selectedClient: Client
-    var typePaySelect: Int = 2
+    lateinit var typePaySelected: TypePay
 
     lateinit var clientList: List<Client>
     lateinit var allTypePay: List<TypePay>
+    lateinit var percentInstallment: PercentInstallment
+
+    var vlTotalPrice: Number = 0
+    var vlTotalPriceWithSale: Number = 0
+    var vlTotalPriceWithoutSale: Number = 0
+    var vlTotalPriceSale: Number = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -57,7 +65,10 @@ class CalculatorFragmentV2 : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
+        val searchClient = binding.clientType.text.toString()
+        val selectClient = clientList.find { it.client_name == searchClient }
+        Log.d("TAG", "onViewCreated: $selectClient")
+//        checkTypePay(binding, selectClient!!)
     }
 
     override fun onStart() {

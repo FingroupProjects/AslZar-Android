@@ -300,42 +300,6 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
-            android:id="@+id/tvTypePay"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:text="Способ оплаты"
-            android:textColor="@color/text_color_1"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/til_clientType" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/til_typePay"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            app:boxBackgroundMode="outline"
-            app:boxStrokeColor="@color/background_2"
-            app:hintTextColor="@color/text_color_1"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvTypePay">
-
-            <AutoCompleteTextView
-                android:id="@+id/typePay"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/bg_for_et_calculator"
-                android:inputType="none"
-                android:text="В рассрочку"
-                tools:ignore="SpeakableTextPresentCheck" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <TextView
             android:id="@+id/tv_firstPay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -346,7 +310,7 @@
             android:textStyle="bold"
             android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/til_typePay" />
+            app:layout_constraintTop_toBottomOf="@+id/til_clientType" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/fil_firstPay"
@@ -369,7 +333,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_for_et_calculator"
-                android:inputType="number"
+                android:inputType="number|numberDecimal"
                 tools:ignore="SpeakableTextPresentCheck" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -411,7 +375,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_for_et_calculator"
-                android:inputType="number"
+                android:inputType="number|numberDecimal"
                 tools:ignore="SpeakableTextPresentCheck" />
         </com.google.android.material.textfield.TextInputLayout>
 
