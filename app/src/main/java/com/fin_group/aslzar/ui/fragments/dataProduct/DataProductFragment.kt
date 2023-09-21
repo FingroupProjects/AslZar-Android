@@ -22,11 +22,14 @@ import com.fin_group.aslzar.adapter.ProductSomeImagesAdapter
 import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.databinding.FragmentCalculatorBinding
 import com.fin_group.aslzar.databinding.FragmentDataProductBinding
+import com.fin_group.aslzar.response.Percent
+import com.fin_group.aslzar.response.PercentInstallment
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.response.SimilarProduct
 import com.fin_group.aslzar.ui.dialogs.AlikeProductBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.callInStockDialog
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.callSetInProduct
+import com.fin_group.aslzar.ui.fragments.dataProduct.functions.createTable
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.getProductByID
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.getSimilarProducts
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.likeProducts
@@ -81,6 +84,9 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
     var isFilterOn: Boolean = false
     var filterBadge: BadgeDrawable? = null
 
+    lateinit var percentInstallment: PercentInstallment
+
+
     @SuppressLint("UnsafeOptInUsageError")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -92,6 +98,14 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         apiService.init(sessionManager)
         swipeRefreshLayout = binding.swipeRefreshLayout
 
+        percentInstallment = PercentInstallment(
+            90, 15, listOf(
+                Percent(6.9, 3),
+                Percent(8.9, 6),
+                Percent(12.9, 9),
+                Percent(17.9, 12),
+            )
+        )
 
         if (args.product != null) {
             product = args.product!!
@@ -133,7 +147,7 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
 
         someImagesProduct()
         likeProducts()
-
+        createTable(binding, product.price)
         return binding.root
     }
 

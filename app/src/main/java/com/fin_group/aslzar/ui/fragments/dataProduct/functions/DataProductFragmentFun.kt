@@ -3,16 +3,23 @@
 package com.fin_group.aslzar.ui.fragments.dataProduct.functions
 
 import android.annotation.SuppressLint
+import android.graphics.Typeface
 import android.util.Log
+import android.view.Gravity
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL
 import com.bumptech.glide.Glide
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.ProductSomeImagesAdapter
 import com.fin_group.aslzar.cart.Cart
+import com.fin_group.aslzar.databinding.FragmentCalculatorV2Binding
 import com.fin_group.aslzar.databinding.FragmentDataProductBinding
 import com.fin_group.aslzar.response.GetSimilarProductsResponse
 import com.fin_group.aslzar.response.InStock
@@ -20,6 +27,7 @@ import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.SetInProductBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.WarningNoHaveProductFragmentDialog
+import com.fin_group.aslzar.ui.fragments.cartMain.calculator.CalculatorFragmentV2
 import com.fin_group.aslzar.ui.fragments.dataProduct.DataProductFragment
 import retrofit2.Callback
 import com.fin_group.aslzar.util.formatNumber
@@ -135,60 +143,6 @@ fun DataProductFragment.someImagesProduct() {
 }
 
 fun DataProductFragment.likeProducts(){
-    val inStockList = listOf(
-        InStock("Магазин 1", "Витрина 3", 8, 0),
-        InStock("Магазин 2", "Витрина 8", 8, 0),
-        InStock("Магазин 12", "Витрина 7", 8, 0),
-        InStock("Магазин 5", "Витрина 6", 8, 0)
-    )
-//    alikeProductsList = listOf(
-//        Product(
-//            id = "00001323022",
-//            full_name = "Кольцо 1",
-//            name = "Серьги с аметистом 1",
-//            price = 120000,
-//            barcode = "",
-//            category_id = "jewelry",
-//            sale = 8,
-//            color = "фиолетовый",
-//            stone_type = "аметист",
-//            metal = "Золото",
-//            content = "Серьги с натуральным аметистом",
-//            size = "21 мм",
-//            weight = "5 г",
-//            country_of_origin = "Турция",
-//            provider = "Украшения Востока",
-//            counts = inStockList,
-//            img = listOf(
-//                "http://convertolink.taskpro.tj/photoLink/public/storage/images/mixGa5sQn5AqcURSKl2Lm3tayf2Xb6SEUupuJQXV.png",
-//                "http://convertolink.taskpro.tj/photoLink/public/storage/images/EI2sNF9keTbJRHDRqSnPhf8uPNs500V6oOyNDGur.png"
-//            )
-//        ),
-//        Product(
-//            id = "0000032421",
-//            full_name = "Кольцо 2",
-//            name = "Серьги с аметистом 2",
-//            price = 1200,
-//            barcode = "",
-//            category_id = "jewelry",
-//            sale = 10,
-//            color = "фиолетовый",
-//            stone_type = "аметист",
-//            metal = "серебро",
-//            content = "Серьги с натуральным аметистом",
-//            size = "17 мм",
-//            weight = "5 г",
-//            country_of_origin = "Индия",
-//            provider = "Украшения Востока",
-//            counts = inStockList,
-//            img = listOf(
-//                "http://convertolink.taskpro.tj/photoLink/public/storage/images/EI2sNF9keTbJRHDRqSnPhf8uPNs500V6oOyNDGur.png",
-//                "http://convertolink.taskpro.tj/photoLink/public/storage/images/mixGa5sQn5AqcURSKl2Lm3tayf2Xb6SEUupuJQXV.png"
-//            )
-//        )
-//    )
-
-
     recyclerViewLikeProducts.layoutManager = LinearLayoutManager(requireContext(), HORIZONTAL, false)
     recyclerViewLikeProducts.adapter = productAlikeAdapter
     productAlikeAdapter.updateList(alikeProductsList)
@@ -240,7 +194,10 @@ fun DataProductFragment.setDataProduct(product: Product, binding: FragmentDataPr
         dpMetal.text = product.metal
         dpWeight.text = product.weight
         dpSize.text = product.size
-        dpInstallmentPrice.text = "(${((product.price.toDouble() * 0.06) + product.price.toDouble()) / 4} UZS/мес)"
+
+        dpInstallmentPrice.text = "(${((product.price.toDouble() * percentInstallment.first_pay.toDouble()) / 100)} UZS п.в.)"
+
+//        dpInstallmentPrice.text = "(${((product.price.toDouble() * 0.06) + product.price.toDouble()) / 4} UZS/мес)"
 
         btnAddToCart.setOnClickListener {
             val addedProduct = Cart.getProductById(product.id)
@@ -250,7 +207,6 @@ fun DataProductFragment.setDataProduct(product: Product, binding: FragmentDataPr
                 Toast.makeText(requireContext(), "Товар добавлен в корзину", Toast.LENGTH_SHORT).show()
             }
             sharedViewModel.onProductAddedToCart(product, requireContext())
-
         }
     }
 }
@@ -270,14 +226,17 @@ fun DataProductFragment.getSimilarProducts(){
                     val result = response.body()
                     if (result != null){
                         val similarProduct = result.result
-                        Log.d("Tag", "onResponse: ${response.code()}")
-                        Log.d("Tag", "onResponse: ${response.body()}")
                         getSimilarProduct = similarProduct
                         productAlikeAdapter.updateList(getSimilarProduct)
+                        if (similarProduct.isEmpty()){
+                            binding.textView28.visibility = GONE
+                            binding.likeProductsRv.visibility = GONE
+                        } else {
+                            binding.textView28.visibility = VISIBLE
+                            binding.likeProductsRv.visibility = VISIBLE
+                        }
                     }else{
                         Toast.makeText(requireContext(), "Не удалось, повторите попытку еще раз!", Toast.LENGTH_SHORT).show()
-                        Log.d("TAG", "onResponse: ${response.code()}")
-                        Log.d("TAG", "onResponse: ${response.body()}")
                     }
                 }
             }
@@ -313,11 +272,9 @@ fun DataProductFragment.getProductByID(){
                             filterBadge?.isVisible = true
                             BadgeUtils.attachBadgeDrawable(filterBadge!!, toolbar, R.id.product_set_item)
                         }
-
                     }
                 }
             }
-
             override fun onFailure(call: Call<Product?>, t: Throwable) {
                 swipeRefreshLayout.isRefreshing = false
                 Log.d("TAG", "onFailure: ${t.message}")
@@ -326,5 +283,54 @@ fun DataProductFragment.getProductByID(){
     } catch (e: Exception){
         swipeRefreshLayout.isRefreshing = false
         Log.d("TAG", "getProductByID: ${e.message}")
+    }
+}
+
+@SuppressLint("SetTextI18n")
+fun DataProductFragment.createTable(binding: FragmentDataProductBinding, totalPrice: Number){
+    binding.apply {
+        val monthLinearLayout = monthTable
+        val percentLinearLayout = percentTable
+
+        for (percent in percentInstallment.result){
+            val indexPercent = percentInstallment.result.indexOf(percent)
+
+            val textViewMonth = TextView(requireContext())
+            textViewMonth.apply {
+                text = "${percent.mounth} платежей (${percent.coefficient}%)"
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                )
+                setPadding(15,15,15,15)
+                setTextColor(ContextCompat.getColor(requireContext(), R.color.text_color_1))
+                View.TEXT_ALIGNMENT_CENTER
+                gravity = Gravity.CENTER
+                typeface = Typeface.defaultFromStyle(Typeface.BOLD)
+                if (indexPercent < percentInstallment.result.size - 1) {
+                    setBackgroundResource(R.drawable.bg_text_view_in_table)
+                }
+            }
+            monthLinearLayout.addView(textViewMonth)
+
+            val textViewPercent = TextView(requireContext())
+            val monthPayment = (((totalPrice.toDouble() * percent.coefficient.toDouble()) / 100) + totalPrice.toDouble()) / percent.mounth.toDouble()
+            textViewPercent.apply {
+                text = formatNumber(monthPayment)
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                )
+                setPadding(15,15,15,15)
+                setTextColor(ContextCompat.getColor(requireContext(), R.color.text_color_1))
+                View.TEXT_ALIGNMENT_CENTER
+                gravity = Gravity.CENTER
+                typeface = Typeface.defaultFromStyle(Typeface.BOLD)
+                if (indexPercent < percentInstallment.result.size - 1) {
+                    setBackgroundResource(R.drawable.bg_text_view_in_table)
+                }
+            }
+            percentLinearLayout.addView(textViewPercent)
+        }
     }
 }

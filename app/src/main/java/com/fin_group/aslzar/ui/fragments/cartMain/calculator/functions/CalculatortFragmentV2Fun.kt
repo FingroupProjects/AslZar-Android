@@ -1,12 +1,21 @@
 package com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions
 
 import android.annotation.SuppressLint
+import android.graphics.Typeface
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.Gravity
 import android.view.View.GONE
+import android.view.View.TEXT_ALIGNMENT_CENTER
 import android.view.View.VISIBLE
+import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.LinearLayout
+import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.core.view.marginBottom
+import androidx.core.view.marginTop
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentCalculatorV2Binding
@@ -36,61 +45,26 @@ fun CalculatorFragmentV2.cartObserver(binding: FragmentCalculatorV2Binding) {
             vlTotalPriceWithSale = totalPriceWithSale
             vlTotalPriceWithoutSale = totalPriceWithoutSale
             vlTotalPriceSale = totalPriceWithSale
+
+            textWatchers(binding, percentInstallment, vlTotalPrice)
+//            createTable(binding, vlTotalPrice)
         }
     }
 }
 
 @SuppressLint("SetTextI18n")
 fun CalculatorFragmentV2.fetchClientsAndTypePay(binding: FragmentCalculatorV2Binding) {
-    percentInstallment = PercentInstallment(
-        90, 15, listOf(
-            Percent(6.9, 3),
-            Percent(8.9, 6),
-            Percent(12.9, 9),
-            Percent(17.9, 12),
-        )
-    )
-
-    clientList = listOf(
-        Client("1", "Розничный клиент", 0, 0, "Silver", "Lead", 8400),
-        Client("3", "Tohirjon", 37512, 3, "Silver", "Referral", 8400),
-        Client("4", "Nuriddin", 19852, 3, "Silver", "Referral", 10000),
-        Client("5", "Tursunboy", 0, 0, "", "Lead", 8000),
-        Client("8", "Rustam", 7522, 3, "Silver", "Referral", 9500),
-        Client("6", "Jamshed", 85654, 3, "Silver", "Referral", 8500),
-        Client("7", "Khusrav", 9654, 5, "Gold", "Lead", 4500),
-        Client("2", "Suhrob", 150000, 7, "Diamond", "Referral", 5000000),
-    )
 
     val arrayAdapterTypeClient =
         ArrayAdapter(requireContext(), R.layout.spinner_item, clientList.map { it.client_name })
 
     binding.apply {
-
         clientType.setAdapter(arrayAdapterTypeClient)
         clientType.setOnItemClickListener { parent, view, position, id ->
             selectedClient = clientList[position]
             bonusClient.text = "${formatNumber(selectedClient.bonus)} UZS"
             paymentClient(selectedClient, binding, percentInstallment)
-
-            val contains = "lead"
-            val containsSubstring = selectedClient.client_type.contains(contains, true)
-
-            if (containsSubstring){
-                cbBonus.visibility = GONE
-                cbBonus.isChecked = false
-                bonus.setText("")
-            } else {
-                cbBonus.visibility = VISIBLE
-                cbBonus.setOnCheckedChangeListener { _, isChecked ->
-                    if (isChecked) {
-                        tilBonus.visibility = VISIBLE
-                    } else {
-                        tilBonus.visibility = GONE
-                        bonus.setText("")
-                    }
-                }
-            }
+            textWatchers(binding, percentInstallment, vlTotalPrice)
         }
     }
 }
@@ -104,7 +78,7 @@ fun CalculatorFragmentV2.paymentClient(
     val contains = "lead"
     val containsSubstring = client.client_type.contains(contains, true)
 
-    if (containsSubstring){
+    if (containsSubstring) {
         binding.cbBonus.visibility = GONE
         binding.cbBonus.isChecked = false
         binding.bonus.setText("")
@@ -125,7 +99,7 @@ fun CalculatorFragmentV2.installmentPayReferralClient(
     binding: FragmentCalculatorV2Binding,
     percent: PercentInstallment,
     totalPrice: Number
-){
+) {
 
     binding.apply {
         cbBonus.visibility = VISIBLE
@@ -141,7 +115,60 @@ fun CalculatorFragmentV2.installmentPayReferralClient(
 }
 
 @SuppressLint("SetTextI18n")
-fun CalculatorFragmentV2.textWatchers(binding: FragmentCalculatorV2Binding, percent: PercentInstallment, totalPrice: Number){
+fun CalculatorFragmentV2.createTable(binding: FragmentCalculatorV2Binding, totalPrice: Number){
+    binding.apply {
+        val monthLinearLayout = monthTable
+        val percentLinearLayout = percentTable
+
+        for (percent in percentInstallment.result){
+            val indexPercent = percentInstallment.result.indexOf(percent)
+
+            val textViewMonth = TextView(requireContext())
+            textViewMonth.apply {
+                text = "${percent.mounth} платежей (${percent.coefficient}%)"
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                )
+                setPadding(15,15,15,15)
+                setTextColor(ContextCompat.getColor(requireContext(), R.color.text_color_1))
+                TEXT_ALIGNMENT_CENTER
+                gravity = Gravity.CENTER
+                typeface = Typeface.defaultFromStyle(Typeface.BOLD)
+                if (indexPercent < percentInstallment.result.size - 1) {
+                    setBackgroundResource(R.drawable.bg_text_view_in_table)
+                }
+            }
+            monthLinearLayout.addView(textViewMonth)
+
+            val textViewPercent = TextView(requireContext())
+            val monthPayment = (((totalPrice.toDouble() * percent.coefficient.toDouble()) / 100) + totalPrice.toDouble()) / percent.mounth.toDouble()
+            textViewPercent.apply {
+                text = formatNumber(monthPayment)
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                )
+                setPadding(15,15,15,15)
+                setTextColor(ContextCompat.getColor(requireContext(), R.color.text_color_1))
+                TEXT_ALIGNMENT_CENTER
+                gravity = Gravity.CENTER
+                typeface = Typeface.defaultFromStyle(Typeface.BOLD)
+                if (indexPercent < percentInstallment.result.size - 1) {
+                    setBackgroundResource(R.drawable.bg_text_view_in_table)
+                }
+            }
+            percentLinearLayout.addView(textViewPercent)
+        }
+    }
+}
+
+@SuppressLint("SetTextI18n")
+fun CalculatorFragmentV2.textWatchers(
+    binding: FragmentCalculatorV2Binding,
+    percent: PercentInstallment,
+    totalPrice: Number
+) {
     val maxValueBonus: Double = (totalPrice.toDouble() * percent.payment_bonus.toDouble()) / 100
     val minValueFirstPay: Double = (totalPrice.toDouble() * percent.first_pay.toDouble()) / 100
     binding.payWithFirstPay.text = "${formatNumber(minValueFirstPay)} UZS"
@@ -156,6 +183,7 @@ fun CalculatorFragmentV2.textWatchers(binding: FragmentCalculatorV2Binding, perc
                 val currentValue = newText.replace(',', '.').toDouble()
                 if (currentValue > maxValueBonus) {
                     binding.bonus.setText(maxValueBonus.toString())
+                    binding.bonus.setSelection(binding.bonus.length())
                 }
             }
             val countText = binding.bonus.text.toString().replace(',', '.').toDoubleOrNull() ?: 0.0
@@ -176,9 +204,7 @@ fun CalculatorFragmentV2.textWatchers(binding: FragmentCalculatorV2Binding, perc
             val hello = countText + countText2
 
             binding.totalPrice.text = "${formatNumber(totalPrice.toDouble() - hello)} UZS"
-
             binding.payWithBonus.text = "${formatNumber(countText)} UZS"
-
         }
     }
     binding.bonus.addTextChangedListener(textWatcherForBonus)
@@ -199,7 +225,8 @@ fun CalculatorFragmentV2.textWatchers(binding: FragmentCalculatorV2Binding, perc
                     binding.firstPay.error = "Первоначальный взнос не может превышать сумму покупки"
                 }
             }
-            val countText = binding.firstPay.text.toString().replace(',', '.').toDoubleOrNull() ?: 0.0
+            val countText =
+                binding.firstPay.text.toString().replace(',', '.').toDoubleOrNull() ?: 0.0
             binding.payWithFirstPay.text = "${formatNumber(countText)} UZS"
         }
 
@@ -209,19 +236,24 @@ fun CalculatorFragmentV2.textWatchers(binding: FragmentCalculatorV2Binding, perc
                 val currentValue = newText.replace(',', '.').toDouble()
                 if (currentValue < minValueFirstPay) {
 //                    binding.firstPay.setText(minValueFirstPay.toString())
-                    binding.firstPay.error = "Минимальное значение первоначального взноса ${percent.first_pay}% ($minValueFirstPay) от итоговой суммы"
+                    binding.firstPay.error =
+                        "Минимальное значение первоначального взноса ${percent.first_pay}% ($minValueFirstPay) от итоговой суммы"
+                }
+                if (currentValue > totalPrice.toDouble()) {
+                    binding.firstPay.setText(totalPrice.toString())
+                    binding.firstPay.error = "Первоначальный взнос не может превышать сумму покупки"
                 }
             }
             val countText = binding.firstPay.text.toString().replace(',', '.').toDoubleOrNull() ?: 0.0
             val countText2 = binding.bonus.text.toString().replace(',', '.').toDoubleOrNull() ?: 0.0
-
             val hello = countText + countText2
+            vlTotalPrice.toDouble() - hello
 
             binding.totalPrice.text = "${formatNumber(totalPrice.toDouble() - hello)} UZS"
-
             binding.payWithFirstPay.text = "${formatNumber(countText)} UZS"
         }
     }
 
     binding.firstPay.addTextChangedListener(textWatcherForFirstPay)
+    createTable(binding, totalPrice)
 }

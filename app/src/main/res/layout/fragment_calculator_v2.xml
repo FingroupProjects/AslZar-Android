@@ -295,7 +295,7 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/bg_for_et_calculator"
                 android:inputType="text"
-                android:text="Реферальный покупатель"
+                android:text="Розничный покупатель"
                 tools:ignore="SpeakableTextPresentCheck" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -402,6 +402,7 @@
             android:background="@drawable/bg_table_calculator"
             android:orientation="horizontal"
             android:visibility="visible"
+            android:elevation="2dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_table">
@@ -415,9 +416,11 @@
 
                 <TextView
                     style="@style/tableTextFirst"
+                    android:background="@drawable/bg_text_view_in_table_first"
+                    android:padding="5dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Количество платежей" />
+                    android:text="Кол-во платежей" />
             </androidx.appcompat.widget.LinearLayoutCompat>
 
             <View
@@ -436,7 +439,9 @@
                     style="@style/tableTextFirst"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Сумма/UZS/мес" />
+                    android:background="@drawable/bg_text_view_in_table_last"
+                    android:padding="5dp"
+                    android:text="UZS/мес" />
             </androidx.appcompat.widget.LinearLayoutCompat>
 
         </androidx.appcompat.widget.LinearLayoutCompat>

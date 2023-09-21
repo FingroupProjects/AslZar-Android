@@ -7,6 +7,6 @@ data class PercentInstallment(
 )
 
 data class Percent(
-    val coefficient: Double,
-    val mounth: Int
+    val coefficient: Number,
+    val mounth: Number
 )
