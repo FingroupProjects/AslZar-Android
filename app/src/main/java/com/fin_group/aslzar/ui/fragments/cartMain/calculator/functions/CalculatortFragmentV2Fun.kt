@@ -16,7 +16,9 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.marginBottom
 import androidx.core.view.marginTop
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.fin_group.aslzar.R
+import com.fin_group.aslzar.adapter.TableInstallmentAdapter
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentCalculatorV2Binding
 import com.fin_group.aslzar.models.TypePay
@@ -48,6 +50,7 @@ fun CalculatorFragmentV2.cartObserver(binding: FragmentCalculatorV2Binding) {
 
             textWatchers(binding, percentInstallment, vlTotalPrice)
 //            createTable(binding, vlTotalPrice)
+            printPercent(binding, percentInstallment, vlTotalPrice)
         }
     }
 }
@@ -114,8 +117,21 @@ fun CalculatorFragmentV2.installmentPayReferralClient(
     }
 }
 
+fun CalculatorFragmentV2.printPercent(binding: FragmentCalculatorV2Binding, installment: PercentInstallment, totalPrice: Number){
+    binding.apply {
+        rvPayments.layoutManager = LinearLayoutManager(requireContext())
+        adapterPaymentPercent = TableInstallmentAdapter(installment, totalPrice)
+        rvPayments.adapter = adapterPaymentPercent
+
+    }
+
+}
+
 @SuppressLint("SetTextI18n")
 fun CalculatorFragmentV2.createTable(binding: FragmentCalculatorV2Binding, totalPrice: Number){
+    monthLinearLayout.removeAllViews()
+    percentLinearLayout.removeAllViews()
+
     binding.apply {
         val monthLinearLayout = monthTable
         val percentLinearLayout = percentTable
@@ -255,5 +271,5 @@ fun CalculatorFragmentV2.textWatchers(
     }
 
     binding.firstPay.addTextChangedListener(textWatcherForFirstPay)
-    createTable(binding, totalPrice)
+//    createTable(binding, totalPrice)
 }

@@ -28,6 +28,8 @@ class SessionManager(context: Context) {
         const val KEY = "key_for_cipher"
         const val USER_FIO = "user_name"
         const val USER_LOCATION = "user_location"
+        const val USER_LOCATION_ID = "user_location_id"
+        const val USER_CHECK = "user_check"
         const val USER_LOGIN = "user_login"
         const val USER_SALES_PLAN = "user_sales_plan"
         const val PASSWORD_PREF = "password_pref"
@@ -90,6 +92,18 @@ class SessionManager(context: Context) {
         editor.apply()
     }
 
+    fun saveLocationId(locationId: String){
+        val editor = prefs.edit()
+        editor.putString(USER_LOCATION_ID, locationId)
+        editor.apply()
+    }
+
+    fun saveCheck(check: Number){
+        val editor = prefs.edit()
+        editor.putFloat(USER_CHECK, check.toFloat())
+        editor.apply()
+    }
+
     fun fetchKey(): String?{
         return prefs.getString(KEY, null)
     }
@@ -106,7 +120,7 @@ class SessionManager(context: Context) {
         return prefs.getString(USER_EMAIL, null)
     }
 
-    fun fetchNumber(): String? {
+    fun fetchNumberPhone(): String? {
         return prefs.getString(USER_NUMBER, null)
     }
 
@@ -126,6 +140,9 @@ class SessionManager(context: Context) {
         return prefs.getFloat(USER_SALES_PLAN, 0f)
     }
 
+    fun fetchCheck(): Number {
+        return prefs.getFloat(USER_SALES_PLAN, 0f)
+    }
 
     fun clearSession() {
         val editor = prefs.edit()
@@ -134,7 +151,12 @@ class SessionManager(context: Context) {
         editor.remove(USER_FIO)
         editor.remove(USER_LOGIN)
         editor.remove(USER_LOCATION)
+        editor.remove(USER_LOCATION_ID)
         editor.remove(PASSWORD_PREF)
+        editor.remove(USER_CHECK)
+        editor.remove(USER_SALES_PLAN)
+        editor.remove(USER_EMAIL)
+        editor.remove(USER_NUMBER)
         editor.putBoolean(IS_LOGGED_IN_KEY, false)
         editor.apply()
     }

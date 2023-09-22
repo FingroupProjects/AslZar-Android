@@ -2,6 +2,7 @@ package com.fin_group.aslzar.ui.fragments.profile
 
 import android.os.Bundle
 import android.util.Base64
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.Menu
@@ -53,19 +54,31 @@ class ProfileFragment : Fragment() {
 //        swipeRefreshLayout.setOnRefreshListener {
 //            getSalesPlan()
 //        }
-        salesPlanNumber = 47.5
+        salesPlanNumber = sessionManager.fetchSalesPlan()
         val asd: Number? = salesPlanNumber
         binding.apply {
-            editName.text = sessionManager.fetchName()
-            editLogin.text = sessionManager.fetchLogin()
-            editFilial.text = sessionManager.fetchLocation()
+            tvName.text = sessionManager.fetchName()
+            tvUserLogin.text = sessionManager.fetchLogin()
+            tvSubsidiary.text = sessionManager.fetchLocation()
+
+            if (sessionManager.fetchEmail()!!.isEmpty()){
+                tvMail.text = "Почта не указана!"
+            } else {
+                tvMail.text = sessionManager.fetchEmail()
+            }
+
+            if (sessionManager.fetchNumberPhone()!!.isEmpty() || sessionManager.fetchNumberPhone()!!.toInt() == 0 ){
+                tvNumberPhone.text = "Номер телефона не указан!"
+            } else {
+                tvNumberPhone.text = sessionManager.fetchNumberPhone()
+            }
 
             val key = sessionManager.fetchKey()
             val keyBase64 = Base64.decode(key, Base64.DEFAULT)
             val encryptionKey = SecretKeySpec(keyBase64, "AES")
             val encryptionManager = EncryptionManager(encryptionKey)
 
-            editLogin.text = encryptionManager.decryptData(sessionManager.fetchLogin()!!)
+            tvUserLogin.text = encryptionManager.decryptData(sessionManager.fetchLogin()!!)
         }
 
         speedometerView(asd!!.toFloat())

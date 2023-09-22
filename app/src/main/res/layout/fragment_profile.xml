@@ -93,7 +93,7 @@
             android:textSize="14sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editName" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_name" />
 
         <TextView
             android:id="@+id/name3"
@@ -106,10 +106,10 @@
             android:textSize="14sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editName2" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_mail" />
 
         <TextView
-            android:id="@+id/editName"
+            android:id="@+id/tv_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -127,7 +127,7 @@
             app:layout_constraintTop_toBottomOf="@+id/name" />
 
         <TextView
-            android:id="@+id/editName2"
+            android:id="@+id/tv_mail"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -146,7 +146,7 @@
             app:layout_constraintTop_toBottomOf="@+id/name2" />
 
         <TextView
-            android:id="@+id/editName3"
+            android:id="@+id/tv_number_phone"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -174,10 +174,10 @@
             android:text="Логин"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editName3" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_number_phone" />
 
         <TextView
-            android:id="@+id/editLogin"
+            android:id="@+id/tv_user_login"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -204,10 +204,10 @@
             android:text="Филиал"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editLogin" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_user_login" />
 
         <TextView
-            android:id="@+id/editFilial"
+            android:id="@+id/tv_subsidiary"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -240,7 +240,7 @@
             app:layout_constraintBottom_toTopOf="@+id/view4"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editFilial" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_subsidiary" />
 
         <View
             android:id="@+id/view4"
