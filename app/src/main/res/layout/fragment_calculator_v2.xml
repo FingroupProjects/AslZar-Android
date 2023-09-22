@@ -402,7 +402,6 @@
             android:background="@drawable/bg_table_calculator"
             android:orientation="horizontal"
             android:visibility="visible"
-            android:elevation="2dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_table">
@@ -445,6 +444,26 @@
             </androidx.appcompat.widget.LinearLayoutCompat>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvPayments"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
+            app:layout_constraintBottom_toTopOf="@+id/view5"
+            app:layout_constraintEnd_toEndOf="@+id/tvTable"
+            app:layout_constraintStart_toStartOf="@+id/tvTable"
+            app:layout_constraintTop_toBottomOf="@+id/tvTable"
+            tools:listitem="@layout/row_item_table_installment" />
+
+        <View
+            android:id="@+id/view5"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rvPayments" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -8,6 +8,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import androidx.appcompat.widget.LinearLayoutCompat
+import com.fin_group.aslzar.adapter.TableInstallmentAdapter
 import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentCalculatorV2Binding
@@ -40,27 +43,28 @@ class CalculatorFragmentV2 : Fragment() {
     lateinit var allTypePay: List<TypePay>
     lateinit var percentInstallment: PercentInstallment
 
+    lateinit var adapterPaymentPercent: TableInstallmentAdapter
+
     var vlTotalPrice: Number = 0
     var vlTotalPriceWithSale: Number = 0
     var vlTotalPriceWithoutSale: Number = 0
     var vlTotalPriceSale: Number = 0
+
+    lateinit var monthLinearLayout: LinearLayoutCompat
+    lateinit var percentLinearLayout: LinearLayoutCompat
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentCalculatorV2Binding.inflate(inflater, container, false)
-
         prefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
         sessionManager = SessionManager(requireContext())
         api = ApiClient()
         api.init(sessionManager)
+        monthLinearLayout = binding.monthTable
+        percentLinearLayout = binding.percentTable
 
-        cartObserver(binding)
-
-
-
-        Cart.registerObserver(cartObserver)
         return binding.root
     }
 
@@ -75,6 +79,9 @@ class CalculatorFragmentV2 : Fragment() {
                 Percent(17.9, 12),
             )
         )
+        adapterPaymentPercent = TableInstallmentAdapter(percentInstallment, vlTotalPrice)
+        cartObserver(binding)
+        Cart.registerObserver(cartObserver)
 
         clientList = listOf(
             Client("1", "Розничный покупатель", 0, 0, "Silver", "Lead", 8400),

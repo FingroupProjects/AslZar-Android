@@ -121,10 +121,15 @@ class FragmentLogin : Fragment() {
 
                                 sessionManager.saveLogin(encryptedLogin)
                                 sessionManager.savePassword(encryptedPassword)
+
                                 sessionManager.saveToken(loginResponse.access_token)
                                 sessionManager.saveUserLocation(loginResponse.location)
                                 sessionManager.saveName(loginResponse.fio)
                                 sessionManager.saveSalesPlan(loginResponse.sales_plan)
+                                sessionManager.saveNumberPhone(loginResponse.phone_number)
+                                sessionManager.saveEmail(loginResponse.mail)
+                                sessionManager.saveLocationId(loginResponse.location_id)
+                                sessionManager.saveCheck(loginResponse.check)
                                 progressBar.visibility = VISIBLE
 
                                 Toast.makeText(requireContext(), "Добро пожаловать ${loginResponse.fio}!", Toast.LENGTH_SHORT).show()
@@ -140,7 +145,13 @@ class FragmentLogin : Fragment() {
                                 api.clearPassLogin()
                                 loginEt.setText("")
                                 passwordEt.setText("")
-                            } else {
+                            } else if (response.code() == 500){
+                                binding.progressBar2.visibility = View.GONE
+                                Toast.makeText(requireContext(),"Повторите попытку позже, сервер временно не работает",Toast.LENGTH_SHORT).show()
+                                api.clearPassLogin()
+                                loginEt.setText("")
+                                passwordEt.setText("")
+                            }else {
                                 progressBar.visibility = View.GONE
                                 Toast.makeText(requireContext(), "Ошибка при входе", Toast.LENGTH_SHORT).show()
                                 api.clearPassLogin()

@@ -16,7 +16,6 @@ class InStockAdapter(private val inStockList: List<InStock>): RecyclerView.Adapt
                 count.text = inStock.count.toString()
             }
         }
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
