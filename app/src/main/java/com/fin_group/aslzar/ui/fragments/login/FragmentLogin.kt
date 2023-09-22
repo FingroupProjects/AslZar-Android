@@ -23,12 +23,13 @@ import java.security.SecureRandom
 import android.util.Base64
 import android.view.View.VISIBLE
 import android.widget.ProgressBar
+import com.fin_group.aslzar.R
 import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.response.Auth
+import com.fin_group.aslzar.ui.fragments.login.forgotPassword.ForgotPasswordFragment
 import com.fin_group.aslzar.util.SessionManager.Companion.IS_LOGGED_IN_KEY
 import com.fin_group.aslzar.util.SessionManager.Companion.PREFS_KEY
 import com.fin_group.aslzar.util.hideKeyboard
-import com.google.android.material.internal.ViewUtils.hideKeyboard
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -176,6 +177,16 @@ class FragmentLogin : Fragment() {
                     }
                 }
             })
+
+        binding.tvForgotPassword.setOnClickListener {
+            val fragment = ForgotPasswordFragment()
+            val transaction = requireActivity().supportFragmentManager.beginTransaction()
+            transaction.replace(R.id.fragmentLogin, fragment)
+            transaction.addToBackStack(null)
+            transaction.commit()
+
+
+        }
 
         return binding.root
     }

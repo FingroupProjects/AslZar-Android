@@ -83,6 +83,5 @@ class ChangePasswordProfileFragmentDialog : BaseDialogFragment() {
 
     override fun onStart() {
         super.onStart()
-        hideBottomNav()
     }
 }
