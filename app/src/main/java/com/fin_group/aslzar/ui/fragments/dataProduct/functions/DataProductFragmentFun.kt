@@ -23,6 +23,7 @@ import com.fin_group.aslzar.databinding.FragmentCalculatorV2Binding
 import com.fin_group.aslzar.databinding.FragmentDataProductBinding
 import com.fin_group.aslzar.response.GetSimilarProductsResponse
 import com.fin_group.aslzar.response.InStock
+import com.fin_group.aslzar.response.PercentInstallment
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.SetInProductBottomSheetDialogFragment
@@ -33,6 +34,7 @@ import retrofit2.Callback
 import com.fin_group.aslzar.util.formatNumber
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.badge.BadgeUtils
+import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Response
 
@@ -286,8 +288,41 @@ fun DataProductFragment.getProductByID(){
     }
 }
 
+fun DataProductFragment.fetchCoefficientPlanFromPrefs(){
+
+}
+
+fun DataProductFragment.fetchCoefficientPlanFromApi() {
+    try {
+        val call = apiService.getApiService().getPercentAndMonth("Bearer ${sessionManager.fetchToken()}")
+        call.enqueue(object : Callback<PercentInstallment?> {
+            override fun onResponse(
+                call: Call<PercentInstallment?>,
+                response: Response<PercentInstallment?>
+            ) {
+                if (response.isSuccessful) {
+                    val coefficientPlanList = response.body()
+                    if (coefficientPlanList != null) {
+                        val coefficientPlanJson = Gson().toJson(coefficientPlanList.result)
+                        preferences.edit().putString("coefficientPlan", coefficientPlanJson).apply()
+                        percentInstallment = coefficientPlanList
+                        val price = product.price.toDouble() - ((product.price.toDouble() * percentInstallment.first_pay.toDouble()) / 100)
+                        createTable(binding, price, percentInstallment)
+                    }
+                }
+            }
+            override fun onFailure(call: Call<PercentInstallment?>, t: Throwable) {
+                Toast.makeText(requireContext(), "Произишла ошибка, повторите попытку", Toast.LENGTH_SHORT).show()
+                Log.d("TAG", "onFailure fetchCategoriesFromApi: ${t.message}")
+            }
+        })
+    } catch (e: Exception) {
+        Log.d("TAG", "fetchCategoriesFromApi: ${e.message}")
+    }
+}
+
 @SuppressLint("SetTextI18n")
-fun DataProductFragment.createTable(binding: FragmentDataProductBinding, totalPrice: Number){
+fun DataProductFragment.createTable(binding: FragmentDataProductBinding, totalPrice: Number, percentInstallment: PercentInstallment){
     binding.apply {
         val monthLinearLayout = monthTable
         val percentLinearLayout = percentTable

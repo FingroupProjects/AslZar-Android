@@ -112,8 +112,6 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnPro
                     return@setOnClickListener
                 }
             }
-        }
-        binding.apply {
             toggleButton.addOnButtonCheckedListener { group, checkedId, isChecked ->
                 if (isChecked) {
                     val isDataProductSelected = checkedId == R.id.dataProductBtn
@@ -139,8 +137,8 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnPro
                 toggleButton.visibility = GONE
             }
         } else {
-            binding.inStockProductLayout.visibility = VISIBLE
-            binding.dataProductLayout.visibility = GONE
+            binding.inStockProductLayout.visibility = INVISIBLE
+            binding.dataProductLayout.visibility = VISIBLE
             binding.toggleButton.visibility = VISIBLE
             binding.rvInStock.visibility = VISIBLE
             binding.inStockError.visibility = GONE
@@ -162,21 +160,41 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnPro
         setInProductAdapter.setSelectedPositions(currentSelectedPosition)
         Glide.with(requireContext()).load(image).into(binding.mainImageView)
 
-        if (product.counts.isNotEmpty()){
-            binding.rvInStock.visibility = VISIBLE
-            binding.inStockError.visibility = GONE
-            binding.textView33.visibility = GONE
-            binding.textView34.visibility = GONE
-            binding.textView35.visibility = GONE
-            binding.rvInStock.layoutManager = LinearLayoutManager(requireContext())
-            binding.rvInStock.adapter = InStockAdapter(product.counts)
-        } else {
+        binding.toggleButton.check(R.id.dataProductBtn)
+        if (selectedProduct.counts.isEmpty()){
             binding.apply {
                 inStockProductLayout.visibility = GONE
                 dataProductLayout.visibility = VISIBLE
                 toggleButton.visibility = GONE
             }
+        } else {
+            binding.inStockProductLayout.visibility = INVISIBLE
+            binding.dataProductLayout.visibility = VISIBLE
+            binding.toggleButton.visibility = VISIBLE
+            binding.rvInStock.visibility = VISIBLE
+            binding.inStockError.visibility = GONE
+            binding.textView33.visibility = VISIBLE
+            binding.textView34.visibility = VISIBLE
+            binding.textView35.visibility = VISIBLE
+            binding.rvInStock.layoutManager = LinearLayoutManager(requireContext())
+            binding.rvInStock.adapter = InStockAdapter(selectedProduct.counts)
         }
+
+//        if (product.counts.isNotEmpty()){
+//            binding.rvInStock.visibility = VISIBLE
+//            binding.inStockError.visibility = GONE
+//            binding.textView33.visibility = GONE
+//            binding.textView34.visibility = GONE
+//            binding.textView35.visibility = GONE
+//            binding.rvInStock.layoutManager = LinearLayoutManager(requireContext())
+//            binding.rvInStock.adapter = InStockAdapter(product.counts)
+//        } else {
+//            binding.apply {
+//                inStockProductLayout.visibility = GONE
+//                dataProductLayout.visibility = VISIBLE
+//                toggleButton.visibility = GONE
+//            }
+//        }
     }
 
     private fun setDataProduct(product: Product){
@@ -216,6 +234,7 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnPro
                             allProducts = products.result
                             setInProductAdapter.updateList(allProducts)
                             setInitialProductAndInterface()
+                            binding.toggleButton.check(R.id.dataProductBtn)
 
                             binding.inStockError.visibility = GONE
                             binding.rvInStock.layoutManager = LinearLayoutManager(requireContext())

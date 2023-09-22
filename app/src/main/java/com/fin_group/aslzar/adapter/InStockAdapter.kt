@@ -11,8 +11,8 @@ class InStockAdapter(private val inStockList: List<InStock>): RecyclerView.Adapt
     inner class ViewHolder(val binding: RowItemHaveingInStoreBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(inStock: InStock){
             binding.apply {
-                store.text = inStock.store_house
-                showCase.text = inStock.subsidiary
+                store.text = inStock.subsidiary
+                showCase.text = inStock.store_house
                 count.text = inStock.count.toString()
             }
         }

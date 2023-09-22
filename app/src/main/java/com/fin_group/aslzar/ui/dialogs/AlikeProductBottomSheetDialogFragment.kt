@@ -99,7 +99,6 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(),
             addToCart.setOnClickListener {
                 if (fullSimilarProduct != null){
                     sharedViewModel.onProductAddedToCart(fullSimilarProduct, requireContext())
-
                     val addedProduct = Cart.getProductById(similarProduct.id)
                     if (addedProduct != null){
                         Toast.makeText(requireContext(), "Количество товара увеличено на +1", Toast.LENGTH_SHORT).show()
@@ -109,12 +108,10 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(),
                 } else {
                     Toast.makeText(requireContext(), "Не удалось добавить товар, загрузите данные заново и повторите попытку.", Toast.LENGTH_SHORT).show()
                 }
-
             }
             refresh.setOnClickListener {
                 getSimilarProduct()
             }
-
             toggleButton.addOnButtonCheckedListener { group, checkedId, isChecked ->
                 if (isChecked) {
                     val isDataProductSelected = checkedId == R.id.dataProductBtn2

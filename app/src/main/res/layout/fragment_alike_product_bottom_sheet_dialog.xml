@@ -213,13 +213,12 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:layout_marginTop="5dp"
-                    android:text="Магазин"
+                    android:text="Филиал"
                     android:textColor="@color/background_disable"
                     android:textSize="12sp"
                     app:layout_constraintEnd_toStartOf="@id/guideline6"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/textView44"

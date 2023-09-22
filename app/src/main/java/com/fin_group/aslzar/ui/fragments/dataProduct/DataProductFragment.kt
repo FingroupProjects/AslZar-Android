@@ -1,6 +1,8 @@
 package com.fin_group.aslzar.ui.fragments.dataProduct
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -30,6 +32,7 @@ import com.fin_group.aslzar.ui.dialogs.AlikeProductBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.callInStockDialog
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.callSetInProduct
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.createTable
+import com.fin_group.aslzar.ui.fragments.dataProduct.functions.fetchCoefficientPlanFromApi
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.getProductByID
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.getSimilarProducts
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.likeProducts
@@ -58,6 +61,8 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
 
     lateinit var swipeRefreshLayout: SwipeRefreshLayout
     lateinit var product: Product
+    lateinit var preferences: SharedPreferences
+
 
     lateinit var recyclerViewSomeImages: RecyclerView
     lateinit var recyclerViewLikeProducts: RecyclerView
@@ -79,6 +84,7 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
     var getSimilarProduct: List<SimilarProduct> = emptyList()
     lateinit var sessionManager: SessionManager
 
+
     lateinit var apiService: ApiClient
 
     var isFilterOn: Boolean = false
@@ -97,6 +103,7 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         apiService = ApiClient()
         apiService.init(sessionManager)
         swipeRefreshLayout = binding.swipeRefreshLayout
+        preferences = context?.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)!!
 
         percentInstallment = PercentInstallment(
             90, 15, listOf(
@@ -106,6 +113,7 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
                 Percent(17.9, 12),
             )
         )
+        fetchCoefficientPlanFromApi()
 
         if (args.product != null) {
             product = args.product!!
@@ -147,7 +155,6 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
 
         someImagesProduct()
         likeProducts()
-        createTable(binding, product.price)
         return binding.root
     }
 

@@ -5,5 +5,8 @@ data class Auth(
     val fio: String,
     val location: String,
     val login: String,
-    val sales_plan: Number
+    val sales_plan: Number,
+    val mail: String,
+    val phone_number: String,
+    val location_id: String
 )
