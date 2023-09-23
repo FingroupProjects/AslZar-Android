@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
@@ -29,6 +30,7 @@ import com.fin_group.aslzar.ui.activities.MainActivity
 import com.fin_group.aslzar.ui.dialogs.DataProductInCartFragment
 import com.fin_group.aslzar.ui.dialogs.DeleteAllProductFromCartFragmentDialog
 import com.fin_group.aslzar.ui.fragments.cartMain.MainCartFragmentDirections
+import com.fin_group.aslzar.ui.fragments.cartMain.calculator.CalculatorFragmentV2
 import com.fin_group.aslzar.ui.fragments.cartMain.cart.functions.cartObserver
 import com.fin_group.aslzar.ui.fragments.cartMain.cart.functions.deleteAllProductFromCart
 import com.fin_group.aslzar.ui.fragments.cartMain.cart.functions.fetchItemTouchHelper
@@ -90,7 +92,6 @@ class CartFragment : Fragment(), EditProductInCart, OnProductAddedToCartListener
         sharedViewModel.productAdded.observe(viewLifecycleOwner) { product ->
             product?.let {
                 onProductAddedToCart(product)
-
             }
         }
         cartObserver(binding)

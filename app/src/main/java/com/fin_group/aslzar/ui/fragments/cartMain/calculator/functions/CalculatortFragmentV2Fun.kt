@@ -28,6 +28,11 @@ import com.fin_group.aslzar.response.PercentInstallment
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.CalculatorFragmentV2
 import com.fin_group.aslzar.util.CartObserver
 import com.fin_group.aslzar.util.formatNumber
+import com.google.gson.Gson
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import kotlin.math.log
 
 
 fun CalculatorFragmentV2.cartObserver(binding: FragmentCalculatorV2Binding) {
@@ -48,9 +53,14 @@ fun CalculatorFragmentV2.cartObserver(binding: FragmentCalculatorV2Binding) {
             vlTotalPriceWithoutSale = totalPriceWithoutSale
             vlTotalPriceSale = totalPriceWithSale
 
-            textWatchers(binding, percentInstallment, vlTotalPrice)
-//            createTable(binding, vlTotalPrice)
-            printPercent(binding, percentInstallment, vlTotalPrice)
+            val hello = totalPrice.toDouble() - sessionManager.fetchCheck().toDouble()
+            Log.d("TAG", "onCartChanged: $hello")
+            Log.d("TAG", "onCartChanged: ${sessionManager.fetchCheck().toDouble()}")
+            Log.d("TAG", "onCartChanged: ${totalPrice.toDouble()}")
+            averageBill.text = "Для среднего чека осталось $hello"
+
+            textWatchers(binding, percentInstallment, totalPrice)
+            printPercent(binding, percentInstallment, totalPrice)
         }
     }
 }
@@ -65,8 +75,8 @@ fun CalculatorFragmentV2.fetchClientsAndTypePay(binding: FragmentCalculatorV2Bin
         clientType.setAdapter(arrayAdapterTypeClient)
         clientType.setOnItemClickListener { parent, view, position, id ->
             selectedClient = clientList[position]
-            bonusClient.text = "${formatNumber(selectedClient.bonus)} UZS"
-            paymentClient(selectedClient, binding, percentInstallment)
+            bonusClient.text = "${formatNumber(selectedClient!!.bonus)} UZS"
+            paymentClient(selectedClient!!, binding, percentInstallment)
             textWatchers(binding, percentInstallment, vlTotalPrice)
         }
     }
@@ -124,7 +134,6 @@ fun CalculatorFragmentV2.printPercent(binding: FragmentCalculatorV2Binding, inst
         rvPayments.adapter = adapterPaymentPercent
 
     }
-
 }
 
 @SuppressLint("SetTextI18n")
@@ -160,7 +169,7 @@ fun CalculatorFragmentV2.createTable(binding: FragmentCalculatorV2Binding, total
             val textViewPercent = TextView(requireContext())
             val monthPayment = (((totalPrice.toDouble() * percent.coefficient.toDouble()) / 100) + totalPrice.toDouble()) / percent.mounth.toDouble()
             textViewPercent.apply {
-                text = formatNumber(monthPayment)
+                text = "${formatNumber(monthPayment)} UZS"
                 layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -185,91 +194,145 @@ fun CalculatorFragmentV2.textWatchers(
     percent: PercentInstallment,
     totalPrice: Number
 ) {
+    // Кэширование элементов интерфейса
+    val bonusEditText = binding.bonus
+    val firstPayEditText = binding.firstPay
+    val payWithFirstPayTextView = binding.payWithFirstPay
+    val payWithBonusTextView = binding.payWithBonus
+    val totalPriceTextView = binding.totalPrice
+
     val maxValueBonus: Double = (totalPrice.toDouble() * percent.payment_bonus.toDouble()) / 100
     val minValueFirstPay: Double = (totalPrice.toDouble() * percent.first_pay.toDouble()) / 100
-    binding.payWithFirstPay.text = "${formatNumber(minValueFirstPay)} UZS"
-    binding.firstPay.setText(minValueFirstPay.toString())
+    firstPayEditText.setText(formatNumber(minValueFirstPay))
 
-    val textWatcherForBonus = object : TextWatcher {
+    var finalTotalPrice = totalPrice.toDouble()
+    var countTextBonus = 0.0
+    var countTextFirstPay = 0.0
+
+    fun updateDisplayedValues() {
+        val bonusAmount = (finalTotalPrice * percent.payment_bonus.toDouble()) / 100
+        val firstPayAmount = (finalTotalPrice * percent.first_pay.toDouble()) / 100
+
+        // Если введены значения бонуса и первоначального взноса, учитываем их
+        val enteredBonus = bonusEditText.text.toString().toDoubleOrNull() ?: 0.0
+        val enteredFirstPay = firstPayEditText.text.toString().toDoubleOrNull() ?: 0.0
+
+        val remainingTotal = finalTotalPrice - enteredFirstPay
+        val bonusPercentOfRemaining = (remainingTotal * percent.payment_bonus.toDouble()) / 100
+
+        if (enteredBonus > bonusPercentOfRemaining) {
+            bonusEditText.setText(bonusPercentOfRemaining.toString())
+            bonusEditText.setSelection(bonusEditText.length())
+            countTextBonus = bonusPercentOfRemaining
+        } else {
+            countTextBonus = enteredBonus
+        }
+
+        val newTotalPrice = remainingTotal - countTextBonus
+
+        totalPriceTextView.text = "${formatNumber(newTotalPrice)} UZS"
+        payWithBonusTextView.text = "${formatNumber(countTextBonus)} UZS"
+        payWithFirstPayTextView.text = "${formatNumber(enteredFirstPay)} UZS"
+
+        adapterPaymentPercent.updateData(percent, newTotalPrice)
+    }
+
+    textWatcherForBonus = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
-        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            val newText = s.toString().trim()
-            if (!newText.isNullOrEmpty()) {
-                val currentValue = newText.replace(',', '.').toDouble()
-                if (currentValue > maxValueBonus) {
-                    binding.bonus.setText(maxValueBonus.toString())
-                    binding.bonus.setSelection(binding.bonus.length())
-                }
-            }
-            val countText = binding.bonus.text.toString().replace(',', '.').toDoubleOrNull() ?: 0.0
-            binding.payWithBonus.text = "${formatNumber(countText)} UZS"
-        }
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 
         override fun afterTextChanged(s: Editable?) {
             val newText = s.toString().trim()
             if (!newText.isNullOrEmpty()) {
                 val currentValue = newText.replace(',', '.').toDouble()
                 if (currentValue > maxValueBonus) {
-                    binding.bonus.setText(maxValueBonus.toString())
-                    binding.bonus.error = "Вводимое число не может превышать ${percent.payment_bonus}% ($maxValueBonus) от итоговой суммы"
+                    bonusEditText.setText(maxValueBonus.toString())
+                    bonusEditText.setSelection(bonusEditText.length())
                 }
             }
-            val countText = binding.bonus.text.toString().replace(',', '.').toDoubleOrNull() ?: 0.0
-            val countText2 = binding.firstPay.text.toString().replace(',', '.').toDoubleOrNull() ?: 0.0
-            val hello = countText + countText2
-
-            binding.totalPrice.text = "${formatNumber(totalPrice.toDouble() - hello)} UZS"
-            binding.payWithBonus.text = "${formatNumber(countText)} UZS"
+            updateDisplayedValues()
         }
     }
-    binding.bonus.addTextChangedListener(textWatcherForBonus)
 
-    val textWatcherForFirstPay = object : TextWatcher {
+    textWatcherForFirstPay = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
-        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            val newText = s.toString().trim()
-            if (!newText.isNullOrEmpty()) {
-                val currentValue = newText.replace(',', '.').toDouble()
-                if (currentValue < minValueFirstPay) {
-//                    binding.firstPay.setText(minValueFirstPay.toString())
-                    binding.firstPay.error = "Минимальное значение первоначального взноса ${percent.first_pay}% ($minValueFirstPay) от итоговой суммы"
-                }
-                if (currentValue > totalPrice.toDouble()) {
-                    binding.firstPay.setText(totalPrice.toString())
-                    binding.firstPay.error = "Первоначальный взнос не может превышать сумму покупки"
-                }
-            }
-            val countText =
-                binding.firstPay.text.toString().replace(',', '.').toDoubleOrNull() ?: 0.0
-            binding.payWithFirstPay.text = "${formatNumber(countText)} UZS"
-        }
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 
         override fun afterTextChanged(s: Editable?) {
             val newText = s.toString().trim()
             if (!newText.isNullOrEmpty()) {
                 val currentValue = newText.replace(',', '.').toDouble()
                 if (currentValue < minValueFirstPay) {
-//                    binding.firstPay.setText(minValueFirstPay.toString())
-                    binding.firstPay.error =
-                        "Минимальное значение первоначального взноса ${percent.first_pay}% ($minValueFirstPay) от итоговой суммы"
-                }
-                if (currentValue > totalPrice.toDouble()) {
-                    binding.firstPay.setText(totalPrice.toString())
-                    binding.firstPay.error = "Первоначальный взнос не может превышать сумму покупки"
+                    firstPayEditText.error = "Минимальное значение первоначального взноса ${percent.first_pay}% ($minValueFirstPay) от итоговой суммы"
+                } else if (currentValue > totalPrice.toDouble()) {
+                    firstPayEditText.setText(totalPrice.toString())
+                    firstPayEditText.error = "Первоначальный взнос не может превышать сумму покупки"
+                } else {
+                    firstPayEditText.error = null
                 }
             }
-            val countText = binding.firstPay.text.toString().replace(',', '.').toDoubleOrNull() ?: 0.0
-            val countText2 = binding.bonus.text.toString().replace(',', '.').toDoubleOrNull() ?: 0.0
-            val hello = countText + countText2
-            vlTotalPrice.toDouble() - hello
+            updateDisplayedValues()
 
-            binding.totalPrice.text = "${formatNumber(totalPrice.toDouble() - hello)} UZS"
-            binding.payWithFirstPay.text = "${formatNumber(countText)} UZS"
         }
     }
 
-    binding.firstPay.addTextChangedListener(textWatcherForFirstPay)
-//    createTable(binding, totalPrice)
+    bonusEditText.addTextChangedListener(textWatcherForBonus)
+    firstPayEditText.addTextChangedListener(textWatcherForFirstPay)
+
+    updateDisplayedValues()
 }
+
+@SuppressLint("SetTextI18n")
+fun CalculatorFragmentV2.resetCalculator(binding: FragmentCalculatorV2Binding) {
+    binding.apply {
+        try {
+            cbBonus.isChecked = false
+            cbBonus.visibility = GONE
+
+            bonus.setText("")
+            firstPay.setText("")
+
+            val initialTotalPrice = Cart.getTotalPrice()
+            totalPrice.text = "${formatNumber(initialTotalPrice)} UZS"
+            payWithBonus.text = "0.00 UZS"
+            payWithFirstPay.text = "0.00 UZS"
+
+            printPercent(binding, percentInstallment, initialTotalPrice)
+        } catch (e: Exception) {
+            Log.d("TAG", "resetCalculator: ${e.message}")
+        } catch (e: NumberFormatException) {
+            Log.d("TAG", "resetCalculator: ${e.message}")
+        }
+    }
+}
+
+
+
+//fun CalculatorFragmentV2.fetchCoefficientPlanFromApi() {
+//    try {
+//        val call = api.getApiService().getPercentAndMonth("Bearer ${sessionManager.fetchToken()}")
+//        call.enqueue(object : Callback<PercentInstallment?> {
+//            override fun onResponse(
+//                call: Call<PercentInstallment?>,
+//                response: Response<PercentInstallment?>
+//            ) {
+//                if (response.isSuccessful) {
+//                    val coefficientPlanList = response.body()
+//                    if (coefficientPlanList != null) {
+//                        val coefficientPlanJson = Gson().toJson(coefficientPlanList.result)
+//                        prefs.edit().putString("coefficientPlan", coefficientPlanJson).apply()
+//                        Log.d("TAG", "onResponse: $coefficientPlanList")
+////                        percentInstallment = coefficientPlanList
+//                    }
+//                }
+//            }
+//            override fun onFailure(call: Call<PercentInstallment?>, t: Throwable) {
+//                Log.d("TAG", "onFailure fetchCategoriesFromApi: ${t.message}")
+//            }
+//        })
+//    } catch (e: Exception) {
+//        Log.d("TAG", "fetchCategoriesFromApi: ${e.message}")
+//    }
+//}

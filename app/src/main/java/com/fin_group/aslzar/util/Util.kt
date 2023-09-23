@@ -45,6 +45,10 @@ interface OnFriendAddedListener {
     fun onFriendAddedSuccessfully(success: Boolean)
 }
 
+interface CalculatorResetListener {
+    fun resetCalculator()
+}
+
 interface OnProductClickListener{
     fun setProduct(product: Product)
 }
