@@ -332,7 +332,7 @@ fun DataProductFragment.createTable(binding: FragmentDataProductBinding, totalPr
 
             val textViewMonth = TextView(requireContext())
             textViewMonth.apply {
-                text = "${percent.mounth} платежей (${percent.coefficient}%)"
+                text = "${percent.mounth} платежей"
                 layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT,

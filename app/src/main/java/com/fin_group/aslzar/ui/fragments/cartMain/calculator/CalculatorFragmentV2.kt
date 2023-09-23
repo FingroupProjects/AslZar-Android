@@ -3,12 +3,12 @@ package com.fin_group.aslzar.ui.fragments.cartMain.calculator
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.util.Log
+import android.text.TextWatcher
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.widget.LinearLayoutCompat
 import com.fin_group.aslzar.adapter.TableInstallmentAdapter
 import com.fin_group.aslzar.api.ApiClient
@@ -20,13 +20,13 @@ import com.fin_group.aslzar.response.Percent
 import com.fin_group.aslzar.response.PercentInstallment
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.cartObserver
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.fetchClientsAndTypePay
-import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.paymentClient
+import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.resetCalculator
+import com.fin_group.aslzar.util.CalculatorResetListener
 import com.fin_group.aslzar.util.CartObserver
 import com.fin_group.aslzar.util.SessionManager
-import java.lang.reflect.Type
 
 @Suppress("DEPRECATION")
-class CalculatorFragmentV2 : Fragment() {
+class CalculatorFragmentV2 : Fragment(), CalculatorResetListener {
 
     private var _binding: FragmentCalculatorV2Binding? = null
     private val binding get() = _binding!!
@@ -36,7 +36,7 @@ class CalculatorFragmentV2 : Fragment() {
     lateinit var prefs: SharedPreferences
     lateinit var cartObserver: CartObserver
 
-    lateinit var selectedClient: Client
+    var selectedClient: Client? = null
     lateinit var typePaySelected: TypePay
 
     lateinit var clientList: List<Client>
@@ -53,6 +53,11 @@ class CalculatorFragmentV2 : Fragment() {
     lateinit var monthLinearLayout: LinearLayoutCompat
     lateinit var percentLinearLayout: LinearLayoutCompat
 
+    lateinit var textWatcherForFirstPay: TextWatcher
+    lateinit var textWatcherForBonus: TextWatcher
+
+    lateinit var averageBill: TextView
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -62,6 +67,7 @@ class CalculatorFragmentV2 : Fragment() {
         sessionManager = SessionManager(requireContext())
         api = ApiClient()
         api.init(sessionManager)
+        averageBill = binding.averageBill
         monthLinearLayout = binding.monthTable
         percentLinearLayout = binding.percentTable
 
@@ -70,6 +76,15 @@ class CalculatorFragmentV2 : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+//        fetchCoefficientPlanFromApi()
+//
+//        val coefficientPlanListJson = prefs.getString("coefficientPlan", null)
+//        val coefficientPlanListType = object : TypeToken<PercentInstallment>() {}.type
+//        val coefficientPlanList = Gson().fromJson<PercentInstallment>(coefficientPlanListJson, coefficientPlanListType)
+////        percentInstallment = coefficientPlanList
+//        Log.d("TAG", "onViewCreated: $coefficientPlanList")
+
 
         percentInstallment = PercentInstallment(
             90, 15, listOf(
@@ -95,18 +110,6 @@ class CalculatorFragmentV2 : Fragment() {
         )
 
         fetchClientsAndTypePay(binding)
-
-        val searchClient = binding.clientType.text.toString()
-        val selectClient = clientList.find { it.client_name == searchClient }
-        Log.d("TAG", "onViewCreated: $selectClient")
-//        paymentClient(selectClient!!, binding, percentInstallment)
-
-        Log.d("TAG", "onViewCreated: vlTotalPrice $vlTotalPrice")
-        Log.d("TAG", "onViewCreated: vlTotalPriceWithSale $vlTotalPriceWithSale")
-        Log.d("TAG", "onViewCreated: vlTotalPriceWithoutSale $vlTotalPriceWithoutSale")
-        Log.d("TAG", "onViewCreated: vlTotalPriceSale $vlTotalPriceSale")
-
-//        checkTypePay(binding, selectClient!!)
     }
 
     override fun onStart() {
@@ -125,5 +128,9 @@ class CalculatorFragmentV2 : Fragment() {
         _binding = null
         Cart.unregisterObserver(cartObserver)
         Cart.saveCartToPrefs(requireContext())
+    }
+
+    override fun resetCalculator() {
+        resetCalculator(binding)
     }
 }
