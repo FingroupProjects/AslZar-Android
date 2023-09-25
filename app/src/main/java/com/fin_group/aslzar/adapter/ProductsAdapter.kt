@@ -13,6 +13,7 @@ import com.fin_group.aslzar.R
 import com.fin_group.aslzar.databinding.RowItemProductBinding
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.ui.fragments.main.MainFragmentDirections
+import com.fin_group.aslzar.util.CustomPopupView
 import com.fin_group.aslzar.util.ProductOnClickListener
 import com.fin_group.aslzar.util.formatNumber
 
@@ -23,6 +24,8 @@ class ProductsAdapter(
 
     private lateinit var binding: RowItemProductBinding
     private lateinit var context: Context
+    private val popupView = CustomPopupView(context)
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         context = parent.context

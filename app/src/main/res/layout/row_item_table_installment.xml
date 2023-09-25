@@ -47,6 +47,7 @@
             android:background="@drawable/bg_text_view_in_table"
             android:padding="5dp"
             android:text="UZS/мес" />
+
     </androidx.appcompat.widget.LinearLayoutCompat>
 
 

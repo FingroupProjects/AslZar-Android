@@ -22,6 +22,7 @@ class TableInstallmentAdapter(var installment: PercentInstallment, var totalPric
                 countPayment.text = "${percent.mounth} платежей"
                 val monthPayment = (((totalPrice.toDouble() * percent.coefficient.toDouble()) / 100) + totalPrice.toDouble()) / percent.mounth.toDouble()
                 sizePayment.text = "${formatNumber(monthPayment)} UZS"
+
             }
         }
     }

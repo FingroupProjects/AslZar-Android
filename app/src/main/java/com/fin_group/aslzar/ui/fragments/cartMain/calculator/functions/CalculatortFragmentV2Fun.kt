@@ -27,11 +27,13 @@ import com.fin_group.aslzar.response.Percent
 import com.fin_group.aslzar.response.PercentInstallment
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.CalculatorFragmentV2
 import com.fin_group.aslzar.util.CartObserver
+import com.fin_group.aslzar.util.CustomPopupView
 import com.fin_group.aslzar.util.formatNumber
 import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import kotlin.math.abs
 import kotlin.math.log
 
 
@@ -53,11 +55,13 @@ fun CalculatorFragmentV2.cartObserver(binding: FragmentCalculatorV2Binding) {
             vlTotalPriceWithoutSale = totalPriceWithoutSale
             vlTotalPriceSale = totalPriceWithSale
 
-            val hello = totalPrice.toDouble() - sessionManager.fetchCheck().toDouble()
-            Log.d("TAG", "onCartChanged: $hello")
-            Log.d("TAG", "onCartChanged: ${sessionManager.fetchCheck().toDouble()}")
-            Log.d("TAG", "onCartChanged: ${totalPrice.toDouble()}")
-            averageBill.text = "Для среднего чека осталось $hello"
+            val difference  = ( averageBill.toDouble() - totalPrice.toDouble())
+            if (difference  > 0){
+                val message = "Нужно еще ${formatNumber(difference)} для среднего чека"
+                averageBillTv.text = message
+            } else if (difference <= 0){
+                averageBillTv.text = "Средний чек достигнут"
+            }
 
             textWatchers(binding, percentInstallment, totalPrice)
             printPercent(binding, percentInstallment, totalPrice)
@@ -132,7 +136,6 @@ fun CalculatorFragmentV2.printPercent(binding: FragmentCalculatorV2Binding, inst
         rvPayments.layoutManager = LinearLayoutManager(requireContext())
         adapterPaymentPercent = TableInstallmentAdapter(installment, totalPrice)
         rvPayments.adapter = adapterPaymentPercent
-
     }
 }
 

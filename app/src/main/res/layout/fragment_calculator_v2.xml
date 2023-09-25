@@ -416,7 +416,7 @@
             android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_table">
+            app:layout_constraintTop_toBottomOf="@+id/tv_table">
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:id="@+id/monthTable"
@@ -427,10 +427,10 @@
 
                 <TextView
                     style="@style/tableTextFirst"
-                    android:background="@drawable/bg_text_view_in_table_first"
-                    android:padding="5dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/bg_text_view_in_table_first"
+                    android:padding="5dp"
                     android:text="Кол-во платежей" />
             </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -476,6 +476,16 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/rvPayments" />
+
+        <ImageButton
+            android:id="@+id/imageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/transparent"
+            android:src="@drawable/round_info_24"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_table"
+            app:layout_constraintStart_toEndOf="@+id/tv_table"
+            app:layout_constraintTop_toTopOf="@+id/tv_table" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

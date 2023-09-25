@@ -23,6 +23,7 @@ import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.fetchClie
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.resetCalculator
 import com.fin_group.aslzar.util.CalculatorResetListener
 import com.fin_group.aslzar.util.CartObserver
+import com.fin_group.aslzar.util.CustomPopupView
 import com.fin_group.aslzar.util.SessionManager
 
 @Suppress("DEPRECATION")
@@ -56,7 +57,8 @@ class CalculatorFragmentV2 : Fragment(), CalculatorResetListener {
     lateinit var textWatcherForFirstPay: TextWatcher
     lateinit var textWatcherForBonus: TextWatcher
 
-    lateinit var averageBill: TextView
+    lateinit var averageBillTv: TextView
+    lateinit var averageBill: Number
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -67,7 +69,8 @@ class CalculatorFragmentV2 : Fragment(), CalculatorResetListener {
         sessionManager = SessionManager(requireContext())
         api = ApiClient()
         api.init(sessionManager)
-        averageBill = binding.averageBill
+        averageBillTv = binding.averageBill
+        averageBill = sessionManager.fetchCheck()
         monthLinearLayout = binding.monthTable
         percentLinearLayout = binding.percentTable
 
@@ -84,6 +87,14 @@ class CalculatorFragmentV2 : Fragment(), CalculatorResetListener {
 //        val coefficientPlanList = Gson().fromJson<PercentInstallment>(coefficientPlanListJson, coefficientPlanListType)
 ////        percentInstallment = coefficientPlanList
 //        Log.d("TAG", "onViewCreated: $coefficientPlanList")
+
+//        binding.imageButton.setOnClickListener {
+//            val popupManager = PopupManager(requireContext())
+//            popupManager.showPopup(
+//                "Клиент не может выплатить такую сумму за месяц."
+//            )
+//        }
+
 
 
         percentInstallment = PercentInstallment(
