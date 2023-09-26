@@ -5,7 +5,6 @@
     android:id="@+id/swipeRefreshLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_view_1"
     tools:context=".ui.fragments.main.MainFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout

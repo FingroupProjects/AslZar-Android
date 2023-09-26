@@ -15,21 +15,42 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.fragment.app.activityViewModels
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.fin_group.aslzar.R
+import com.fin_group.aslzar.adapter.ProductsAdapter
+import com.fin_group.aslzar.adapter.SalesProductsAdapter
 import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentSalesAndPromotionsBinding
 import com.fin_group.aslzar.response.Category
 import com.fin_group.aslzar.response.Product
+import com.fin_group.aslzar.response.ProductSale
+import com.fin_group.aslzar.response.SaleProductsResponse
 import com.fin_group.aslzar.ui.activities.MainActivity
 import com.fin_group.aslzar.ui.fragments.main.MainFragmentDirections
+import com.fin_group.aslzar.ui.fragments.sales.functions.addProductToCart
+import com.fin_group.aslzar.ui.fragments.sales.functions.callInStockDialog
+import com.fin_group.aslzar.ui.fragments.sales.functions.callOutStock
+import com.fin_group.aslzar.ui.fragments.sales.functions.fetchRV
+import com.fin_group.aslzar.ui.fragments.sales.functions.filterFun
+import com.fin_group.aslzar.ui.fragments.sales.functions.filterProducts
+import com.fin_group.aslzar.ui.fragments.sales.functions.getAllCategoriesFromApi
+import com.fin_group.aslzar.ui.fragments.sales.functions.getAllCategoriesPrefs
+import com.fin_group.aslzar.ui.fragments.sales.functions.getAllProductFromPrefs
+import com.fin_group.aslzar.ui.fragments.sales.functions.getAllProductsFromApi
+import com.fin_group.aslzar.ui.fragments.sales.functions.savingAndFetchSearch
+import com.fin_group.aslzar.ui.fragments.sales.functions.savingAndFetchingCategory
+import com.fin_group.aslzar.ui.fragments.sales.functions.searchViewFun
 import com.fin_group.aslzar.util.BadgeManager
 import com.fin_group.aslzar.util.CategoryClickListener
 import com.fin_group.aslzar.util.ProductOnClickListener
 import com.fin_group.aslzar.util.SessionManager
+import com.fin_group.aslzar.viewmodel.SharedViewModel
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
@@ -39,23 +60,32 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener, CategoryC
     private var _binding: FragmentSalesAndPromotionsBinding? = null
     private val binding get() = _binding!!
 
+    val sharedViewModel: SharedViewModel by activityViewModels()
+
+    lateinit var toolbar: MaterialToolbar
+
     lateinit var preferences: SharedPreferences
 
     lateinit var viewSearch: ConstraintLayout
     var searchText: String = ""
     lateinit var searchView: SearchView
 
-    var allProducts: List<Product> = emptyList()
-    var filteredProducts: List<Product> = emptyList()
+    var allProducts: List<ProductSale> = emptyList()
+    var filteredProducts: List<ProductSale> = emptyList()
+    lateinit var myAdapter: SalesProductsAdapter
 
-    lateinit var sessionManager: SessionManager
-    lateinit var apiService: ApiClient
+    lateinit var viewCheckedCategory: ConstraintLayout
+    var allCategories: List<Category> = emptyList()
+    var selectCategory: Category? = null
 
     lateinit var mainActivity: MainActivity
     lateinit var bottomNavigationView: BottomNavigationView
 
     lateinit var badgeManager: BadgeManager
     lateinit var swipeRefreshLayout: SwipeRefreshLayout
+
+    lateinit var sessionManager: SessionManager
+    lateinit var apiService: ApiClient
 
     lateinit var recyclerView: RecyclerView
 
@@ -71,16 +101,47 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener, CategoryC
         apiService.init(sessionManager)
         swipeRefreshLayout = binding.swipeRefreshLayout
         setHasOptionsMenu(true)
+        viewSearch = binding.viewSearch
+        viewCheckedCategory = binding.viewCheckedCategory
+        recyclerView = binding.mainRecyclerView
+
+        binding.fabClearSearch.setOnClickListener {
+            if (searchText != "") {
+                searchView.setQuery("", false)
+            }
+            viewSearch.visibility = View.GONE
+        }
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            fetchDataAndFilterProducts()
+        }
 
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        searchView = binding.searchViewMain
 
-        mainActivity =
-            activity as? MainActivity ?: throw IllegalStateException("Activity is not MainActivity")
+        mainActivity = activity as? MainActivity ?: throw IllegalStateException("Activity is not MainActivity")
 
+        getAllCategoriesPrefs()
+        getAllProductFromPrefs()
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return true
+            }
+            override fun onQueryTextChange(newText: String?): Boolean {
+                searchText = newText.toString()
+                Log.d("TAG", "onQueryTextChange: $searchText")
+                filterProducts()
+                return true
+            }
+        })
+        savingAndFetchSearch(binding)
+        fetchRV(allProducts)
+        val selectedCategoryId = preferences.getString("selectedCategory", "all")
+        selectCategory = allCategories.find { it.id == selectedCategoryId }
 //        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 //            override fun onQueryTextSubmit(query: String?): Boolean {
 //                return true
@@ -102,21 +163,14 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener, CategoryC
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.search_item -> {
-                Toast.makeText(requireContext(), "Search", Toast.LENGTH_SHORT).show()
-//                searchViewFun()
-            }
-
-            R.id.filter_item -> {
-//                filterFun()
-                Toast.makeText(requireContext(), "Category", Toast.LENGTH_SHORT).show()
-            }
-
+            R.id.search_item -> {searchViewFun()}
+            R.id.filter_item -> {filterFun()}
             R.id.barcode_item -> {
-
+                val action = SalesAndPromotionsFragmentDirections.actionSalesAndPromotionsFragmentToBarCodeScannerFragment()
+                findNavController().navigate(action)
             }
-
             R.id.profile_item -> {
+                findNavController().navigate(R.id.action_salesAndPromotionsFragment_to_profileFragment)
             }
         }
         return super.onOptionsItemSelected(item)
@@ -151,18 +205,32 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener, CategoryC
     }
 
     override fun addToCart(product: Product) {
-        TODO("Not yet implemented")
+        addProductToCart(product)
     }
 
     override fun inStock(product: Product) {
-        TODO("Not yet implemented")
+        if (product.counts.isNotEmpty()) {
+            callInStockDialog(product.full_name, product.counts)
+        } else {
+            callOutStock(product.id)
+        }
     }
 
     override fun getData(product: Product) {
-        TODO("Not yet implemented")
+        val action = SalesAndPromotionsFragmentDirections.actionSalesAndPromotionsFragmentToDataProductFragment(product.id, product)
+        Navigation.findNavController(binding.root).navigate(action)
     }
 
     override fun onCategorySelected(selectedCategory: Category) {
-        TODO("Not yet implemented")
+        selectCategory = selectedCategory
+        preferences.edit()?.putString("selectedCategory", selectedCategory.id)?.apply()
+
+        savingAndFetchingCategory(binding)
+    }
+
+    private fun fetchDataAndFilterProducts() {
+        getAllProductsFromApi()
+        getAllCategoriesFromApi()
+        filterProducts()
     }
 }
