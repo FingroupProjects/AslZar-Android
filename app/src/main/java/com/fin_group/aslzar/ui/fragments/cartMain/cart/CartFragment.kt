@@ -146,6 +146,7 @@ class CartFragment : Fragment(), EditProductInCart, OnProductAddedToCartListener
             false,
             emptyList(),
             productInCart.image,
+            ""
         )
 
         try {

@@ -158,6 +158,10 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener, CategoryC
         TODO("Not yet implemented")
     }
 
+    override fun getData(product: Product) {
+        TODO("Not yet implemented")
+    }
+
     override fun onCategorySelected(selectedCategory: Category) {
         TODO("Not yet implemented")
     }

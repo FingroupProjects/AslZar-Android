@@ -22,7 +22,6 @@ class TableInstallmentAdapter(var installment: PercentInstallment, var totalPric
                 countPayment.text = "${percent.mounth} платежей"
                 val monthPayment = (((totalPrice.toDouble() * percent.coefficient.toDouble()) / 100) + totalPrice.toDouble()) / percent.mounth.toDouble()
                 sizePayment.text = "${formatNumber(monthPayment)} UZS"
-
             }
         }
     }
@@ -46,6 +45,10 @@ class TableInstallmentAdapter(var installment: PercentInstallment, var totalPric
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val percent = installment.result[position]
         holder.bind(percent)
+
+        holder.tvPercent.setOnClickListener {
+
+        }
 
         val lastItem = position == itemCount - 1
 

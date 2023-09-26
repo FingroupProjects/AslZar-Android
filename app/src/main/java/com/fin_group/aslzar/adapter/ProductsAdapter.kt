@@ -2,6 +2,7 @@ package com.fin_group.aslzar.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -24,7 +25,6 @@ class ProductsAdapter(
 
     private lateinit var binding: RowItemProductBinding
     private lateinit var context: Context
-    private val popupView = CustomPopupView(context)
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -38,8 +38,7 @@ class ProductsAdapter(
         holder.bind(product)
 
         binding.root.setOnClickListener {
-            val action = MainFragmentDirections.actionMainFragmentToDataProductFragment(product.id, product)
-            holder.itemView.findNavController().navigate(action)
+            listener.getData(product)
         }
     }
 

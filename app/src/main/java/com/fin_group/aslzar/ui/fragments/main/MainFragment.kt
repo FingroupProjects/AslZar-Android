@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -91,7 +92,6 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
 
     lateinit var encryptionManager: EncryptionManager
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -138,9 +138,6 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
                 return true
             }
         })
-
-
-
         savingAndFetchSearch(binding)
         fetchRV(allProducts)
         val selectedCategoryId = preferences.getString("selectedCategory", "all")
@@ -226,6 +223,11 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         } else {
             callOutStock(product.id)
         }
+    }
+
+    override fun getData(product: Product) {
+        val action = MainFragmentDirections.actionMainFragmentToDataProductFragment(product.id, product)
+        Navigation.findNavController(binding.root).navigate(action)
     }
 
     @SuppressLint("CommitPrefEdits")
