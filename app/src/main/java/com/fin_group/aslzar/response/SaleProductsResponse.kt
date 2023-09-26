@@ -1,13 +1,20 @@
 package com.fin_group.aslzar.response
 
-data class SaleProductsResponse(
-    val result: List<ResultX>
-)
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+import java.io.Serializable
 
-data class ResultX(
+@Parcelize
+data class SaleProductsResponse(
+    val result: List<ProductSale>
+): Parcelable, Serializable
+
+@Parcelize
+data class ProductSale(
     val full_name: String,
     val id: String,
     val img: List<String>,
     val name: String,
-    val sale: Int
-)
+    val sale: Int,
+    val counts: InStock
+): Parcelable, Serializable

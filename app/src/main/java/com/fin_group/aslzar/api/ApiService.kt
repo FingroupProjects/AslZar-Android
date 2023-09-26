@@ -27,6 +27,10 @@ interface ApiService {
     @GET(Constants.GET_ALL_PRODUCTS)
     fun getAllProducts(@Header("Authorization") token: String): Call<GetAllProductsResponse>
 
+    @GET(Constants.SALES_PRODUCTS)
+    @Headers("Accept:application/json", "Content-Type:application/json")
+    fun getSalesProducts(@Header("Authorization") token: String): Call<SaleProductsResponse>
+
     @GET(Constants.GET_PRODUCT_BY_ID)
     @Headers("Accept:application/json", "Content-Type:application/json")
     fun getProductByID(@Header("Authorization") token: String, @Path("id") id: String): Call<Product>
@@ -51,9 +55,6 @@ interface ApiService {
     @Headers("Accept:application/json", "Content-Type:application/json")
     fun getPercentAndMonth(@Header("Authorization") token: String): Call<PercentInstallment>
 
-    @GET(Constants.SALES_PRODUCTS)
-    @Headers("Accept:application/json", "Content-Type:application/json")
-    fun getSalesProducts(@Header("Authorization") token: String): Call<SaleProductsResponse>
 
     @GET(Constants.GET_SALES_PLAN)
     @Headers("Accept:application/json", "Content-Type:application/json")

@@ -1,4 +1,4 @@
-package com.fin_group.aslzar.ui.fragments.sales.functions
+package com.fin_group.aslzar.ui.fragments.new_products.functions
 
 import android.annotation.SuppressLint
 import android.util.Log
@@ -8,22 +8,18 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.ProductsAdapter
-import com.fin_group.aslzar.adapter.SalesProductsAdapter
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentMainBinding
-import com.fin_group.aslzar.databinding.FragmentSalesAndPromotionsBinding
 import com.fin_group.aslzar.response.Category
 import com.fin_group.aslzar.response.GetAllCategoriesResponse
 import com.fin_group.aslzar.response.GetAllProductsResponse
 import com.fin_group.aslzar.response.InStock
 import com.fin_group.aslzar.response.Product
-import com.fin_group.aslzar.response.ProductSale
-import com.fin_group.aslzar.response.SaleProductsResponse
 import com.fin_group.aslzar.ui.dialogs.CheckCategoryFragmentDialog
 import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.WarningNoHaveProductFragmentDialog
 import com.fin_group.aslzar.ui.fragments.main.MainFragment
-import com.fin_group.aslzar.ui.fragments.sales.SalesAndPromotionsFragment
+import com.fin_group.aslzar.ui.fragments.new_products.NewProductsFragment
 import com.fin_group.aslzar.util.CategoryClickListener
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -32,13 +28,13 @@ import retrofit2.Callback
 import retrofit2.Response
 
 
-fun SalesAndPromotionsFragment.callCategoryDialog(listener: CategoryClickListener) {
+fun NewProductsFragment.callCategoryDialog(listener: CategoryClickListener) {
     val categoryDialog = CheckCategoryFragmentDialog()
     categoryDialog.setCategoryClickListener(listener)
     categoryDialog.show(activity?.supportFragmentManager!!, "category check dialog")
 }
 
-fun SalesAndPromotionsFragment.callInStockDialog(name: String, counts: List<InStock>) {
+fun NewProductsFragment.callInStockDialog(name: String, counts: List<InStock>) {
     val fragmentManager = requireFragmentManager()
     val tag = "Product in stock Dialog"
     val existingFragment = fragmentManager.findFragmentByTag(tag)
@@ -49,7 +45,7 @@ fun SalesAndPromotionsFragment.callInStockDialog(name: String, counts: List<InSt
     }
 }
 
-fun SalesAndPromotionsFragment.callOutStock(id: String) {
+fun NewProductsFragment.callOutStock(id: String) {
     val fragmentManager = requireFragmentManager()
     val tag = "Product no have dialog"
     val existingFragment = fragmentManager.findFragmentByTag(tag)
@@ -60,15 +56,15 @@ fun SalesAndPromotionsFragment.callOutStock(id: String) {
     }
 }
 
-fun SalesAndPromotionsFragment.searchBarChecked(view: ConstraintLayout): Boolean {
+fun NewProductsFragment.searchBarChecked(view: ConstraintLayout): Boolean {
     return view.visibility != View.VISIBLE
 }
 
-fun SalesAndPromotionsFragment.categoryChecked(view: ConstraintLayout): Boolean {
+fun NewProductsFragment.categoryChecked(view: ConstraintLayout): Boolean {
     return view.visibility != View.VISIBLE
 }
 
-fun SalesAndPromotionsFragment.searchViewFun() {
+fun NewProductsFragment.searchViewFun() {
     if (selectCategory != null) {
         viewCheckedCategory.visibility = View.GONE
         selectCategory = null
@@ -92,22 +88,23 @@ fun SalesAndPromotionsFragment.searchViewFun() {
     }
 }
 
-fun SalesAndPromotionsFragment.filterFun() {
+fun NewProductsFragment.filterFun() {
     if (searchBarChecked(viewSearch)) {
         if (searchText != "") {
             searchView.setQuery("", false)
         }
         viewSearch.visibility = View.GONE
     }
+
     callCategoryDialog(this)
 }
 
-fun SalesAndPromotionsFragment.addProductToCart(product: Product) {
+fun NewProductsFragment.addProductToCart(product: Product) {
     sharedViewModel.onProductAddedToCart(product, requireContext())
     updateBadge()
 }
 
-fun SalesAndPromotionsFragment.updateBadge() {
+fun NewProductsFragment.updateBadge() {
     val uniqueProductTypes = Cart.getUniqueProductTypesCount()
     badgeManager.saveBadgeCount(uniqueProductTypes)
 
@@ -116,7 +113,7 @@ fun SalesAndPromotionsFragment.updateBadge() {
     badge.number = uniqueProductTypes
 }
 
-fun SalesAndPromotionsFragment.savingAndFetchingCategory(binding: FragmentSalesAndPromotionsBinding) {
+fun NewProductsFragment.savingAndFetchingCategory(binding: FragmentMainBinding) {
     try {
         if (selectCategory != null) {
             if (selectCategory!!.id != "all") {
@@ -154,7 +151,7 @@ fun SalesAndPromotionsFragment.savingAndFetchingCategory(binding: FragmentSalesA
     }
 }
 
-fun SalesAndPromotionsFragment.savingAndFetchSearch(binding: FragmentSalesAndPromotionsBinding) {
+fun NewProductsFragment.savingAndFetchSearch(binding: FragmentMainBinding) {
     try {
         if (searchText.isNotEmpty()) {
             binding.apply {
@@ -175,39 +172,38 @@ fun SalesAndPromotionsFragment.savingAndFetchSearch(binding: FragmentSalesAndPro
     }
 }
 
-fun SalesAndPromotionsFragment.categoryDialog() {
+fun NewProductsFragment.categoryDialog() {
     val categoryDialog = CheckCategoryFragmentDialog()
     categoryDialog.setCategoryClickListener(this)
     categoryDialog.show(activity?.supportFragmentManager!!, "category check dialog")
 }
 
-fun SalesAndPromotionsFragment.filterProducts() {
-//    filteredProducts = if (searchText.isNotEmpty()) {
-//        allProducts.filter { product ->
-//            product.name.contains(searchText, ignoreCase = true) || product.id.contains(
-//                searchText,
-//                ignoreCase = true
-//            ) || product.full_name.contains(searchText, ignoreCase = true)
-//        }
-//    }
-//    else {
-//        if (selectCategory?.id == "all" || selectCategory == null) {
-//            allProducts
-//        } else {
-//            allProducts.filter { product ->
-//                product.category_id == selectCategory?.id
-//            }
-//        }
-//    }
-//    myAdapter.updateProducts(filteredProducts)
+fun NewProductsFragment.filterProducts() {
+    filteredProducts = if (searchText.isNotEmpty()) {
+        allProducts.filter { product ->
+            product.name.contains(searchText, ignoreCase = true) || product.id.contains(
+                searchText,
+                ignoreCase = true
+            ) || product.full_name.contains(searchText, ignoreCase = true)
+        }
+    } else {
+        if (selectCategory?.id == "all" || selectCategory == null) {
+            allProducts
+        } else {
+            allProducts.filter { product ->
+                product.category_id == selectCategory?.id
+            }
+        }
+    }
+    myAdapter.updateProducts(filteredProducts)
 }
 
-fun SalesAndPromotionsFragment.getAllProductFromPrefs() {
+fun NewProductsFragment.getAllProductFromPrefs() {
     try {
-        val products = preferences.getString("productListSales", null)
+        val products = preferences.getString("productList", null)
         if (products != null) {
-            val productsListType = object : TypeToken<List<ProductSale>>() {}.type
-            val productList = Gson().fromJson<List<ProductSale>>(products, productsListType)
+            val productsListType = object : TypeToken<List<Product>>() {}.type
+            val productList = Gson().fromJson<List<Product>>(products, productsListType)
             allProducts = productList
             fetchRV(allProducts)
         } else {
@@ -216,12 +212,12 @@ fun SalesAndPromotionsFragment.getAllProductFromPrefs() {
         filteredProducts = retrieveFilteredProducts()
         fetchRV(filteredProducts)
     } catch (e: Exception) {
-        Log.d("TAG", "getAllProductSalesFromPrefs: ${e.message}")
+        Log.d("TAG", "getAllProductFromPrefs: ${e.message}")
     }
 }
 
-fun SalesAndPromotionsFragment.retrieveFilteredProducts(): List<ProductSale> {
-    val productJson = preferences.getString("filteredProductsSales", null)
+fun NewProductsFragment.retrieveFilteredProducts(): List<Product> {
+    val productJson = preferences.getString("filteredProducts", null)
     return if (productJson != null) {
         val productListType = object : TypeToken<List<Product>>() {}.type
         Gson().fromJson(productJson, productListType)
@@ -231,22 +227,22 @@ fun SalesAndPromotionsFragment.retrieveFilteredProducts(): List<ProductSale> {
 }
 
 @SuppressLint("NotifyDataSetChanged")
-fun SalesAndPromotionsFragment.fetchRV(productList: List<ProductSale>) {
+fun NewProductsFragment.fetchRV(productList: List<Product>) {
     recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
-    myAdapter = SalesProductsAdapter(productList, this)
+    myAdapter = ProductsAdapter(productList, this)
     recyclerView.adapter = myAdapter
     myAdapter.notifyDataSetChanged()
 }
 
-fun SalesAndPromotionsFragment.getAllProductsFromApi() {
+fun NewProductsFragment.getAllProductsFromApi() {
     swipeRefreshLayout.isRefreshing = true
     try {
         val call =
-            apiService.getApiService().getSalesProducts("Bearer ${sessionManager.fetchToken()}")
-        call.enqueue(object : Callback<SaleProductsResponse?> {
+            apiService.getApiService().getAllProducts("Bearer ${sessionManager.fetchToken()}")
+        call.enqueue(object : Callback<GetAllProductsResponse?> {
             override fun onResponse(
-                call: Call<SaleProductsResponse?>,
-                response: Response<SaleProductsResponse?>
+                call: Call<GetAllProductsResponse?>,
+                response: Response<GetAllProductsResponse?>
             ) {
                 swipeRefreshLayout.isRefreshing = false
                 if (response.isSuccessful) {
@@ -255,7 +251,7 @@ fun SalesAndPromotionsFragment.getAllProductsFromApi() {
                         allProducts = getAllProducts.result
 
                         val productListJson = Gson().toJson(allProducts)
-                        preferences.edit().putString("productListSales", productListJson).apply()
+                        preferences.edit().putString("productList", productListJson).apply()
                         filterProducts()
                     } else {
                         Toast.makeText(requireContext(), "Произошла ошибка", Toast.LENGTH_SHORT)
@@ -266,7 +262,7 @@ fun SalesAndPromotionsFragment.getAllProductsFromApi() {
                 }
             }
 
-            override fun onFailure(call: Call<SaleProductsResponse?>, t: Throwable) {
+            override fun onFailure(call: Call<GetAllProductsResponse?>, t: Throwable) {
                 Log.d("TAG", "onFailure: ${t.message}")
                 swipeRefreshLayout.isRefreshing = false
             }
@@ -278,7 +274,7 @@ fun SalesAndPromotionsFragment.getAllProductsFromApi() {
 }
 
 
-fun SalesAndPromotionsFragment.getAllCategoriesPrefs() {
+fun NewProductsFragment.getAllCategoriesPrefs() {
     try {
         val categoriesListJson = preferences.getString("categoryList", null)
         if (categoriesListJson != null) {
@@ -295,7 +291,7 @@ fun SalesAndPromotionsFragment.getAllCategoriesPrefs() {
     }
 }
 
-fun SalesAndPromotionsFragment.getAllCategoriesFromApi() {
+fun NewProductsFragment.getAllCategoriesFromApi() {
     swipeRefreshLayout.isRefreshing = true
     try {
         val call =
@@ -312,24 +308,28 @@ fun SalesAndPromotionsFragment.getAllCategoriesFromApi() {
                         val firstCategory = Category("all", "Все")
                         allCategories = categoryList
                         allCategories = mutableListOf(firstCategory).plus(allCategories)
-
-                        val categoryListJson = Gson().toJson(allCategories)
-                        preferences.edit().putString("categoryList", categoryListJson).apply()
                     } else {
-                        Toast.makeText(requireContext(), "Категории не найдены", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), "Категории не найдены", Toast.LENGTH_SHORT)
+                            .show()
                     }
                 } else {
-                    Toast.makeText(requireContext(),"Ошибка, повторите попытку",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Ошибка, повторите попытку",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
 
             override fun onFailure(call: Call<GetAllCategoriesResponse?>, t: Throwable) {
                 Log.d("TAG", "onFailure: ${t.message}")
                 swipeRefreshLayout.isRefreshing = false
+
             }
         })
     } catch (e: Exception) {
         Log.d("TAG", "getAllCategories: ${e.message}")
         swipeRefreshLayout.isRefreshing = false
+
     }
 }
