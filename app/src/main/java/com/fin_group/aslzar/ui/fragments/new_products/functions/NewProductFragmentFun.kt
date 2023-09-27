@@ -10,8 +10,10 @@ import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.ProductsAdapter
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentMainBinding
+import com.fin_group.aslzar.databinding.FragmentNewProductsBinding
 import com.fin_group.aslzar.response.Category
 import com.fin_group.aslzar.response.GetAllCategoriesResponse
+import com.fin_group.aslzar.response.GetAllNewProductsResponse
 import com.fin_group.aslzar.response.GetAllProductsResponse
 import com.fin_group.aslzar.response.InStock
 import com.fin_group.aslzar.response.Product
@@ -88,17 +90,6 @@ fun NewProductsFragment.searchViewFun() {
     }
 }
 
-fun NewProductsFragment.filterFun() {
-    if (searchBarChecked(viewSearch)) {
-        if (searchText != "") {
-            searchView.setQuery("", false)
-        }
-        viewSearch.visibility = View.GONE
-    }
-
-    callCategoryDialog(this)
-}
-
 fun NewProductsFragment.addProductToCart(product: Product) {
     sharedViewModel.onProductAddedToCart(product, requireContext())
     updateBadge()
@@ -113,45 +104,7 @@ fun NewProductsFragment.updateBadge() {
     badge.number = uniqueProductTypes
 }
 
-fun NewProductsFragment.savingAndFetchingCategory(binding: FragmentMainBinding) {
-    try {
-        if (selectCategory != null) {
-            if (selectCategory!!.id != "all") {
-                binding.apply {
-                    if (!searchBarChecked(viewSearch)) {
-                        if (searchText != "") {
-                            searchView.setQuery("", false)
-                        }
-                        viewSearch.visibility = View.GONE
-                    }
-                    materialCardViewCategory.setOnClickListener {
-                        categoryDialog()
-                    }
-                    fabClearCategory.setOnClickListener {
-                        viewCheckedCategory.visibility = View.GONE
-                        selectCategory = null
-                        preferences.edit()?.putString("selectedCategory", "all")?.apply()
-                        filterProducts()
-                    }
-                    viewCheckedCategory.visibility = View.VISIBLE
-                    checkedCategoryTv.text = selectCategory!!.name
-                }
-            } else {
-                if (selectCategory!!.id == "all") {
-                    viewCheckedCategory.visibility = View.GONE
-                    filterProducts()
-                }
-            }
-            filterProducts()
-        } else {
-            filterProducts()
-        }
-    } catch (e: Exception) {
-        Log.d("TAG", "onViewCreated: ${e.message}")
-    }
-}
-
-fun NewProductsFragment.savingAndFetchSearch(binding: FragmentMainBinding) {
+fun NewProductsFragment.savingAndFetchSearch(binding: FragmentNewProductsBinding) {
     try {
         if (searchText.isNotEmpty()) {
             binding.apply {
@@ -171,13 +124,6 @@ fun NewProductsFragment.savingAndFetchSearch(binding: FragmentMainBinding) {
         Log.d("TAG", "savingAndFetchSearch: ${e.message}")
     }
 }
-
-fun NewProductsFragment.categoryDialog() {
-    val categoryDialog = CheckCategoryFragmentDialog()
-    categoryDialog.setCategoryClickListener(this)
-    categoryDialog.show(activity?.supportFragmentManager!!, "category check dialog")
-}
-
 fun NewProductsFragment.filterProducts() {
     filteredProducts = if (searchText.isNotEmpty()) {
         allProducts.filter { product ->
@@ -200,7 +146,7 @@ fun NewProductsFragment.filterProducts() {
 
 fun NewProductsFragment.getAllProductFromPrefs() {
     try {
-        val products = preferences.getString("productList", null)
+        val products = preferences.getString("newProductList", null)
         if (products != null) {
             val productsListType = object : TypeToken<List<Product>>() {}.type
             val productList = Gson().fromJson<List<Product>>(products, productsListType)
@@ -217,7 +163,7 @@ fun NewProductsFragment.getAllProductFromPrefs() {
 }
 
 fun NewProductsFragment.retrieveFilteredProducts(): List<Product> {
-    val productJson = preferences.getString("filteredProducts", null)
+    val productJson = preferences.getString("filteredNewProducts", null)
     return if (productJson != null) {
         val productListType = object : TypeToken<List<Product>>() {}.type
         Gson().fromJson(productJson, productListType)
@@ -238,11 +184,11 @@ fun NewProductsFragment.getAllProductsFromApi() {
     swipeRefreshLayout.isRefreshing = true
     try {
         val call =
-            apiService.getApiService().getAllProducts("Bearer ${sessionManager.fetchToken()}")
-        call.enqueue(object : Callback<GetAllProductsResponse?> {
+            apiService.getApiService().getNewProducts("Bearer ${sessionManager.fetchToken()}")
+        call.enqueue(object : Callback<GetAllNewProductsResponse?> {
             override fun onResponse(
-                call: Call<GetAllProductsResponse?>,
-                response: Response<GetAllProductsResponse?>
+                call: Call<GetAllNewProductsResponse?>,
+                response: Response<GetAllNewProductsResponse?>
             ) {
                 swipeRefreshLayout.isRefreshing = false
                 if (response.isSuccessful) {
@@ -251,8 +197,9 @@ fun NewProductsFragment.getAllProductsFromApi() {
                         allProducts = getAllProducts.result
 
                         val productListJson = Gson().toJson(allProducts)
-                        preferences.edit().putString("productList", productListJson).apply()
+                        preferences.edit().putString("newProductList", productListJson).apply()
                         filterProducts()
+                        Log.d("TAG", "onResponse: ${response.body()}")
                     } else {
                         Toast.makeText(requireContext(), "Произошла ошибка", Toast.LENGTH_SHORT)
                             .show()
@@ -262,7 +209,7 @@ fun NewProductsFragment.getAllProductsFromApi() {
                 }
             }
 
-            override fun onFailure(call: Call<GetAllProductsResponse?>, t: Throwable) {
+            override fun onFailure(call: Call<GetAllNewProductsResponse?>, t: Throwable) {
                 Log.d("TAG", "onFailure: ${t.message}")
                 swipeRefreshLayout.isRefreshing = false
             }
@@ -273,23 +220,6 @@ fun NewProductsFragment.getAllProductsFromApi() {
     }
 }
 
-
-fun NewProductsFragment.getAllCategoriesPrefs() {
-    try {
-        val categoriesListJson = preferences.getString("categoryList", null)
-        if (categoriesListJson != null) {
-            val categoryListType = object : TypeToken<List<Category>>() {}.type
-            val categoryList = Gson().fromJson<List<Category>>(categoriesListJson, categoryListType)
-            val firstCategory = Category("all", "Все")
-            allCategories = categoryList
-            allCategories = mutableListOf(firstCategory).plus(allCategories)
-        } else {
-            getAllCategoriesFromApi()
-        }
-    } catch (e: Exception) {
-        Log.d("TAG", "getAllCategoriesPrefs: ${e.message}")
-    }
-}
 
 fun NewProductsFragment.getAllCategoriesFromApi() {
     swipeRefreshLayout.isRefreshing = true

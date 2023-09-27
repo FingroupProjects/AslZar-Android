@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.ProductsAdapter
 import com.fin_group.aslzar.adapter.SalesProductsAdapter
+import com.fin_group.aslzar.adapter.SalesProductsV2Adapter
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentMainBinding
 import com.fin_group.aslzar.databinding.FragmentSalesAndPromotionsBinding
@@ -92,16 +93,6 @@ fun SalesAndPromotionsFragment.searchViewFun() {
     }
 }
 
-fun SalesAndPromotionsFragment.filterFun() {
-    if (searchBarChecked(viewSearch)) {
-        if (searchText != "") {
-            searchView.setQuery("", false)
-        }
-        viewSearch.visibility = View.GONE
-    }
-    callCategoryDialog(this)
-}
-
 fun SalesAndPromotionsFragment.addProductToCart(product: Product) {
     sharedViewModel.onProductAddedToCart(product, requireContext())
     updateBadge()
@@ -114,44 +105,6 @@ fun SalesAndPromotionsFragment.updateBadge() {
     val badge = bottomNavigationView.getOrCreateBadge(R.id.mainCartFragment)
     badge.isVisible = uniqueProductTypes > 0
     badge.number = uniqueProductTypes
-}
-
-fun SalesAndPromotionsFragment.savingAndFetchingCategory(binding: FragmentSalesAndPromotionsBinding) {
-    try {
-        if (selectCategory != null) {
-            if (selectCategory!!.id != "all") {
-                binding.apply {
-                    if (!searchBarChecked(viewSearch)) {
-                        if (searchText != "") {
-                            searchView.setQuery("", false)
-                        }
-                        viewSearch.visibility = View.GONE
-                    }
-                    materialCardViewCategory.setOnClickListener {
-                        categoryDialog()
-                    }
-                    fabClearCategory.setOnClickListener {
-                        viewCheckedCategory.visibility = View.GONE
-                        selectCategory = null
-                        preferences.edit()?.putString("selectedCategory", "all")?.apply()
-                        filterProducts()
-                    }
-                    viewCheckedCategory.visibility = View.VISIBLE
-                    checkedCategoryTv.text = selectCategory!!.name
-                }
-            } else {
-                if (selectCategory!!.id == "all") {
-                    viewCheckedCategory.visibility = View.GONE
-                    filterProducts()
-                }
-            }
-            filterProducts()
-        } else {
-            filterProducts()
-        }
-    } catch (e: Exception) {
-        Log.d("TAG", "onViewCreated: ${e.message}")
-    }
 }
 
 fun SalesAndPromotionsFragment.savingAndFetchSearch(binding: FragmentSalesAndPromotionsBinding) {
@@ -175,39 +128,25 @@ fun SalesAndPromotionsFragment.savingAndFetchSearch(binding: FragmentSalesAndPro
     }
 }
 
-fun SalesAndPromotionsFragment.categoryDialog() {
-    val categoryDialog = CheckCategoryFragmentDialog()
-    categoryDialog.setCategoryClickListener(this)
-    categoryDialog.show(activity?.supportFragmentManager!!, "category check dialog")
-}
-
 fun SalesAndPromotionsFragment.filterProducts() {
-//    filteredProducts = if (searchText.isNotEmpty()) {
-//        allProducts.filter { product ->
-//            product.name.contains(searchText, ignoreCase = true) || product.id.contains(
-//                searchText,
-//                ignoreCase = true
-//            ) || product.full_name.contains(searchText, ignoreCase = true)
-//        }
-//    }
-//    else {
-//        if (selectCategory?.id == "all" || selectCategory == null) {
-//            allProducts
-//        } else {
-//            allProducts.filter { product ->
-//                product.category_id == selectCategory?.id
-//            }
-//        }
-//    }
-//    myAdapter.updateProducts(filteredProducts)
+    filteredProducts = if (searchText.isNotEmpty()) {
+        allProducts.filter { product ->
+            product.name.contains(searchText, ignoreCase = true) ||
+            product.id.contains(searchText, ignoreCase = true) ||
+            product.full_name.contains(searchText, ignoreCase = true)
+        }
+    } else {
+        allProducts
+    }
+    myAdapter.updateProducts(filteredProducts)
 }
 
 fun SalesAndPromotionsFragment.getAllProductFromPrefs() {
     try {
         val products = preferences.getString("productListSales", null)
         if (products != null) {
-            val productsListType = object : TypeToken<List<ProductSale>>() {}.type
-            val productList = Gson().fromJson<List<ProductSale>>(products, productsListType)
+            val productsListType = object : TypeToken<List<Product>>() {}.type
+            val productList = Gson().fromJson<List<Product>>(products, productsListType)
             allProducts = productList
             fetchRV(allProducts)
         } else {
@@ -220,7 +159,7 @@ fun SalesAndPromotionsFragment.getAllProductFromPrefs() {
     }
 }
 
-fun SalesAndPromotionsFragment.retrieveFilteredProducts(): List<ProductSale> {
+fun SalesAndPromotionsFragment.retrieveFilteredProducts(): List<Product> {
     val productJson = preferences.getString("filteredProductsSales", null)
     return if (productJson != null) {
         val productListType = object : TypeToken<List<Product>>() {}.type
@@ -231,11 +170,11 @@ fun SalesAndPromotionsFragment.retrieveFilteredProducts(): List<ProductSale> {
 }
 
 @SuppressLint("NotifyDataSetChanged")
-fun SalesAndPromotionsFragment.fetchRV(productList: List<ProductSale>) {
+fun SalesAndPromotionsFragment.fetchRV(productList: List<Product>) {
     recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
-    myAdapter = SalesProductsAdapter(productList, this)
+    myAdapter = SalesProductsV2Adapter(productList, this)
     recyclerView.adapter = myAdapter
-    myAdapter.notifyDataSetChanged()
+    myAdapter.updateProducts(productList)
 }
 
 fun SalesAndPromotionsFragment.getAllProductsFromApi() {
@@ -316,10 +255,15 @@ fun SalesAndPromotionsFragment.getAllCategoriesFromApi() {
                         val categoryListJson = Gson().toJson(allCategories)
                         preferences.edit().putString("categoryList", categoryListJson).apply()
                     } else {
-                        Toast.makeText(requireContext(), "Категории не найдены", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), "Категории не найдены", Toast.LENGTH_SHORT)
+                            .show()
                     }
                 } else {
-                    Toast.makeText(requireContext(),"Ошибка, повторите попытку",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Ошибка, повторите попытку",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
 

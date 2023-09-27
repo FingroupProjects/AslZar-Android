@@ -23,6 +23,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.ProductsAdapter
 import com.fin_group.aslzar.adapter.SalesProductsAdapter
+import com.fin_group.aslzar.adapter.SalesProductsV2Adapter
 import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentSalesAndPromotionsBinding
@@ -36,15 +37,14 @@ import com.fin_group.aslzar.ui.fragments.sales.functions.addProductToCart
 import com.fin_group.aslzar.ui.fragments.sales.functions.callInStockDialog
 import com.fin_group.aslzar.ui.fragments.sales.functions.callOutStock
 import com.fin_group.aslzar.ui.fragments.sales.functions.fetchRV
-import com.fin_group.aslzar.ui.fragments.sales.functions.filterFun
 import com.fin_group.aslzar.ui.fragments.sales.functions.filterProducts
 import com.fin_group.aslzar.ui.fragments.sales.functions.getAllCategoriesFromApi
 import com.fin_group.aslzar.ui.fragments.sales.functions.getAllCategoriesPrefs
 import com.fin_group.aslzar.ui.fragments.sales.functions.getAllProductFromPrefs
 import com.fin_group.aslzar.ui.fragments.sales.functions.getAllProductsFromApi
 import com.fin_group.aslzar.ui.fragments.sales.functions.savingAndFetchSearch
-import com.fin_group.aslzar.ui.fragments.sales.functions.savingAndFetchingCategory
 import com.fin_group.aslzar.ui.fragments.sales.functions.searchViewFun
+import com.fin_group.aslzar.ui.fragments.sales.functions.updateBadge
 import com.fin_group.aslzar.util.BadgeManager
 import com.fin_group.aslzar.util.CategoryClickListener
 import com.fin_group.aslzar.util.ProductOnClickListener
@@ -53,9 +53,8 @@ import com.fin_group.aslzar.viewmodel.SharedViewModel
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-
 @Suppress("DEPRECATION")
-class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
+class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener {
 
     private var _binding: FragmentSalesAndPromotionsBinding? = null
     private val binding get() = _binding!!
@@ -70,9 +69,9 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener, CategoryC
     var searchText: String = ""
     lateinit var searchView: SearchView
 
-    var allProducts: List<ProductSale> = emptyList()
-    var filteredProducts: List<ProductSale> = emptyList()
-    lateinit var myAdapter: SalesProductsAdapter
+    var allProducts: List<Product> = emptyList()
+    var filteredProducts: List<Product> = emptyList()
+    lateinit var myAdapter: SalesProductsV2Adapter
 
     lateinit var viewCheckedCategory: ConstraintLayout
     var allCategories: List<Category> = emptyList()
@@ -120,11 +119,10 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener, CategoryC
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        searchView = binding.searchViewMain
 
+        searchView = binding.searchViewMain
         mainActivity = activity as? MainActivity ?: throw IllegalStateException("Activity is not MainActivity")
 
-        getAllCategoriesPrefs()
         getAllProductFromPrefs()
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -140,23 +138,10 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener, CategoryC
         })
         savingAndFetchSearch(binding)
         fetchRV(allProducts)
-        val selectedCategoryId = preferences.getString("selectedCategory", "all")
-        selectCategory = allCategories.find { it.id == selectedCategoryId }
-//        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-//            override fun onQueryTextSubmit(query: String?): Boolean {
-//                return true
-//            }
-//            override fun onQueryTextChange(newText: String?): Boolean {
-//                searchText = newText.toString()
-//                Log.d("TAG", "onQueryTextChange: $searchText")
-////                filterProducts()
-//                return true
-//            }
-//        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.main_fragment_menu, menu)
+        inflater.inflate(R.menu.sales_fragment_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
     }
@@ -164,7 +149,6 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener, CategoryC
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.search_item -> {searchViewFun()}
-            R.id.filter_item -> {filterFun()}
             R.id.barcode_item -> {
                 val action = SalesAndPromotionsFragmentDirections.actionSalesAndPromotionsFragmentToBarCodeScannerFragment()
                 findNavController().navigate(action)
@@ -185,7 +169,6 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener, CategoryC
         super.onDestroyView()
         Cart.saveCartToPrefs(requireContext())
         _binding = null
-        preferences.edit()?.putBoolean("first_run", false)?.apply()
     }
 
     override fun onAttach(context: Context) {
@@ -196,7 +179,7 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener, CategoryC
     override fun onResume() {
         super.onResume()
         bottomNavigationView = mainActivity.findViewById(R.id.bottomNavigationView)
-//        updateBadge()
+        updateBadge()
     }
 
     override fun onDestroy() {
@@ -221,16 +204,9 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener, CategoryC
         Navigation.findNavController(binding.root).navigate(action)
     }
 
-    override fun onCategorySelected(selectedCategory: Category) {
-        selectCategory = selectedCategory
-        preferences.edit()?.putString("selectedCategory", selectedCategory.id)?.apply()
-
-        savingAndFetchingCategory(binding)
-    }
 
     private fun fetchDataAndFilterProducts() {
         getAllProductsFromApi()
-        getAllCategoriesFromApi()
         filterProducts()
     }
 }

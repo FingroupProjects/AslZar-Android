@@ -8,7 +8,7 @@ data class GetAllProductsResponse(
     val result: List<Product>
 )
 
-data class GetProductByIdResponse(
+data class GetAllNewProductsResponse(
     val result: List<Product>
 )
 

@@ -71,8 +71,7 @@ class CheckCategoryFragmentDialog : BaseDialogFragment() {
 //            Category("00005", "Подвески"),
 //            Category("00006", "Часы"),
 //        )
-        getAllCategoriesFromApi()
-
+        getAllCategoriesPrefs()
         fetchRV(categories)
         return binding.root
     }
@@ -107,15 +106,15 @@ class CheckCategoryFragmentDialog : BaseDialogFragment() {
 //        }
 //    }
 
-    fun getAllCategoriesPrefs() {
+    private fun getAllCategoriesPrefs() {
         try {
             val categoriesListJson = preferences.getString("categoryList", null)
             if (categoriesListJson != null){
                 val categoryListType = object : TypeToken<List<Category>>() {}.type
                 val categoryList = Gson().fromJson<List<Category>>(categoriesListJson, categoryListType)
-                val firstCategory = Category("all", "Все")
                 categories = categoryList
-                categories = mutableListOf(firstCategory).plus(categories)
+                binding.view.visibility = VISIBLE
+                progressBar.visibility = INVISIBLE
                 fetchRV(categories)
             } else {
                 getAllCategoriesFromApi()

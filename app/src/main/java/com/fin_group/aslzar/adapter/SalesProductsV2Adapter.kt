@@ -2,6 +2,7 @@ package com.fin_group.aslzar.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,19 +11,19 @@ import com.bumptech.glide.Glide
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.databinding.RowItemProductBinding
 import com.fin_group.aslzar.response.Product
-import com.fin_group.aslzar.response.ProductSale
 import com.fin_group.aslzar.util.ProductOnClickListener
 import com.fin_group.aslzar.util.formatNumber
 
-class SalesProductsAdapter(
-    var productList: List<ProductSale>,
+@Suppress("DEPRECATION")
+class SalesProductsV2Adapter(
+    var productList: List<Product>,
     val listener: ProductOnClickListener
-) : RecyclerView.Adapter<SalesProductsAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<SalesProductsV2Adapter.ViewHolder>() {
 
     private lateinit var binding: RowItemProductBinding
     private lateinit var context: Context
 
-    class ViewHolder(binding: RowItemProductBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(binding: RowItemProductBinding) : RecyclerView.ViewHolder(binding.root) {
         val title = binding.productTitle
         val image = binding.productImage
         val code = binding.productKode
@@ -31,7 +32,7 @@ class SalesProductsAdapter(
         val saleTv = binding.productSale
 
         @SuppressLint("UseCompatLoadingForDrawables", "SetTextI18n")
-        fun bind(product: ProductSale) {
+        fun bind(product: Product) {
             title.text = product.full_name
             code.text = product.name
 
@@ -52,19 +53,25 @@ class SalesProductsAdapter(
                 saleTv.visibility = View.VISIBLE
             }
 
+//            if (product.counts.isEmpty()) {
+//                btnCheckingInStock.setImageResource(R.drawable.ic_clear_white)
+//                btnCheckingInStock.background =
+//                    context.resources.getDrawable(R.drawable.item_product_bottom_btn_2)
+//            } else {
+//                btnCheckingInStock.setImageResource(R.drawable.ic_check)
+//                btnCheckingInStock.background =
+//                    context.resources.getDrawable(R.drawable.ripple_effect_bottom_btn)
+//            }
+            btnAddToCart.setOnClickListener {
+                listener.addToCart(product)
+            }
+            btnCheckingInStock.setOnClickListener {
+                listener.inStock(product)
+            }
         }
     }
 
-
-    fun updateProducts(newProducts: List<ProductSale>) {
-        productList = newProducts
-        notifyDataSetChanged()
-    }
-
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): SalesProductsAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         context = parent.context
         binding = RowItemProductBinding.inflate(LayoutInflater.from(context), parent, false)
         return ViewHolder(binding)
@@ -74,11 +81,17 @@ class SalesProductsAdapter(
         return productList.size
     }
 
-    override fun onBindViewHolder(holder: SalesProductsAdapter.ViewHolder, position: Int) {
+    fun updateProducts(newProducts: List<Product>) {
+        productList = newProducts
+        notifyDataSetChanged()
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val product = productList[position]
         holder.bind(product)
 
         binding.root.setOnClickListener {
+
             val product2 = Product(
                 product.id,
                 product.full_name,
@@ -96,11 +109,14 @@ class SalesProductsAdapter(
                 "",
                 "",
                 false,
-                emptyList(),
+                product.counts,
                 product.img,
                 ""
             )
-            listener.getData(product2)
+
+            Log.d("TAG", "onBindViewHolder: ${product.counts}")
+            Log.d("TAG", "onBindViewHolder: ${product.sale}")
+//            listener.getData(product2)
         }
     }
 }
