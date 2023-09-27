@@ -13,6 +13,7 @@ object Constants {
     const val SIMILAR_PRODUCTS = "SimilarProducts/{id}"
     const val SET_IN_PRODUCT = "GetSetProduct/{id}"
     const val SALES_PRODUCTS = "GetSalesProduct"
+    const val NEW_PRODUCTS = "GetNewProducts"
 
     //categories
     const val GET_CATEGORY = "GetCategory"

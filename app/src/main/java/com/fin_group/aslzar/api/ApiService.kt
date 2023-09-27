@@ -4,8 +4,8 @@ import com.fin_group.aslzar.response.Auth
 import com.fin_group.aslzar.response.ForgotPasswordResponse
 import com.fin_group.aslzar.response.GetAllCategoriesResponse
 import com.fin_group.aslzar.response.GetAllClientsResponse
+import com.fin_group.aslzar.response.GetAllNewProductsResponse
 import com.fin_group.aslzar.response.GetAllProductsResponse
-import com.fin_group.aslzar.response.GetProductByIdResponse
 import com.fin_group.aslzar.response.GetSimilarProductsResponse
 import com.fin_group.aslzar.response.PercentInstallment
 import com.fin_group.aslzar.response.Product
@@ -33,6 +33,10 @@ interface ApiService {
     @GET(Constants.SALES_PRODUCTS)
     @Headers("Accept:application/json", "Content-Type:application/json")
     fun getSalesProducts(@Header("Authorization") token: String): Call<SaleProductsResponse>
+
+    @GET(Constants.NEW_PRODUCTS)
+    @Headers("Accept:application/json", "Content-Type:application/json")
+    fun getNewProducts(@Header("Authorization") token: String): Call<GetAllNewProductsResponse>
 
     @GET(Constants.GET_PRODUCT_BY_ID)
     @Headers("Accept:application/json", "Content-Type:application/json")

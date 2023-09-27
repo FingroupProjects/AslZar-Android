@@ -97,6 +97,7 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
+
         preferences = context?.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)!!
         sessionManager = SessionManager(requireContext())
         apiService = ApiClient()

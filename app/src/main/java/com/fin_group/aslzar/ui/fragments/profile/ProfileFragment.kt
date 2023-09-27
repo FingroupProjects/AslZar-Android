@@ -61,13 +61,13 @@ class ProfileFragment : Fragment() {
             tvUserLogin.text = sessionManager.fetchLogin()
             tvSubsidiary.text = sessionManager.fetchLocation()
 
-            if (sessionManager.fetchEmail()!!.isEmpty()){
+            if (sessionManager.fetchEmail()?.isEmpty() == true){
                 tvMail.text = "Почта не указана!"
             } else {
                 tvMail.text = sessionManager.fetchEmail()
             }
 
-            if (sessionManager.fetchNumberPhone()!!.isEmpty() || sessionManager.fetchNumberPhone()!!.toInt() == 0 ){
+            if (sessionManager.fetchNumberPhone()?.isEmpty() == true || sessionManager.fetchNumberPhone()?.toInt() == 0 ){
                 tvNumberPhone.text = "Номер телефона не указан!"
             } else {
                 tvNumberPhone.text = sessionManager.fetchNumberPhone()
