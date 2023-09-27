@@ -1,6 +1,7 @@
 package com.fin_group.aslzar.api
 
 import com.fin_group.aslzar.response.Auth
+import com.fin_group.aslzar.response.ForgotPasswordResponse
 import com.fin_group.aslzar.response.GetAllCategoriesResponse
 import com.fin_group.aslzar.response.GetAllClientsResponse
 import com.fin_group.aslzar.response.GetAllProductsResponse
@@ -8,6 +9,8 @@ import com.fin_group.aslzar.response.GetProductByIdResponse
 import com.fin_group.aslzar.response.GetSimilarProductsResponse
 import com.fin_group.aslzar.response.PercentInstallment
 import com.fin_group.aslzar.response.Product
+import com.fin_group.aslzar.response.ResponseChangePassword
+import com.fin_group.aslzar.response.ResponseForgotPassword
 import com.fin_group.aslzar.response.SaleProductsResponse
 import com.fin_group.aslzar.response.SalesPlanResponse
 import retrofit2.http.Headers
@@ -59,5 +62,17 @@ interface ApiService {
     @GET(Constants.GET_SALES_PLAN)
     @Headers("Accept:application/json", "Content-Type:application/json")
     fun getSalesPlan(@Header("Authorization") token: String): Call<SalesPlanResponse>
+
+    @POST(Constants.FORGOT_PASSWORD_WITH_MAIL)
+    @Headers("Accept:application/json", "Content-Type:application/json")
+    fun forgotPasswordWithMail( @Path("mail") mail: String): Call<ForgotPasswordResponse>
+
+    @POST(Constants.CHANGE_PASSWORD)
+    @Headers("Accept:application/json", "Content-Type:application/json")
+    fun changePassword(@Path("password") password: String): Call<ResponseChangePassword>
+
+    @POST(Constants.FORGOT_PASSWORD)
+    @Headers("Accept:application/json", "Content-Type:application/json")
+    fun forgotPassword( @Header("Authorization") token: String): Call<ResponseForgotPassword>
 
 }

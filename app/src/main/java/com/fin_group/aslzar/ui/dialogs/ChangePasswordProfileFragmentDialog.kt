@@ -1,40 +1,69 @@
 package com.fin_group.aslzar.ui.dialogs
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import com.fin_group.aslzar.R
+import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.databinding.FragmentDialogChangePasswordProfileBinding
+import com.fin_group.aslzar.response.Auth
+import com.fin_group.aslzar.response.ResponseChangePassword
+import com.fin_group.aslzar.ui.fragments.login.FragmentLogin
 import com.fin_group.aslzar.util.BaseDialogFragment
-import com.fin_group.aslzar.util.hideBottomNav
 import com.fin_group.aslzar.util.setWidthPercent
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class ChangePasswordProfileFragmentDialog : BaseDialogFragment() {
 
     private var _binding: FragmentDialogChangePasswordProfileBinding? = null
     private val binding get() = _binding!!
-
     private lateinit var newPasswordInputLayout: TextInputLayout
     private lateinit var newPasswordEditText: TextInputEditText
+    lateinit var apiService: ApiClient
+    lateinit var login: String
+    lateinit var password: String
+
+    companion object {
+        fun newInstancePass(login: String, password: String): ChangePasswordProfileFragmentDialog {
+            val dialog = ChangePasswordProfileFragmentDialog()
+            val args = Bundle()
+            args.putString(ARG_LOGIN, login)
+            args.putString(ARG_PASSWORD, password)
+            dialog.arguments = args
+            return dialog
+        }
+
+        private const val ARG_LOGIN = "login"
+        private const val ARG_PASSWORD = "password"
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentDialogChangePasswordProfileBinding.inflate(inflater, container, false)
+        apiService = ApiClient()
+        arguments?.let {
+            login = it.getString(ARG_LOGIN, "")
+            password = it.getString(ARG_PASSWORD, "")
+        }
+        Log.d("TAG", "onCreateView: $login")
+        Log.d("TAG", "onCreateView: $password")
         return binding.root
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setWidthPercent(90)
-
         newPasswordInputLayout = binding.newPasswordChange
         newPasswordEditText = binding.editNewPasswordChange
         passwordCheck()
-
         binding.floatingActionButton.setOnClickListener {
             dismiss()
         }
@@ -42,21 +71,15 @@ class ChangePasswordProfileFragmentDialog : BaseDialogFragment() {
 
     private fun passwordCheck() {
 
-        val oldPassword = binding.oldPasswordChange
         val newPassword = binding.newPasswordChange
         val repeatPassword = binding.repeatNewPasswordChange
         val saveButton = binding.btnSaveChangeData
 
         saveButton.setOnClickListener {
-            val oldPasswordText = oldPassword.editText?.text.toString()
             val newPasswordText = newPassword.editText?.text.toString()
             val repeatPasswordText = repeatPassword.editText?.text.toString()
 
-            if (oldPasswordText.isEmpty()) {
-                binding.editOldPasswordChange.error = "Введите старый пароль!"
-                binding.editOldPasswordChange.requestFocus()
-                return@setOnClickListener
-            } else if (newPasswordText.isEmpty()) {
+            if (newPasswordText.isEmpty()) {
                 binding.editNewPasswordChange.error = "Введите новый пароль!"
                 binding.editNewPasswordChange.requestFocus()
                 return@setOnClickListener
@@ -70,15 +93,58 @@ class ChangePasswordProfileFragmentDialog : BaseDialogFragment() {
                 return@setOnClickListener
             }
             if (newPasswordText == repeatPasswordText) {
+                gotoLoginFragment()
+                changePasswordWithApi(login, password)
                 dismiss()
-                Toast.makeText(requireContext(), "Пароль успешно изменён!", Toast.LENGTH_SHORT)
-                    .show()
             } else {
                 binding.tvError.visibility = View.VISIBLE
             }
         }
     }
 
+
+    fun gotoLoginFragment(){
+        val fragmentLogin = FragmentLogin()
+        val fragmentManager = requireActivity().supportFragmentManager
+        val transaction = fragmentManager.beginTransaction()
+        transaction.replace(R.id.fragmentLogin, fragmentLogin)
+        transaction.addToBackStack(null)
+        transaction.commit()
+    }
+
+    fun changePasswordWithApi(login: String, password: String) {
+        val call = apiService.getApiServiceLogin(login, password).changePassword(this.password)
+        try {
+            call.enqueue(object : Callback<ResponseChangePassword?> {
+                override fun onResponse(
+                    call: Call<ResponseChangePassword?>,
+                    response: Response<ResponseChangePassword?>
+                ) {
+                    if (response.isSuccessful) {
+                        val response = response.body()
+                        Log.d("TAG", "onResponse: $response")
+                        if (response != null) {
+                            if (response.result) {
+                                Toast.makeText(requireContext(), "Ваш пароль изменен", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(requireContext(), "Ошибка", Toast.LENGTH_SHORT).show()
+                            }
+                        } else {
+                            Toast.makeText(requireContext(), "Ошибка", Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
+                        Toast.makeText(requireContext(), "Ошибка", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<ResponseChangePassword?>, t: Throwable) {
+                    Log.d("TAG", "onFailure: ${t.message}")
+                }
+            })
+        } catch (e: Exception) {
+            Log.d("TAG", "createLead: ${e.message}")
+        }
+    }
 
 
     override fun onStart() {

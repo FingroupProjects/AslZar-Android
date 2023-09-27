@@ -76,6 +76,34 @@ class ApiClient {
         return apiService
     }
 
+    fun getApiServiceForgotPassword(): ApiService {
+        val credentials = Credentials.basic("Admin1", "2023")
+        okHttpClient = OkHttpClient.Builder().addInterceptor { chain ->
+            val originalRequest = chain.request()
+            val authenticatedRequest =
+                originalRequest.newBuilder().header("Authorization", credentials).build()
+            chain.proceed(authenticatedRequest)
+        }.build()
+        val updatedClient = okHttpClient.newBuilder()
+            .addInterceptor { chain ->
+                val originalRequest = chain.request()
+                val authenticatedRequest = originalRequest.newBuilder()
+                    .header("Authorization", credentials)
+                    .build()
+                chain.proceed(authenticatedRequest)
+            }
+            .build()
+        val gson = GsonBuilder()
+            .setLenient()
+            .create()
+        val retrofit = Retrofit.Builder()
+            .baseUrl(Constants.BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .client(updatedClient)
+            .build()
+
+        return retrofit.create(ApiService::class.java)
+    }
 
     fun getApiServiceLogin(login: String, password: String): ApiService {
         val credentials = Credentials.basic(login, password)
