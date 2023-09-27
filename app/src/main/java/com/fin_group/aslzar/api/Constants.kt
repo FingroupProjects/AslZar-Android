@@ -21,4 +21,9 @@ object Constants {
 
     //
     const val GET_COEFFICIENT = "GetСoefficientPlan"
+
+    //password
+    const val FORGOT_PASSWORD_WITH_MAIL = "FgtPass/{mail}"
+    const val CHANGE_PASSWORD = "ChangePassword/{password}"
+    const val FORGOT_PASSWORD = "ForgetPassword"
 }
