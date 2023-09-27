@@ -1,6 +1,5 @@
-package com.fin_group.aslzar.ui.fragments.main
+package com.fin_group.aslzar.ui.fragments.sales
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -11,44 +10,44 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.view.View.GONE
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.ProductsAdapter
+import com.fin_group.aslzar.adapter.SalesProductsAdapter
 import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.cart.Cart
-import com.fin_group.aslzar.cipher.EncryptionManager
-import com.fin_group.aslzar.databinding.FragmentMainBinding
+import com.fin_group.aslzar.databinding.FragmentSalesAndPromotionsBinding
 import com.fin_group.aslzar.response.Category
-import com.fin_group.aslzar.response.InStock
 import com.fin_group.aslzar.response.Product
+import com.fin_group.aslzar.response.ProductSale
+import com.fin_group.aslzar.response.SaleProductsResponse
 import com.fin_group.aslzar.ui.activities.MainActivity
-import com.fin_group.aslzar.ui.fragments.main.functions.addProductToCart
+import com.fin_group.aslzar.ui.fragments.main.MainFragmentDirections
+import com.fin_group.aslzar.ui.fragments.sales.functions.addProductToCart
+import com.fin_group.aslzar.ui.fragments.sales.functions.callInStockDialog
+import com.fin_group.aslzar.ui.fragments.sales.functions.callOutStock
+import com.fin_group.aslzar.ui.fragments.sales.functions.fetchRV
+import com.fin_group.aslzar.ui.fragments.sales.functions.filterFun
+import com.fin_group.aslzar.ui.fragments.sales.functions.filterProducts
+import com.fin_group.aslzar.ui.fragments.sales.functions.getAllCategoriesFromApi
+import com.fin_group.aslzar.ui.fragments.sales.functions.getAllCategoriesPrefs
+import com.fin_group.aslzar.ui.fragments.sales.functions.getAllProductFromPrefs
+import com.fin_group.aslzar.ui.fragments.sales.functions.getAllProductsFromApi
+import com.fin_group.aslzar.ui.fragments.sales.functions.savingAndFetchSearch
+import com.fin_group.aslzar.ui.fragments.sales.functions.savingAndFetchingCategory
+import com.fin_group.aslzar.ui.fragments.sales.functions.searchViewFun
+import com.fin_group.aslzar.util.BadgeManager
 import com.fin_group.aslzar.util.CategoryClickListener
 import com.fin_group.aslzar.util.ProductOnClickListener
-import com.fin_group.aslzar.ui.fragments.main.functions.callInStockDialog
-import com.fin_group.aslzar.ui.fragments.main.functions.callOutStock
-import com.fin_group.aslzar.ui.fragments.main.functions.fetchRV
-import com.fin_group.aslzar.ui.fragments.main.functions.filterFun
-import com.fin_group.aslzar.ui.fragments.main.functions.filterProducts
-import com.fin_group.aslzar.ui.fragments.main.functions.getAllCategoriesFromApi
-import com.fin_group.aslzar.ui.fragments.main.functions.getAllCategoriesPrefs
-import com.fin_group.aslzar.ui.fragments.main.functions.getAllProductFromPrefs
-import com.fin_group.aslzar.ui.fragments.main.functions.getAllProductsFromApi
-import com.fin_group.aslzar.ui.fragments.main.functions.savingAndFetchSearch
-import com.fin_group.aslzar.ui.fragments.main.functions.savingAndFetchingCategory
-import com.fin_group.aslzar.ui.fragments.main.functions.searchViewFun
-import com.fin_group.aslzar.ui.fragments.main.functions.updateBadge
-import com.fin_group.aslzar.util.BadgeManager
 import com.fin_group.aslzar.util.SessionManager
 import com.fin_group.aslzar.viewmodel.SharedViewModel
 import com.google.android.material.appbar.MaterialToolbar
@@ -56,9 +55,9 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
 @Suppress("DEPRECATION")
-class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
+class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
 
-    private var _binding: FragmentMainBinding? = null
+    private var _binding: FragmentSalesAndPromotionsBinding? = null
     private val binding get() = _binding!!
 
     val sharedViewModel: SharedViewModel by activityViewModels()
@@ -71,9 +70,9 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
     var searchText: String = ""
     lateinit var searchView: SearchView
 
-    var allProducts: List<Product> = emptyList()
-    var filteredProducts: List<Product> = emptyList()
-    lateinit var myAdapter: ProductsAdapter
+    var allProducts: List<ProductSale> = emptyList()
+    var filteredProducts: List<ProductSale> = emptyList()
+    lateinit var myAdapter: SalesProductsAdapter
 
     lateinit var viewCheckedCategory: ConstraintLayout
     var allCategories: List<Category> = emptyList()
@@ -90,13 +89,12 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
 
     lateinit var recyclerView: RecyclerView
 
-    lateinit var encryptionManager: EncryptionManager
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentMainBinding.inflate(inflater, container, false)
+        _binding = FragmentSalesAndPromotionsBinding.inflate(inflater, container, false)
+
         preferences = context?.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)!!
         sessionManager = SessionManager(requireContext())
         apiService = ApiClient()
@@ -111,17 +109,19 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
             if (searchText != "") {
                 searchView.setQuery("", false)
             }
-            viewSearch.visibility = GONE
+            viewSearch.visibility = View.GONE
         }
         binding.swipeRefreshLayout.setOnRefreshListener {
             fetchDataAndFilterProducts()
         }
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         searchView = binding.searchViewMain
+
         mainActivity = activity as? MainActivity ?: throw IllegalStateException("Activity is not MainActivity")
 
         getAllCategoriesPrefs()
@@ -142,10 +142,17 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         fetchRV(allProducts)
         val selectedCategoryId = preferences.getString("selectedCategory", "all")
         selectCategory = allCategories.find { it.id == selectedCategoryId }
-    }
-
-    fun hideCategoryView() {
-        viewCheckedCategory.visibility = GONE
+//        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+//            override fun onQueryTextSubmit(query: String?): Boolean {
+//                return true
+//            }
+//            override fun onQueryTextChange(newText: String?): Boolean {
+//                searchText = newText.toString()
+//                Log.d("TAG", "onQueryTextChange: $searchText")
+////                filterProducts()
+//                return true
+//            }
+//        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -159,10 +166,12 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
             R.id.search_item -> {searchViewFun()}
             R.id.filter_item -> {filterFun()}
             R.id.barcode_item -> {
-                val action = MainFragmentDirections.actionMainFragmentToBarCodeScannerFragment()
+                val action = SalesAndPromotionsFragmentDirections.actionSalesAndPromotionsFragmentToBarCodeScannerFragment()
                 findNavController().navigate(action)
             }
-            R.id.profile_item -> {findNavController().navigate(R.id.action_mainFragment_to_profileFragment)}
+            R.id.profile_item -> {
+                findNavController().navigate(R.id.action_salesAndPromotionsFragment_to_profileFragment)
+            }
         }
         return super.onOptionsItemSelected(item)
     }
@@ -179,23 +188,6 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         preferences.edit()?.putBoolean("first_run", false)?.apply()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        preferences.edit()?.putBoolean("first_run", true)?.apply()
-    }
-
-    override fun onStart() {
-        super.onStart()
-        val firstRun = preferences.getBoolean("first_run", true)
-        if (firstRun){
-            viewCheckedCategory.visibility = GONE
-        } else {
-            savingAndFetchingCategory(binding)
-        }
-        savingAndFetchSearch(binding)
-        Cart.loadCartFromPrefs(requireContext())
-    }
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
         badgeManager = BadgeManager(requireContext())
@@ -204,17 +196,16 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
     override fun onResume() {
         super.onResume()
         bottomNavigationView = mainActivity.findViewById(R.id.bottomNavigationView)
-        updateBadge()
+//        updateBadge()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        preferences.edit()?.putBoolean("first_run", true)?.apply()
     }
 
     override fun addToCart(product: Product) {
         addProductToCart(product)
-    }
-
-    private fun fetchDataAndFilterProducts() {
-        getAllProductsFromApi()
-        getAllCategoriesFromApi()
-        filterProducts()
     }
 
     override fun inStock(product: Product) {
@@ -226,15 +217,20 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
     }
 
     override fun getData(product: Product) {
-        val action = MainFragmentDirections.actionMainFragmentToDataProductFragment(product.id, product)
+        val action = SalesAndPromotionsFragmentDirections.actionSalesAndPromotionsFragmentToDataProductFragment(product.id, product)
         Navigation.findNavController(binding.root).navigate(action)
     }
 
-    @SuppressLint("CommitPrefEdits")
     override fun onCategorySelected(selectedCategory: Category) {
         selectCategory = selectedCategory
         preferences.edit()?.putString("selectedCategory", selectedCategory.id)?.apply()
 
         savingAndFetchingCategory(binding)
+    }
+
+    private fun fetchDataAndFilterProducts() {
+        getAllProductsFromApi()
+        getAllCategoriesFromApi()
+        filterProducts()
     }
 }

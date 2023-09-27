@@ -31,15 +31,15 @@ data class Product(
     val provider: String,
     val is_set: Boolean,
     val counts: List<InStock>,
-    val img: List<String>
+    val img: List<String>,
+    val description: String
 ) : Parcelable, Serializable
 
 @Parcelize
 data class InStock(
     val store_house: String,
     val subsidiary: String,
-    val count: Number,
-    val sale: Number
+    val count: Number
 ) : Parcelable, Serializable
 
 @Parcelize

@@ -8,6 +8,7 @@ interface ProductOnClickListener {
 
     fun addToCart(product: Product)
     fun inStock(product: Product)
+    fun getData(product: Product)
 }
 
 interface CategoryClickListener {

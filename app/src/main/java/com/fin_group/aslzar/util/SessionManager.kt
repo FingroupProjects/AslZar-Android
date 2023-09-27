@@ -141,7 +141,7 @@ class   SessionManager(context: Context) {
     }
 
     fun fetchCheck(): Number {
-        return prefs.getFloat(USER_SALES_PLAN, 0f)
+        return prefs.getFloat(USER_CHECK, 0f)
     }
 
     fun clearSession() {

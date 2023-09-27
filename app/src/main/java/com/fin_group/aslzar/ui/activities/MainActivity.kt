@@ -61,11 +61,12 @@ class MainActivity : AppCompatActivity() {
         prefs.edit()?.putString("selectedCategory", "all")?.apply()
         val isFirstRun = prefs.getBoolean("isFirstRun", true)
 
-        if (isFirstRun) {
-            val mainFragment = supportFragmentManager.findFragmentById(R.id.fragmentMain) as? MainFragment
-            mainFragment?.hideCategoryView()
-            prefs.edit()?.putBoolean("isFirstRun", false)?.apply()
-        }
+//        if (isFirstRun) {
+//            val mainFragment =
+//                supportFragmentManager.findFragmentById(R.id.fragmentMain) as? MainFragment
+//            mainFragment?.hideCategoryView()
+//            prefs.edit()?.putBoolean("isFirstRun", false)?.apply()
+//        }
 
         checkAndFetchData()
 
@@ -80,11 +81,18 @@ class MainActivity : AppCompatActivity() {
         badgeManager = BadgeManager(this)
 
         bottomNavBar = binding.bottomNavigationView
-        val navController =findNavController(R.id.fragmentMain)
+        val navController = findNavController(R.id.fragmentMain)
 
-        val appBarConfiguration = AppBarConfiguration(setOf(R.id.mainFragment, R.id.mainCartFragment))
+        val appBarConfiguration = AppBarConfiguration(
+            setOf(
+                R.id.newProductsFragment,
+                R.id.salesAndPromotionsFragment,
+                R.id.mainFragment,
+                R.id.mainCartFragment
+            )
+        )
 
-        setupActionBarWithNavController(navController,appBarConfiguration)
+        setupActionBarWithNavController(navController, appBarConfiguration)
         bottomNavBar.setupWithNavController(navController)
 
         //addBadgeToBottomNavigationItem(R.id.mainCartFragment, 5)
@@ -118,7 +126,7 @@ class MainActivity : AppCompatActivity() {
         if (clientListJson == null) {
             fetchDataList.add("clientList" to ::fetchClientsFromApi)
         }
-        if (coefficientPlanJson == null){
+        if (coefficientPlanJson == null) {
             fetchDataList.add("coefficientPlan" to ::fetchCoefficientPlanFromApi)
         }
 
@@ -129,7 +137,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun fetchProductsFromApi() {
         try {
-            val call = apiClient.getApiService().getAllProducts("Bearer ${sessionManager.fetchToken()}")
+            val call =
+                apiClient.getApiService().getAllProducts("Bearer ${sessionManager.fetchToken()}")
             call.enqueue(object : Callback<GetAllProductsResponse?> {
                 override fun onResponse(
                     call: Call<GetAllProductsResponse?>,
@@ -143,6 +152,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                 }
+
                 override fun onFailure(call: Call<GetAllProductsResponse?>, t: Throwable) {
                     Log.d("TAG", "onViewCreated fetchProductsFromApi: ${t.message}")
                 }
@@ -154,7 +164,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun fetchClientsFromApi() {
         try {
-            val call = apiClient.getApiService().getAllClients("Bearer ${sessionManager.fetchToken()}")
+            val call =
+                apiClient.getApiService().getAllClients("Bearer ${sessionManager.fetchToken()}")
             call.enqueue(object : Callback<GetAllClientsResponse?> {
                 override fun onResponse(
                     call: Call<GetAllClientsResponse?>,
@@ -168,6 +179,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                 }
+
                 override fun onFailure(call: Call<GetAllClientsResponse?>, t: Throwable) {
                     Log.d("TAG", "onViewCreated fetchClientsFromApi: ${t.message}")
                 }
@@ -179,7 +191,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun fetchCategoriesFromApi() {
         try {
-            val call = apiClient.getApiService().getAllCategories("Bearer ${sessionManager.fetchToken()}")
+            val call =
+                apiClient.getApiService().getAllCategories("Bearer ${sessionManager.fetchToken()}")
             call.enqueue(object : Callback<GetAllCategoriesResponse?> {
                 override fun onResponse(
                     call: Call<GetAllCategoriesResponse?>,
@@ -193,6 +206,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                 }
+
                 override fun onFailure(call: Call<GetAllCategoriesResponse?>, t: Throwable) {
                     Log.d("TAG", "onFailure fetchCategoriesFromApi: ${t.message}")
                 }
@@ -204,7 +218,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun fetchCoefficientPlanFromApi() {
         try {
-            val call = apiClient.getApiService().getPercentAndMonth("Bearer ${sessionManager.fetchToken()}")
+            val call = apiClient.getApiService()
+                .getPercentAndMonth("Bearer ${sessionManager.fetchToken()}")
             call.enqueue(object : Callback<PercentInstallment?> {
                 override fun onResponse(
                     call: Call<PercentInstallment?>,
@@ -218,6 +233,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                 }
+
                 override fun onFailure(call: Call<PercentInstallment?>, t: Throwable) {
                     Log.d("TAG", "onFailure fetchCategoriesFromApi: ${t.message}")
                 }
@@ -226,6 +242,7 @@ class MainActivity : AppCompatActivity() {
             Log.d("TAG", "fetchCategoriesFromApi: ${e.message}")
         }
     }
+
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.fragmentMain)
         return navController.navigateUp() || super.onSupportNavigateUp()

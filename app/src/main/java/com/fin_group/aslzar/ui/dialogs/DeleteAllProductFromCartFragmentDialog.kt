@@ -13,7 +13,10 @@ import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentDeleteAllProductFromCartDialogBinding
 import com.fin_group.aslzar.databinding.FragmentSignOutProfileDialogBinding
 import com.fin_group.aslzar.ui.activities.LoginActivity
+import com.fin_group.aslzar.ui.fragments.cartMain.calculator.CalculatorFragmentV2
+import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.resetCalculator
 import com.fin_group.aslzar.util.BaseDialogFragment
+import com.fin_group.aslzar.util.CalculatorResetListener
 import com.fin_group.aslzar.util.EditProductInCart
 import com.fin_group.aslzar.util.setWidthPercent
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -24,6 +27,7 @@ class DeleteAllProductFromCartFragmentDialog : BaseDialogFragment() {
     private val binding get() = _binding!!
 
     private lateinit var bottomNavigationView: BottomNavigationView
+    private var resetListener: CalculatorResetListener? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,10 +51,18 @@ class DeleteAllProductFromCartFragmentDialog : BaseDialogFragment() {
 
                 val cartFragment = parentFragment as? EditProductInCart
                 cartFragment?.onCartCleared()
+
+                val calculatorFragment = parentFragment as? CalculatorResetListener
+                calculatorFragment?.resetCalculator()
+
                 dismiss()
             }
             actionNoBtn.setOnClickListener { dismiss() }
         }
+    }
+
+    fun setCalculatorResetListener(listener: CalculatorResetListener) {
+        resetListener = listener
     }
 
     override fun onDestroyView() {

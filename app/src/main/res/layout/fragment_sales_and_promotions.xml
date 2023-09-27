@@ -5,7 +5,7 @@
     android:id="@+id/swipeRefreshLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.fragments.main.MainFragment">
+    tools:context=".ui.fragments.sales.SalesAndPromotionsFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -170,5 +170,6 @@
             app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

@@ -88,7 +88,8 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnPro
         getSetInProduct()
         setInProductAdapter = SetInProductAdapter(allProducts, this)
 
-        recyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        recyclerView.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         recyclerView.adapter = setInProductAdapter
         setInProductAdapter.updateList(allProducts)
 
@@ -101,14 +102,26 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnPro
             addToCart.setOnClickListener {
                 if (setInProductId != null && setInProductId.isNotEmpty()) {
                     val addedProduct = Cart.getProductById(setInProductId)
-                    if (addedProduct != null){
-                        Toast.makeText(requireContext(), "Количество товара увеличено на +1", Toast.LENGTH_SHORT).show()
+                    if (addedProduct != null) {
+                        Toast.makeText(
+                            requireContext(),
+                            "Количество товара увеличено на +1",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     } else {
-                        Toast.makeText(requireContext(), "Товар добавлен в корзину", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            requireContext(),
+                            "Товар добавлен в корзину",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                     sharedViewModel.onProductAddedToCart(selectedProduct, requireContext())
                 } else {
-                    Toast.makeText(requireContext(), "Идентификатор продукта пуст или null", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Идентификатор продукта пуст или null",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     return@setOnClickListener
                 }
             }
@@ -116,7 +129,8 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnPro
                 if (isChecked) {
                     val isDataProductSelected = checkedId == R.id.dataProductBtn
                     dataProductLayout.visibility = if (isDataProductSelected) VISIBLE else INVISIBLE
-                    inStockProductLayout.visibility = if (isDataProductSelected) INVISIBLE else VISIBLE
+                    inStockProductLayout.visibility =
+                        if (isDataProductSelected) INVISIBLE else VISIBLE
                 }
             }
         }
@@ -130,16 +144,18 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnPro
     private fun setInitialProductAndInterface() {
         selectedProduct = allProducts[0]
         setDataProduct(selectedProduct)
-        if (selectedProduct.counts.isEmpty()){
+        if (selectedProduct.counts.isEmpty()) {
             binding.apply {
                 inStockProductLayout.visibility = GONE
                 dataProductLayout.visibility = VISIBLE
-                toggleButton.visibility = GONE
+                toggleButton.visibility = INVISIBLE
+                textView48.visibility = VISIBLE
             }
         } else {
             binding.inStockProductLayout.visibility = INVISIBLE
             binding.dataProductLayout.visibility = VISIBLE
             binding.toggleButton.visibility = VISIBLE
+            binding.textView48.visibility = INVISIBLE
             binding.rvInStock.visibility = VISIBLE
             binding.inStockError.visibility = GONE
             binding.textView33.visibility = VISIBLE
@@ -161,16 +177,18 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnPro
         Glide.with(requireContext()).load(image).into(binding.mainImageView)
 
         binding.toggleButton.check(R.id.dataProductBtn)
-        if (selectedProduct.counts.isEmpty()){
+        if (selectedProduct.counts.isEmpty()) {
             binding.apply {
                 inStockProductLayout.visibility = GONE
                 dataProductLayout.visibility = VISIBLE
-                toggleButton.visibility = GONE
+                toggleButton.visibility = INVISIBLE
+                textView48.visibility = VISIBLE
             }
         } else {
             binding.inStockProductLayout.visibility = INVISIBLE
             binding.dataProductLayout.visibility = VISIBLE
             binding.toggleButton.visibility = VISIBLE
+            binding.textView48.visibility = INVISIBLE
             binding.rvInStock.visibility = VISIBLE
             binding.inStockError.visibility = GONE
             binding.textView33.visibility = VISIBLE
@@ -197,7 +215,7 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnPro
 //        }
     }
 
-    private fun setDataProduct(product: Product){
+    private fun setDataProduct(product: Product) {
         binding.apply {
             Glide.with(requireContext()).load(product.img[0]).into(binding.mainImageView)
 
@@ -212,10 +230,11 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnPro
         }
     }
 
-    private fun getSetInProduct(){
+    private fun getSetInProduct() {
         progressBar.visibility = VISIBLE
         try {
-            val call = apiClient.getApiService().getSetInProduct("Bearer ${sessionManager.fetchToken()}", setInProductId)
+            val call = apiClient.getApiService()
+                .getSetInProduct("Bearer ${sessionManager.fetchToken()}", setInProductId)
             call.enqueue(object : Callback<GetAllProductsResponse?> {
                 override fun onResponse(
                     call: Call<GetAllProductsResponse?>,
@@ -224,11 +243,11 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnPro
                     Log.d("TAG", "onResponse: ${response.code()}")
                     Log.d("TAG", "onResponse: ${response.body()}")
                     progressBar.visibility = INVISIBLE
-                    if (response.isSuccessful){
+                    if (response.isSuccessful) {
                         Log.d("TAG", "onResponse: ${response.code()}")
                         Log.d("TAG", "onResponse: ${response.body()}")
                         val products = response.body()
-                        if (products?.result != null){
+                        if (products?.result != null) {
                             Log.d("TAG", "onResponse: ${response.code()}")
                             Log.d("TAG", "onResponse: ${response.body()}")
                             allProducts = products.result
@@ -238,12 +257,17 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnPro
 
                             binding.inStockError.visibility = GONE
                             binding.rvInStock.layoutManager = LinearLayoutManager(requireContext())
-                            binding.rvInStock.adapter = InStockAdapter(allProducts.flatMap  { it.counts })
+                            binding.rvInStock.adapter =
+                                InStockAdapter(allProducts.flatMap { it.counts })
 //                            setProductBottomSheet(selectedProduct)
                         } else {
                             val handler = Handler(Looper.getMainLooper())
                             handler.postDelayed({
-                                Toast.makeText(requireContext(), "У данного товара нет комплекта", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    requireContext(),
+                                    "У данного товара нет комплекта",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                                 dismiss()
                             }, 1000)
                         }
@@ -255,7 +279,7 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnPro
                     progressBar.visibility = INVISIBLE
                 }
             })
-        } catch (e: Exception){
+        } catch (e: Exception) {
             progressBar.visibility = INVISIBLE
             Log.d("TAG", "getSetInProduct: ${e.message}")
         }
