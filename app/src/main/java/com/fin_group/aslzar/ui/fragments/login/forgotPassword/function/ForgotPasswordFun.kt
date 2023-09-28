@@ -49,9 +49,9 @@ fun ForgotPasswordFragment.checkEmail(binding: FragmentForgotPasswordBinding){
 
                 override fun onError(errorMessage: String) {
                     if (errorMessage == "Ошибка"){
-                        Toast.makeText(requireContext(), "Такого эл. почты нет!", Toast.LENGTH_SHORT).show()
                         binding.tvError.visibility = View.VISIBLE
                         binding.tvError.text = "Нет пользоваателя с такой электронной почтой"
+                        binding.progressBar2.visibility = View.GONE
 
                     }
                 }
@@ -60,6 +60,7 @@ fun ForgotPasswordFragment.checkEmail(binding: FragmentForgotPasswordBinding){
         } else {
             binding.tvError.visibility = View.VISIBLE
             binding.tvError.text = "Электронаая почта введен неправильно!"
+            binding.progressBar2.visibility = View.GONE
         }
     }
 
