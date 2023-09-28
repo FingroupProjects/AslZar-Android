@@ -13,6 +13,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.addCallback
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -24,6 +25,7 @@ import com.fin_group.aslzar.adapter.ProductSomeImagesAdapter
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentCalculatorV2Binding
 import com.fin_group.aslzar.databinding.FragmentDataProductBinding
+import com.fin_group.aslzar.response.Category
 import com.fin_group.aslzar.response.GetSimilarProductsResponse
 import com.fin_group.aslzar.response.InStock
 import com.fin_group.aslzar.response.PercentInstallment
@@ -33,12 +35,14 @@ import com.fin_group.aslzar.ui.dialogs.SetInProductBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.WarningNoHaveProductFragmentDialog
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.CalculatorFragmentV2
 import com.fin_group.aslzar.ui.fragments.dataProduct.DataProductFragment
+import com.fin_group.aslzar.ui.fragments.main.functions.getAllCategoriesFromApi
 import retrofit2.Callback
 import com.fin_group.aslzar.util.formatNumber
 import com.fin_group.aslzar.util.showBottomNav
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.badge.BadgeUtils
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import retrofit2.Call
 import retrofit2.Response
 
@@ -54,9 +58,6 @@ fun DataProductFragment.callInStockDialog(name: String, counts: List<InStock>) {
 }
 
 fun DataProductFragment.callOutStock(id: String) {
-//    val noHave = WarningNoHaveProductFragmentDialog()
-//    noHave.show(activity?.supportFragmentManager!!, "Product no have dialog")
-
     val fragmentManager = requireFragmentManager()
     val tag = "Product no have dialog"
     val existingFragment = fragmentManager.findFragmentByTag(tag)
@@ -82,64 +83,6 @@ fun DataProductFragment.callSetInProduct(id: String){
         bottomSheetFragment.show(fragmentManager, tag)
     }
 }
-//
-//@SuppressLint("UseCompatLoadingForColorStateLists")
-//fun DataProductFragment.callSizeChipGroup(sizeList: List<String>){
-//    for (size in sizeList) {
-//        val chip = Chip(requireContext(), null, R.style.Widget_App_Chip)
-//        chip.text = size
-//        chip.isCheckable = true
-//        chip.isClickable = true
-//        if (size == sizeList[0]){
-//            chip.isChecked = true
-//            sizeSelected = size
-//        }
-//        val chipBackgroundSelector = ContextCompat.getColorStateList(requireContext(), R.color.chip_background_selector)
-//        chip.chipBackgroundColor = chipBackgroundSelector
-//        chip.setTextColor(resources.getColorStateList(R.color.text_color_1))
-//        chip.setChipStrokeColorResource(R.color.border_color_1)
-//        chip.chipStrokeWidth = 3F
-//
-//        sizeChipGroup.addView(chip)
-//    }
-//
-//    sizeChipGroup.setOnCheckedChangeListener { group, checkedId ->
-//        val selectedChip = group.findViewById<Chip>(checkedId)
-//        if (selectedChip != null) {
-//            val selectedSize = selectedChip.text.toString()
-//            sizeSelected = selectedSize
-//        }
-//    }
-//}
-//
-//@SuppressLint("UseCompatLoadingForColorStateLists")
-//fun DataProductFragment.callWeightChipGroup(weightList: List<String>){
-//    for (size in weightList) {
-//        val chip = Chip(requireContext(), null, R.style.Widget_App_Chip)
-//        chip.text = size
-//        chip.isCheckable = true
-//        chip.isClickable = true
-//        if (size == weightList[0]){
-//            chip.isChecked = true
-//            sizeSelected = size
-//        }
-//        val chipBackgroundSelector = ContextCompat.getColorStateList(requireContext(), R.color.chip_background_selector)
-//        chip.chipBackgroundColor = chipBackgroundSelector
-//        chip.setTextColor(resources.getColorStateList(R.color.text_color_1))
-//        chip.setChipStrokeColorResource(R.color.border_color_1)
-//        chip.chipStrokeWidth = 3F
-//
-//        weightChipGroup.addView(chip)
-//    }
-//
-//    weightChipGroup.setOnCheckedChangeListener { group, checkedId ->
-//        val selectedChip = group.findViewById<Chip>(checkedId)
-//        if (selectedChip != null) {
-//            val selectedWeight = selectedChip.text.toString()
-//            weightSelected = selectedWeight
-//        }
-//    }
-//}
 
 fun DataProductFragment.someImagesProduct() {
     imageList = product.img
@@ -192,7 +135,6 @@ fun DataProductFragment.setDataProduct(product: Product, binding: FragmentDataPr
         } else {
             imageView2.setImageResource(R.drawable.ic_no_image)
         }
-//        dpTitle.text = product.full_name
         dpCode.text = product.name
         dpPrice.text = product.price.toString()
         dpStone.text = product.stone_type
@@ -203,7 +145,6 @@ fun DataProductFragment.setDataProduct(product: Product, binding: FragmentDataPr
 
         dpInstallmentPrice.text = "(${((product.price.toDouble() * percentInstallment.first_pay.toDouble()) / 100)} UZS п.в.)"
 
-//        dpInstallmentPrice.text = "(${((product.price.toDouble() * 0.06) + product.price.toDouble()) / 4} UZS/мес)"
 
         btnAddToCart.setOnClickListener {
             val addedProduct = Cart.getProductById(product.id)
@@ -291,9 +232,21 @@ fun DataProductFragment.getProductByID(){
         Log.d("TAG", "getProductByID: ${e.message}")
     }
 }
-
 fun DataProductFragment.fetchCoefficientPlanFromPrefs(){
-
+    try {
+        val coefficientPlanJson = preferences.getString("coefficientPlan", null)
+        if (coefficientPlanJson != null) {
+            val coefficientPlanType = object : TypeToken<PercentInstallment>() {}.type
+            val coefficientPlan = Gson().fromJson<PercentInstallment>(coefficientPlanJson, coefficientPlanType)
+            percentInstallment = coefficientPlan
+            val price = product.price.toDouble() - ((product.price.toDouble() * percentInstallment.first_pay.toDouble()) / 100)
+            createTable(binding, price, percentInstallment)
+        } else {
+            fetchCoefficientPlanFromApi()
+        }
+    } catch (e: Exception) {
+        Log.d("TAG", "getAllCategoriesPrefs: ${e.message}")
+    }
 }
 
 fun DataProductFragment.fetchCoefficientPlanFromApi() {
@@ -380,15 +333,6 @@ fun DataProductFragment.onBackPressed() {
         object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 when (args.parentFragment) {
-                    "Main" -> {
-                        findNavController().popBackStack()
-                    }
-                    "SalesProducts" -> {
-                        findNavController().popBackStack()
-                    }
-                    "NewProducts" -> {
-                        findNavController().popBackStack()
-                    }
                     "MainBarcode" -> {
                         findNavController().navigate(R.id.action_dataProductFragment_to_mainFragment)
                     }
@@ -398,7 +342,7 @@ fun DataProductFragment.onBackPressed() {
                     "NewProductsBarcode" -> {
                         findNavController().navigate(R.id.action_dataProductFragment_to_newProductsFragment)
                     }
-                    "Cart" -> {
+                    else -> {
                         findNavController().popBackStack()
                     }
                 }
@@ -406,14 +350,3 @@ fun DataProductFragment.onBackPressed() {
             }
         })
 }
-
-//fun DataProductFragment.backPressed(){
-//    requireActivity().onBackPressedDispatcher.addCallback(
-//        viewLifecycleOwner,
-//        object : OnBackPressedCallback(true) {
-//            override fun handleOnBackPressed() {
-//                val fragment =
-//            }
-//        }
-//    )
-//}

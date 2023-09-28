@@ -37,6 +37,7 @@ import com.fin_group.aslzar.ui.fragments.dataProduct.functions.callInStockDialog
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.callSetInProduct
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.createTable
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.fetchCoefficientPlanFromApi
+import com.fin_group.aslzar.ui.fragments.dataProduct.functions.fetchCoefficientPlanFromPrefs
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.getProductByID
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.getSimilarProducts
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.likeProducts
@@ -67,7 +68,6 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
     lateinit var swipeRefreshLayout: SwipeRefreshLayout
     lateinit var product: Product
     lateinit var preferences: SharedPreferences
-
 
     lateinit var recyclerViewSomeImages: RecyclerView
     lateinit var recyclerViewLikeProducts: RecyclerView
@@ -117,7 +117,8 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
                 Percent(17.9, 12),
             )
         )
-        fetchCoefficientPlanFromApi()
+//        fetchCoefficientPlanFromApi()
+        fetchCoefficientPlanFromPrefs()
         onBackPressed()
         if (args.product != null) {
             product = args.product!!
@@ -130,47 +131,12 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         toolbar = requireActivity().findViewById(R.id.toolbar)
         toolbar.title = product.full_name
         (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        Log.d("TAG", "onCreateView: ${args.parentFragment}")
-        toolbar.setNavigationOnClickListener {
-            when (args.parentFragment) {
-                "Main" -> {
-                    findNavController().popBackStack()
-                }
-                "SalesProducts" -> {
-                    findNavController().popBackStack()
-                }
-                "NewProducts" -> {
-                    findNavController().popBackStack()
-                }
-                "MainBarcode" -> {
-                    findNavController().navigate(R.id.action_dataProductFragment_to_mainFragment)
-                }
-                "SalesProductsBarcode" -> {
-                    findNavController().navigate(R.id.action_dataProductFragment_to_salesAndPromotionsFragment)
-                }
-                "NewProductsBarcode" -> {
-                    findNavController().navigate(R.id.action_dataProductFragment_to_newProductsFragment)
-                }
-                "Cart" -> {
-                    findNavController().popBackStack()
-                }
-            }
-            showBottomNav()
-        }
 
         if (product.is_set) {
             filterBadge = BadgeDrawable.create(requireContext())
             filterBadge?.isVisible = true
             BadgeUtils.attachBadgeDrawable(filterBadge!!, toolbar, R.id.product_set_item)
         }
-
-//        toolbar = binding.toolbar
-//        (activity as AppCompatActivity?)!!.setSupportActionBar(toolbar as MaterialToolbar?)
-//        toolbar.title = "Данные товара"
-//        toolbar.setNavigationIcon(R.drawable.ic_back)
-//        toolbar.setNavigationOnClickListener {
-//            findNavController().popBackStack()
-//        }
         hideBottomNav()
         setHasOptionsMenu(true)
         recyclerViewSomeImages = binding.otherImgRv
@@ -208,34 +174,7 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         super.onCreateOptionsMenu(menu, inflater)
     }
 
-    fun handleBackPressed() {
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            when (args.parentFragment) {
-                "Main" -> {
-                    findNavController().popBackStack()
-                }
-                "SalesProducts" -> {
-                    findNavController().popBackStack()
-                }
-                "NewProducts" -> {
-                    findNavController().popBackStack()
-                }
-                "MainBarcode" -> {
-                    findNavController().navigate(R.id.action_dataProductFragment_to_mainFragment)
-                }
-                "SalesProductsBarcode" -> {
-                    findNavController().navigate(R.id.action_dataProductFragment_to_salesAndPromotionsFragment)
-                }
-                "NewProductsBarcode" -> {
-                    findNavController().navigate(R.id.action_dataProductFragment_to_newProductsFragment)
-                }
-                "Cart" -> {
-                    findNavController().popBackStack()
-                }
-            }
-            showBottomNav()
-        }
-    }
+
 
 
     @SuppressLint("UnsafeOptInUsageError")
