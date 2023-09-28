@@ -53,8 +53,10 @@
             app:destination="@id/dataProductFragment"
             app:enterAnim="@anim/from_right"
             app:exitAnim="@anim/to_left"
+            app:launchSingleTop="true"
             app:popEnterAnim="@anim/from_left"
-            app:popExitAnim="@anim/to_right"/>
+            app:popExitAnim="@anim/to_right"
+            app:popUpToInclusive="true" />
         <argument
             android:name="parentFragment"
             app:argType="string" />

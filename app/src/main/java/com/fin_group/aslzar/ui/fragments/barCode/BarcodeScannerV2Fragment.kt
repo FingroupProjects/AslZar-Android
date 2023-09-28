@@ -87,13 +87,7 @@ class BarcodeScannerV2Fragment : Fragment() {
                     if (response.isSuccessful) {
                         val productResponse = response.body()
                         if (productResponse != null) {
-                            val action =
-                                BarcodeScannerV2FragmentDirections.actionBarCodeScannerFragmentToDataProductFragment(
-                                    productResponse.id,
-                                    productResponse,
-                                    args.parentFragment
-                                )
-                            Navigation.findNavController(binding.root).navigate(action)
+                            navigateToDataProductFragment(productResponse.id, productResponse)
                         } else if (response.body() == null) {
                             Toast.makeText(requireContext(),"Товар с таким идентификатором не найден",Toast.LENGTH_SHORT).show()
                             Navigation.findNavController(binding.root).popBackStack()
@@ -106,14 +100,29 @@ class BarcodeScannerV2Fragment : Fragment() {
                     }
                 }
                 override fun onFailure(call: Call<Product?>, t: Throwable) {
+                    Navigation.findNavController(binding.root).popBackStack()
                     Toast.makeText(requireContext(),"Загрузка прошла не успешно, пожалуйста повторите попытку",Toast.LENGTH_SHORT).show()
                     Log.d("TAG", "onFailure: ${t.message}")
                 }
             })
         } catch (e: Exception) {
+            Navigation.findNavController(binding.root).popBackStack()
+            Toast.makeText(requireContext(),"Загрузка прошла не успешно, пожалуйста повторите попытку",Toast.LENGTH_SHORT).show()
             Log.d("TAG", "getProductByID: ${e.message}")
         }
     }
+
+    private fun navigateToDataProductFragment(productId: String, product: Product) {
+        hideBottomNav()
+        val action =
+            BarcodeScannerV2FragmentDirections.actionBarCodeScannerFragmentToDataProductFragment(
+                productId,
+                product,
+                args.parentFragment
+            )
+        Navigation.findNavController(binding.root).navigate(action)
+    }
+
 
     private fun askForCameraPermission() {
         ActivityCompat.requestPermissions(
@@ -125,11 +134,13 @@ class BarcodeScannerV2Fragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        hideBottomNav()
         codeScanner.startPreview()
     }
 
     override fun onPause() {
         codeScanner.releaseResources()
+        showBottomNav()
         super.onPause()
     }
 
@@ -140,7 +151,6 @@ class BarcodeScannerV2Fragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        showBottomNav()
         _binding = null
     }
 }
