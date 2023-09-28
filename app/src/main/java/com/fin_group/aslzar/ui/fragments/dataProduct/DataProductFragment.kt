@@ -40,6 +40,7 @@ import com.fin_group.aslzar.ui.fragments.dataProduct.functions.fetchCoefficientP
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.getProductByID
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.getSimilarProducts
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.likeProducts
+import com.fin_group.aslzar.ui.fragments.dataProduct.functions.onBackPressed
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.setDataProduct
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.someImagesProduct
 import com.fin_group.aslzar.util.OnAlikeProductClickListener
@@ -117,7 +118,7 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
             )
         )
         fetchCoefficientPlanFromApi()
-
+        onBackPressed()
         if (args.product != null) {
             product = args.product!!
         } else {
@@ -209,7 +210,6 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
 
     fun handleBackPressed() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            // Обработка нажатия кнопки "Назад" внутри фрагмента
             when (args.parentFragment) {
                 "Main" -> {
                     findNavController().popBackStack()
@@ -235,7 +235,6 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
             }
             showBottomNav()
         }
-
     }
 
 
