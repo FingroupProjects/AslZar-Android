@@ -38,8 +38,6 @@ import com.fin_group.aslzar.ui.fragments.sales.functions.callInStockDialog
 import com.fin_group.aslzar.ui.fragments.sales.functions.callOutStock
 import com.fin_group.aslzar.ui.fragments.sales.functions.fetchRV
 import com.fin_group.aslzar.ui.fragments.sales.functions.filterProducts
-import com.fin_group.aslzar.ui.fragments.sales.functions.getAllCategoriesFromApi
-import com.fin_group.aslzar.ui.fragments.sales.functions.getAllCategoriesPrefs
 import com.fin_group.aslzar.ui.fragments.sales.functions.getAllProductFromPrefs
 import com.fin_group.aslzar.ui.fragments.sales.functions.getAllProductsFromApi
 import com.fin_group.aslzar.ui.fragments.sales.functions.savingAndFetchSearch
@@ -150,7 +148,7 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener {
         when (item.itemId) {
             R.id.search_item -> {searchViewFun()}
             R.id.barcode_item -> {
-                val action = SalesAndPromotionsFragmentDirections.actionSalesAndPromotionsFragmentToBarCodeScannerFragment()
+                val action = SalesAndPromotionsFragmentDirections.actionSalesAndPromotionsFragmentToBarCodeScannerFragment("SalesProductsBarcode")
                 findNavController().navigate(action)
             }
             R.id.profile_item -> {
@@ -182,10 +180,6 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener {
         updateBadge()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        preferences.edit()?.putBoolean("first_run", true)?.apply()
-    }
 
     override fun addToCart(product: Product) {
         addProductToCart(product)
@@ -200,7 +194,7 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener {
     }
 
     override fun getData(product: Product) {
-        val action = SalesAndPromotionsFragmentDirections.actionSalesAndPromotionsFragmentToDataProductFragment(product.id, product)
+        val action = SalesAndPromotionsFragmentDirections.actionSalesAndPromotionsFragmentToDataProductFragment(product.id, product, "SalesProducts")
         Navigation.findNavController(binding.root).navigate(action)
     }
 

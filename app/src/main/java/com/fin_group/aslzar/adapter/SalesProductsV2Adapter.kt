@@ -53,15 +53,15 @@ class SalesProductsV2Adapter(
                 saleTv.visibility = View.VISIBLE
             }
 
-//            if (product.counts.isEmpty()) {
-//                btnCheckingInStock.setImageResource(R.drawable.ic_clear_white)
-//                btnCheckingInStock.background =
-//                    context.resources.getDrawable(R.drawable.item_product_bottom_btn_2)
-//            } else {
-//                btnCheckingInStock.setImageResource(R.drawable.ic_check)
-//                btnCheckingInStock.background =
-//                    context.resources.getDrawable(R.drawable.ripple_effect_bottom_btn)
-//            }
+            if (product.counts.isEmpty()) {
+                btnCheckingInStock.setImageResource(R.drawable.ic_clear_white)
+                btnCheckingInStock.background =
+                    context.resources.getDrawable(R.drawable.item_product_bottom_btn_2)
+            } else {
+                btnCheckingInStock.setImageResource(R.drawable.ic_check)
+                btnCheckingInStock.background =
+                    context.resources.getDrawable(R.drawable.ripple_effect_bottom_btn)
+            }
             btnAddToCart.setOnClickListener {
                 listener.addToCart(product)
             }
@@ -116,7 +116,7 @@ class SalesProductsV2Adapter(
 
             Log.d("TAG", "onBindViewHolder: ${product.counts}")
             Log.d("TAG", "onBindViewHolder: ${product.sale}")
-//            listener.getData(product2)
+            listener.getData(product2)
         }
     }
 }

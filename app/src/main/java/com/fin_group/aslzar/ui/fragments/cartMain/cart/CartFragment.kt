@@ -151,7 +151,7 @@ class CartFragment : Fragment(), EditProductInCart, OnProductAddedToCartListener
 
         try {
             val action =
-                MainCartFragmentDirections.actionMainCartFragmentToDataProductFragment(productInCart.id, product)
+                MainCartFragmentDirections.actionMainCartFragmentToDataProductFragment(productInCart.id, product, "Cart")
             Navigation.findNavController(binding.root).navigate(action)
         } catch (e: Exception){
             Log.d("TAG", "openDialogDataProduct: ${e.message}")

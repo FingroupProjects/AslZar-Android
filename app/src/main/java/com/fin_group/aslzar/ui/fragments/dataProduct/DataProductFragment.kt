@@ -12,8 +12,12 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.addCallback
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -95,8 +99,7 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
 
     @SuppressLint("UnsafeOptInUsageError")
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentDataProductBinding.inflate(inflater, container, false)
         sessionManager = SessionManager(requireContext())
@@ -117,18 +120,44 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
 
         if (args.product != null) {
             product = args.product!!
-            Log.d("TAG", "onCreateView: $product")
         } else {
             getProductByID()
         }
-        if (product.category_id == ""){
+        if (product.category_id == "") {
             getProductByID()
         }
-        Log.d("TAG", "onCreateView: $product")
         toolbar = requireActivity().findViewById(R.id.toolbar)
         toolbar.title = product.full_name
+        (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        Log.d("TAG", "onCreateView: ${args.parentFragment}")
+        toolbar.setNavigationOnClickListener {
+            when (args.parentFragment) {
+                "Main" -> {
+                    findNavController().popBackStack()
+                }
+                "SalesProducts" -> {
+                    findNavController().popBackStack()
+                }
+                "NewProducts" -> {
+                    findNavController().popBackStack()
+                }
+                "MainBarcode" -> {
+                    findNavController().navigate(R.id.action_dataProductFragment_to_mainFragment)
+                }
+                "SalesProductsBarcode" -> {
+                    findNavController().navigate(R.id.action_dataProductFragment_to_salesAndPromotionsFragment)
+                }
+                "NewProductsBarcode" -> {
+                    findNavController().navigate(R.id.action_dataProductFragment_to_newProductsFragment)
+                }
+                "Cart" -> {
+                    findNavController().popBackStack()
+                }
+            }
+            showBottomNav()
+        }
 
-        if (product.is_set){
+        if (product.is_set) {
             filterBadge = BadgeDrawable.create(requireContext())
             filterBadge?.isVisible = true
             BadgeUtils.attachBadgeDrawable(filterBadge!!, toolbar, R.id.product_set_item)
@@ -178,21 +207,57 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         super.onCreateOptionsMenu(menu, inflater)
     }
 
+    fun handleBackPressed() {
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            // Обработка нажатия кнопки "Назад" внутри фрагмента
+            when (args.parentFragment) {
+                "Main" -> {
+                    findNavController().popBackStack()
+                }
+                "SalesProducts" -> {
+                    findNavController().popBackStack()
+                }
+                "NewProducts" -> {
+                    findNavController().popBackStack()
+                }
+                "MainBarcode" -> {
+                    findNavController().navigate(R.id.action_dataProductFragment_to_mainFragment)
+                }
+                "SalesProductsBarcode" -> {
+                    findNavController().navigate(R.id.action_dataProductFragment_to_salesAndPromotionsFragment)
+                }
+                "NewProductsBarcode" -> {
+                    findNavController().navigate(R.id.action_dataProductFragment_to_newProductsFragment)
+                }
+                "Cart" -> {
+                    findNavController().popBackStack()
+                }
+            }
+            showBottomNav()
+        }
+
+    }
+
+
     @SuppressLint("UnsafeOptInUsageError")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.product_set_item){
+        if (item.itemId == R.id.product_set_item) {
             if (product.is_set) {
                 callSetInProduct(args.productId)
-            }else {
-                Toast.makeText(requireContext(), "У данного продукта нет комплекта", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(
+                    requireContext(), "У данного продукта нет комплекта", Toast.LENGTH_SHORT
+                ).show()
             }
         }
 
-        if (item.itemId == R.id.product_in_stock_item){
-            if (product.counts.isNotEmpty()){
+        if (item.itemId == R.id.product_in_stock_item) {
+            if (product.counts.isNotEmpty()) {
                 callInStockDialog(product.full_name, product.counts)
             } else {
-                Toast.makeText(requireContext(), "Данного продукта нет в наличии", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(), "Данного продукта нет в наличии", Toast.LENGTH_SHORT
+                ).show()
             }
         }
         return super.onOptionsItemSelected(item)

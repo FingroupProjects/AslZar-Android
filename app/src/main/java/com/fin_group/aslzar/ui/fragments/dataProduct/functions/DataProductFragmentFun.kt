@@ -12,6 +12,7 @@ import android.view.View.VISIBLE
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL
@@ -369,3 +370,14 @@ fun DataProductFragment.createTable(binding: FragmentDataProductBinding, totalPr
         }
     }
 }
+
+//fun DataProductFragment.backPressed(){
+//    requireActivity().onBackPressedDispatcher.addCallback(
+//        viewLifecycleOwner,
+//        object : OnBackPressedCallback(true) {
+//            override fun handleOnBackPressed() {
+//                val fragment =
+//            }
+//        }
+//    )
+//}

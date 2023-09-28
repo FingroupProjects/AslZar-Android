@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.navArgs
 import com.budiyev.android.codescanner.CodeScanner
 import com.budiyev.android.codescanner.DecodeCallback
 import com.fin_group.aslzar.api.ApiClient
@@ -29,6 +30,7 @@ class BarcodeScannerV2Fragment : Fragment() {
     private var _binding: FragmentBarcodeScannerV2Binding? = null
     private val binding get() = _binding!!
 
+    val args by navArgs<BarcodeScannerV2FragmentArgs>()
     private val requestCodeCameraPermission = 1001
     private lateinit var codeScanner: CodeScanner
 
@@ -88,7 +90,8 @@ class BarcodeScannerV2Fragment : Fragment() {
                             val action =
                                 BarcodeScannerV2FragmentDirections.actionBarCodeScannerFragmentToDataProductFragment(
                                     productResponse.id,
-                                    productResponse
+                                    productResponse,
+                                    args.parentFragment
                                 )
                             Navigation.findNavController(binding.root).navigate(action)
                         } else if (response.body() == null) {
@@ -137,6 +140,7 @@ class BarcodeScannerV2Fragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        showBottomNav()
         _binding = null
     }
 }

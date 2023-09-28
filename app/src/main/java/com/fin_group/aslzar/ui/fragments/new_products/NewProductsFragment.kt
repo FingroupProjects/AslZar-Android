@@ -44,6 +44,7 @@ import com.fin_group.aslzar.util.BadgeManager
 import com.fin_group.aslzar.util.CategoryClickListener
 import com.fin_group.aslzar.util.ProductOnClickListener
 import com.fin_group.aslzar.util.SessionManager
+import com.fin_group.aslzar.util.showBottomNav
 import com.fin_group.aslzar.viewmodel.SharedViewModel
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -147,7 +148,8 @@ class NewProductsFragment : Fragment(), ProductOnClickListener {
                 searchViewFun()
             }
             R.id.barcode_item -> {
-                findNavController().navigate(R.id.action_newProductsFragment_to_barCodeScannerFragment)
+                val action = NewProductsFragmentDirections.actionNewProductsFragmentToBarCodeScannerFragment("NewProductsBarcode")
+                findNavController().navigate(action)
             }
             R.id.profile_item -> {
                 findNavController().navigate(R.id.action_newProductsFragment_to_profileFragment)
@@ -196,7 +198,7 @@ class NewProductsFragment : Fragment(), ProductOnClickListener {
     }
 
     override fun getData(product: Product) {
-        val action = NewProductsFragmentDirections.actionNewProductsFragmentToDataProductFragment(product.id, product)
+        val action = NewProductsFragmentDirections.actionNewProductsFragmentToDataProductFragment(product.id, product, "NewProducts")
         Navigation.findNavController(binding.root).navigate(action)
     }
 

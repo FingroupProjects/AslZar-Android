@@ -160,7 +160,7 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
             R.id.search_item -> {searchViewFun()}
             R.id.filter_item -> {filterFun()}
             R.id.barcode_item -> {
-                val action = MainFragmentDirections.actionMainFragmentToBarCodeScannerFragment()
+                val action = MainFragmentDirections.actionMainFragmentToBarCodeScannerFragment("MainBarcode")
                 findNavController().navigate(action)
             }
             R.id.profile_item -> {findNavController().navigate(R.id.action_mainFragment_to_profileFragment)}
@@ -178,11 +178,6 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         Cart.saveCartToPrefs(requireContext())
         _binding = null
         preferences.edit()?.putBoolean("first_run", false)?.apply()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        preferences.edit()?.putBoolean("first_run", true)?.apply()
     }
 
     override fun onStart() {
@@ -227,7 +222,7 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
     }
 
     override fun getData(product: Product) {
-        val action = MainFragmentDirections.actionMainFragmentToDataProductFragment(product.id, product)
+        val action = MainFragmentDirections.actionMainFragmentToDataProductFragment(product.id, product, "Main")
         Navigation.findNavController(binding.root).navigate(action)
     }
 

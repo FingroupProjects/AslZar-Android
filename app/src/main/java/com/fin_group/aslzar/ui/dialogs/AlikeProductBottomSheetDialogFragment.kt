@@ -65,7 +65,6 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(),
             dialog.arguments = args
             return dialog
         }
-
         private const val ARG_PRODUCT = "alikeProduct"
     }
 

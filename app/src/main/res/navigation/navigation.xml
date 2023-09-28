@@ -41,8 +41,7 @@
             app:enterAnim="@anim/from_right"
             app:exitAnim="@anim/to_left"
             app:popEnterAnim="@anim/from_left"
-            app:popExitAnim="@anim/to_right"
-            app:popUpTo="@id/mainFragment" />
+            app:popExitAnim="@anim/to_right" />
     </fragment>
     <fragment
         android:id="@+id/barCodeScannerFragment"
@@ -55,8 +54,10 @@
             app:enterAnim="@anim/from_right"
             app:exitAnim="@anim/to_left"
             app:popEnterAnim="@anim/from_left"
-            app:popExitAnim="@anim/to_right"
-            app:popUpTo="@id/mainFragment" />
+            app:popExitAnim="@anim/to_right"/>
+        <argument
+            android:name="parentFragment"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/dataProductFragment"
@@ -70,6 +71,29 @@
             android:name="product"
             app:argType="com.fin_group.aslzar.response.Product"
             app:nullable="true" />
+        <argument
+            android:name="parentFragment"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_dataProductFragment_to_salesAndPromotionsFragment"
+            app:destination="@id/salesAndPromotionsFragment"
+            app:popUpTo="@id/salesAndPromotionsFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_dataProductFragment_to_mainFragment"
+            app:destination="@id/mainFragment"
+            app:popUpTo="@id/mainFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_dataProductFragment_to_newProductsFragment"
+            app:destination="@id/newProductsFragment"
+            app:popUpTo="@id/newProductsFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_dataProductFragment_to_mainCartFragment"
+            app:destination="@id/mainCartFragment"
+            app:popUpTo="@id/mainCartFragment"
+            app:popUpToInclusive="true"/>
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
@@ -80,54 +104,54 @@
         android:id="@+id/salesAndPromotionsFragment"
         android:name="com.fin_group.aslzar.ui.fragments.sales.SalesAndPromotionsFragment"
         android:label="Акции и скидки"
-        tools:layout="@layout/fragment_sales_and_promotions" >
+        tools:layout="@layout/fragment_sales_and_promotions">
         <action
             android:id="@+id/action_salesAndPromotionsFragment_to_profileFragment"
             app:destination="@id/profileFragment"
             app:enterAnim="@anim/from_right"
             app:exitAnim="@anim/to_left"
             app:popEnterAnim="@anim/from_left"
-            app:popExitAnim="@anim/to_right"/>
+            app:popExitAnim="@anim/to_right" />
         <action
             android:id="@+id/action_salesAndPromotionsFragment_to_dataProductFragment"
             app:destination="@id/dataProductFragment"
             app:enterAnim="@anim/from_right"
             app:exitAnim="@anim/to_left"
             app:popEnterAnim="@anim/from_left"
-            app:popExitAnim="@anim/to_right"/>
+            app:popExitAnim="@anim/to_right" />
         <action
             android:id="@+id/action_salesAndPromotionsFragment_to_barCodeScannerFragment"
             app:destination="@id/barCodeScannerFragment"
             app:enterAnim="@anim/from_right"
             app:exitAnim="@anim/to_left"
             app:popEnterAnim="@anim/from_left"
-            app:popExitAnim="@anim/to_right"/>
+            app:popExitAnim="@anim/to_right" />
     </fragment>
     <fragment
         android:id="@+id/newProductsFragment"
         android:name="com.fin_group.aslzar.ui.fragments.new_products.NewProductsFragment"
         android:label="Новинки"
-        tools:layout="@layout/fragment_new_products" >
+        tools:layout="@layout/fragment_new_products">
         <action
             android:id="@+id/action_newProductsFragment_to_profileFragment"
             app:destination="@id/profileFragment"
             app:enterAnim="@anim/from_right"
             app:exitAnim="@anim/to_left"
             app:popEnterAnim="@anim/from_left"
-            app:popExitAnim="@anim/to_right"/>
+            app:popExitAnim="@anim/to_right" />
         <action
             android:id="@+id/action_newProductsFragment_to_dataProductFragment"
             app:destination="@id/dataProductFragment"
             app:enterAnim="@anim/from_right"
             app:exitAnim="@anim/to_left"
             app:popEnterAnim="@anim/from_left"
-            app:popExitAnim="@anim/to_right"/>
+            app:popExitAnim="@anim/to_right" />
         <action
             android:id="@+id/action_newProductsFragment_to_barCodeScannerFragment"
             app:destination="@id/barCodeScannerFragment"
             app:enterAnim="@anim/from_right"
             app:exitAnim="@anim/to_left"
             app:popEnterAnim="@anim/from_left"
-            app:popExitAnim="@anim/to_right"/>
+            app:popExitAnim="@anim/to_right" />
     </fragment>
 </navigation>

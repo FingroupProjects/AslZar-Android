@@ -4,8 +4,12 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.Menu
+import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -20,6 +24,7 @@ import com.fin_group.aslzar.response.GetAllCategoriesResponse
 import com.fin_group.aslzar.response.GetAllClientsResponse
 import com.fin_group.aslzar.response.GetAllProductsResponse
 import com.fin_group.aslzar.response.PercentInstallment
+import com.fin_group.aslzar.ui.fragments.dataProduct.DataProductFragment
 import com.fin_group.aslzar.ui.fragments.main.MainFragment
 import com.fin_group.aslzar.util.BadgeManager
 import com.fin_group.aslzar.util.SessionManager
@@ -48,6 +53,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var apiClient: ApiClient
     private lateinit var sessionManager: SessionManager
 
+    private var doubleBackToExitPressedOnce = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -101,6 +107,8 @@ class MainActivity : AppCompatActivity() {
     private fun clearSavedPreferences() {
         with(prefs.edit()) {
             remove("productList")
+            remove("newProductList")
+            remove("productListSales")
             remove("clientList")
             remove("categoryList")
             remove("requestList")
@@ -264,9 +272,19 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
         Cart.saveCartToPrefs(this)
 
+
         val badge = bottomNavBar.getOrCreateBadge(R.id.mainCartFragment)
         badgeManager.saveBadgeCount(badge.number)
         prefs.edit()?.putString("selectedCategory", "all")?.apply()
         prefs.edit()?.putBoolean("first_run", false)?.apply()
     }
+
+//    override fun onBackPressed() {
+//        val navController = findNavController(R.id.fragmentMain)
+//
+//        // Если навигация возможна назад, выполните навигацию
+//        if (navController.currentDestination?.id != R.id.barCodeScannerFragment) {
+//            super.onBackPressed()
+//        }
+//    }
 }
