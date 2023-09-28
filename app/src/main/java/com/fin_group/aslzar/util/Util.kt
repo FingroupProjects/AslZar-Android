@@ -221,3 +221,13 @@ fun BottomSheetDialogFragment.setDialogHeightPercent(percentage: Int) {
         percentHeight.toInt()
     )
 }
+
+fun Fragment.backPressed(action: Int) {
+    requireActivity().onBackPressedDispatcher.addCallback(
+        viewLifecycleOwner,
+        object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                findNavController().navigate(action)
+            }
+        })
+}

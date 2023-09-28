@@ -14,6 +14,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL
 import com.bumptech.glide.Glide
@@ -33,6 +35,7 @@ import com.fin_group.aslzar.ui.fragments.cartMain.calculator.CalculatorFragmentV
 import com.fin_group.aslzar.ui.fragments.dataProduct.DataProductFragment
 import retrofit2.Callback
 import com.fin_group.aslzar.util.formatNumber
+import com.fin_group.aslzar.util.showBottomNav
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.badge.BadgeUtils
 import com.google.gson.Gson
@@ -369,6 +372,39 @@ fun DataProductFragment.createTable(binding: FragmentDataProductBinding, totalPr
             percentLinearLayout.addView(textViewPercent)
         }
     }
+}
+
+fun DataProductFragment.onBackPressed() {
+    requireActivity().onBackPressedDispatcher.addCallback(
+        viewLifecycleOwner,
+        object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                when (args.parentFragment) {
+                    "Main" -> {
+                        findNavController().popBackStack()
+                    }
+                    "SalesProducts" -> {
+                        findNavController().popBackStack()
+                    }
+                    "NewProducts" -> {
+                        findNavController().popBackStack()
+                    }
+                    "MainBarcode" -> {
+                        findNavController().navigate(R.id.action_dataProductFragment_to_mainFragment)
+                    }
+                    "SalesProductsBarcode" -> {
+                        findNavController().navigate(R.id.action_dataProductFragment_to_salesAndPromotionsFragment)
+                    }
+                    "NewProductsBarcode" -> {
+                        findNavController().navigate(R.id.action_dataProductFragment_to_newProductsFragment)
+                    }
+                    "Cart" -> {
+                        findNavController().popBackStack()
+                    }
+                }
+                showBottomNav()
+            }
+        })
 }
 
 //fun DataProductFragment.backPressed(){

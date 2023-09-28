@@ -156,25 +156,6 @@ class CartFragment : Fragment(), EditProductInCart, OnProductAddedToCartListener
         } catch (e: Exception){
             Log.d("TAG", "openDialogDataProduct: ${e.message}")
         }
-
-
-
-
-//        val fragmentManager = requireFragmentManager()
-//        val tag = "Product in stock Dialog"
-//        val existingFragment = fragmentManager.findFragmentByTag(tag)
-//
-//        if (existingFragment == null) {
-//            val bottomSheetFragment = DataProductInCartFragment.newInstance(productInCart)
-//            bottomSheetFragment.show(fragmentManager, tag)
-//        }
-
-//        val action =
-//            CartFragmentDirections.actionCartFragmentToDataProductFragment(
-//                productInCart.id,
-//                null
-//            )
-//        findNavController().navigate(action)
     }
 
     override fun onProductAddedToCart(product: ProductInCart) {
