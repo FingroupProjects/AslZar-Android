@@ -58,6 +58,7 @@ class ChangePasswordProfileFragmentDialog : BaseDialogFragment() {
         Log.d("TAG", "onCreateView: $password")
         return binding.root
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setWidthPercent(90)
@@ -102,8 +103,7 @@ class ChangePasswordProfileFragmentDialog : BaseDialogFragment() {
         }
     }
 
-
-    fun gotoLoginFragment(){
+    private fun gotoLoginFragment() {
         val fragmentLogin = FragmentLogin()
         val fragmentManager = requireActivity().supportFragmentManager
         val transaction = fragmentManager.beginTransaction()
@@ -112,7 +112,7 @@ class ChangePasswordProfileFragmentDialog : BaseDialogFragment() {
         transaction.commit()
     }
 
-    fun changePasswordWithApi(login: String, password: String) {
+    private fun changePasswordWithApi(login: String, password: String) {
         val call = apiService.getApiServiceLogin(login, password).changePassword(this.password)
         try {
             call.enqueue(object : Callback<ResponseChangePassword?> {
@@ -125,7 +125,7 @@ class ChangePasswordProfileFragmentDialog : BaseDialogFragment() {
                         Log.d("TAG", "onResponse: $response")
                         if (response != null) {
                             if (response.result) {
-                                Toast.makeText(requireContext(), "Ваш пароль изменен", Toast.LENGTH_SHORT).show()
+                                Log.d("Tag", "Your password is change!")
                             } else {
                                 Toast.makeText(requireContext(), "Ошибка", Toast.LENGTH_SHORT).show()
                             }
@@ -145,7 +145,6 @@ class ChangePasswordProfileFragmentDialog : BaseDialogFragment() {
             Log.d("TAG", "createLead: ${e.message}")
         }
     }
-
 
     override fun onStart() {
         super.onStart()
