@@ -1,19 +1,26 @@
 package com.fin_group.aslzar.ui.fragments.profile.functions
 
 import android.graphics.Color
+import android.util.Base64
 import android.util.Log
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Toast
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import com.fin_group.aslzar.cipher.EncryptionManager
+import com.fin_group.aslzar.databinding.FragmentForgotPasswordBinding
+import com.fin_group.aslzar.databinding.FragmentProfileBinding
+import com.fin_group.aslzar.response.ResponseForgotPassword
 import com.fin_group.aslzar.response.SalesPlanResponse
 import com.fin_group.aslzar.ui.dialogs.ChangePasswordProfileFragmentDialog
+import com.fin_group.aslzar.ui.fragments.login.forgotPassword.ForgotPasswordFragment
 import com.fin_group.aslzar.ui.fragments.profile.ProfileFragment
 import com.github.anastr.speedviewlib.components.Style
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import javax.crypto.spec.SecretKeySpec
 
 fun ProfileFragment.speedometerView(speed: Float) {
     speedometer.speedTo(speed)
@@ -33,6 +40,68 @@ fun ProfileFragment.goToChangePasswordDialog() {
         changeDataPassword.show(transaction, "ChangePasswordProfileDialogFragment")
     }
 }
+
+
+fun ProfileFragment.goToDialogShow(login: String, password: String) {
+    val changeDataPassword = ChangePasswordProfileFragmentDialog.newInstancePass(login, password)
+    val fragmentManager: FragmentManager? = activity?.supportFragmentManager
+    fragmentManager?.let {
+        val transaction: FragmentTransaction = it.beginTransaction()
+        transaction.addToBackStack(null)
+        changeDataPassword.show(transaction, "ChangePasswordProfileDialogFragment")
+    }
+}
+
+
+fun ProfileFragment.changePassword(binding: FragmentProfileBinding) {
+    val call = apiService.getApiService().forgotPassword("Bearer ${sessionManager.fetchToken()}")
+    try {
+        call.enqueue(object : Callback<ResponseForgotPassword?> {
+            override fun onResponse(
+                call: Call<ResponseForgotPassword?>,
+                response: Response<ResponseForgotPassword?>
+            ) {
+                if (response.isSuccessful) {
+                    val changePassword = response.body()
+                    Log.d("TAG", "onResponse: $changePassword")
+                    if (changePassword != null) {
+                        if (changePassword.result) {
+                            key = sessionManager.fetchKey()!!
+                            keyBase64 = Base64.decode(key, Base64.DEFAULT)
+                            encryptionKey = SecretKeySpec(keyBase64, "AES")
+                            encryptionManager = EncryptionManager(encryptionKey)
+
+                            val llogin =
+                                encryptionManager.decryptData(sessionManager.fetchLogin()!!)
+                            val ppasword =
+                                encryptionManager.decryptData(sessionManager.fetchPassword()!!)
+
+                            goToDialogShow(llogin, ppasword)
+
+                        } else {
+                            Log.d("TAG", "onResponse: ${response.code()}")
+                            Log.d("TAG", "onResponse: ${response.body()}")
+                        }
+                    } else {
+                        Log.d("TAG", "onResponse: ${response.code()}")
+                        Log.d("TAG", "onResponse: ${response.body()}")
+                    }
+
+                } else {
+                    Log.d("TAG", "onResponse: ${response.code()}")
+                    Log.d("TAG", "onResponse: ${response.body()}")
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseForgotPassword?>, t: Throwable) {
+                Log.d("TAG", "onFailure: ${t.message}")
+            }
+        })
+    } catch (e: Exception) {
+        Log.d("TAG", "changePassword: ${e.message}")
+    }
+}
+
 
 //fun ProfileFragment.getSalesPlan(){
 //    swipeRefreshLayout.isRefreshing = true

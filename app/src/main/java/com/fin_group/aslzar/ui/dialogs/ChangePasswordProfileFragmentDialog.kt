@@ -1,25 +1,30 @@
 package com.fin_group.aslzar.ui.dialogs
 
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.databinding.FragmentDialogChangePasswordProfileBinding
 import com.fin_group.aslzar.response.Auth
 import com.fin_group.aslzar.response.ResponseChangePassword
 import com.fin_group.aslzar.ui.fragments.login.FragmentLogin
+import com.fin_group.aslzar.ui.fragments.login.forgotPassword.ForgotPasswordFragment
 import com.fin_group.aslzar.util.BaseDialogFragment
 import com.fin_group.aslzar.util.setWidthPercent
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+@Suppress("DEPRECATION")
 class ChangePasswordProfileFragmentDialog : BaseDialogFragment() {
 
     private var _binding: FragmentDialogChangePasswordProfileBinding? = null
@@ -27,8 +32,8 @@ class ChangePasswordProfileFragmentDialog : BaseDialogFragment() {
     private lateinit var newPasswordInputLayout: TextInputLayout
     private lateinit var newPasswordEditText: TextInputEditText
     lateinit var apiService: ApiClient
-    lateinit var login: String
-    lateinit var password: String
+    private var vlLogin: String? = null
+    private var vlPassword: String? = null
 
     companion object {
         fun newInstancePass(login: String, password: String): ChangePasswordProfileFragmentDialog {
@@ -51,11 +56,11 @@ class ChangePasswordProfileFragmentDialog : BaseDialogFragment() {
         _binding = FragmentDialogChangePasswordProfileBinding.inflate(inflater, container, false)
         apiService = ApiClient()
         arguments?.let {
-            login = it.getString(ARG_LOGIN, "")
-            password = it.getString(ARG_PASSWORD, "")
+            vlLogin = it.getString(ARG_LOGIN, "")
+            vlPassword = it.getString(ARG_PASSWORD, "")
         }
-        Log.d("TAG", "onCreateView: $login")
-        Log.d("TAG", "onCreateView: $password")
+        Log.d("TAG", "onCreateView: $vlLogin")
+        Log.d("TAG", "onCreateView: $vlPassword")
         return binding.root
     }
 
@@ -65,9 +70,10 @@ class ChangePasswordProfileFragmentDialog : BaseDialogFragment() {
         newPasswordInputLayout = binding.newPasswordChange
         newPasswordEditText = binding.editNewPasswordChange
         passwordCheck()
-        binding.floatingActionButton.setOnClickListener {
-            dismiss()
-        }
+        isCancelable = false
+//        binding.floatingActionButton.setOnClickListener {
+//            dismiss()
+//        }
     }
 
     private fun passwordCheck() {
@@ -84,8 +90,8 @@ class ChangePasswordProfileFragmentDialog : BaseDialogFragment() {
                 binding.editNewPasswordChange.error = "Введите новый пароль!"
                 binding.editNewPasswordChange.requestFocus()
                 return@setOnClickListener
-            } else if (newPasswordText.length < 8) {
-                binding.editNewPasswordChange.error = "Минимальная длина паролья 8 символов"
+            } else if (newPasswordText.length < 4) {
+                binding.editNewPasswordChange.error = "Минимальная длина паролья 4 символов"
                 binding.editNewPasswordChange.requestFocus()
                 return@setOnClickListener
             } else if (repeatPasswordText.isEmpty()) {
@@ -94,26 +100,38 @@ class ChangePasswordProfileFragmentDialog : BaseDialogFragment() {
                 return@setOnClickListener
             }
             if (newPasswordText == repeatPasswordText) {
-                gotoLoginFragment()
-                changePasswordWithApi(login, password)
+                changePasswordWithApi(vlLogin!!, vlPassword!!, newPasswordText)
                 dismiss()
+                Toast.makeText(requireContext(),"Ваш пароль изменён!", Toast.LENGTH_SHORT).show()
+                gotoLoginFragment(requireActivity() as AppCompatActivity)
             } else {
                 binding.tvError.visibility = View.VISIBLE
             }
         }
     }
 
-    private fun gotoLoginFragment() {
-        val fragmentLogin = FragmentLogin()
-        val fragmentManager = requireActivity().supportFragmentManager
+    private fun gotoLoginFragment(activity: AppCompatActivity) {
+
+        val forgotPasswordFragment = ForgotPasswordFragment()
+        val fragmentManager = activity.supportFragmentManager
         val transaction = fragmentManager.beginTransaction()
-        transaction.replace(R.id.fragmentLogin, fragmentLogin)
+        transaction.replace(R.id.fragmentLogin, forgotPasswordFragment)
         transaction.addToBackStack(null)
         transaction.commit()
+
+
+        Handler().postDelayed({
+            val fragmentLogin = FragmentLogin()
+            val transactionLogin = fragmentManager.beginTransaction()
+            transactionLogin.replace(R.id.fragmentLogin, fragmentLogin)
+            transactionLogin.addToBackStack(null)
+            transactionLogin.commit()
+        }, 2500)
+
     }
 
-    private fun changePasswordWithApi(login: String, password: String) {
-        val call = apiService.getApiServiceLogin(login, password).changePassword(this.password)
+    private fun changePasswordWithApi(login: String, password: String, newPassword: String) {
+        val call = apiService.getApiServiceLogin(login, password).changePassword(newPassword)
         try {
             call.enqueue(object : Callback<ResponseChangePassword?> {
                 override fun onResponse(
@@ -126,6 +144,8 @@ class ChangePasswordProfileFragmentDialog : BaseDialogFragment() {
                         if (response != null) {
                             if (response.result) {
                                 Log.d("Tag", "Your password is change!")
+                                val snackBar = Snackbar.make(binding.root, "Hello", Snackbar.LENGTH_SHORT)
+                                snackBar.show()
                             } else {
                                 Toast.makeText(requireContext(), "Ошибка", Toast.LENGTH_SHORT).show()
                             }
