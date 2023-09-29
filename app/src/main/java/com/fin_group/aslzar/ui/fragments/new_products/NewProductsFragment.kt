@@ -160,7 +160,7 @@ class NewProductsFragment : Fragment(), ProductOnClickListener {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        badgeManager = BadgeManager(requireContext())
+        badgeManager = BadgeManager(requireContext(), "badge_cart_prefs")
     }
 
     override fun inStock(product: Product) {

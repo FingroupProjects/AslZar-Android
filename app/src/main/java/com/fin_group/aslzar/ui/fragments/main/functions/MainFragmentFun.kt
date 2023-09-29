@@ -78,7 +78,6 @@ fun MainFragment.searchViewFun() {
         } else {
             viewSearch.visibility = GONE
         }
-        Log.d("TAG", "searchViewFun: ${categoryChecked(viewCheckedCategory)}")
     } else {
         viewCheckedCategory.visibility = GONE
         selectCategory = null
@@ -88,7 +87,6 @@ fun MainFragment.searchViewFun() {
         } else {
             viewSearch.visibility = GONE
         }
-        Log.d("TAG", "searchViewFun: ${categoryChecked(viewCheckedCategory)}")
     }
 }
 

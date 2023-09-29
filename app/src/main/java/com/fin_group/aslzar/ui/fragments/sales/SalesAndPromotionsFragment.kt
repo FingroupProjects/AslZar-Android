@@ -49,9 +49,12 @@ import com.fin_group.aslzar.util.ProductOnClickListener
 import com.fin_group.aslzar.util.SessionManager
 import com.fin_group.aslzar.viewmodel.SharedViewModel
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.badge.BadgeDrawable
+import com.google.android.material.badge.BadgeUtils
+import com.google.android.material.badge.ExperimentalBadgeUtils
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-@Suppress("DEPRECATION")
+@ExperimentalBadgeUtils @Suppress("DEPRECATION")
 class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener {
 
     private var _binding: FragmentSalesAndPromotionsBinding? = null
@@ -171,7 +174,7 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        badgeManager = BadgeManager(requireContext())
+        badgeManager = BadgeManager(requireContext(), "badge_cart_prefs")
     }
 
     override fun onResume() {
@@ -197,7 +200,6 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener {
         val action = SalesAndPromotionsFragmentDirections.actionSalesAndPromotionsFragmentToDataProductFragment(product.id, product, "SalesProducts")
         Navigation.findNavController(binding.root).navigate(action)
     }
-
 
     private fun fetchDataAndFilterProducts() {
         getAllProductsFromApi()

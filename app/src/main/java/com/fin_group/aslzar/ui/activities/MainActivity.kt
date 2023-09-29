@@ -84,7 +84,7 @@ class MainActivity : AppCompatActivity() {
         toolbar = binding.toolbar
 
         setSupportActionBar(toolbar)
-        badgeManager = BadgeManager(this)
+        badgeManager = BadgeManager(this, "badge_cart_prefs")
 
         bottomNavBar = binding.bottomNavigationView
         val navController = findNavController(R.id.fragmentMain)

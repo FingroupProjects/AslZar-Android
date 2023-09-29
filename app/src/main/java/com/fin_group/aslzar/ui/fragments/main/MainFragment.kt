@@ -194,7 +194,7 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        badgeManager = BadgeManager(requireContext())
+        badgeManager = BadgeManager(requireContext(), "badge_cart_prefs")
     }
 
     override fun onResume() {

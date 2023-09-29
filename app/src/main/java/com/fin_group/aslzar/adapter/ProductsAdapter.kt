@@ -64,7 +64,6 @@ class ProductsAdapter(
                 image.setImageResource(R.drawable.ic_no_image)
             }
 
-            Log.d("TAG", "bind: ${product.sale}")
             if (product.sale.toDouble() <= 0.0){
                 saleTv.visibility = GONE
             } else {

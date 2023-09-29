@@ -107,7 +107,7 @@ class CartFragment : Fragment(), EditProductInCart, OnProductAddedToCartListener
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        badgeManager = BadgeManager(requireContext())
+        badgeManager = BadgeManager(requireContext(), "badge_cart_prefs")
     }
 
     override fun plusProductInCart(productInCart: ProductInCart) {

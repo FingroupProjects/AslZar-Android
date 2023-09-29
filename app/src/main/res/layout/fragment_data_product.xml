@@ -38,10 +38,8 @@
                 android:layout_marginTop="4dp"
                 android:layout_marginEnd="16dp"
                 android:background="@drawable/bg_table_calculator"
-                android:elevation="2dp"
                 android:orientation="horizontal"
                 android:visibility="visible"
-                app:layout_constraintBottom_toTopOf="@+id/view3"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_table2">
@@ -460,6 +458,16 @@
                 app:layout_constraintBottom_toTopOf="@+id/btn_add_to_cart"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/printPercent" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/printPercent"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
+                app:layout_constraintBottom_toTopOf="@id/view3"
+                app:layout_constraintEnd_toEndOf="@+id/tvTable"
+                app:layout_constraintStart_toStartOf="@+id/tvTable"
                 app:layout_constraintTop_toBottomOf="@+id/tvTable" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
