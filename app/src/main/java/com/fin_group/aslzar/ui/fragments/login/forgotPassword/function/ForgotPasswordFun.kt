@@ -12,6 +12,7 @@ import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import com.fin_group.aslzar.R
 import com.fin_group.aslzar.databinding.FragmentForgotPasswordBinding
 import com.fin_group.aslzar.response.ForgotPasswordResponse
 import com.fin_group.aslzar.ui.dialogs.ChangePasswordProfileFragmentDialog
@@ -40,10 +41,12 @@ fun ForgotPasswordFragment.checkEmail(binding: FragmentForgotPasswordBinding){
                     binding.addFour.visibility = View.VISIBLE
                     binding.addFive.visibility = View.VISIBLE
                     binding.tvText.text = "Проверте почту: $email"
+                    binding.image.setImageResource(R.drawable.ic_code)
                     binding.tvErrorNumber.visibility = View.GONE
                     binding.editEmail.visibility = View.GONE
                     binding.email.visibility = View.GONE
                     binding.progressBar2.visibility = View.GONE
+
                     checkNumber(binding)
                 }
 
@@ -52,7 +55,6 @@ fun ForgotPasswordFragment.checkEmail(binding: FragmentForgotPasswordBinding){
                         binding.tvError.visibility = View.VISIBLE
                         binding.tvError.text = "Нет пользоваателя с такой электронной почтой"
                         binding.progressBar2.visibility = View.GONE
-
                     }
                 }
             })
@@ -126,8 +128,14 @@ fun ForgotPasswordFragment.startCountDawnTimer(binding: FragmentForgotPasswordBi
                     }
 
                     override fun onError(errorMessage: String) {
+
                         if (errorMessage == "Ошибка"){
+
                             Toast.makeText(requireContext(), "Такого эл. почты нет!", Toast.LENGTH_SHORT).show()
+
+                        }else if(errorMessage == "Ошибка с сервером"){
+
+                            Toast.makeText(requireContext(), "Повторите попытку позже", Toast.LENGTH_SHORT).show()
                         }
                     }
                 })
@@ -150,13 +158,7 @@ fun ForgotPasswordFragment.forgotPasswordWithEmail(binding: FragmentForgotPasswo
                 call: Call<ForgotPasswordResponse?>,
                 response: Response<ForgotPasswordResponse?>
             ) {
-
-                if (response.code() == 400) {
-
-                    callback.onError("Ошибка")
-                    Toast.makeText(requireContext(), "Такого эл. почты нет!", Toast.LENGTH_SHORT).show()
-
-                } else if (response.code() == 200){
+                 if (response.code() == 200){
                     if (response.isSuccessful) {
                         val getEmail = response.body()
                         Log.d("TAG", "onResponse: $getEmail")
@@ -178,7 +180,14 @@ fun ForgotPasswordFragment.forgotPasswordWithEmail(binding: FragmentForgotPasswo
                             callback.onSuccess(false)
                         }
                     }
-                }
+                }else if (response.code() == 400) {
+                    callback.onError("Ошибка")
+                    Toast.makeText(requireContext(), "Такого эл. почты нет!", Toast.LENGTH_SHORT).show()
+
+                }else if (response.code() == 500) {
+                     callback.onError("Ошибка с сервером")
+                     Toast.makeText(requireContext(), "Повторите попытку позже", Toast.LENGTH_SHORT).show()
+                 }
             }
 
             override fun onFailure(call: Call<ForgotPasswordResponse?>, t: Throwable) {
