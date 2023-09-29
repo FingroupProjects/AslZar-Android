@@ -2,7 +2,6 @@ package com.fin_group.aslzar.ui.fragments.profile
 
 import android.os.Bundle
 import android.util.Base64
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.Menu
@@ -15,6 +14,7 @@ import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.cipher.EncryptionManager
 import com.fin_group.aslzar.databinding.FragmentProfileBinding
 import com.fin_group.aslzar.ui.dialogs.SignOutProfileFragmentDialog
+import com.fin_group.aslzar.ui.fragments.profile.functions.changePassword
 import com.fin_group.aslzar.ui.fragments.profile.functions.goToChangePasswordDialog
 import com.fin_group.aslzar.ui.fragments.profile.functions.speedometerView
 import com.fin_group.aslzar.util.SessionManager
@@ -34,6 +34,11 @@ class ProfileFragment : Fragment() {
 
     lateinit var apiService: ApiClient
     lateinit var sessionManager: SessionManager
+
+    lateinit var key: String
+    lateinit var keyBase64: ByteArray
+    lateinit var encryptionKey: SecretKeySpec
+    lateinit var encryptionManager: EncryptionManager
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -73,17 +78,17 @@ class ProfileFragment : Fragment() {
                 tvNumberPhone.text = sessionManager.fetchNumberPhone()
             }
 
-            val key = sessionManager.fetchKey()
-            val keyBase64 = Base64.decode(key, Base64.DEFAULT)
-            val encryptionKey = SecretKeySpec(keyBase64, "AES")
-            val encryptionManager = EncryptionManager(encryptionKey)
+            key = sessionManager.fetchKey()!!
+            keyBase64 = Base64.decode(key, Base64.DEFAULT)
+            encryptionKey = SecretKeySpec(keyBase64, "AES")
+            encryptionManager = EncryptionManager(encryptionKey)
 
             tvUserLogin.text = encryptionManager.decryptData(sessionManager.fetchLogin()!!)
         }
 
         speedometerView(asd!!.toFloat())
         binding.btnChangePassword.setOnClickListener {
-            goToChangePasswordDialog()
+            changePassword(binding)
         }
     }
 
