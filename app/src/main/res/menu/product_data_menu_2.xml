@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/product_in_stock_item"
+        android:icon="@drawable/ic_in_stock"
+        android:title="В наличии"
+        app:showAsAction="ifRoom" />
+</menu>

@@ -54,7 +54,7 @@ import com.google.android.material.badge.BadgeUtils
 import com.google.android.material.badge.ExperimentalBadgeUtils
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-@ExperimentalBadgeUtils @Suppress("DEPRECATION")
+@Suppress("DEPRECATION")
 class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener {
 
     private var _binding: FragmentSalesAndPromotionsBinding? = null

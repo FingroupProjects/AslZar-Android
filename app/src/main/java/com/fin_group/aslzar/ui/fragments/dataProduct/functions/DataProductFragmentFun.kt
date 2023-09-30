@@ -109,21 +109,6 @@ fun DataProductFragment.setDataProduct(product: Product, binding: FragmentDataPr
         binding.otherImgRv.visibility = VISIBLE
     }
 
-    if (product.is_set) {
-        isFilterOn = !isFilterOn
-        if (isFilterOn) {
-            if (filterBadge == null) {
-                filterBadge = BadgeDrawable.create(requireContext())
-                filterBadge?.isVisible = true
-                BadgeUtils.attachBadgeDrawable(filterBadge!!, toolbar, R.id.product_set_item)
-            }
-        } else {
-            filterBadge?.isVisible = false
-        }
-    } else {
-        filterBadge?.isVisible = false
-    }
-
     if (product.sale != 0) {
         if (product.sale.toString().isNotEmpty() && product.sale.toDouble() > 0.0) {
             binding.productSale.text = "-${formatNumber(product.sale.toDouble())}%"
@@ -131,6 +116,14 @@ fun DataProductFragment.setDataProduct(product: Product, binding: FragmentDataPr
         } else {
             binding.productSale.visibility = GONE
         }
+    }
+    if (product.description.isNotEmpty()){
+        binding.dpDescription.visibility = VISIBLE
+        binding.textView46.visibility = VISIBLE
+        binding.dpDescription.text = product.description
+    } else {
+        binding.dpDescription.visibility = GONE
+        binding.textView46.visibility = GONE
     }
 
     binding.apply {
@@ -141,7 +134,7 @@ fun DataProductFragment.setDataProduct(product: Product, binding: FragmentDataPr
         }
         dpCode.text = product.name
         dpPrice.text = product.price.toString()
-        dpStone.text = product.stone_type
+        dpStone.text = product.stone_type.ifEmpty { "Без камня" }
         dpProbe.text = product.content
         dpMetal.text = product.metal
         dpWeight.text = product.weight
@@ -228,15 +221,7 @@ fun DataProductFragment.getProductByID() {
                         setDataProduct(product, binding)
                         productSomeImagesAdapter.updateList(product.img)
 
-                        if (product.is_set) {
-                            filterBadge = BadgeDrawable.create(requireContext())
-                            filterBadge?.isVisible = true
-                            BadgeUtils.attachBadgeDrawable(
-                                filterBadge!!,
-                                toolbar,
-                                R.id.product_set_item
-                            )
-                        }
+
                     }
                 }
             }

@@ -140,12 +140,11 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         toolbar.title = product.full_name
         (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        if (product.is_set) {
-            filterBadge = BadgeDrawable.create(requireContext())
-            filterBadge?.isVisible = true
-            BadgeUtils.attachBadgeDrawable(filterBadge!!, toolbar, R.id.product_set_item)
-            setBadge()
-        }
+//        if (product.is_set) {
+//            filterBadge = BadgeDrawable.create(requireContext())
+//            filterBadge?.isVisible = true
+//            BadgeUtils.attachBadgeDrawable(filterBadge!!, toolbar, R.id.product_set_item)
+//        }
         hideBottomNav()
         setHasOptionsMenu(true)
         recyclerViewSomeImages = binding.otherImgRv
@@ -169,7 +168,6 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         setDataProduct(product, binding)
         getSimilarProducts()
 
-
         swipeRefreshLayout.setOnRefreshListener {
             getProductByID()
             fetchCoefficientPlanFromApi()
@@ -177,7 +175,13 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.product_data_menu, menu)
+        Log.d("TAG", "onCreateOptionsMenu: $product")
+        if (product.is_set){
+            inflater.inflate(R.menu.product_data_menu, menu)
+        } else {
+            inflater.inflate(R.menu.product_data_menu_2, menu)
+        }
+
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -216,12 +220,6 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         Glide.with(requireContext()).load(image).into(binding.imageView2)
     }
 
-    @SuppressLint("UnsafeOptInUsageError")
-    override fun onDestroyView() {
-        super.onDestroyView()
-        removeBadge()
-    }
-
     override fun callBottomDialog(product: SimilarProduct) {
         val fragmentManager = requireFragmentManager()
         val tag = "alike_product_dialog"
@@ -232,23 +230,6 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
             bottomSheetFragment.show(fragmentManager, tag)
         }
     }
-
-    private fun setBadge() {
-        badgeManager.saveBadgeCount(1) // Устанавливаем бейдж с количеством уведомлений
-        if (filterBadge != null) {
-            filterBadge?.isVisible = true
-            BadgeUtils.attachBadgeDrawable(filterBadge!!, toolbar, R.id.product_set_item)
-        }
-    }
-
-    private fun removeBadge() {
-        if (filterBadge != null) {
-            filterBadge?.isVisible = false
-            BadgeUtils.detachBadgeDrawable(filterBadge!!, toolbar, R.id.product_set_item)
-        }
-    }
-
-
 
     override fun onDestroy() {
         super.onDestroy()

@@ -63,7 +63,7 @@ fun CalculatorFragmentV2.cartObserver(binding: FragmentCalculatorV2Binding) {
             vlTotalPriceWithoutSale = totalPriceWithoutSale
             vlTotalPriceSale = totalPriceWithSale
 
-            val difference = (averageBill.toDouble() - totalPrice.toDouble())
+            val difference = (averageBill.toDouble() - totalPriceWithoutSale.toDouble())
             if (difference > 0) {
                 val message = "Нужно еще ${formatNumber(difference)} для среднего чека"
                 averageBillTv.text = message
@@ -120,7 +120,7 @@ fun CalculatorFragmentV2.paymentClient(
             installmentPayReferralClient(client, binding, percent, vlTotalPrice)
             textWatchers(binding, percent, Cart.getTotalPrice())
         } else {
-            binding.cbBonus.visibility = View.GONE
+            binding.cbBonus.visibility = GONE
             binding.cbBonus.isChecked = false
             binding.bonus.setText("")
         }
@@ -221,101 +221,119 @@ fun CalculatorFragmentV2.textWatchers(
     percent: PercentInstallment,
     totalPrice: Number
 ) {
+    val bonusCheckBox = binding.cbBonus
     val bonusEditText = binding.bonus
     val firstPayEditText = binding.firstPay
     val payWithFirstPayTextView = binding.payWithFirstPay
     val payWithBonusTextView = binding.payWithBonus
     val totalPriceTextView = binding.totalPrice
 
-    val maxValueBonus: Double = (totalPrice.toDouble() * percent.payment_bonus.toDouble()) / 100
-    val minValueFirstPay: Double = (totalPrice.toDouble() * percent.first_pay.toDouble()) / 100
-    firstPayEditText.setText(formatNumber(minValueFirstPay))
+//    val isFirstPayEnabled = totalPrice.toDouble() > 0
+//    firstPayEditText.isEnabled = isFirstPayEnabled
 
-    var finalTotalPrice = totalPrice.toDouble()
-    var countTextBonus = 0.0
-    var countTextFirstPay = 0.0
+    if (totalPrice == 0.0) {
+        firstPayEditText.setText("0")
+        bonusEditText.setText("0")
+        payWithFirstPayTextView.text = "0.00 UZS"
+        payWithBonusTextView.text = "0.00 UZS"
+        totalPriceTextView.text = "0.00 UZS"
 
-    fun updateDisplayedValues() {
-        val bonusAmount = (finalTotalPrice * percent.payment_bonus.toDouble()) / 100
-        val firstPayAmount = (finalTotalPrice * percent.first_pay.toDouble()) / 100
+        bonusCheckBox.visibility = GONE
+        bonusCheckBox.isChecked = false
+        firstPayEditText.error = null
+    } else {
+        val maxValueBonus: Double = (totalPrice.toDouble() * percent.payment_bonus.toDouble()) / 100
+        val minValueFirstPay: Double = (totalPrice.toDouble() * percent.first_pay.toDouble()) / 100
+        firstPayEditText.setText(formatNumber(minValueFirstPay))
 
-        val enteredBonus = if ((selectedClient?.bonus?.toDouble() ?: 0.0) > 0.0) {
-            bonusEditText.text.toString().toDoubleOrNull() ?: 0.0
-        } else {
-            0.0
-        }
-        val enteredFirstPay = firstPayEditText.text.toString().toDoubleOrNull() ?: 0.0
+        var finalTotalPrice = totalPrice.toDouble()
+        var countTextBonus = 0.0
+        var countTextFirstPay = 0.0
 
-        val remainingTotal = finalTotalPrice - enteredFirstPay
-        val bonusPercentOfRemaining = (remainingTotal * percent.payment_bonus.toDouble()) / 100
+        fun updateDisplayedValues() {
+            val bonusAmount = (finalTotalPrice * percent.payment_bonus.toDouble()) / 100
+            val firstPayAmount = (finalTotalPrice * percent.first_pay.toDouble()) / 100
 
-        if (enteredBonus > bonusPercentOfRemaining) {
-            bonusEditText.setText(bonusPercentOfRemaining.toString())
-            bonusEditText.setSelection(bonusEditText.length())
-            countTextBonus = bonusPercentOfRemaining
-        } else {
-            countTextBonus = enteredBonus
-        }
-
-        val newTotalPrice = remainingTotal - countTextBonus
-
-        totalPriceTextView.text = "${formatNumber(newTotalPrice)} UZS"
-        payWithBonusTextView.text = "${formatNumber(countTextBonus)} UZS"
-        payWithFirstPayTextView.text = "${formatNumber(enteredFirstPay)} UZS"
-
-        adapterPaymentPercent.updateData(percent, newTotalPrice)
-    }
-
-    textWatcherForBonus = object : TextWatcher {
-        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-
-        override fun afterTextChanged(s: Editable?) {
-            val newText = s.toString().trim()
-            if (!newText.isNullOrEmpty()) {
-                val currentValue = newText.replace(',', '.').toDouble()
-                if (currentValue > (selectedClient?.bonus?.toDouble() ?: 0.0)) {
-                    binding.bonus.setText(selectedClient?.bonus?.toString() ?: "")
-                    binding.bonus.setSelection(binding.bonus.length())
-                }
-                else if (currentValue > maxValueBonus) {
-                    binding.bonus.setText(maxValueBonus.toString())
-                    binding.bonus.setSelection(binding.bonus.length())
-                }
+            val enteredBonus = if ((selectedClient?.bonus?.toDouble() ?: 0.0) > 0.0) {
+                bonusEditText.text.toString().toDoubleOrNull() ?: 0.0
+            } else {
+                0.0
             }
-            updateDisplayedValues()
-        }
-    }
+            val enteredFirstPay = firstPayEditText.text.toString().toDoubleOrNull() ?: 0.0
 
-    textWatcherForFirstPay = object : TextWatcher {
-        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            val remainingTotal = finalTotalPrice - enteredFirstPay
+            val bonusPercentOfRemaining = (remainingTotal * percent.payment_bonus.toDouble()) / 100
 
-        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-
-        override fun afterTextChanged(s: Editable?) {
-            val newText = s.toString().trim()
-            if (!newText.isNullOrEmpty()) {
-                val currentValue = newText.replace(',', '.').toDouble()
-                if (currentValue < minValueFirstPay) {
-                    firstPayEditText.error =
-                        "Минимальное значение первоначального взноса ${percent.first_pay}% ($minValueFirstPay) от итоговой суммы"
-                } else if (currentValue > totalPrice.toDouble()) {
-                    firstPayEditText.setText(totalPrice.toString())
-                    firstPayEditText.error = "Первоначальный взнос не может превышать сумму покупки"
-                } else {
-                    firstPayEditText.error = null
-                }
+            if (enteredBonus > bonusPercentOfRemaining) {
+                bonusEditText.setText(bonusPercentOfRemaining.toString())
+                bonusEditText.setSelection(bonusEditText.length())
+                countTextBonus = bonusPercentOfRemaining
+            } else {
+                countTextBonus = enteredBonus
             }
-            updateDisplayedValues()
 
+            val newTotalPrice = remainingTotal - countTextBonus
+
+            totalPriceTextView.text = "${formatNumber(newTotalPrice)} UZS"
+            payWithBonusTextView.text = "${formatNumber(countTextBonus)} UZS"
+            payWithFirstPayTextView.text = "${formatNumber(enteredFirstPay)} UZS"
+
+            adapterPaymentPercent.updateData(percent, newTotalPrice)
         }
+
+        textWatcherForBonus = object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun afterTextChanged(s: Editable?) {
+                val newText = s.toString().trim()
+                if (!newText.isNullOrEmpty()) {
+                    val currentValue = newText.replace(',', '.').toDouble()
+                    if (currentValue > (selectedClient?.bonus?.toDouble() ?: 0.0)) {
+                        binding.bonus.setText(selectedClient?.bonus?.toString() ?: "")
+                        binding.bonus.setSelection(binding.bonus.length())
+                    } else if (currentValue > maxValueBonus) {
+                        binding.bonus.setText(maxValueBonus.toString())
+                        binding.bonus.setSelection(binding.bonus.length())
+                    }
+                }
+                updateDisplayedValues()
+            }
+        }
+
+        textWatcherForFirstPay = object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun afterTextChanged(s: Editable?) {
+                val newText = s.toString().trim()
+                if (!newText.isNullOrEmpty()) {
+                    val currentValue = newText.replace(',', '.').toDouble()
+                    if (totalPrice.toDouble() != 0.0 && currentValue < minValueFirstPay) {
+                        firstPayEditText.error = "Минимальное значение первоначального взноса ${percent.first_pay}% ($minValueFirstPay) от итоговой суммы"
+                    } else {
+                        firstPayEditText.error = null
+                    }
+
+                    if (currentValue > totalPrice.toDouble()) {
+                        firstPayEditText.setText(totalPrice.toString())
+                        firstPayEditText.error = "Первоначальный взнос не может превышать сумму покупки"
+                    } else {
+                        firstPayEditText.error = null
+                    }
+                }
+                updateDisplayedValues()
+
+            }
+        }
+
+        bonusEditText.addTextChangedListener(textWatcherForBonus)
+        firstPayEditText.addTextChangedListener(textWatcherForFirstPay)
+
+        updateDisplayedValues()
     }
-
-    bonusEditText.addTextChangedListener(textWatcherForBonus)
-    firstPayEditText.addTextChangedListener(textWatcherForFirstPay)
-
-    updateDisplayedValues()
 }
 
 @SuppressLint("SetTextI18n")
