@@ -21,12 +21,14 @@ import com.fin_group.aslzar.util.SessionManager
 import com.google.android.material.textfield.TextInputEditText
 import java.security.SecureRandom
 import android.util.Base64
+import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.ProgressBar
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.response.Auth
 import com.fin_group.aslzar.ui.fragments.login.forgotPassword.ForgotPasswordFragment
+import com.fin_group.aslzar.util.NoInternetDialogFragment
 import com.fin_group.aslzar.util.SessionManager.Companion.IS_LOGGED_IN_KEY
 import com.fin_group.aslzar.util.SessionManager.Companion.PREFS_KEY
 import com.fin_group.aslzar.util.hideKeyboard
@@ -86,6 +88,7 @@ class FragmentLogin : Fragment() {
         val savingKey = Base64.encodeToString(encryptionKey.encoded, Base64.DEFAULT)
 
         encryptionManager = EncryptionManager(encryptionKey)
+        NoInternetDialogFragment.showIfNoInternet(requireContext())
 
         binding.btnLogin.setOnClickListener {
             val login = loginEt.text.toString().trim()
@@ -105,71 +108,79 @@ class FragmentLogin : Fragment() {
 
             progressBar.visibility = VISIBLE
 
-            val call = api.getApiServiceLogin(login, password).userLogin()
-            call.enqueue(object : Callback<Auth?> {
-                override fun onResponse(call: Call<Auth?>, response: Response<Auth?>) {
-                    try {
-                        if (response.isSuccessful){
-                            val loginResponse = response.body()
-                            if (loginResponse != null){
-                                val encryptedLogin = encryptionManager.encryptData(login)
-                                val encryptedPassword = encryptionManager.encryptData(password)
-                                sessionManager.saveKey(savingKey)
+            val hasInternet = NoInternetDialogFragment.hasInternetConnection(requireContext())
+            if (hasInternet){
+                val call = api.getApiServiceLogin(login, password).userLogin()
+                call.enqueue(object : Callback<Auth?> {
+                    override fun onResponse(call: Call<Auth?>, response: Response<Auth?>) {
+                        try {
+                            progressBar.visibility = GONE
+                            if (response.isSuccessful){
+                                val loginResponse = response.body()
+                                if (loginResponse != null){
+                                    val encryptedLogin = encryptionManager.encryptData(login)
+                                    val encryptedPassword = encryptionManager.encryptData(password)
+                                    sessionManager.saveKey(savingKey)
 
-                                val editor: SharedPreferences.Editor = sharedPreferences.edit()
-                                editor.putBoolean(IS_LOGGED_IN_KEY, true)
-                                editor.apply()
+//                                    val editor: SharedPreferences.Editor = sharedPreferences.edit()
+//                                    editor.putBoolean(IS_LOGGED_IN_KEY, true)
+//                                    editor.apply()
 
-                                sessionManager.saveLogin(encryptedLogin)
-                                sessionManager.savePassword(encryptedPassword)
+                                    sessionManager.saveLogin(encryptedLogin)
+                                    sessionManager.savePassword(encryptedPassword)
 
-                                sessionManager.saveToken(loginResponse.access_token)
-                                sessionManager.saveUserLocation(loginResponse.location)
-                                sessionManager.saveName(loginResponse.fio)
-                                sessionManager.saveSalesPlan(loginResponse.sales_plan)
-                                sessionManager.saveNumberPhone(loginResponse.phone_number)
-                                sessionManager.saveEmail(loginResponse.mail)
-                                sessionManager.saveLocationId(loginResponse.location_id)
-                                sessionManager.saveCheck(loginResponse.check)
-                                progressBar.visibility = VISIBLE
+                                    sessionManager.saveToken(loginResponse.access_token)
+                                    sessionManager.saveUserLocation(loginResponse.location)
+                                    sessionManager.saveName(loginResponse.fio)
+                                    sessionManager.saveSalesPlan(loginResponse.sales_plan)
+                                    sessionManager.saveNumberPhone(loginResponse.phone_number)
+                                    sessionManager.saveEmail(loginResponse.mail)
+                                    sessionManager.saveLocationId(loginResponse.location_id)
+                                    sessionManager.saveCheck(loginResponse.check)
+                                    progressBar.visibility = VISIBLE
 
-                                Toast.makeText(requireContext(), "Добро пожаловать ${loginResponse.fio}!", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(requireContext(), "Добро пожаловать ${loginResponse.fio}!", Toast.LENGTH_SHORT).show()
 
-                                val i = Intent(requireContext(), MainActivity::class.java)
-                                startActivity(i)
-                                requireActivity().finish()
-                            }
-                        } else {
-                            if (response.code() == 401) {
-                                binding.progressBar2.visibility = View.GONE
-                                Toast.makeText(requireContext(),"Логин или пароль введены неправильно!",Toast.LENGTH_SHORT).show()
-                                api.clearPassLogin()
-                                loginEt.setText("")
-                                passwordEt.setText("")
-                            } else if (response.code() == 500){
-                                binding.progressBar2.visibility = View.GONE
-                                Toast.makeText(requireContext(),"Повторите попытку позже, сервер временно не работает",Toast.LENGTH_SHORT).show()
-                                api.clearPassLogin()
-                                loginEt.setText("")
-                                passwordEt.setText("")
-                            }else {
+                                    val i = Intent(requireContext(), MainActivity::class.java)
+                                    startActivity(i)
+                                    requireActivity().finish()
+                                }
+                            } else {
+                                if (response.code() == 401) {
+                                    binding.progressBar2.visibility = View.GONE
+                                    Toast.makeText(requireContext(),"Логин или пароль введены неправильно!",Toast.LENGTH_SHORT).show()
+                                    api.clearPassLogin()
+                                    loginEt.setText("")
+                                    passwordEt.setText("")
+                                } else if (response.code() == 500){
+                                    binding.progressBar2.visibility = View.GONE
+                                    Toast.makeText(requireContext(),"Повторите попытку позже, сервер временно не работает",Toast.LENGTH_SHORT).show()
+                                    api.clearPassLogin()
+                                    loginEt.setText("")
+                                    passwordEt.setText("")
+                                }else {
+                                    progressBar.visibility = View.GONE
+                                    Toast.makeText(requireContext(), "Ошибка при входе", Toast.LENGTH_SHORT).show()
+                                    api.clearPassLogin()
+                                }
                                 progressBar.visibility = View.GONE
-                                Toast.makeText(requireContext(), "Ошибка при входе", Toast.LENGTH_SHORT).show()
-                                api.clearPassLogin()
                             }
+                        }catch (e: Exception){
                             progressBar.visibility = View.GONE
+                            e.printStackTrace()
+                            Log.d("TAG", "onResponse: ${e.message}")
                         }
-                    }catch (e: Exception){
-                        progressBar.visibility = View.GONE
-                        e.printStackTrace()
-                        Log.d("TAG", "onResponse: ${e.message}")
                     }
-                }
 
-                override fun onFailure(call: Call<Auth?>, t: Throwable) {
-                    Log.d("TAG", "onFailure: ${t.message}")
-                }
-            })
+                    override fun onFailure(call: Call<Auth?>, t: Throwable) {
+                        Log.d("TAG", "onFailure: ${t.message}")
+                        progressBar.visibility = GONE
+                    }
+                })
+            } else {
+                NoInternetDialogFragment.showIfNoInternet(requireContext())
+                progressBar.visibility = GONE
+            }
         }
 
         requireActivity().onBackPressedDispatcher.addCallback(
@@ -195,8 +206,6 @@ class FragmentLogin : Fragment() {
             transaction.replace(R.id.fragmentLogin, fragment)
             transaction.addToBackStack(null)
             transaction.commit()
-
-
         }
 
         return binding.root
@@ -204,11 +213,11 @@ class FragmentLogin : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        if (isLoggedIn) {
-            val i = Intent(requireActivity(), MainActivity::class.java)
-            startActivity(i)
-            requireActivity().finish()
-        }
+//        if (isLoggedIn) {
+//            val i = Intent(requireActivity(), MainActivity::class.java)
+//            startActivity(i)
+//            requireActivity().finish()
+//        }
     }
     override fun onDestroyView() {
         super.onDestroyView()

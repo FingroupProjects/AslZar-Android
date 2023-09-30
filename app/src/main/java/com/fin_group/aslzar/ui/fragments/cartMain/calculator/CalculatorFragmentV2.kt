@@ -31,6 +31,7 @@ import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.retrieveC
 import com.fin_group.aslzar.util.CalculatorResetListener
 import com.fin_group.aslzar.util.CartObserver
 import com.fin_group.aslzar.util.CustomPopupView
+import com.fin_group.aslzar.util.NoInternetDialogFragment
 import com.fin_group.aslzar.util.SessionManager
 
 @Suppress("DEPRECATION")
@@ -82,6 +83,7 @@ class CalculatorFragmentV2 : Fragment(), CalculatorResetListener {
         averageBill = sessionManager.fetchCheck()
         monthLinearLayout = binding.monthTable
         percentLinearLayout = binding.percentTable
+        NoInternetDialogFragment.showIfNoInternet(requireContext())
 
         return binding.root
     }
@@ -95,9 +97,8 @@ class CalculatorFragmentV2 : Fragment(), CalculatorResetListener {
         Cart.registerObserver(cartObserver)
 
         clientList = retrieveClientList()
-        Log.d("TAG", "onViewCreated: $clientList")
-        fetchClientsFromPrefs()
         fetchClientsAndTypePay(binding)
+        fetchClientsFromPrefs()
     }
 
     override fun onStart() {

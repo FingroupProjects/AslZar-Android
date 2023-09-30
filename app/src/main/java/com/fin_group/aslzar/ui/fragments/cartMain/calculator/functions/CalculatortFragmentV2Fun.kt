@@ -240,7 +240,7 @@ fun CalculatorFragmentV2.textWatchers(
 
         bonusCheckBox.visibility = GONE
         bonusCheckBox.isChecked = false
-        firstPayEditText.error = null
+//        firstPayEditText.error = null
     } else {
         val maxValueBonus: Double = (totalPrice.toDouble() * percent.payment_bonus.toDouble()) / 100
         val minValueFirstPay: Double = (totalPrice.toDouble() * percent.first_pay.toDouble()) / 100
@@ -311,7 +311,7 @@ fun CalculatorFragmentV2.textWatchers(
                 val newText = s.toString().trim()
                 if (!newText.isNullOrEmpty()) {
                     val currentValue = newText.replace(',', '.').toDouble()
-                    if (totalPrice.toDouble() != 0.0 && currentValue < minValueFirstPay) {
+                    if (currentValue < minValueFirstPay) {
                         firstPayEditText.error = "Минимальное значение первоначального взноса ${percent.first_pay}% ($minValueFirstPay) от итоговой суммы"
                     } else {
                         firstPayEditText.error = null
@@ -319,13 +319,9 @@ fun CalculatorFragmentV2.textWatchers(
 
                     if (currentValue > totalPrice.toDouble()) {
                         firstPayEditText.setText(totalPrice.toString())
-                        firstPayEditText.error = "Первоначальный взнос не может превышать сумму покупки"
-                    } else {
-                        firstPayEditText.error = null
                     }
                 }
                 updateDisplayedValues()
-
             }
         }
 

@@ -49,6 +49,7 @@ import com.fin_group.aslzar.ui.fragments.dataProduct.functions.retrieveCoefficie
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.setDataProduct
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.someImagesProduct
 import com.fin_group.aslzar.util.BadgeManager
+import com.fin_group.aslzar.util.NoInternetDialogFragment
 import com.fin_group.aslzar.util.OnAlikeProductClickListener
 import com.fin_group.aslzar.util.OnImageClickListener
 import com.fin_group.aslzar.util.SessionManager
@@ -134,17 +135,16 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
             getProductByID()
         }
         fetchCoefficientPlanFromPrefs()
-        percentInstallment = retrieveCoefficientPlan()
+        try {
+            percentInstallment = retrieveCoefficientPlan()
+        }catch (e: Exception){
+            Log.d("TAG", "onCreateView: ${e.message}")
+        }
         adapterPaymentPercent = TableInstallmentAdapter(percentInstallment, product.price, 0.0)
         toolbar = requireActivity().findViewById(R.id.toolbar)
         toolbar.title = product.full_name
         (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-//        if (product.is_set) {
-//            filterBadge = BadgeDrawable.create(requireContext())
-//            filterBadge?.isVisible = true
-//            BadgeUtils.attachBadgeDrawable(filterBadge!!, toolbar, R.id.product_set_item)
-//        }
         hideBottomNav()
         setHasOptionsMenu(true)
         recyclerViewSomeImages = binding.otherImgRv
@@ -175,13 +175,15 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        Log.d("TAG", "onCreateOptionsMenu: $product")
-        if (product.is_set){
+        if (product.is_set && product.counts.isNotEmpty()){
             inflater.inflate(R.menu.product_data_menu, menu)
-        } else {
+        } else if (product.is_set && product.counts.isEmpty()) {
+            inflater.inflate(R.menu.product_data_menu_3, menu)
+        } else if (product.counts.isNotEmpty() && !product.is_set){
             inflater.inflate(R.menu.product_data_menu_2, menu)
+        } else {
+            inflater.inflate(R.menu.product_data_menu_4, menu)
         }
-
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -191,19 +193,14 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
             if (product.is_set) {
                 callSetInProduct(args.productId)
             } else {
-                Toast.makeText(
-                    requireContext(), "У данного продукта нет комплекта", Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(requireContext(), "У данного продукта нет комплекта", Toast.LENGTH_SHORT).show()
             }
         }
-
         if (item.itemId == R.id.product_in_stock_item) {
             if (product.counts.isNotEmpty()) {
                 callInStockDialog(product.full_name, product.counts)
             } else {
-                Toast.makeText(
-                    requireContext(), "Данного продукта нет в наличии", Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(requireContext(), "Данного продукта нет в наличии", Toast.LENGTH_SHORT).show()
             }
         }
         return super.onOptionsItemSelected(item)
