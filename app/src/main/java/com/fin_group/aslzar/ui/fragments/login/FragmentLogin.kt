@@ -201,11 +201,16 @@ class FragmentLogin : Fragment() {
             })
 
         binding.tvForgotPassword.setOnClickListener {
-            val fragment = ForgotPasswordFragment()
-            val transaction = requireActivity().supportFragmentManager.beginTransaction()
-            transaction.replace(R.id.fragmentLogin, fragment)
-            transaction.addToBackStack(null)
-            transaction.commit()
+            val hasInternet = NoInternetDialogFragment.hasInternetConnection(requireContext())
+            if (hasInternet){
+                val fragment = ForgotPasswordFragment()
+                val transaction = requireActivity().supportFragmentManager.beginTransaction()
+                transaction.replace(R.id.fragmentLogin, fragment)
+                transaction.addToBackStack(null)
+                transaction.commit()
+            } else {
+                NoInternetDialogFragment.showIfNoInternet(requireContext())
+            }
         }
 
         return binding.root
