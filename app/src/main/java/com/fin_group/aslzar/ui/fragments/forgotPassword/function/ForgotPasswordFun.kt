@@ -1,4 +1,4 @@
-package com.fin_group.aslzar.ui.fragments.login.forgotPassword.function
+package com.fin_group.aslzar.ui.fragments.forgotPassword.function
 
 import android.os.CountDownTimer
 import android.text.Editable
@@ -6,9 +6,7 @@ import android.text.TextUtils
 import android.text.TextWatcher
 import android.util.Log
 import android.util.Patterns
-import android.view.KeyEvent
 import android.view.View
-import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
@@ -16,7 +14,7 @@ import com.fin_group.aslzar.R
 import com.fin_group.aslzar.databinding.FragmentForgotPasswordBinding
 import com.fin_group.aslzar.response.ForgotPasswordResponse
 import com.fin_group.aslzar.ui.dialogs.ChangePasswordProfileFragmentDialog
-import com.fin_group.aslzar.ui.fragments.login.forgotPassword.ForgotPasswordFragment
+import com.fin_group.aslzar.ui.fragments.forgotPassword.ForgotPasswordFragment
 import com.fin_group.aslzar.util.FunCallback
 import retrofit2.Call
 import retrofit2.Callback
@@ -96,7 +94,7 @@ fun ForgotPasswordFragment.dialogShow(
 ) {
 
     binding.tvErrorNumber.visibility = View.GONE
-    val changeDataPassword = ChangePasswordProfileFragmentDialog.newInstancePass(login, password)
+    val changeDataPassword = ChangePasswordProfileFragmentDialog.newInstancePass(login, password, "forgot")
     val fragmentManager: FragmentManager? = activity?.supportFragmentManager
     fragmentManager?.let {
         val transaction: FragmentTransaction = it.beginTransaction()
@@ -123,7 +121,6 @@ fun ForgotPasswordFragment.startCountDawnTimer(binding: FragmentForgotPasswordBi
                 forgotPasswordWithEmail(binding, object : FunCallback {
                     override fun onSuccess(success: Boolean) {
                         if (success){
-                            Toast.makeText(requireContext(), "Все хорошо", Toast.LENGTH_SHORT).show()
                         }
                     }
 

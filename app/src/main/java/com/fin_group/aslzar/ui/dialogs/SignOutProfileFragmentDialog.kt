@@ -69,7 +69,6 @@ class SignOutProfileFragmentDialog : BaseDialogFragment() {
                 }
             }
 
-
             actionNoBtn.setOnClickListener { dismiss() }
         }
     }

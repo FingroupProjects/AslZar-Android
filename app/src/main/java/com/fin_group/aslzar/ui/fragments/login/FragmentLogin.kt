@@ -27,7 +27,7 @@ import android.widget.ProgressBar
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.response.Auth
-import com.fin_group.aslzar.ui.fragments.login.forgotPassword.ForgotPasswordFragment
+import com.fin_group.aslzar.ui.fragments.forgotPassword.ForgotPasswordFragment
 import com.fin_group.aslzar.util.NoInternetDialogFragment
 import com.fin_group.aslzar.util.SessionManager.Companion.IS_LOGGED_IN_KEY
 import com.fin_group.aslzar.util.SessionManager.Companion.PREFS_KEY

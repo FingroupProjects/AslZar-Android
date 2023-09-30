@@ -3,18 +3,14 @@ package com.fin_group.aslzar.ui.fragments.profile.functions
 import android.graphics.Color
 import android.util.Base64
 import android.util.Log
-import android.view.View.GONE
-import android.view.View.VISIBLE
-import android.widget.Toast
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import com.fin_group.aslzar.R
 import com.fin_group.aslzar.cipher.EncryptionManager
-import com.fin_group.aslzar.databinding.FragmentForgotPasswordBinding
-import com.fin_group.aslzar.databinding.FragmentProfileBinding
 import com.fin_group.aslzar.response.ResponseForgotPassword
-import com.fin_group.aslzar.response.SalesPlanResponse
 import com.fin_group.aslzar.ui.dialogs.ChangePasswordProfileFragmentDialog
-import com.fin_group.aslzar.ui.fragments.login.forgotPassword.ForgotPasswordFragment
+import com.fin_group.aslzar.ui.fragments.CodeFragment
+import com.fin_group.aslzar.ui.fragments.forgotPassword.ForgotPasswordFragment
 import com.fin_group.aslzar.ui.fragments.profile.ProfileFragment
 import com.github.anastr.speedviewlib.components.Style
 import retrofit2.Call
@@ -31,19 +27,19 @@ fun ProfileFragment.speedometerView(speed: Float) {
     speedometer.ticks = arrayListOf(0f, .25f, .5f, .75f, 1f)
 }
 
-fun ProfileFragment.goToChangePasswordDialog() {
-    val changeDataPassword = ChangePasswordProfileFragmentDialog()
-    val fragmentManager: FragmentManager? = activity?.supportFragmentManager
-    fragmentManager?.let {
-        val transaction: FragmentTransaction = it.beginTransaction()
-        transaction.addToBackStack(null)
-        changeDataPassword.show(transaction, "ChangePasswordProfileDialogFragment")
-    }
-}
+//fun ProfileFragment.goToChangePasswordDialog() {
+//    val changeDataPassword = ChangePasswordProfileFragmentDialog()
+//    val fragmentManager: FragmentManager? = activity?.supportFragmentManager
+//    fragmentManager?.let {
+//        val transaction: FragmentTransaction = it.beginTransaction()
+//        transaction.addToBackStack(null)
+//        changeDataPassword.show(transaction, "ChangePasswordProfileDialogFragment")
+//    }
+//}
 
 
 fun ProfileFragment.goToDialogShow(login: String, password: String) {
-    val changeDataPassword = ChangePasswordProfileFragmentDialog.newInstancePass(login, password)
+    val changeDataPassword = ChangePasswordProfileFragmentDialog.newInstancePass(login, password, "change")
     val fragmentManager: FragmentManager? = activity?.supportFragmentManager
     fragmentManager?.let {
         val transaction: FragmentTransaction = it.beginTransaction()
@@ -53,7 +49,7 @@ fun ProfileFragment.goToDialogShow(login: String, password: String) {
 }
 
 
-fun ProfileFragment.changePassword(binding: FragmentProfileBinding) {
+fun ProfileFragment.changePassword() {
     val call = apiService.getApiService().forgotPassword("Bearer ${sessionManager.fetchToken()}")
     try {
         call.enqueue(object : Callback<ResponseForgotPassword?> {

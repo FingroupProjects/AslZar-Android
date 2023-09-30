@@ -9,13 +9,13 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.cipher.EncryptionManager
 import com.fin_group.aslzar.databinding.FragmentProfileBinding
 import com.fin_group.aslzar.ui.dialogs.SignOutProfileFragmentDialog
 import com.fin_group.aslzar.ui.fragments.profile.functions.changePassword
-import com.fin_group.aslzar.ui.fragments.profile.functions.goToChangePasswordDialog
 import com.fin_group.aslzar.ui.fragments.profile.functions.speedometerView
 import com.fin_group.aslzar.util.NoInternetDialogFragment
 import com.fin_group.aslzar.util.SessionManager
@@ -88,7 +88,11 @@ class ProfileFragment : Fragment() {
 
         speedometerView(asd!!.toFloat())
         binding.btnChangePassword.setOnClickListener {
-            changePassword(binding)
+            //changePassword()
+
+            findNavController().navigate(R.id.action_profileFragment_to_codeFragment)
+
+
         }
     }
 
