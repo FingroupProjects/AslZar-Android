@@ -108,14 +108,12 @@ class SalesProductsV2Adapter(
                 "",
                 "",
                 "",
-                false,
+                product.is_set,
                 product.counts,
                 product.img,
                 ""
             )
 
-            Log.d("TAG", "onBindViewHolder: ${product.counts}")
-            Log.d("TAG", "onBindViewHolder: ${product.sale}")
             listener.getData(product2)
         }
     }

@@ -15,6 +15,7 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -25,6 +26,7 @@ import com.bumptech.glide.Glide
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.AlikeProductsAdapter
 import com.fin_group.aslzar.adapter.ProductSomeImagesAdapter
+import com.fin_group.aslzar.adapter.TableInstallmentAdapter
 import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.databinding.FragmentCalculatorBinding
 import com.fin_group.aslzar.databinding.FragmentDataProductBinding
@@ -42,8 +44,12 @@ import com.fin_group.aslzar.ui.fragments.dataProduct.functions.getProductByID
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.getSimilarProducts
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.likeProducts
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.onBackPressed
+import com.fin_group.aslzar.ui.fragments.dataProduct.functions.printPercent
+import com.fin_group.aslzar.ui.fragments.dataProduct.functions.retrieveCoefficientPlan
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.setDataProduct
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.someImagesProduct
+import com.fin_group.aslzar.util.BadgeManager
+import com.fin_group.aslzar.util.NoInternetDialogFragment
 import com.fin_group.aslzar.util.OnAlikeProductClickListener
 import com.fin_group.aslzar.util.OnImageClickListener
 import com.fin_group.aslzar.util.SessionManager
@@ -53,6 +59,7 @@ import com.fin_group.aslzar.viewmodel.SharedViewModel
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.badge.BadgeUtils
+import com.google.android.material.badge.ExperimentalBadgeUtils
 import com.google.android.material.chip.ChipGroup
 
 
@@ -64,6 +71,8 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
 
     val args by navArgs<DataProductFragmentArgs>()
     val sharedViewModel: SharedViewModel by activityViewModels()
+
+    lateinit var badgeManager: BadgeManager
 
     lateinit var swipeRefreshLayout: SwipeRefreshLayout
     lateinit var product: Product
@@ -97,6 +106,10 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
 
     lateinit var percentInstallment: PercentInstallment
 
+    lateinit var monthLinearLayout: LinearLayoutCompat
+    lateinit var percentLinearLayout: LinearLayoutCompat
+
+    lateinit var adapterPaymentPercent: TableInstallmentAdapter
 
     @SuppressLint("UnsafeOptInUsageError")
     override fun onCreateView(
@@ -107,18 +120,11 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         apiService = ApiClient()
         apiService.init(sessionManager)
         swipeRefreshLayout = binding.swipeRefreshLayout
+        badgeManager = BadgeManager(requireContext(), "data_product_badge_prefs")
         preferences = context?.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)!!
+        monthLinearLayout = binding.monthTable
+        percentLinearLayout = binding.percentTable
 
-        percentInstallment = PercentInstallment(
-            90, 15, listOf(
-                Percent(6.9, 3),
-                Percent(8.9, 6),
-                Percent(12.9, 9),
-                Percent(17.9, 12),
-            )
-        )
-//        fetchCoefficientPlanFromApi()
-        fetchCoefficientPlanFromPrefs()
         onBackPressed()
         if (args.product != null) {
             product = args.product!!
@@ -128,15 +134,17 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         if (product.category_id == "") {
             getProductByID()
         }
+        fetchCoefficientPlanFromPrefs()
+        try {
+            percentInstallment = retrieveCoefficientPlan()
+        }catch (e: Exception){
+            Log.d("TAG", "onCreateView: ${e.message}")
+        }
+        adapterPaymentPercent = TableInstallmentAdapter(percentInstallment, product.price, 0.0)
         toolbar = requireActivity().findViewById(R.id.toolbar)
         toolbar.title = product.full_name
         (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        if (product.is_set) {
-            filterBadge = BadgeDrawable.create(requireContext())
-            filterBadge?.isVisible = true
-            BadgeUtils.attachBadgeDrawable(filterBadge!!, toolbar, R.id.product_set_item)
-        }
         hideBottomNav()
         setHasOptionsMenu(true)
         recyclerViewSomeImages = binding.otherImgRv
@@ -162,20 +170,22 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
 
         swipeRefreshLayout.setOnRefreshListener {
             getProductByID()
+            fetchCoefficientPlanFromApi()
         }
-//        val weightList = listOf("1.5", "1.7", "1.8", "2.0", "2.1", "2.3")
-//        val sizeList = listOf("10.5", "12.1", "13.5", "13.7", "14", "14.8")
-//        callWeightChipGroup(weightList)
-//        callSizeChipGroup(sizeList)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.product_data_menu, menu)
+        if (product.is_set && product.counts.isNotEmpty()){
+            inflater.inflate(R.menu.product_data_menu, menu)
+        } else if (product.is_set && product.counts.isEmpty()) {
+            inflater.inflate(R.menu.product_data_menu_3, menu)
+        } else if (product.counts.isNotEmpty() && !product.is_set){
+            inflater.inflate(R.menu.product_data_menu_2, menu)
+        } else {
+            inflater.inflate(R.menu.product_data_menu_4, menu)
+        }
         super.onCreateOptionsMenu(menu, inflater)
     }
-
-
-
 
     @SuppressLint("UnsafeOptInUsageError")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -183,19 +193,14 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
             if (product.is_set) {
                 callSetInProduct(args.productId)
             } else {
-                Toast.makeText(
-                    requireContext(), "У данного продукта нет комплекта", Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(requireContext(), "У данного продукта нет комплекта", Toast.LENGTH_SHORT).show()
             }
         }
-
         if (item.itemId == R.id.product_in_stock_item) {
             if (product.counts.isNotEmpty()) {
                 callInStockDialog(product.full_name, product.counts)
             } else {
-                Toast.makeText(
-                    requireContext(), "Данного продукта нет в наличии", Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(requireContext(), "Данного продукта нет в наличии", Toast.LENGTH_SHORT).show()
             }
         }
         return super.onOptionsItemSelected(item)
@@ -210,20 +215,6 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         currentSelectedPosition = imageList.indexOfFirst { it == image }
         productSomeImagesAdapter.setSelectedPosition(currentSelectedPosition)
         Glide.with(requireContext()).load(image).into(binding.imageView2)
-//        binding.imageView2.setImageResource(image)
-//        viewAdapter.notifyItemChanged(currentSelectedPosition)
-//        Toast.makeText(requireContext(), currentSelectedPosition, Toast.LENGTH_SHORT).show()
-
-    }
-
-    @SuppressLint("UnsafeOptInUsageError")
-    override fun onDestroyView() {
-        super.onDestroyView()
-
-        if (filterBadge != null) {
-            filterBadge?.isVisible = false
-            BadgeUtils.attachBadgeDrawable(filterBadge!!, toolbar, R.id.product_set_item)
-        }
     }
 
     override fun callBottomDialog(product: SimilarProduct) {

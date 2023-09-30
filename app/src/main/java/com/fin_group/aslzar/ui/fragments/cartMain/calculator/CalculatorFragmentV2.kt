@@ -4,10 +4,12 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.text.TextWatcher
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.appcompat.widget.LinearLayoutCompat
 import com.fin_group.aslzar.adapter.TableInstallmentAdapter
@@ -20,10 +22,16 @@ import com.fin_group.aslzar.response.Percent
 import com.fin_group.aslzar.response.PercentInstallment
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.cartObserver
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.fetchClientsAndTypePay
+import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.fetchClientsFromApi
+import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.fetchClientsFromPrefs
+import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.fetchCoefficientPlanFromPrefs
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.resetCalculator
+import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.retrieveClientList
+import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.retrieveCoefficientPlan
 import com.fin_group.aslzar.util.CalculatorResetListener
 import com.fin_group.aslzar.util.CartObserver
 import com.fin_group.aslzar.util.CustomPopupView
+import com.fin_group.aslzar.util.NoInternetDialogFragment
 import com.fin_group.aslzar.util.SessionManager
 
 @Suppress("DEPRECATION")
@@ -43,6 +51,8 @@ class CalculatorFragmentV2 : Fragment(), CalculatorResetListener {
     lateinit var clientList: List<Client>
     lateinit var allTypePay: List<TypePay>
     lateinit var percentInstallment: PercentInstallment
+
+    lateinit var arrayAdapterTypeClient: ArrayAdapter<String>
 
     lateinit var adapterPaymentPercent: TableInstallmentAdapter
 
@@ -73,54 +83,22 @@ class CalculatorFragmentV2 : Fragment(), CalculatorResetListener {
         averageBill = sessionManager.fetchCheck()
         monthLinearLayout = binding.monthTable
         percentLinearLayout = binding.percentTable
+        NoInternetDialogFragment.showIfNoInternet(requireContext())
 
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-//        fetchCoefficientPlanFromApi()
-//
-//        val coefficientPlanListJson = prefs.getString("coefficientPlan", null)
-//        val coefficientPlanListType = object : TypeToken<PercentInstallment>() {}.type
-//        val coefficientPlanList = Gson().fromJson<PercentInstallment>(coefficientPlanListJson, coefficientPlanListType)
-////        percentInstallment = coefficientPlanList
-//        Log.d("TAG", "onViewCreated: $coefficientPlanList")
-
-//        binding.imageButton.setOnClickListener {
-//            val popupManager = PopupManager(requireContext())
-//            popupManager.showPopup(
-//                "Клиент не может выплатить такую сумму за месяц."
-//            )
-//        }
-
-
-
-        percentInstallment = PercentInstallment(
-            90, 15, listOf(
-                Percent(6.9, 3),
-                Percent(8.9, 6),
-                Percent(12.9, 9),
-                Percent(17.9, 12),
-            )
-        )
-        adapterPaymentPercent = TableInstallmentAdapter(percentInstallment, vlTotalPrice)
+        fetchCoefficientPlanFromPrefs(binding)
+        percentInstallment = retrieveCoefficientPlan()
+        adapterPaymentPercent = TableInstallmentAdapter(percentInstallment, vlTotalPrice, 0.0)
         cartObserver(binding)
         Cart.registerObserver(cartObserver)
 
-        clientList = listOf(
-            Client("1", "Розничный покупатель", 0, 0, "Silver", "Lead", 8400),
-            Client("3", "Tohirjon", 37512, 3, "Silver", "Referral", 8400),
-            Client("4", "Nuriddin", 19852, 3, "Silver", "Referral", 10000),
-            Client("5", "Tursunboy", 0, 0, "", "Lead", 8000),
-            Client("8", "Rustam", 7522, 3, "Silver", "Referral", 9500),
-            Client("6", "Jamshed", 85654, 3, "Silver", "Referral", 8500),
-            Client("7", "Khusrav", 9654, 5, "Gold", "Lead", 4500),
-            Client("2", "Suhrob", 150000, 7, "Diamond", "Referral", 5000000),
-        )
-
+        clientList = retrieveClientList()
         fetchClientsAndTypePay(binding)
+        fetchClientsFromPrefs()
     }
 
     override fun onStart() {

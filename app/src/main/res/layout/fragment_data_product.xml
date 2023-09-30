@@ -19,12 +19,12 @@
 
             <TextView
                 android:id="@+id/tv_table2"
+                style="@style/forTextView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:text="Таблица рассрочки"
-                android:textColor="@color/text_color_1"
                 android:textStyle="bold"
                 android:visibility="visible"
                 app:layout_constraintStart_toStartOf="parent"
@@ -38,10 +38,8 @@
                 android:layout_marginTop="4dp"
                 android:layout_marginEnd="16dp"
                 android:background="@drawable/bg_table_calculator"
-                android:elevation="2dp"
                 android:orientation="horizontal"
                 android:visibility="visible"
-                app:layout_constraintBottom_toTopOf="@+id/view3"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_table2">
@@ -267,6 +265,19 @@
                 app:layout_constraintTop_toBottomOf="@+id/textView27" />
 
             <TextView
+                android:id="@+id/textView46"
+                style="@style/forTextView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
+                android:text="Описание:"
+                android:textStyle="bold"
+                android:visibility="visible"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView20" />
+
+            <TextView
                 android:id="@+id/dp_code"
                 style="@style/forTextView"
                 android:layout_width="wrap_content"
@@ -351,6 +362,20 @@
                 app:layout_constraintTop_toTopOf="@+id/textView20" />
 
             <TextView
+                android:id="@+id/dp_description"
+                style="@style/forTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:maxLines="5"
+                android:text="Изящность природы теперь отразится на ваших руках"
+                android:textStyle="bold"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/textView46"
+                app:layout_constraintTop_toBottomOf="@+id/textView46" />
+
+            <TextView
                 android:id="@+id/dp_weight"
                 style="@style/forTextView"
                 android:layout_width="wrap_content"
@@ -413,12 +438,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="10dp"
                 android:text="Похожие товары:"
                 android:textStyle="bold"
                 android:visibility="visible"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView20" />
+                app:layout_constraintTop_toBottomOf="@+id/dp_description" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/likeProductsRv"
@@ -460,6 +485,16 @@
                 app:layout_constraintBottom_toTopOf="@+id/btn_add_to_cart"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/printPercent" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/printPercent"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
+                app:layout_constraintBottom_toTopOf="@id/view3"
+                app:layout_constraintEnd_toEndOf="@+id/tvTable"
+                app:layout_constraintStart_toStartOf="@+id/tvTable"
                 app:layout_constraintTop_toBottomOf="@+id/tvTable" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,8 +1,11 @@
 package com.fin_group.aslzar.adapter
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.DialogInterface
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.databinding.RowItemHaveingInStoreBinding
@@ -10,19 +13,27 @@ import com.fin_group.aslzar.databinding.RowItemTableInstallmentBinding
 import com.fin_group.aslzar.response.Percent
 import com.fin_group.aslzar.response.PercentInstallment
 import com.fin_group.aslzar.util.formatNumber
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 
-class TableInstallmentAdapter(var installment: PercentInstallment, var totalPrice: Number):  RecyclerView.Adapter<TableInstallmentAdapter.ViewHolder>() {
+class TableInstallmentAdapter(var installment: PercentInstallment, var totalPrice: Number, var limit: Number):  RecyclerView.Adapter<TableInstallmentAdapter.ViewHolder>() {
+
+    private lateinit var context: Context
+
     inner class ViewHolder(val binding: RowItemTableInstallmentBinding): RecyclerView.ViewHolder(binding.root) {
         val tvMonth = binding.countPayment
         val tvPercent = binding.sizePayment
-        @SuppressLint("SetTextI18n")
+        @SuppressLint("SetTextI18n", "ResourceAsColor")
         fun bind(percent: Percent){
-            binding.apply {
-                countPayment.text = "${percent.mounth} платежей"
-                val monthPayment = (((totalPrice.toDouble() * percent.coefficient.toDouble()) / 100) + totalPrice.toDouble()) / percent.mounth.toDouble()
-                sizePayment.text = "${formatNumber(monthPayment)} UZS"
+            tvMonth.text = "${percent.mounth} платежей"
+            val monthPayment = (((totalPrice.toDouble() * percent.coefficient.toDouble()) / 100) + totalPrice.toDouble()) / percent.mounth.toDouble()
+
+            if (limit.toDouble() >= monthPayment || limit.toDouble() == 0.0) {
+                tvPercent.setTextColor(ContextCompat.getColor(tvPercent.context, R.color.text_color_1))
+            } else {
+                tvPercent.setTextColor(ContextCompat.getColor(tvPercent.context, R.color.background_7))
             }
+            tvPercent.text = "${formatNumber(monthPayment)} UZS"
         }
     }
 
@@ -34,6 +45,7 @@ class TableInstallmentAdapter(var installment: PercentInstallment, var totalPric
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        context = parent.context
         val binding = RowItemTableInstallmentBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
@@ -46,8 +58,16 @@ class TableInstallmentAdapter(var installment: PercentInstallment, var totalPric
         val percent = installment.result[position]
         holder.bind(percent)
 
-        holder.tvPercent.setOnClickListener {
+        val monthPayment = (((totalPrice.toDouble() * percent.coefficient.toDouble()) / 100) + totalPrice.toDouble()) / percent.mounth.toDouble()
 
+        if (!(limit.toDouble() >= monthPayment || limit.toDouble() == 0.0)) {
+            holder.tvPercent.setOnClickListener {
+                val dialog = MaterialAlertDialogBuilder(context)
+                dialog.setTitle("Превышен лимит")
+                dialog.setMessage("Данный клиент не сможет выплатить ${formatNumber(monthPayment)} UZS в месяц, его лимит:${formatNumber(limit)} UZS в месяц")
+                val positiveButton = dialog.setPositiveButton("ок", null).show().getButton(DialogInterface.BUTTON_POSITIVE)
+                positiveButton.setTextColor(ContextCompat.getColor(context, R.color.background_2))
+            }
         }
 
         val lastItem = position == itemCount - 1

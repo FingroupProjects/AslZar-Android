@@ -409,7 +409,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="4dp"
             android:layout_marginEnd="16dp"
             android:background="@drawable/bg_table_calculator"
             android:orientation="horizontal"
@@ -476,16 +476,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/rvPayments" />
-
-        <ImageButton
-            android:id="@+id/imageButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@android:color/transparent"
-            android:src="@drawable/round_info_24"
-            app:layout_constraintBottom_toBottomOf="@+id/tv_table"
-            app:layout_constraintStart_toEndOf="@+id/tv_table"
-            app:layout_constraintTop_toTopOf="@+id/tv_table" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

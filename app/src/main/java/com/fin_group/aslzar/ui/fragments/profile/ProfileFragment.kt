@@ -17,6 +17,7 @@ import com.fin_group.aslzar.databinding.FragmentProfileBinding
 import com.fin_group.aslzar.ui.dialogs.SignOutProfileFragmentDialog
 import com.fin_group.aslzar.ui.fragments.profile.functions.changePassword
 import com.fin_group.aslzar.ui.fragments.profile.functions.speedometerView
+import com.fin_group.aslzar.util.NoInternetDialogFragment
 import com.fin_group.aslzar.util.SessionManager
 import com.fin_group.aslzar.util.hideBottomNav
 import com.fin_group.aslzar.util.showBottomNav
@@ -56,9 +57,8 @@ class ProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        swipeRefreshLayout.setOnRefreshListener {
-//            getSalesPlan()
-//        }
+        NoInternetDialogFragment.showIfNoInternet(requireContext())
+
         salesPlanNumber = sessionManager.fetchSalesPlan()
         val asd: Number? = salesPlanNumber
         binding.apply {

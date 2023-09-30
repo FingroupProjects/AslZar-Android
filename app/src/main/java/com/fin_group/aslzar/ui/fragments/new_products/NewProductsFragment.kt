@@ -42,6 +42,7 @@ import com.fin_group.aslzar.ui.fragments.new_products.functions.searchViewFun
 import com.fin_group.aslzar.ui.fragments.new_products.functions.updateBadge
 import com.fin_group.aslzar.util.BadgeManager
 import com.fin_group.aslzar.util.CategoryClickListener
+import com.fin_group.aslzar.util.NoInternetDialogFragment
 import com.fin_group.aslzar.util.ProductOnClickListener
 import com.fin_group.aslzar.util.SessionManager
 import com.fin_group.aslzar.util.showBottomNav
@@ -121,6 +122,9 @@ class NewProductsFragment : Fragment(), ProductOnClickListener {
         mainActivity = activity as? MainActivity ?: throw IllegalStateException("Activity is not MainActivity")
         getAllProductFromPrefs()
 
+        NoInternetDialogFragment.showIfNoInternet(requireContext())
+
+
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return true
@@ -143,16 +147,26 @@ class NewProductsFragment : Fragment(), ProductOnClickListener {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val hasInternet = NoInternetDialogFragment.hasInternetConnection(requireContext())
+
         when (item.itemId) {
             R.id.search_item -> {
                 searchViewFun()
             }
             R.id.barcode_item -> {
-                val action = NewProductsFragmentDirections.actionNewProductsFragmentToBarCodeScannerFragment("NewProductsBarcode")
-                findNavController().navigate(action)
+                if (hasInternet){
+                    val action = NewProductsFragmentDirections.actionNewProductsFragmentToBarCodeScannerFragment("NewProductsBarcode")
+                    findNavController().navigate(action)
+                } else {
+                    NoInternetDialogFragment.showIfNoInternet(requireContext())
+                }
             }
             R.id.profile_item -> {
-                findNavController().navigate(R.id.action_newProductsFragment_to_profileFragment)
+                if (hasInternet){
+                    findNavController().navigate(R.id.action_newProductsFragment_to_profileFragment)
+                } else {
+                    NoInternetDialogFragment.showIfNoInternet(requireContext())
+                }
             }
         }
         return super.onOptionsItemSelected(item)
@@ -160,7 +174,7 @@ class NewProductsFragment : Fragment(), ProductOnClickListener {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        badgeManager = BadgeManager(requireContext())
+        badgeManager = BadgeManager(requireContext(), "badge_cart_prefs")
     }
 
     override fun inStock(product: Product) {

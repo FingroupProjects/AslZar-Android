@@ -26,6 +26,7 @@ class ForgotPasswordFragment : Fragment() {
         apiService = ApiClient()
         sessionManager = SessionManager(requireContext())
         apiService.init(sessionManager)
+
         checkEmail(binding)
         return binding.root
     }
