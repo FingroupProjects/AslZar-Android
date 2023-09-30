@@ -3,6 +3,7 @@ package com.fin_group.aslzar.ui.fragments.main
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
+import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -13,6 +14,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.View.GONE
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -49,6 +51,7 @@ import com.fin_group.aslzar.ui.fragments.main.functions.savingAndFetchingCategor
 import com.fin_group.aslzar.ui.fragments.main.functions.searchViewFun
 import com.fin_group.aslzar.ui.fragments.main.functions.updateBadge
 import com.fin_group.aslzar.util.BadgeManager
+import com.fin_group.aslzar.util.NoInternetDialogFragment
 import com.fin_group.aslzar.util.SessionManager
 import com.fin_group.aslzar.viewmodel.SharedViewModel
 import com.google.android.material.appbar.MaterialToolbar
@@ -125,6 +128,8 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         searchView = binding.searchViewMain
         mainActivity = activity as? MainActivity ?: throw IllegalStateException("Activity is not MainActivity")
 
+        NoInternetDialogFragment.showIfNoInternet(requireContext())
+
         getAllCategoriesPrefs()
         getAllProductFromPrefs()
 
@@ -156,14 +161,36 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val hasInternet = NoInternetDialogFragment.hasInternetConnection(requireContext())
+
         when (item.itemId) {
-            R.id.search_item -> {searchViewFun()}
-            R.id.filter_item -> {filterFun()}
-            R.id.barcode_item -> {
-                val action = MainFragmentDirections.actionMainFragmentToBarCodeScannerFragment("MainBarcode")
-                findNavController().navigate(action)
+            R.id.search_item -> {
+                searchViewFun()
             }
-            R.id.profile_item -> {findNavController().navigate(R.id.action_mainFragment_to_profileFragment)}
+            R.id.filter_item -> {
+                if (hasInternet){
+                    filterFun()
+                } else {
+                    NoInternetDialogFragment.showIfNoInternet(requireContext())
+                }
+            }
+            R.id.barcode_item -> {
+                if (hasInternet) {
+                    val action =
+                        MainFragmentDirections.actionMainFragmentToBarCodeScannerFragment("MainBarcode")
+                    findNavController().navigate(action)
+                } else {
+                    NoInternetDialogFragment.showIfNoInternet(requireContext())
+                }
+            }
+            R.id.profile_item -> {
+                if (hasInternet) {
+                    findNavController().navigate(R.id.action_mainFragment_to_profileFragment)
+                }
+                else {
+                    NoInternetDialogFragment.showIfNoInternet(requireContext())
+                }
+            }
         }
         return super.onOptionsItemSelected(item)
     }

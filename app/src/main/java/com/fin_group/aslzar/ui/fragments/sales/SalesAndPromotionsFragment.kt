@@ -45,6 +45,7 @@ import com.fin_group.aslzar.ui.fragments.sales.functions.searchViewFun
 import com.fin_group.aslzar.ui.fragments.sales.functions.updateBadge
 import com.fin_group.aslzar.util.BadgeManager
 import com.fin_group.aslzar.util.CategoryClickListener
+import com.fin_group.aslzar.util.NoInternetDialogFragment
 import com.fin_group.aslzar.util.ProductOnClickListener
 import com.fin_group.aslzar.util.SessionManager
 import com.fin_group.aslzar.viewmodel.SharedViewModel
@@ -94,6 +95,8 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentSalesAndPromotionsBinding.inflate(inflater, container, false)
+
+        NoInternetDialogFragment.showIfNoInternet(requireContext())
 
         preferences = context?.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)!!
         sessionManager = SessionManager(requireContext())
@@ -148,14 +151,24 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val hasInternet = NoInternetDialogFragment.hasInternetConnection(requireContext())
+
         when (item.itemId) {
             R.id.search_item -> {searchViewFun()}
             R.id.barcode_item -> {
-                val action = SalesAndPromotionsFragmentDirections.actionSalesAndPromotionsFragmentToBarCodeScannerFragment("SalesProductsBarcode")
-                findNavController().navigate(action)
+                if (hasInternet){
+                    val action = SalesAndPromotionsFragmentDirections.actionSalesAndPromotionsFragmentToBarCodeScannerFragment("SalesProductsBarcode")
+                    findNavController().navigate(action)
+                } else {
+                    NoInternetDialogFragment.showIfNoInternet(requireContext())
+                }
             }
             R.id.profile_item -> {
-                findNavController().navigate(R.id.action_salesAndPromotionsFragment_to_profileFragment)
+                if (hasInternet){
+                    findNavController().navigate(R.id.action_salesAndPromotionsFragment_to_profileFragment)
+                } else {
+                    NoInternetDialogFragment.showIfNoInternet(requireContext())
+                }
             }
         }
         return super.onOptionsItemSelected(item)

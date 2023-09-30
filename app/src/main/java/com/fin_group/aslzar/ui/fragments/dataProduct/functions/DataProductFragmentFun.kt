@@ -27,6 +27,7 @@ import com.fin_group.aslzar.databinding.FragmentDataProductBinding
 import com.fin_group.aslzar.response.Category
 import com.fin_group.aslzar.response.GetSimilarProductsResponse
 import com.fin_group.aslzar.response.InStock
+import com.fin_group.aslzar.response.Percent
 import com.fin_group.aslzar.response.PercentInstallment
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
@@ -38,6 +39,7 @@ import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.printPerc
 import com.fin_group.aslzar.ui.fragments.dataProduct.DataProductFragment
 import com.fin_group.aslzar.ui.fragments.main.MainFragment
 import com.fin_group.aslzar.ui.fragments.main.functions.getAllCategoriesFromApi
+import com.fin_group.aslzar.util.NoInternetDialogFragment
 import retrofit2.Callback
 import com.fin_group.aslzar.util.formatNumber
 import com.fin_group.aslzar.util.showBottomNav
@@ -251,10 +253,13 @@ fun DataProductFragment.retrieveCoefficientPlan(): PercentInstallment {
     val coefficientPlanJson = preferences.getString("coefficientPlan", null)
     return if (coefficientPlanJson != null) {
         val coefficientPlanType = object : TypeToken<PercentInstallment>() {}.type
-        Gson().fromJson(coefficientPlanJson, coefficientPlanType)
+        val percent = Gson().fromJson<PercentInstallment>(coefficientPlanJson, coefficientPlanType)
+        percent
     } else {
         PercentInstallment(
-            5, 5, emptyList()
+            5, 5, listOf(
+                Percent(1.79, 3)
+            )
         )
     }
 }
@@ -272,6 +277,7 @@ fun DataProductFragment.fetchCoefficientPlanFromPrefs() {
             fetchCoefficientPlanFromApi()
         }
     } catch (e: Exception) {
+        Toast.makeText(requireContext(), "${e.message}", Toast.LENGTH_SHORT).show()
         Log.d("TAG", "getAllCategoriesPrefs: ${e.message}")
     }
 }
@@ -299,13 +305,7 @@ fun DataProductFragment.fetchCoefficientPlanFromApi() {
                     }
                 }
             }
-
             override fun onFailure(call: Call<PercentInstallment?>, t: Throwable) {
-                Toast.makeText(
-                    requireContext(),
-                    "Произишла ошибка, повторите попытку",
-                    Toast.LENGTH_SHORT
-                ).show()
                 Log.d("TAG", "onFailure fetchCategoriesFromApi: ${t.message}")
             }
         })
