@@ -62,7 +62,6 @@ interface ApiService {
     @Headers("Accept:application/json", "Content-Type:application/json")
     fun getPercentAndMonth(@Header("Authorization") token: String): Call<PercentInstallment>
 
-
     @GET(Constants.GET_SALES_PLAN)
     @Headers("Accept:application/json", "Content-Type:application/json")
     fun getSalesPlan(@Header("Authorization") token: String): Call<SalesPlanResponse>
@@ -75,8 +74,12 @@ interface ApiService {
     @Headers("Accept:application/json", "Content-Type:application/json")
     fun changePassword(@Path("password") password: String): Call<ResponseChangePassword>
 
+    @POST(Constants.CHANGE_PASSWORD)
+    @Headers("Accept:application/json", "Content-Type:application/json")
+    fun changePassword2(@Path("password") password: String, @Header("Authorization") token: String): Call<ResponseChangePassword>
+
     @POST(Constants.FORGOT_PASSWORD)
     @Headers("Accept:application/json", "Content-Type:application/json")
-    fun forgotPassword( @Header("Authorization") token: String): Call<ResponseForgotPassword>
+    fun forgotPassword(@Header("Authorization") token: String): Call<ResponseForgotPassword>
 
 }
