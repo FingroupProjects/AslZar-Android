@@ -281,15 +281,15 @@ class MainActivity : AppCompatActivity() {
         prefs.edit()?.putBoolean("first_run", false)?.apply()
     }
 
-    override fun onBackPressed() {
-        if (backPressedTime + 2000 > System.currentTimeMillis()) {
-            super.onBackPressed()
-            finish()
-        } else {
-            Toast.makeText(this, "Нажмите еще раз чтобы выйти", Toast.LENGTH_SHORT).show()
-        }
-        backPressedTime = System.currentTimeMillis()
-    }
+//    override fun onBackPressed() {
+//        if (backPressedTime + 2000 > System.currentTimeMillis()) {
+//            super.onBackPressed()
+//            finish()
+//        } else {
+//            Toast.makeText(this, "Нажмите еще раз чтобы выйти", Toast.LENGTH_SHORT).show()
+//        }
+//        backPressedTime = System.currentTimeMillis()
+//    }
 
 //    override fun onBackPressed() {
 //        val navController = findNavController(R.id.fragmentMain)

@@ -125,6 +125,15 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         monthLinearLayout = binding.monthTable
         percentLinearLayout = binding.percentTable
 
+        percentInstallment = try {
+            retrieveCoefficientPlan()
+        } catch (e: Exception) {
+            Log.e("DataProductFragment", "Ошибка при получении коэффициентов: ${e.message}")
+            fetchCoefficientPlanFromApi()
+            PercentInstallment(0, 0, emptyList())
+        }
+
+
         onBackPressed()
         if (args.product != null) {
             product = args.product!!

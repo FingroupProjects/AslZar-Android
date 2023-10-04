@@ -249,7 +249,29 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
     }
 
     override fun getData(product: Product) {
-        val action = MainFragmentDirections.actionMainFragmentToDataProductFragment(product.id, product, "Main")
+        val product2 = Product(
+            product.id,
+            product.full_name,
+            product.name,
+            product.price,
+            "",
+            "",
+            0,
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            product.is_set,
+            product.counts,
+            product.img,
+            ""
+        )
+
+        val action = MainFragmentDirections.actionMainFragmentToDataProductFragment(product2.id, product2, "Main")
         Navigation.findNavController(binding.root).navigate(action)
     }
 

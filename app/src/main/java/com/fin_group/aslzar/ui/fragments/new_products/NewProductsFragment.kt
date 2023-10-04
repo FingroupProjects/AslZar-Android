@@ -12,6 +12,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -28,6 +29,7 @@ import com.fin_group.aslzar.databinding.FragmentNewProductsBinding
 import com.fin_group.aslzar.response.Category
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.ui.activities.MainActivity
+import com.fin_group.aslzar.ui.fragments.dataProduct.DataProductFragment
 import com.fin_group.aslzar.ui.fragments.main.MainFragmentDirections
 import com.fin_group.aslzar.ui.fragments.new_products.functions.addProductToCart
 import com.fin_group.aslzar.ui.fragments.new_products.functions.callInStockDialog
@@ -85,6 +87,8 @@ class NewProductsFragment : Fragment(), ProductOnClickListener {
     lateinit var apiService: ApiClient
 
     lateinit var recyclerView: RecyclerView
+    var backPressedTime: Long = 0
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -123,7 +127,7 @@ class NewProductsFragment : Fragment(), ProductOnClickListener {
         getAllProductFromPrefs()
 
         NoInternetDialogFragment.showIfNoInternet(requireContext())
-
+        onBackPressed()
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -212,12 +216,50 @@ class NewProductsFragment : Fragment(), ProductOnClickListener {
     }
 
     override fun getData(product: Product) {
-        val action = NewProductsFragmentDirections.actionNewProductsFragmentToDataProductFragment(product.id, product, "NewProducts")
+        val product2 = Product(
+            product.id,
+            product.full_name,
+            product.name,
+            product.price,
+            "",
+            "",
+            0,
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            product.is_set,
+            product.counts,
+            product.img,
+            ""
+        )
+
+
+        val action = NewProductsFragmentDirections.actionNewProductsFragmentToDataProductFragment(product2.id, product2, "NewProducts")
         Navigation.findNavController(binding.root).navigate(action)
     }
 
     private fun fetchDataAndFilterProducts() {
         getAllProductsFromApi()
         filterProducts()
+    }
+
+    fun onBackPressed() {
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (backPressedTime + 2000 > System.currentTimeMillis()) {
+                        requireActivity().finish()
+                    } else {
+                        Toast.makeText(requireContext(), "Нажмите еще раз чтобы выйти.", Toast.LENGTH_LONG).show()
+                    }
+                    backPressedTime = System.currentTimeMillis()
+                }
+            })
     }
 }

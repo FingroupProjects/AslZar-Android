@@ -210,7 +210,29 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener {
     }
 
     override fun getData(product: Product) {
-        val action = SalesAndPromotionsFragmentDirections.actionSalesAndPromotionsFragmentToDataProductFragment(product.id, product, "SalesProducts")
+        val product2 = Product(
+            product.id,
+            product.full_name,
+            product.name,
+            product.price,
+            "",
+            "",
+            0,
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            product.is_set,
+            product.counts,
+            product.img,
+            ""
+        )
+
+        val action = SalesAndPromotionsFragmentDirections.actionSalesAndPromotionsFragmentToDataProductFragment(product2.id, product2, "SalesProducts")
         Navigation.findNavController(binding.root).navigate(action)
     }
 
