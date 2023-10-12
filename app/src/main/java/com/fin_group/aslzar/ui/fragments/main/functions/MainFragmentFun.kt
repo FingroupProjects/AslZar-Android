@@ -22,6 +22,7 @@ import com.fin_group.aslzar.response.InStock
 import com.fin_group.aslzar.response.InStockList
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.ui.dialogs.CheckCategoryFragmentDialog
+import com.fin_group.aslzar.ui.dialogs.FilterDialogFragment
 import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.WarningNoHaveProductFragmentDialog
 import com.fin_group.aslzar.ui.fragments.main.MainFragment
@@ -31,6 +32,12 @@ import com.google.gson.reflect.TypeToken
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+
+fun MainFragment.callFilterDialog() {
+    val categoryDialog = FilterDialogFragment()
+//    categoryDialog.setCategoryClickListener(listener)
+    categoryDialog.show(activity?.supportFragmentManager!!, "category check dialog")
+}
 
 fun MainFragment.callCategoryDialog(listener: CategoryClickListener) {
     val categoryDialog = CheckCategoryFragmentDialog()

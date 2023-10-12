@@ -8,8 +8,13 @@
         app:showAsAction="always" />
     <item
         android:id="@+id/filter_item"
-        android:icon="@drawable/ic_filter"
+        android:icon="@drawable/ic_filter_3"
         android:title="Фильтр"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/category_item"
+        android:icon="@drawable/ic_filter"
+        android:title="Категории"
         app:showAsAction="always" />
     <item
         android:id="@+id/barcode_item"

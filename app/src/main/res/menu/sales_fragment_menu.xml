@@ -7,6 +7,11 @@
         android:title="Поиск"
         app:showAsAction="always" />
     <item
+        android:id="@+id/filter_item"
+        android:icon="@drawable/ic_filter_3"
+        android:title="Фильтр"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/barcode_item"
         android:icon="@drawable/ic_barcode_scanner"
         android:title="Сканнер штрих кода"

@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="4dp"
+    app:strokeColor="@android:color/transparent"
+    tools:context=".ui.dialogs.FilterDialogFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/textView7"
+            style="@style/forTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="Фильтрация"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/btnClose"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/btnClose" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btnClose"
+            style="?attr/floatingActionButtonSmallStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="5dp"
+            android:clickable="true"
+            android:src="@drawable/ic_clear"
+            app:backgroundTint="@color/white"
+            app:elevation="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/background_2"
+            tools:ignore="ContentDescription,SpeakableTextPresentCheck" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btnRefresh"
+            style="?attr/floatingActionButtonSmallStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="5dp"
+            android:clickable="true"
+            android:src="@drawable/ic_refresh"
+            app:backgroundTint="@color/white"
+            app:elevation="0dp"
+            app:layout_constraintEnd_toStartOf="@+id/btnClose"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/background_2"
+            tools:ignore="ContentDescription,SpeakableTextPresentCheck" />
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/progressLinearDeterminate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:max="100"
+            android:progress="0"
+            app:indicatorColor="@color/background_2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btnClose"
+            app:trackColor="@color/background_3" />
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="wrap_content"
+            android:layout_height="3dp"
+            android:layout_marginTop="2dp"
+            android:background="@color/background_2"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btnClose" />
+
+        <TextView
+            android:id="@+id/textView49"
+            style="@style/forTextView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="16dp"
+            android:text="Выберите диапазон цены: "
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view" />
+
+        <TextView
+            android:id="@+id/textView51"
+            style="@style/forTextView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="16dp"
+            android:text="Выберите диапазон размера: "
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/range_price_from" />
+
+        <TextView
+            android:id="@+id/textView53"
+            style="@style/forTextView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="16dp"
+            android:text="Выберите диапазон веса: "
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/range_size_from" />
+
+        <TextView
+            android:id="@+id/textView55"
+            style="@style/forTextView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="16dp"
+            android:text="Выберите категорию товаров: "
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/range_weight_from" />
+
+        <TextView
+            android:id="@+id/textView56"
+            style="@style/forTextView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="16dp"
+            android:text="Таких продуктов найдено:"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/filter_category" />
+
+        <!--        <com.google.android.material.textfield.TextInputLayout-->
+<!--            android:id="@+id/typeProject"-->
+<!--            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="10dp"-->
+<!--            android:layout_marginEnd="10dp"-->
+<!--            android:hint="Тип задачи"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/textView55">-->
+
+<!--            -->
+<!--        </com.google.android.material.textfield.TextInputLayout>-->
+
+        <TextView
+            android:id="@+id/filter_price_range"
+            style="@style/forTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="от 12400500 / до 96500000"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/textView49"
+            app:layout_constraintStart_toEndOf="@+id/textView49"
+            app:layout_constraintTop_toTopOf="@+id/textView49" />
+
+        <TextView
+            android:id="@+id/filter_size_range"
+            style="@style/forTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="от 14 / до 19"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/textView51"
+            app:layout_constraintStart_toEndOf="@+id/textView51"
+            app:layout_constraintTop_toTopOf="@+id/textView51" />
+
+        <TextView
+            android:id="@+id/filter_weight_range"
+            style="@style/forTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="от 7 / до 12"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/textView53"
+            app:layout_constraintStart_toEndOf="@+id/textView53"
+            app:layout_constraintTop_toTopOf="@+id/textView53" />
+
+        <TextView
+            android:id="@+id/filtered_products"
+            style="@style/forTextView.18"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:text="12 шт"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/textView56"
+            app:layout_constraintStart_toEndOf="@+id/textView56"
+            app:layout_constraintTop_toTopOf="@+id/textView56" />
+
+        <AutoCompleteTextView
+            android:id="@+id/filter_category"
+            style="@style/forTextView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/bg_for_et"
+            android:drawableEnd="@drawable/ic_arrow_dropdown"
+            android:elevation="2dp"
+            android:inputType="none"
+            android:padding="7.5dp"
+            android:paddingStart="15dp"
+            android:text="Все"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView55" />
+
+        <EditText
+            android:id="@+id/range_price_from"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="6dp"
+            android:background="@drawable/bg_for_et"
+            android:elevation="2dp"
+            android:inputType="number|numberDecimal"
+            android:padding="7.5dp"
+            android:text="122000"
+            android:textColor="@color/text_color_1"
+            app:layout_constraintEnd_toStartOf="@+id/range_price_to"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView49" />
+
+        <EditText
+            android:id="@+id/range_price_to"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/bg_for_et"
+            android:elevation="2dp"
+            android:hint="96500000"
+            android:inputType="number|numberDecimal"
+            android:padding="7.5dp"
+            app:layout_constraintBottom_toBottomOf="@+id/range_price_from"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/range_price_from"
+            app:layout_constraintTop_toTopOf="@+id/range_price_from" />
+
+        <EditText
+            android:id="@+id/range_size_from"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="6dp"
+            android:background="@drawable/bg_for_et"
+            android:elevation="2dp"
+            android:inputType="number|numberDecimal"
+            android:padding="7.5dp"
+            android:text="14"
+            android:textColor="@color/text_color_1"
+            app:layout_constraintEnd_toStartOf="@+id/range_size_to"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView51" />
+
+        <EditText
+            android:id="@+id/range_size_to"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/bg_for_et"
+            android:elevation="2dp"
+            android:inputType="number|numberDecimal"
+            android:padding="7.5dp"
+            android:text="19"
+            android:textColor="@color/text_color_1"
+            app:layout_constraintBottom_toBottomOf="@+id/range_size_from"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/range_size_from"
+            app:layout_constraintTop_toTopOf="@+id/range_size_from" />
+
+        <EditText
+            android:id="@+id/range_weight_from"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="6dp"
+            android:background="@drawable/bg_for_et"
+            android:elevation="2dp"
+            android:inputType="number|numberDecimal"
+            android:padding="7.5dp"
+            android:text="7"
+            android:textColor="@color/text_color_1"
+            app:layout_constraintEnd_toStartOf="@+id/range_weight_to"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView53" />
+
+        <EditText
+            android:id="@+id/range_weight_to"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/bg_for_et"
+            android:elevation="2dp"
+            android:inputType="number|numberDecimal"
+            android:padding="7.5dp"
+            android:text="12"
+            android:textColor="@color/text_color_1"
+            app:layout_constraintBottom_toBottomOf="@+id/range_weight_from"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/range_weight_from"
+            app:layout_constraintTop_toTopOf="@+id/range_weight_from" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnSetFilter"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="24dp"
+            android:background="@drawable/ripple_effect_btn_2"
+            android:padding="10dp"
+            android:text="применить"
+            android:textColor="@color/text_color_1"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView56" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

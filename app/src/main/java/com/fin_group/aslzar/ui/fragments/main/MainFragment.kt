@@ -3,7 +3,6 @@ package com.fin_group.aslzar.ui.fragments.main
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -14,14 +13,12 @@ import android.view.MenuItem
 import android.view.View
 import android.view.View.GONE
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.fin_group.aslzar.R
@@ -31,10 +28,10 @@ import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.cipher.EncryptionManager
 import com.fin_group.aslzar.databinding.FragmentMainBinding
 import com.fin_group.aslzar.response.Category
-import com.fin_group.aslzar.response.InStock
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.ui.activities.MainActivity
 import com.fin_group.aslzar.ui.fragments.main.functions.addProductToCart
+import com.fin_group.aslzar.ui.fragments.main.functions.callFilterDialog
 import com.fin_group.aslzar.util.CategoryClickListener
 import com.fin_group.aslzar.util.ProductOnClickListener
 import com.fin_group.aslzar.ui.fragments.main.functions.callInStockDialog
@@ -168,6 +165,9 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
                 searchViewFun()
             }
             R.id.filter_item -> {
+                callFilterDialog()
+            }
+            R.id.category_item -> {
                 if (hasInternet){
                     filterFun()
                 } else {
