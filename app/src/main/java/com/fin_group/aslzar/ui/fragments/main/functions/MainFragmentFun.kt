@@ -33,9 +33,9 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-fun MainFragment.callFilterDialog() {
+fun MainFragment.callFilterDialog(listener: CategoryClickListener) {
     val categoryDialog = FilterDialogFragment()
-//    categoryDialog.setCategoryClickListener(listener)
+    categoryDialog.setCategoryClickListener(listener)
     categoryDialog.show(activity?.supportFragmentManager!!, "category check dialog")
 }
 
@@ -262,6 +262,9 @@ fun MainFragment.getAllProductsFromApi() {
                         val productListJson = Gson().toJson(allProducts)
                         preferences.edit().putString("productList", productListJson).apply()
                         filterProducts()
+                        Log.d("TAG", "onResponse: $response")
+                        Log.d("TAG", "onResponse: ${response.body()}")
+                        Log.d("TAG", "onResponse: ${response.code()}")
                     } else {
                         Toast.makeText(requireContext(), "Произошла ошибка", Toast.LENGTH_SHORT)
                             .show()

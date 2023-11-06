@@ -136,7 +136,6 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
             }
             override fun onQueryTextChange(newText: String?): Boolean {
                 searchText = newText.toString()
-                Log.d("TAG", "onQueryTextChange: $searchText")
                 filterProducts()
                 return true
             }
@@ -165,7 +164,7 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
                 searchViewFun()
             }
             R.id.filter_item -> {
-                callFilterDialog()
+                callFilterDialog(this)
             }
             R.id.category_item -> {
                 if (hasInternet){

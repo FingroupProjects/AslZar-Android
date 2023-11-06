@@ -59,18 +59,6 @@ class CheckCategoryFragmentDialog : BaseDialogFragment() {
         progressBar = binding.progressLinearDeterminate
         preferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
 
-
-
-
-//        categories = listOf(
-//            Category("all", "Все"),
-//            Category("00001", "Кольца"),
-//            Category("00002", "Серьги"),
-//            Category("00003", "Ожерелья"),
-//            Category("00004", "Браслеты"),
-//            Category("00005", "Подвески"),
-//            Category("00006", "Часы"),
-//        )
         getAllCategoriesPrefs()
         fetchRV(categories)
         return binding.root

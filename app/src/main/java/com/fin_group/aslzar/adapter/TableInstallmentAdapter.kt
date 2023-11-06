@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.fin_group.aslzar.R
-import com.fin_group.aslzar.databinding.RowItemHaveingInStoreBinding
 import com.fin_group.aslzar.databinding.RowItemTableInstallmentBinding
 import com.fin_group.aslzar.response.Percent
 import com.fin_group.aslzar.response.PercentInstallment

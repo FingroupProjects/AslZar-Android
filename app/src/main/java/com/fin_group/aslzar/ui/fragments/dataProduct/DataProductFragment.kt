@@ -12,13 +12,10 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
-import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -28,28 +25,23 @@ import com.fin_group.aslzar.adapter.AlikeProductsAdapter
 import com.fin_group.aslzar.adapter.ProductSomeImagesAdapter
 import com.fin_group.aslzar.adapter.TableInstallmentAdapter
 import com.fin_group.aslzar.api.ApiClient
-import com.fin_group.aslzar.databinding.FragmentCalculatorBinding
 import com.fin_group.aslzar.databinding.FragmentDataProductBinding
-import com.fin_group.aslzar.response.Percent
 import com.fin_group.aslzar.response.PercentInstallment
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.response.SimilarProduct
 import com.fin_group.aslzar.ui.dialogs.AlikeProductBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.callInStockDialog
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.callSetInProduct
-import com.fin_group.aslzar.ui.fragments.dataProduct.functions.createTable
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.fetchCoefficientPlanFromApi
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.fetchCoefficientPlanFromPrefs
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.getProductByID
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.getSimilarProducts
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.likeProducts
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.onBackPressed
-import com.fin_group.aslzar.ui.fragments.dataProduct.functions.printPercent
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.retrieveCoefficientPlan
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.setDataProduct
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.someImagesProduct
 import com.fin_group.aslzar.util.BadgeManager
-import com.fin_group.aslzar.util.NoInternetDialogFragment
 import com.fin_group.aslzar.util.OnAlikeProductClickListener
 import com.fin_group.aslzar.util.OnImageClickListener
 import com.fin_group.aslzar.util.SessionManager
@@ -58,8 +50,6 @@ import com.fin_group.aslzar.util.showBottomNav
 import com.fin_group.aslzar.viewmodel.SharedViewModel
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.badge.BadgeDrawable
-import com.google.android.material.badge.BadgeUtils
-import com.google.android.material.badge.ExperimentalBadgeUtils
 import com.google.android.material.chip.ChipGroup
 
 
@@ -130,7 +120,7 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         } catch (e: Exception) {
             Log.e("DataProductFragment", "Ошибка при получении коэффициентов: ${e.message}")
             fetchCoefficientPlanFromApi()
-            PercentInstallment(0, 0, emptyList())
+            PercentInstallment(0, 0, 7, emptyList())
         }
 
         onBackPressed()

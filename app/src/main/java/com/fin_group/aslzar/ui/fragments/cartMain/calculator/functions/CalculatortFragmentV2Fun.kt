@@ -10,39 +10,27 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.TEXT_ALIGNMENT_CENTER
 import android.view.View.VISIBLE
-import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.core.view.marginBottom
-import androidx.core.view.marginTop
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.TableInstallmentAdapter
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentCalculatorV2Binding
-import com.fin_group.aslzar.models.TypePay
 import com.fin_group.aslzar.response.Client
 import com.fin_group.aslzar.response.GetAllClientsResponse
-import com.fin_group.aslzar.response.Percent
 import com.fin_group.aslzar.response.PercentInstallment
-import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.CalculatorFragmentV2
-import com.fin_group.aslzar.ui.fragments.dataProduct.DataProductFragment
-import com.fin_group.aslzar.ui.fragments.dataProduct.functions.createTable
-import com.fin_group.aslzar.ui.fragments.dataProduct.functions.fetchCoefficientPlanFromApi
 import com.fin_group.aslzar.util.CartObserver
-import com.fin_group.aslzar.util.CustomPopupView
 import com.fin_group.aslzar.util.formatNumber
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import kotlin.math.abs
-import kotlin.math.log
 
 
 fun CalculatorFragmentV2.cartObserver(binding: FragmentCalculatorV2Binding) {
@@ -380,7 +368,7 @@ fun CalculatorFragmentV2.retrieveCoefficientPlan(): PercentInstallment {
         Gson().fromJson(coefficientPlanJson, coefficientPlanType)
     } else {
         PercentInstallment(
-            5, 5, emptyList()
+            5, 5, 7, emptyList()
         )
     }
 }

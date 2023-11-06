@@ -11,20 +11,15 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.addCallback
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL
 import com.bumptech.glide.Glide
 import com.fin_group.aslzar.R
-import com.fin_group.aslzar.adapter.ProductSomeImagesAdapter
 import com.fin_group.aslzar.adapter.TableInstallmentAdapter
 import com.fin_group.aslzar.cart.Cart
-import com.fin_group.aslzar.databinding.FragmentCalculatorV2Binding
 import com.fin_group.aslzar.databinding.FragmentDataProductBinding
-import com.fin_group.aslzar.response.Category
 import com.fin_group.aslzar.response.GetSimilarProductsResponse
 import com.fin_group.aslzar.response.InStock
 import com.fin_group.aslzar.response.Percent
@@ -33,19 +28,10 @@ import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.SetInProductBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.WarningNoHaveProductFragmentDialog
-import com.fin_group.aslzar.ui.fragments.cartMain.calculator.CalculatorFragmentV2
-import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.fetchCoefficientPlanFromApi
-import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.printPercent
 import com.fin_group.aslzar.ui.fragments.dataProduct.DataProductFragment
-import com.fin_group.aslzar.ui.fragments.main.MainFragment
-import com.fin_group.aslzar.ui.fragments.main.functions.getAllCategoriesFromApi
-import com.fin_group.aslzar.util.NoInternetDialogFragment
 import retrofit2.Callback
 import com.fin_group.aslzar.util.formatNumber
 import com.fin_group.aslzar.util.showBottomNav
-import com.google.android.material.badge.BadgeDrawable
-import com.google.android.material.badge.BadgeUtils
-import com.google.android.material.badge.ExperimentalBadgeUtils
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import retrofit2.Call
@@ -257,7 +243,7 @@ fun DataProductFragment.retrieveCoefficientPlan(): PercentInstallment {
         percent
     } else {
         PercentInstallment(
-            5, 5, listOf(
+            5, 5, 7, listOf(
                 Percent(1.79, 3)
             )
         )

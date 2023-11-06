@@ -4,12 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.Menu
-import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -24,8 +20,6 @@ import com.fin_group.aslzar.response.GetAllCategoriesResponse
 import com.fin_group.aslzar.response.GetAllClientsResponse
 import com.fin_group.aslzar.response.GetAllProductsResponse
 import com.fin_group.aslzar.response.PercentInstallment
-import com.fin_group.aslzar.ui.fragments.dataProduct.DataProductFragment
-import com.fin_group.aslzar.ui.fragments.main.MainFragment
 import com.fin_group.aslzar.util.BadgeManager
 import com.fin_group.aslzar.util.SessionManager
 import com.fin_group.aslzar.viewmodel.SharedViewModel
