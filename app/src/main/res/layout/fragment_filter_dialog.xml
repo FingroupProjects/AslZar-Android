@@ -306,14 +306,18 @@
 
         <TextView
             android:id="@+id/filter_category"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            style="@style/forTextView.16"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginTop="4dp"
             android:layout_marginEnd="10dp"
             android:background="@drawable/bg_for_et"
             android:elevation="2dp"
             android:padding="7.5dp"
+            android:gravity="center_vertical"
+            android:textStyle="bold"
+            android:minHeight="40dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView55" />
@@ -332,12 +336,12 @@
             android:textColor="@color/text_color_1"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/btnSetFilter2"
+            app:layout_constraintEnd_toStartOf="@+id/btnClearFilter"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView56" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnSetFilter2"
+            android:id="@+id/btnClearFilter"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="6dp"
@@ -346,7 +350,7 @@
             android:layout_marginBottom="24dp"
             android:background="@drawable/ripple_effect_btn_2"
             android:padding="10dp"
-            android:text="Очистить"
+            android:text="Сбросить"
             android:textColor="@color/text_color_1"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -366,7 +370,7 @@
                 android:id="@+id/categoriesRv"
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
-                android:visibility="gone"
+                android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

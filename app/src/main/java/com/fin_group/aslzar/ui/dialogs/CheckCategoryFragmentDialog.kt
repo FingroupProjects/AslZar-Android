@@ -32,6 +32,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 
+@Suppress("DEPRECATION")
 class CheckCategoryFragmentDialog : BaseDialogFragment() {
 
     private var _binding: FragmentDialogCheckCategoryBinding? = null

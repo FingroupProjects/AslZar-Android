@@ -24,6 +24,7 @@ import androidx.navigation.NavDirections
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.fin_group.aslzar.R
+import com.fin_group.aslzar.models.FilterModel
 import com.fin_group.aslzar.models.ProductInCart
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.response.SimilarProduct
@@ -73,6 +74,11 @@ interface OnProductAddedToCartListener {
 interface OnAlikeProductClickListener{
     fun callBottomDialog(product: SimilarProduct)
 }
+
+interface FilterDialogListener {
+    fun onFilterApplied(updatedFilterModel: FilterModel)
+}
+
 
 
 fun Fragment.showAction() {
@@ -230,4 +236,12 @@ fun Fragment.backPressed(action: Int) {
                 findNavController().navigate(action)
             }
         })
+}
+
+fun returnNumber(str: String): Number{
+    return if (str.contains('.')){
+        str.toDouble()
+    } else {
+        str.toInt()
+    }
 }

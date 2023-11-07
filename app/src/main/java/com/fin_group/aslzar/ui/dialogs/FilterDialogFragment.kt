@@ -5,46 +5,42 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
+import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
 import android.widget.ProgressBar
 import android.widget.Spinner
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.CategoryAdapter
 import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.databinding.FragmentFilterDialogBinding
+import com.fin_group.aslzar.models.FilterModel
 import com.fin_group.aslzar.response.Category
 import com.fin_group.aslzar.response.GetAllCategoriesResponse
-import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.paymentClient
-import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.printPercent
-import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.textWatchers
 import com.fin_group.aslzar.util.BaseBottomSheetDialogFragment
-import com.fin_group.aslzar.util.BaseDialogFragment
 import com.fin_group.aslzar.util.CategoryClickListener
+import com.fin_group.aslzar.util.FilterDialogListener
+import com.fin_group.aslzar.util.FilterViewModel
 import com.fin_group.aslzar.util.SessionManager
-import com.fin_group.aslzar.util.formatNumber
-import com.fin_group.aslzar.util.hideKeyboard
-import com.fin_group.aslzar.util.setWidthPercent
-import com.fin_group.aslzar.util.setupKeyboardScrolling
+import com.fin_group.aslzar.util.returnNumber
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import kotlin.math.log
 
 
+@Suppress("DEPRECATION")
 class FilterDialogFragment : BaseBottomSheetDialogFragment() {
+    private lateinit var filterViewModel: FilterViewModel
 
     private var _binding: FragmentFilterDialogBinding? = null
     private val binding get() = _binding!!
@@ -59,12 +55,26 @@ class FilterDialogFragment : BaseBottomSheetDialogFragment() {
 
     private lateinit var arrayAdapterCategories: ArrayAdapter<String>
     private var categoryClickListener: CategoryClickListener? = null
+    private var filterDialogListener: FilterDialogListener? = null
     private lateinit var categoriesRV: RecyclerView
-//    private lateinit var categoriesSpinner: Spinner
 
     private lateinit var preferences: SharedPreferences
 
     private var showCategories: Boolean = false
+
+    private lateinit var filter: FilterModel
+
+
+//    companion object {
+//        fun newInstance(filter: FilterModel): FilterDialogFragment{
+//            val dialog = FilterDialogFragment()
+//            val args = Bundle()
+//            args.putParcelable(ARG_FILTER, filter)
+//            dialog.arguments = args
+//            return dialog
+//        }
+//        private const val ARG_FILTER = "filter"
+//    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -76,8 +86,11 @@ class FilterDialogFragment : BaseBottomSheetDialogFragment() {
         apiService.init(sessionManager)
         progressBar = binding.progressLinearDeterminate
         preferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
-//        categoriesSpinner = binding.filterCategory
         categoriesRV = binding.categoriesRv
+        filterViewModel = ViewModelProvider(requireActivity())[FilterViewModel::class.java]
+//        arguments?.let {
+//            filter = it.getParcelable(ARG_FILTER)!!
+//        }
 
         return binding.root
     }
@@ -85,7 +98,14 @@ class FilterDialogFragment : BaseBottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setDialogHeightPercent(95)
-
+        val filterModel = filterViewModel.filterModel
+        val filterModel2 = filterViewModel.defaultFilterModel
+        if (filterModel != null) {
+            setDataFilter(filterModel)
+        }
+        if (filterModel2 != null){
+            setDataFilter2(filterModel2)
+        }
         binding.btnClose.setOnClickListener { dismiss() }
         binding.btnRefresh.setOnClickListener {
             getAllCategoriesFromApi()
@@ -93,8 +113,6 @@ class FilterDialogFragment : BaseBottomSheetDialogFragment() {
 
         getAllCategoriesPrefs()
 //        fetchSpinner(categories, categoriesSpinner)
-
-
 //        categoriesSpinner.setOnItemClickListener { parent, view, position, id ->
 //            Toast.makeText(requireContext(), "${categories[position]}", Toast.LENGTH_SHORT).show()
 //        }
@@ -110,13 +128,19 @@ class FilterDialogFragment : BaseBottomSheetDialogFragment() {
         }
 
         binding.btnSetFilter.setOnClickListener{
+            filterViewModel.filterModel = newFilterModel(binding)
+            filterViewModel.filterChangeListener.postValue(filterViewModel.filterModel)
 
-//            val cat: String = categoriesSpinner.selectedItem as String
-//            selectedCategory = categories.find { it.name == cat }!!
-//            categoryClickListener?.onCategorySelected(selectedCategory)
-//
-//            Log.d("TAG", "onViewCreated: $cat")
-            Log.d("TAG", "onViewCreated: $selectedCategory")
+            setDataFilter(filterViewModel.filterModel!!)
+            dismiss()
+        }
+
+        binding.btnClearFilter.setOnClickListener {
+            filterViewModel.filterModel = filterViewModel.defaultFilterModel!!
+            filterViewModel.filterChangeListener.postValue(filterViewModel.defaultFilterModel)
+
+            setDataFilter(filterViewModel.defaultFilterModel!!)
+            dismiss()
 
         }
     }
@@ -125,7 +149,6 @@ class FilterDialogFragment : BaseBottomSheetDialogFragment() {
     fun fetchRv(categoryList: List<Category>){
         categoriesRV.layoutManager = LinearLayoutManager(requireContext())
         categoriesRV.adapter = CategoryAdapter(categoryList) { selectCategory ->
-//            categoryClickListener?.onCategorySelected(selectedCategory)
             selectedCategory = categories.find { it.name == selectCategory.name }!!
             binding.filterCategory.text = "Выбранная категория: ${selectCategory.name}"
         }
@@ -154,8 +177,52 @@ class FilterDialogFragment : BaseBottomSheetDialogFragment() {
         }
     }
 
-    fun setCategoryClickListener(listener: CategoryClickListener) {
-        categoryClickListener = listener
+    fun setFilterListener(listener: FilterDialogListener){
+        filterDialogListener = listener
+    }
+
+    @SuppressLint("SetTextI18n")
+    fun setDataFilter(filterModel: FilterModel){
+        binding.apply {
+            filterModel.apply {
+                rangePriceFrom.setText(priceFrom.toString())
+                rangePriceTo.setText(priceTo.toString())
+                filterPriceRange.text = "от $priceFrom / до $priceTo"
+
+                rangeSizeFrom.setText(sizeFrom.toString())
+                rangeSizeTo.setText(sizeTo.toString())
+                filterSizeRange.text = "от $sizeFrom / до $sizeTo"
+
+                rangeWeightFrom.setText(weightFrom.toString())
+                rangeWeightTo.setText(weightTo.toString())
+                filterWeightRange.text = "от $weightFrom / до $weightTo"
+
+                selectedCategory = category
+                binding.filterCategory.text = "Выбранная категория: ${selectedCategory.name}"
+            }
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    fun setDataFilter2(filterModel: FilterModel){
+        binding.apply {
+            filterModel.apply {
+                filterPriceRange.text = "от $priceFrom / до $priceTo"
+                filterSizeRange.text = "от $sizeFrom / до $sizeTo"
+                filterWeightRange.text = "от $weightFrom / до $weightTo"
+            }
+        }
+    }
+    private fun newFilterModel(binding: FragmentFilterDialogBinding): FilterModel {
+        return FilterModel(
+            returnNumber(binding.rangePriceFrom.text.toString()),
+            returnNumber(binding.rangePriceTo.text.toString()),
+            returnNumber(binding.rangeSizeFrom.text.toString()),
+            returnNumber(binding.rangeSizeTo.text.toString()),
+            returnNumber(binding.rangeWeightFrom.text.toString()),
+            returnNumber(binding.rangeWeightTo.text.toString()),
+            selectedCategory,
+        )
     }
 
     override fun onDestroy() {
@@ -170,8 +237,8 @@ class FilterDialogFragment : BaseBottomSheetDialogFragment() {
                 val categoryListType = object : TypeToken<List<Category>>() {}.type
                 val categoryList = Gson().fromJson<List<Category>>(categoriesListJson, categoryListType)
                 categories = categoryList
-                binding.view.visibility = View.VISIBLE
-                progressBar.visibility = View.INVISIBLE
+                binding.view.visibility = VISIBLE
+                progressBar.visibility = INVISIBLE
 //                fetchSpinner(categories, categoriesSpinner)
                 fetchRv(categories)
             } else {
@@ -183,8 +250,8 @@ class FilterDialogFragment : BaseBottomSheetDialogFragment() {
     }
 
     private fun getAllCategoriesFromApi(){
-        binding.view.visibility = View.INVISIBLE
-        progressBar.visibility = View.VISIBLE
+        binding.view.visibility = INVISIBLE
+        progressBar.visibility = VISIBLE
         try {
             val call = apiService.getApiService().getAllCategories("Bearer ${sessionManager.fetchToken()}")
             call.enqueue(object : Callback<GetAllCategoriesResponse?> {
