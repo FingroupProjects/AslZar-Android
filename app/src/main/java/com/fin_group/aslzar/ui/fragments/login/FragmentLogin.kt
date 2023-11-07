@@ -122,9 +122,9 @@ class FragmentLogin : Fragment() {
                                     val encryptedPassword = encryptionManager.encryptData(password)
                                     sessionManager.saveKey(savingKey)
 
-//                                    val editor: SharedPreferences.Editor = sharedPreferences.edit()
-//                                    editor.putBoolean(IS_LOGGED_IN_KEY, true)
-//                                    editor.apply()
+                                    val editor: SharedPreferences.Editor = sharedPreferences.edit()
+                                    editor.putBoolean(IS_LOGGED_IN_KEY, true)
+                                    editor.apply()
 
                                     sessionManager.saveLogin(encryptedLogin)
                                     sessionManager.savePassword(encryptedPassword)
@@ -218,11 +218,11 @@ class FragmentLogin : Fragment() {
 
     override fun onStart() {
         super.onStart()
-//        if (isLoggedIn) {
-//            val i = Intent(requireActivity(), MainActivity::class.java)
-//            startActivity(i)
-//            requireActivity().finish()
-//        }
+        if (isLoggedIn) {
+            val i = Intent(requireActivity(), MainActivity::class.java)
+            startActivity(i)
+            requireActivity().finish()
+        }
     }
     override fun onDestroyView() {
         super.onDestroyView()

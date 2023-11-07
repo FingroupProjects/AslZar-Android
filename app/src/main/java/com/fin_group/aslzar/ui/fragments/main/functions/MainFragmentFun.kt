@@ -4,22 +4,20 @@ package com.fin_group.aslzar.ui.fragments.main.functions
 
 import android.annotation.SuppressLint
 import android.util.Log
-import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.recyclerview.widget.GridLayoutManager
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.ProductsAdapter
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentMainBinding
+import com.fin_group.aslzar.models.FilterModel
 import com.fin_group.aslzar.response.Category
 import com.fin_group.aslzar.response.GetAllCategoriesResponse
 import com.fin_group.aslzar.response.GetAllProductsResponse
 import com.fin_group.aslzar.response.InStock
-import com.fin_group.aslzar.response.InStockList
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.ui.dialogs.CheckCategoryFragmentDialog
 import com.fin_group.aslzar.ui.dialogs.FilterDialogFragment
@@ -27,16 +25,24 @@ import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.WarningNoHaveProductFragmentDialog
 import com.fin_group.aslzar.ui.fragments.main.MainFragment
 import com.fin_group.aslzar.util.CategoryClickListener
+import com.fin_group.aslzar.util.FilterDialogListener
+import com.fin_group.aslzar.util.returnNumber
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-fun MainFragment.callFilterDialog(listener: CategoryClickListener) {
-    val categoryDialog = FilterDialogFragment()
-    categoryDialog.setCategoryClickListener(listener)
-    categoryDialog.show(activity?.supportFragmentManager!!, "category check dialog")
+//fun MainFragment.callFilterDialog(listener: CategoryClickListener) {
+//    val categoryDialog = FilterDialogFragment()
+//    categoryDialog.setCategoryClickListener(listener)
+//    categoryDialog.show(activity?.supportFragmentManager!!, "category check dialog")
+//}
+
+fun MainFragment.callFilterDialog(listener: FilterDialogListener){
+    val filterDialog = FilterDialogFragment()
+    filterDialog.setFilterListener(listener)
+    filterDialog.show(activity?.supportFragmentManager!!, "filter dialog")
 }
 
 fun MainFragment.callCategoryDialog(listener: CategoryClickListener) {
@@ -225,6 +231,17 @@ fun MainFragment.getAllProductFromPrefs() {
     }
 }
 
+fun MainFragment.retrieveProducts(): List<Product> {
+    val productJson = preferences.getString("productList", null)
+    return if (productJson != null) {
+        val productsListType = object : TypeToken<List<Product>>() {}.type
+        val productList = Gson().fromJson<List<Product>>(productJson, productsListType)
+        productList
+    } else {
+        emptyList()
+    }
+}
+
 fun MainFragment.retrieveFilteredProducts(): List<Product> {
     val productJson = preferences.getString("filteredProducts", null)
     return if (productJson != null) {
@@ -246,8 +263,7 @@ fun MainFragment.fetchRV(productList: List<Product>) {
 fun MainFragment.getAllProductsFromApi() {
     swipeRefreshLayout.isRefreshing = true
     try {
-        val call =
-            apiService.getApiService().getAllProducts("Bearer ${sessionManager.fetchToken()}")
+        val call = apiService.getApiService().getAllProducts("Bearer ${sessionManager.fetchToken()}")
         call.enqueue(object : Callback<GetAllProductsResponse?> {
             override fun onResponse(
                 call: Call<GetAllProductsResponse?>,
@@ -258,7 +274,6 @@ fun MainFragment.getAllProductsFromApi() {
                     val getAllProducts = response.body()
                     if (getAllProducts?.result != null) {
                         allProducts = getAllProducts.result
-
                         val productListJson = Gson().toJson(allProducts)
                         preferences.edit().putString("productList", productListJson).apply()
                         filterProducts()
@@ -266,14 +281,12 @@ fun MainFragment.getAllProductsFromApi() {
                         Log.d("TAG", "onResponse: ${response.body()}")
                         Log.d("TAG", "onResponse: ${response.code()}")
                     } else {
-                        Toast.makeText(requireContext(), "Произошла ошибка", Toast.LENGTH_SHORT)
-                            .show()
+                        Toast.makeText(requireContext(), "Произошла ошибка", Toast.LENGTH_SHORT).show()
                     }
                 } else {
                     Log.d("TAG", "onResponse if un success: ${response.raw()}")
                 }
             }
-
             override fun onFailure(call: Call<GetAllProductsResponse?>, t: Throwable) {
                 Log.d("TAG", "onFailure: ${t.message}")
                 swipeRefreshLayout.isRefreshing = false
@@ -303,6 +316,31 @@ fun MainFragment.getAllCategoriesPrefs() {
     }
 }
 
+fun MainFragment.setFilterViewModel(){
+    val filterDialogFragment = FilterDialogFragment()
+    allProducts = retrieveProducts()
+    val minPrice = allProducts.minBy { it.price.toDouble() }.price
+    val maxPrice = allProducts.maxBy { it.price.toDouble() }.price
+    val minSize = returnNumber(allProducts.minBy { it.size }.size)
+    val maxSize = returnNumber(allProducts.maxBy { it.size }.size)
+    val minWeight = returnNumber(allProducts.minBy { it.weight }.weight)
+    val maxWeight = returnNumber(allProducts.maxBy { it.weight }.weight)
+    val selectedCategoryId = preferences.getString("selectedCategory", "all")
+    selectCategory = allCategories.find { it.id == selectedCategoryId }
+    val updatedFilterModel = FilterModel(
+        minPrice, maxPrice, minSize, maxSize, minWeight, maxWeight, selectCategory ?: Category("all", "Все")
+    )
+    filterViewModel.defaultFilterModel = updatedFilterModel
+
+    if (filterModel == null){
+        filterViewModel.filterModel = updatedFilterModel
+    } else {
+        filterViewModel.filterModel = filterModel
+    }
+
+    filterDialogFragment.show(parentFragmentManager, "filterDialog")
+}
+
 fun MainFragment.getAllCategoriesFromApi() {
     swipeRefreshLayout.isRefreshing = true
     try {
@@ -321,22 +359,15 @@ fun MainFragment.getAllCategoriesFromApi() {
                         allCategories = categoryList
                         allCategories = mutableListOf(firstCategory).plus(allCategories)
                     } else {
-                        Toast.makeText(requireContext(), "Категории не найдены", Toast.LENGTH_SHORT)
-                            .show()
+                        Toast.makeText(requireContext(), "Категории не найдены", Toast.LENGTH_SHORT).show()
                     }
                 } else {
-                    Toast.makeText(
-                        requireContext(),
-                        "Ошибка, повторите попытку",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Toast.makeText(requireContext(), "Ошибка, повторите попытку", Toast.LENGTH_SHORT).show()
                 }
             }
-
             override fun onFailure(call: Call<GetAllCategoriesResponse?>, t: Throwable) {
                 Log.d("TAG", "onFailure: ${t.message}")
                 swipeRefreshLayout.isRefreshing = false
-
             }
         })
     } catch (e: Exception) {

@@ -13,10 +13,12 @@ import android.view.MenuItem
 import android.view.View
 import android.view.View.GONE
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
@@ -27,11 +29,12 @@ import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.cipher.EncryptionManager
 import com.fin_group.aslzar.databinding.FragmentMainBinding
+import com.fin_group.aslzar.models.FilterModel
 import com.fin_group.aslzar.response.Category
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.ui.activities.MainActivity
+import com.fin_group.aslzar.ui.dialogs.FilterDialogFragment
 import com.fin_group.aslzar.ui.fragments.main.functions.addProductToCart
-import com.fin_group.aslzar.ui.fragments.main.functions.callFilterDialog
 import com.fin_group.aslzar.util.CategoryClickListener
 import com.fin_group.aslzar.util.ProductOnClickListener
 import com.fin_group.aslzar.ui.fragments.main.functions.callInStockDialog
@@ -46,8 +49,11 @@ import com.fin_group.aslzar.ui.fragments.main.functions.getAllProductsFromApi
 import com.fin_group.aslzar.ui.fragments.main.functions.savingAndFetchSearch
 import com.fin_group.aslzar.ui.fragments.main.functions.savingAndFetchingCategory
 import com.fin_group.aslzar.ui.fragments.main.functions.searchViewFun
+import com.fin_group.aslzar.ui.fragments.main.functions.setFilterViewModel
 import com.fin_group.aslzar.ui.fragments.main.functions.updateBadge
 import com.fin_group.aslzar.util.BadgeManager
+import com.fin_group.aslzar.util.FilterDialogListener
+import com.fin_group.aslzar.util.FilterViewModel
 import com.fin_group.aslzar.util.NoInternetDialogFragment
 import com.fin_group.aslzar.util.SessionManager
 import com.fin_group.aslzar.viewmodel.SharedViewModel
@@ -56,7 +62,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
 @Suppress("DEPRECATION")
-class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
+class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener,
+    FilterDialogListener {
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
@@ -92,11 +99,17 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
 
     lateinit var encryptionManager: EncryptionManager
 
+    lateinit var filterViewModel: FilterViewModel
+    var filterModel: FilterModel ?= null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
+        filterViewModel = ViewModelProvider(requireActivity())[FilterViewModel::class.java]
+
+//        filterModel = filterViewModel.filterModel
 
         preferences = context?.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)!!
         sessionManager = SessionManager(requireContext())
@@ -117,6 +130,7 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         binding.swipeRefreshLayout.setOnRefreshListener {
             fetchDataAndFilterProducts()
         }
+
         return binding.root
     }
 
@@ -144,6 +158,18 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
         fetchRV(allProducts)
         val selectedCategoryId = preferences.getString("selectedCategory", "all")
         selectCategory = allCategories.find { it.id == selectedCategoryId }
+
+
+        filterViewModel.filterChangeListener.observe(viewLifecycleOwner) { newFilterModel ->
+            newFilterModel?.let { updatedFilterModel ->
+                Toast.makeText(requireContext(),"${updatedFilterModel.category}",Toast.LENGTH_SHORT).show()
+                Log.d("TAG", "onFilterChanged: $updatedFilterModel")
+
+                filterModel = updatedFilterModel
+                selectCategory = updatedFilterModel.category
+                savingAndFetchingCategory(binding)
+            }
+        }
     }
 
     fun hideCategoryView() {
@@ -164,7 +190,7 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
                 searchViewFun()
             }
             R.id.filter_item -> {
-                callFilterDialog(this)
+                setFilterViewModel()
             }
             R.id.category_item -> {
                 if (hasInternet){
@@ -278,7 +304,11 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener {
     override fun onCategorySelected(selectedCategory: Category) {
         selectCategory = selectedCategory
         preferences.edit()?.putString("selectedCategory", selectedCategory.id)?.apply()
-
         savingAndFetchingCategory(binding)
+    }
+
+    override fun onFilterApplied(updatedFilterModel: FilterModel) {
+        Log.d("TAG", "onFilterApplied: $updatedFilterModel")
+        Toast.makeText(requireContext(), "$updatedFilterModel", Toast.LENGTH_SHORT).show()
     }
 }
