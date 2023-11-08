@@ -82,6 +82,7 @@ fun MainFragment.categoryChecked(view: ConstraintLayout): Boolean {
 }
 
 fun MainFragment.searchViewFun() {
+    setFilterViewModelData()
     if (selectCategory != null) {
         viewCheckedCategory.visibility = GONE
         selectCategory = null
@@ -128,7 +129,7 @@ fun MainFragment.updateBadge() {
     badge.number = uniqueProductTypes
 }
 
-fun MainFragment.savingAndFetchingCategory(binding: FragmentMainBinding) {
+fun MainFragment.savingAndFetchingCategory(binding: FragmentMainBinding, filterModel: FilterModel, defaultFilterModel: FilterModel) {
     try {
         if (selectCategory != null) {
             if (selectCategory!!.id != "all") {
@@ -146,7 +147,12 @@ fun MainFragment.savingAndFetchingCategory(binding: FragmentMainBinding) {
                         viewCheckedCategory.visibility = GONE
                         selectCategory = null
                         preferences.edit()?.putString("selectedCategory", "all")?.apply()
+//                        setDefaultFilterViewModelData()
+                        setDefaultFilterViewModelData()
+                        filterViewModel.filterModel = defaultFilterModel
+                        filterViewModel.defaultFilterModel = defaultFilterModel
                         filterProducts()
+                        filterProducts2(defaultFilterModel)
                     }
                     viewCheckedCategory.visibility = VISIBLE
                     checkedCategoryTv.text = selectCategory!!.name
@@ -155,11 +161,14 @@ fun MainFragment.savingAndFetchingCategory(binding: FragmentMainBinding) {
                 if (selectCategory!!.id == "all") {
                     viewCheckedCategory.visibility = GONE
                     filterProducts()
+                    filterProducts2(filterModel)
                 }
             }
             filterProducts()
+            filterProducts2(filterModel)
         } else {
             filterProducts()
+            filterProducts2(defaultFilterModel)
         }
     } catch (e: Exception) {
         Log.d("TAG", "onViewCreated: ${e.message}")
@@ -209,6 +218,15 @@ fun MainFragment.filterProducts() {
                 product.category_id == selectCategory?.id
             }
         }
+    }
+    myAdapter.updateProducts(filteredProducts)
+}
+
+fun MainFragment.filterProducts2(filterModel: FilterModel) {
+    filteredProducts = filteredProducts.filter { product ->
+        product.price.toDouble() >= filterModel.priceFrom.toDouble() && product.price.toDouble() <= filterModel.priceTo.toDouble()
+                && product.size.toDouble() >= filterModel.sizeFrom.toDouble() && product.size.toDouble() <= filterModel.sizeTo.toDouble()
+                && product.weight.toDouble() >= filterModel.weightFrom.toDouble() && product.weight.toDouble() <= filterModel.weightTo.toDouble()
     }
     myAdapter.updateProducts(filteredProducts)
 }
@@ -276,6 +294,7 @@ fun MainFragment.getAllProductsFromApi() {
                         allProducts = getAllProducts.result
                         val productListJson = Gson().toJson(allProducts)
                         preferences.edit().putString("productList", productListJson).apply()
+                        setFilterViewModelData()
                         filterProducts()
                         Log.d("TAG", "onResponse: $response")
                         Log.d("TAG", "onResponse: ${response.body()}")
@@ -341,6 +360,44 @@ fun MainFragment.setFilterViewModel(){
     filterDialogFragment.show(parentFragmentManager, "filterDialog")
 }
 
+fun MainFragment.setFilterViewModelData(){
+    allProducts = retrieveProducts()
+    val minPrice = allProducts.minBy { it.price.toDouble() }.price
+    val maxPrice = allProducts.maxBy { it.price.toDouble() }.price
+    val minSize = returnNumber(allProducts.minBy { it.size }.size)
+    val maxSize = returnNumber(allProducts.maxBy { it.size }.size)
+    val minWeight = returnNumber(allProducts.minBy { it.weight }.weight)
+    val maxWeight = returnNumber(allProducts.maxBy { it.weight }.weight)
+    val selectedCategoryId = preferences.getString("selectedCategory", "all")
+    selectCategory = allCategories.find { it.id == selectedCategoryId }
+    val updatedFilterModel = FilterModel(
+        minPrice, maxPrice, minSize, maxSize, minWeight, maxWeight, selectCategory ?: Category("all", "Все")
+    )
+    filterViewModel.defaultFilterModel = updatedFilterModel
+    if (filterModel == null){
+        filterViewModel.filterModel = updatedFilterModel
+    } else {
+        filterViewModel.filterModel = filterModel
+    }
+}
+
+fun MainFragment.setDefaultFilterViewModelData(){
+    allProducts = retrieveProducts()
+    val minPrice = allProducts.minBy { it.price.toDouble() }.price
+    val maxPrice = allProducts.maxBy { it.price.toDouble() }.price
+    val minSize = returnNumber(allProducts.minBy { it.size }.size)
+    val maxSize = returnNumber(allProducts.maxBy { it.size }.size)
+    val minWeight = returnNumber(allProducts.minBy { it.weight }.weight)
+    val maxWeight = returnNumber(allProducts.maxBy { it.weight }.weight)
+    val selectedCategoryId = preferences.getString("selectedCategory", "all")
+    selectCategory = allCategories.find { it.id == selectedCategoryId }
+    val updatedFilterModel = FilterModel(
+        minPrice, maxPrice, minSize, maxSize, minWeight, maxWeight, selectCategory ?: Category("all", "Все")
+    )
+    filterViewModel.defaultFilterModel = updatedFilterModel
+    filterViewModel.filterModel = updatedFilterModel
+}
+
 fun MainFragment.getAllCategoriesFromApi() {
     swipeRefreshLayout.isRefreshing = true
     try {
@@ -373,6 +430,5 @@ fun MainFragment.getAllCategoriesFromApi() {
     } catch (e: Exception) {
         Log.d("TAG", "getAllCategories: ${e.message}")
         swipeRefreshLayout.isRefreshing = false
-
     }
 }
