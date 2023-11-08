@@ -33,7 +33,6 @@ import com.fin_group.aslzar.models.FilterModel
 import com.fin_group.aslzar.response.Category
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.ui.activities.MainActivity
-import com.fin_group.aslzar.ui.dialogs.FilterDialogFragment
 import com.fin_group.aslzar.ui.fragments.main.functions.addProductToCart
 import com.fin_group.aslzar.util.CategoryClickListener
 import com.fin_group.aslzar.util.ProductOnClickListener
@@ -42,6 +41,7 @@ import com.fin_group.aslzar.ui.fragments.main.functions.callOutStock
 import com.fin_group.aslzar.ui.fragments.main.functions.fetchRV
 import com.fin_group.aslzar.ui.fragments.main.functions.filterFun
 import com.fin_group.aslzar.ui.fragments.main.functions.filterProducts
+import com.fin_group.aslzar.ui.fragments.main.functions.filterProducts2
 import com.fin_group.aslzar.ui.fragments.main.functions.getAllCategoriesFromApi
 import com.fin_group.aslzar.ui.fragments.main.functions.getAllCategoriesPrefs
 import com.fin_group.aslzar.ui.fragments.main.functions.getAllProductFromPrefs
@@ -167,7 +167,7 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener,
 
                 filterModel = updatedFilterModel
                 selectCategory = updatedFilterModel.category
-                savingAndFetchingCategory(binding)
+                savingAndFetchingCategory(binding, filterModel!!, filterViewModel.defaultFilterModel!!)
             }
         }
     }
@@ -238,7 +238,7 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener,
         if (firstRun){
             viewCheckedCategory.visibility = GONE
         } else {
-            savingAndFetchingCategory(binding)
+            savingAndFetchingCategory(binding, filterViewModel.filterModel!!, filterViewModel.defaultFilterModel!!)
         }
         savingAndFetchSearch(binding)
         Cart.loadCartFromPrefs(requireContext())
@@ -304,7 +304,7 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener,
     override fun onCategorySelected(selectedCategory: Category) {
         selectCategory = selectedCategory
         preferences.edit()?.putString("selectedCategory", selectedCategory.id)?.apply()
-        savingAndFetchingCategory(binding)
+//        savingAndFetchingCategory(binding)
     }
 
     override fun onFilterApplied(updatedFilterModel: FilterModel) {

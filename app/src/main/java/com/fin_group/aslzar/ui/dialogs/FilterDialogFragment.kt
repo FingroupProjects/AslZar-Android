@@ -31,6 +31,7 @@ import com.fin_group.aslzar.util.FilterDialogListener
 import com.fin_group.aslzar.util.FilterViewModel
 import com.fin_group.aslzar.util.SessionManager
 import com.fin_group.aslzar.util.returnNumber
+import com.fin_group.aslzar.util.setMaxValueET
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import retrofit2.Call
@@ -60,7 +61,7 @@ class FilterDialogFragment : BaseBottomSheetDialogFragment() {
 
     private lateinit var preferences: SharedPreferences
 
-    private var showCategories: Boolean = false
+    private var showCategories: Boolean = true
 
     private lateinit var filter: FilterModel
 
@@ -141,7 +142,6 @@ class FilterDialogFragment : BaseBottomSheetDialogFragment() {
 
             setDataFilter(filterViewModel.defaultFilterModel!!)
             dismiss()
-
         }
     }
 
@@ -187,14 +187,20 @@ class FilterDialogFragment : BaseBottomSheetDialogFragment() {
             filterModel.apply {
                 rangePriceFrom.setText(priceFrom.toString())
                 rangePriceTo.setText(priceTo.toString())
+                setMaxValueET(rangePriceFrom, priceTo)
+                setMaxValueET(rangePriceTo, priceTo)
                 filterPriceRange.text = "от $priceFrom / до $priceTo"
 
                 rangeSizeFrom.setText(sizeFrom.toString())
                 rangeSizeTo.setText(sizeTo.toString())
+                setMaxValueET(rangeSizeFrom, sizeTo)
+                setMaxValueET(rangeSizeTo, sizeTo)
                 filterSizeRange.text = "от $sizeFrom / до $sizeTo"
 
                 rangeWeightFrom.setText(weightFrom.toString())
                 rangeWeightTo.setText(weightTo.toString())
+                setMaxValueET(rangeWeightFrom, weightTo)
+                setMaxValueET(rangeWeightTo, weightTo)
                 filterWeightRange.text = "от $weightFrom / до $weightTo"
 
                 selectedCategory = category
@@ -239,7 +245,6 @@ class FilterDialogFragment : BaseBottomSheetDialogFragment() {
                 categories = categoryList
                 binding.view.visibility = VISIBLE
                 progressBar.visibility = INVISIBLE
-//                fetchSpinner(categories, categoriesSpinner)
                 fetchRv(categories)
             } else {
                 getAllCategoriesFromApi()

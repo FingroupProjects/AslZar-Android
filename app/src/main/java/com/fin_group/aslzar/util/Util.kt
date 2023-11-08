@@ -6,7 +6,9 @@ import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Rect
+import android.text.Editable
 import android.text.InputType
+import android.text.TextWatcher
 import android.util.Base64
 import android.view.Gravity
 import android.view.KeyEvent
@@ -16,6 +18,7 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
@@ -239,9 +242,37 @@ fun Fragment.backPressed(action: Int) {
 }
 
 fun returnNumber(str: String): Number{
-    return if (str.contains('.')){
-        str.toDouble()
+    return if (!str.isNullOrEmpty()){
+        if (str.contains('.')){
+            str.toDouble()
+        } else {
+            str.toInt()
+        }
     } else {
-        str.toInt()
+        0
     }
 }
+
+
+
+fun setMaxValueET(inputET: EditText, maxValue: Number){
+    val hello = object : TextWatcher {
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+        override fun afterTextChanged(s: Editable?) {
+            val newText = s.toString().trim()
+            if (!newText.isNullOrEmpty()) {
+                val currentValue = newText.replace(',', '.').toDouble()
+                if (currentValue > maxValue.toDouble()){
+                    inputET.setText(maxValue.toString())
+                    inputET.requestFocus()
+                    inputET.setSelection(maxValue.toString().length)
+                }
+            }
+        }
+    }
+    inputET.addTextChangedListener(hello)
+}
+
