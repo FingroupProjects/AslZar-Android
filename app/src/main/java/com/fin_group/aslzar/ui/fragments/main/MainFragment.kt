@@ -167,7 +167,7 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener,
 
                 filterModel = updatedFilterModel
                 selectCategory = updatedFilterModel.category
-                savingAndFetchingCategory(binding, filterModel!!, filterViewModel.defaultFilterModel!!)
+                savingAndFetchingCategory(binding, filterModel!!)
             }
         }
     }
@@ -190,11 +190,8 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener,
                 searchViewFun()
             }
             R.id.filter_item -> {
-                setFilterViewModel()
-            }
-            R.id.category_item -> {
                 if (hasInternet){
-                    filterFun()
+                    setFilterViewModel()
                 } else {
                     NoInternetDialogFragment.showIfNoInternet(requireContext())
                 }
@@ -238,7 +235,7 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener,
         if (firstRun){
             viewCheckedCategory.visibility = GONE
         } else {
-            savingAndFetchingCategory(binding, filterViewModel.filterModel!!, filterViewModel.defaultFilterModel!!)
+            savingAndFetchingCategory(binding, filterViewModel.filterModel!!)
         }
         savingAndFetchSearch(binding)
         Cart.loadCartFromPrefs(requireContext())
@@ -263,6 +260,7 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener,
         getAllProductsFromApi()
         getAllCategoriesFromApi()
         filterProducts()
+        filterProducts2(filterViewModel.filterModel!!)
     }
 
     override fun inStock(product: Product) {

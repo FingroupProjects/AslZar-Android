@@ -66,17 +66,6 @@ class FilterDialogFragment : BaseBottomSheetDialogFragment() {
     private lateinit var filter: FilterModel
 
 
-//    companion object {
-//        fun newInstance(filter: FilterModel): FilterDialogFragment{
-//            val dialog = FilterDialogFragment()
-//            val args = Bundle()
-//            args.putParcelable(ARG_FILTER, filter)
-//            dialog.arguments = args
-//            return dialog
-//        }
-//        private const val ARG_FILTER = "filter"
-//    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -89,9 +78,6 @@ class FilterDialogFragment : BaseBottomSheetDialogFragment() {
         preferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
         categoriesRV = binding.categoriesRv
         filterViewModel = ViewModelProvider(requireActivity())[FilterViewModel::class.java]
-//        arguments?.let {
-//            filter = it.getParcelable(ARG_FILTER)!!
-//        }
 
         return binding.root
     }
@@ -113,10 +99,6 @@ class FilterDialogFragment : BaseBottomSheetDialogFragment() {
         }
 
         getAllCategoriesPrefs()
-//        fetchSpinner(categories, categoriesSpinner)
-//        categoriesSpinner.setOnItemClickListener { parent, view, position, id ->
-//            Toast.makeText(requireContext(), "${categories[position]}", Toast.LENGTH_SHORT).show()
-//        }
 
         binding.filterCategory.setOnClickListener {
             if (!showCategories){
@@ -285,15 +267,15 @@ class FilterDialogFragment : BaseBottomSheetDialogFragment() {
                     }
                 }
                 override fun onFailure(call: Call<GetAllCategoriesResponse?>, t: Throwable) {
-                    progressBar.visibility = View.GONE
-                    binding.view.visibility = View.VISIBLE
+                    progressBar.visibility = GONE
+                    binding.view.visibility = VISIBLE
                     Log.d("TAG", "onFailure: ${t.message}")
                 }
             })
         } catch (e: Exception){
             Log.d("TAG", "getAllCategories: ${e.message}")
-            progressBar.visibility = View.GONE
-            binding.view.visibility = View.VISIBLE
+            progressBar.visibility = GONE
+            binding.view.visibility = VISIBLE
         }
     }
 

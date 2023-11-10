@@ -129,8 +129,9 @@ fun MainFragment.updateBadge() {
     badge.number = uniqueProductTypes
 }
 
-fun MainFragment.savingAndFetchingCategory(binding: FragmentMainBinding, filterModel: FilterModel, defaultFilterModel: FilterModel) {
+fun MainFragment.savingAndFetchingCategory(binding: FragmentMainBinding, filterModel: FilterModel) {
     try {
+        val a = filterViewModel.defaultFilterModel!!
         if (selectCategory != null) {
             if (selectCategory!!.id != "all") {
                 binding.apply {
@@ -141,18 +142,18 @@ fun MainFragment.savingAndFetchingCategory(binding: FragmentMainBinding, filterM
                         viewSearch.visibility = GONE
                     }
                     materialCardViewCategory.setOnClickListener {
-                        categoryDialog()
+                        setFilterViewModel()
                     }
                     fabClearCategory.setOnClickListener {
                         viewCheckedCategory.visibility = GONE
                         selectCategory = null
                         preferences.edit()?.putString("selectedCategory", "all")?.apply()
-//                        setDefaultFilterViewModelData()
                         setDefaultFilterViewModelData()
-                        filterViewModel.filterModel = defaultFilterModel
-                        filterViewModel.defaultFilterModel = defaultFilterModel
+
+                        filterViewModel.filterModel = a
+                        filterViewModel.filterChangeListener.postValue(filterViewModel.defaultFilterModel)
                         filterProducts()
-                        filterProducts2(defaultFilterModel)
+                        filterProducts2(a)
                     }
                     viewCheckedCategory.visibility = VISIBLE
                     checkedCategoryTv.text = selectCategory!!.name
@@ -168,7 +169,7 @@ fun MainFragment.savingAndFetchingCategory(binding: FragmentMainBinding, filterM
             filterProducts2(filterModel)
         } else {
             filterProducts()
-            filterProducts2(defaultFilterModel)
+            filterProducts2(a)
         }
     } catch (e: Exception) {
         Log.d("TAG", "onViewCreated: ${e.message}")
@@ -223,6 +224,7 @@ fun MainFragment.filterProducts() {
 }
 
 fun MainFragment.filterProducts2(filterModel: FilterModel) {
+
     filteredProducts = filteredProducts.filter { product ->
         product.price.toDouble() >= filterModel.priceFrom.toDouble() && product.price.toDouble() <= filterModel.priceTo.toDouble()
                 && product.size.toDouble() >= filterModel.sizeFrom.toDouble() && product.size.toDouble() <= filterModel.sizeTo.toDouble()
