@@ -3,11 +3,13 @@ package com.fin_group.aslzar.ui.fragments.profile.functions
 import android.graphics.Color
 import android.util.Base64
 import android.util.Log
+import android.widget.Toast
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.cipher.EncryptionManager
 import com.fin_group.aslzar.response.ResponseForgotPassword
+import com.fin_group.aslzar.response.SalesPlanResponse
 import com.fin_group.aslzar.ui.dialogs.ChangePasswordProfileFragmentDialog
 import com.fin_group.aslzar.ui.fragments.CodeFragment
 import com.fin_group.aslzar.ui.fragments.forgotPassword.ForgotPasswordFragment
@@ -99,32 +101,32 @@ fun ProfileFragment.changePassword() {
 }
 
 
-//fun ProfileFragment.getSalesPlan(){
-//    swipeRefreshLayout.isRefreshing = true
-//    try {
-//        val call = apiService.getApiService().getSalesPlan(token = "Bearer ${sessionManager.fetchToken()}")
-//        call.enqueue(object : Callback<SalesPlanResponse?> {
-//            override fun onResponse(
-//                call: Call<SalesPlanResponse?>,
-//                response: Response<SalesPlanResponse?>
-//            ) {
-//                swipeRefreshLayout.isRefreshing = false
-//                if (response.isSuccessful){
-//                    val salesPlan = response.body()
-//                    if (salesPlan?.result != null){
-//                        salesPlanNumber = salesPlan.result.percent
-//                    } else {
-//                        Toast.makeText(requireContext(), "Ответ пустой", Toast.LENGTH_SHORT).show()
-//                    }
-//                }
-//            }
-//            override fun onFailure(call: Call<SalesPlanResponse?>, t: Throwable) {
-//                Log.d("TAG", "onFailure: ${t.message}")
-//                swipeRefreshLayout.isRefreshing = false
-//            }
-//        })
-//    }catch (e: Exception){
-//        Log.d("TAG", "getSalesPlan: ${e.message}")
-//        swipeRefreshLayout.isRefreshing = false
-//    }
-//}
+fun ProfileFragment.getSalesPlan(){
+    swipeRefreshLayout.isRefreshing = true
+    try {
+        val call = apiService.getApiService().getSalesPlan(token = "Bearer ${sessionManager.fetchToken()}")
+        call.enqueue(object : Callback<SalesPlanResponse?> {
+            override fun onResponse(
+                call: Call<SalesPlanResponse?>,
+                response: Response<SalesPlanResponse?>
+            ) {
+                swipeRefreshLayout.isRefreshing = false
+                if (response.isSuccessful){
+                    val salesPlan = response.body()
+                    if (salesPlan?.result != null){
+                        salesPlanNumber = salesPlan.result.percent
+                    } else {
+                        Toast.makeText(requireContext(), "Ответ пустой", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+            override fun onFailure(call: Call<SalesPlanResponse?>, t: Throwable) {
+                Log.d("TAG", "onFailure: ${t.message}")
+                swipeRefreshLayout.isRefreshing = false
+            }
+        })
+    }catch (e: Exception){
+        Log.d("TAG", "getSalesPlan: ${e.message}")
+        swipeRefreshLayout.isRefreshing = false
+    }
+}

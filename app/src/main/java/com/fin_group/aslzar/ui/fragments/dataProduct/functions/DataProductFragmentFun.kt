@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.fin_group.aslzar.ui.fragments.dataProduct.functions
 
 import android.annotation.SuppressLint
@@ -32,6 +34,7 @@ import com.fin_group.aslzar.ui.fragments.dataProduct.DataProductFragment
 import retrofit2.Callback
 import com.fin_group.aslzar.util.formatNumber
 import com.fin_group.aslzar.util.showBottomNav
+import com.google.android.material.chip.Chip
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import retrofit2.Call
@@ -125,8 +128,8 @@ fun DataProductFragment.setDataProduct(product: Product, binding: FragmentDataPr
         dpStone.text = product.stone_type.ifEmpty { "Без камня" }
         dpProbe.text = product.content
         dpMetal.text = product.metal
-        dpWeight.text = product.weight
-        dpSize.text = product.size
+//        dpWeight.text = product.weight
+//        dpSize.text = product.size
 
         dpInstallmentPrice.text = "(${((product.price.toDouble() * percentInstallment.first_pay.toDouble()) / 100)} UZS п.в.)"
         btnAddToCart.setOnClickListener {
@@ -406,4 +409,120 @@ fun DataProductFragment.onBackPressed() {
                 showBottomNav()
             }
         })
+}
+
+fun DataProductFragment.chipGroup(binding: FragmentDataProductBinding){
+
+    val ves = binding.chipGroupVes
+    val size = binding.chipGroupSize
+    
+    ves.setOnCheckedChangeListener { group, checkedId ->
+        val chip: Chip? = group.findViewById(checkedId)
+        chip?.let {
+            when (checkedId) {
+                R.id.ves1 -> {
+                    binding.dpPrice.text = "100 UZS"
+                    resetSizeChipsBackground(binding)
+                    binding.ves1.setChipBackgroundColorResource(R.color.background_3)
+                    size.check(R.id.size4)
+                    binding.size4.setChipBackgroundColorResource(R.color.background_3)
+                }
+
+                R.id.ves2 -> {
+                    binding.dpPrice.text = "200 UZS"
+                    resetSizeChipsBackground(binding)
+                    binding.ves2.setChipBackgroundColorResource(R.color.background_3)
+                    size.check(R.id.size3)
+                    binding.size3.setChipBackgroundColorResource(R.color.background_3)
+                }
+
+                R.id.ves3 -> {
+                    binding.dpPrice.text = "300 UZS"
+                    resetSizeChipsBackground(binding)
+                    binding.ves3.setChipBackgroundColorResource(R.color.background_3)
+                    size.check(R.id.size2)
+                    binding.size2.setChipBackgroundColorResource(R.color.background_3)
+                }
+
+                R.id.ves4 -> {
+                    binding.dpPrice.text = "400 UZS"
+                    resetSizeChipsBackground(binding)
+                    binding.ves4.setChipBackgroundColorResource(R.color.background_3)
+                    size.check(R.id.size1)
+                    binding.size1.setChipBackgroundColorResource(R.color.background_3)
+
+                }
+                R.id.ves5 -> {
+                    binding.dpPrice.text = "500 UZS"
+                    resetSizeChipsBackground(binding)
+                    binding.ves5.setChipBackgroundColorResource(R.color.background_3)
+                    size.check(R.id.size5)
+                    binding.size5.setChipBackgroundColorResource(R.color.background_3)
+                }
+            }
+        }
+    }
+
+    size.setOnCheckedChangeListener { group, checkedId ->
+        val chip: Chip? = group.findViewById(checkedId)
+        chip?.let {
+            when (checkedId) {
+                R.id.size1 -> {
+                    binding.dpPrice.text = "400 UZS"
+                    resetVesChipsBackground(binding)
+                    binding.size1.setChipBackgroundColorResource(R.color.background_3)
+                    ves.check(R.id.ves4)
+                    binding.ves4.setChipBackgroundColorResource(R.color.background_3)
+
+                }
+
+                R.id.size2 -> {
+                    binding.dpPrice.text = "300 UZS"
+                    resetVesChipsBackground(binding)
+                    binding.size2.setChipBackgroundColorResource(R.color.background_3)
+                    ves.check(R.id.ves3)
+                    binding.ves3.setChipBackgroundColorResource(R.color.background_3)
+                }
+
+                R.id.size3 -> {
+                    binding.dpPrice.text = "200 UZS"
+                    resetVesChipsBackground(binding)
+                    binding.size3.setChipBackgroundColorResource(R.color.background_3)
+                    ves.check(R.id.ves2)
+                    binding.ves2.setChipBackgroundColorResource(R.color.background_3)
+                }
+
+                R.id.size4 -> {
+                    binding.dpPrice.text = "100 UZS"
+                    resetVesChipsBackground(binding)
+                    binding.size4.setChipBackgroundColorResource(R.color.background_3)
+                    ves.check(R.id.ves1)
+                    binding.ves1.setChipBackgroundColorResource(R.color.background_3)
+                }
+                R.id.size5 -> {
+                    binding.dpPrice.text = "500 UZS"
+                    resetVesChipsBackground(binding)
+                    binding.size5.setChipBackgroundColorResource(R.color.background_3)
+                    ves.check(R.id.ves5)
+                    binding.ves5.setChipBackgroundColorResource(R.color.background_3)
+                }
+            }
+        }
+    }
+}
+
+private fun resetVesChipsBackground(binding: FragmentDataProductBinding) {
+    binding.ves1.setChipBackgroundColorResource(R.color.background_1)
+    binding.ves2.setChipBackgroundColorResource(R.color.background_1)
+    binding.ves3.setChipBackgroundColorResource(R.color.background_1)
+    binding.ves4.setChipBackgroundColorResource(R.color.background_1)
+    binding.ves5.setChipBackgroundColorResource(R.color.background_1)
+}
+
+private fun resetSizeChipsBackground(binding: FragmentDataProductBinding) {
+    binding.size1.setChipBackgroundColorResource(R.color.background_1)
+    binding.size2.setChipBackgroundColorResource(R.color.background_1)
+    binding.size3.setChipBackgroundColorResource(R.color.background_1)
+    binding.size4.setChipBackgroundColorResource(R.color.background_1)
+    binding.size5.setChipBackgroundColorResource(R.color.background_1)
 }
