@@ -25,6 +25,7 @@ import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.fetchClie
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.fetchClientsFromApi
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.fetchClientsFromPrefs
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.fetchCoefficientPlanFromPrefs
+import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.printPercent
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.resetCalculator
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.retrieveClientList
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.retrieveCoefficientPlan
@@ -33,6 +34,7 @@ import com.fin_group.aslzar.util.CartObserver
 import com.fin_group.aslzar.util.CustomPopupView
 import com.fin_group.aslzar.util.NoInternetDialogFragment
 import com.fin_group.aslzar.util.SessionManager
+import org.w3c.dom.Text
 
 @Suppress("DEPRECATION")
 class CalculatorFragmentV2 : Fragment(), CalculatorResetListener {
@@ -70,6 +72,8 @@ class CalculatorFragmentV2 : Fragment(), CalculatorResetListener {
     lateinit var averageBillTv: TextView
     lateinit var averageBill: Number
 
+    lateinit var limitClient: TextView
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -95,6 +99,12 @@ class CalculatorFragmentV2 : Fragment(), CalculatorResetListener {
         adapterPaymentPercent = TableInstallmentAdapter(percentInstallment, vlTotalPrice, 0.0)
         cartObserver(binding)
         Cart.registerObserver(cartObserver)
+
+        binding.btnRefresh.setOnClickListener {
+            cartObserver(binding)
+            fetchClientsAndTypePay(binding)
+        }
+
 
         clientList = retrieveClientList()
         fetchClientsAndTypePay(binding)

@@ -32,6 +32,7 @@ import com.fin_group.aslzar.response.SimilarProduct
 import com.fin_group.aslzar.ui.dialogs.AlikeProductBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.callInStockDialog
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.callSetInProduct
+import com.fin_group.aslzar.ui.fragments.dataProduct.functions.chipGroup
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.fetchCoefficientPlanFromApi
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.fetchCoefficientPlanFromPrefs
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.getProductByID
@@ -50,6 +51,7 @@ import com.fin_group.aslzar.util.showBottomNav
 import com.fin_group.aslzar.viewmodel.SharedViewModel
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.badge.BadgeDrawable
+import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 
 
@@ -100,7 +102,6 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
     lateinit var percentLinearLayout: LinearLayoutCompat
 
     lateinit var adapterPaymentPercent: TableInstallmentAdapter
-
     @SuppressLint("UnsafeOptInUsageError")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -170,8 +171,10 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
             getProductByID()
             fetchCoefficientPlanFromApi()
         }
-    }
 
+        chipGroup(binding)
+
+    }
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         if (product.is_set && product.counts.isNotEmpty()){
             inflater.inflate(R.menu.product_data_menu, menu)

@@ -82,6 +82,23 @@ fun CalculatorFragmentV2.fetchClientsAndTypePay(binding: FragmentCalculatorV2Bin
                 binding.cbBonus.isChecked = false
                 binding.bonus.setText("")
             }
+
+            val cons = "розничный"
+            val containsSubstring = selectedClient?.client_name.toString().contains(cons, true)
+            Log.d("TAG", "FFFFFFFFFFFFF: $containsSubstring")
+            if (containsSubstring){
+                binding.limit.visibility = GONE
+            }else{
+                if (selectedClient?.limit == 0){
+                    binding.limit.visibility = VISIBLE
+                    binding.limit.text = "У данного клиента нет лимита!"
+                }
+                else{
+                    binding.limit.visibility = VISIBLE
+                    binding.limit.text = "Лимит: ${selectedClient?.limit}"
+                }
+            }
+
             bonusClient.text = "${formatNumber(selectedClient!!.bonus)} UZS"
             paymentClient(selectedClient!!, binding, percentInstallment)
             textWatchers(binding, percentInstallment, vlTotalPrice)
@@ -89,8 +106,6 @@ fun CalculatorFragmentV2.fetchClientsAndTypePay(binding: FragmentCalculatorV2Bin
         }
     }
 }
-
-
 fun CalculatorFragmentV2.paymentClient(
     client: Client,
     binding: FragmentCalculatorV2Binding,

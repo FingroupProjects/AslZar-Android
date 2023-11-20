@@ -246,7 +246,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
-                android:layout_marginTop="3dp"
+                android:layout_marginTop="20dp"
                 android:text="Вес:"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
@@ -258,11 +258,128 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
-                android:layout_marginTop="3dp"
+                android:layout_marginTop="20dp"
                 android:text="Размер:"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView27" />
+
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipGroupSize"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                app:layout_constraintBottom_toBottomOf="@+id/textView20"
+                app:layout_constraintStart_toEndOf="@+id/textView20"
+                app:layout_constraintTop_toTopOf="@+id/textView20"
+                app:singleSelection="true">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/size1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="10"
+                    android:textColor="@color/black" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/size2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="11"
+                    android:textColor="@color/black" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/size3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="12"
+                    android:textColor="@color/black" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/size4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="13"
+                    android:textColor="@color/black" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/size5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="14"
+                    android:textColor="@color/black" />
+
+            </com.google.android.material.chip.ChipGroup>
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipGroupVes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                app:layout_constraintBottom_toBottomOf="@+id/textView27"
+                app:layout_constraintStart_toEndOf="@+id/textView27"
+                app:layout_constraintTop_toTopOf="@+id/textView27"
+                app:singleSelection="true">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/ves1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:text="10" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/ves2"
+                    android:textColor="@color/black"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="11" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/ves3"
+                    android:textColor="@color/black"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="12" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/ves4"
+                    android:textColor="@color/black"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="13" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/ves5"
+                    android:textColor="@color/black"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="14" />
+
+            </com.google.android.material.chip.ChipGroup>
+
+
+
+
+
+
+
+
+
+
 
             <TextView
                 android:id="@+id/textView46"
@@ -270,7 +387,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="20dp"
                 android:text="Описание:"
                 android:textStyle="bold"
                 android:visibility="visible"
@@ -350,18 +467,6 @@
                 app:layout_constraintTop_toTopOf="@+id/textView19" />
 
             <TextView
-                android:id="@+id/dp_size"
-                style="@style/forTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:text="14,8 мм"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/textView20"
-                app:layout_constraintStart_toEndOf="@+id/textView20"
-                app:layout_constraintTop_toTopOf="@+id/textView20" />
-
-            <TextView
                 android:id="@+id/dp_description"
                 style="@style/forTextView"
                 android:layout_width="0dp"
@@ -374,18 +479,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/textView46"
                 app:layout_constraintTop_toBottomOf="@+id/textView46" />
-
-            <TextView
-                android:id="@+id/dp_weight"
-                style="@style/forTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:text="1.5 г"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/textView27"
-                app:layout_constraintStart_toEndOf="@+id/textView27"
-                app:layout_constraintTop_toTopOf="@+id/textView27" />
 
             <HorizontalScrollView
                 android:id="@+id/horizontalScrollViewWeight"
@@ -464,7 +557,6 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
-                android:layout_marginTop="15dp"
                 android:layout_marginEnd="20dp"
                 android:layout_marginBottom="15dp"
                 android:background="@drawable/ripple_effect_btn"
@@ -474,8 +566,7 @@
                 android:textColor="@color/text_color_1"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/view3" />
+                app:layout_constraintStart_toStartOf="parent" />
 
             <View
                 android:id="@+id/view3"

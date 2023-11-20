@@ -10,12 +10,13 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.cipher.EncryptionManager
 import com.fin_group.aslzar.databinding.FragmentProfileBinding
 import com.fin_group.aslzar.ui.dialogs.SignOutProfileFragmentDialog
-import com.fin_group.aslzar.ui.fragments.profile.functions.changePassword
+import com.fin_group.aslzar.ui.fragments.profile.functions.getSalesPlan
 import com.fin_group.aslzar.ui.fragments.profile.functions.speedometerView
 import com.fin_group.aslzar.util.NoInternetDialogFragment
 import com.fin_group.aslzar.util.SessionManager
@@ -29,20 +30,18 @@ class ProfileFragment : Fragment() {
 
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
-
     lateinit var speedometer: Speedometer
     var salesPlanNumber: Number? = 0
-
     lateinit var apiService: ApiClient
     lateinit var sessionManager: SessionManager
-
     lateinit var key: String
     lateinit var keyBase64: ByteArray
     lateinit var encryptionKey: SecretKeySpec
     lateinit var encryptionManager: EncryptionManager
-
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
@@ -51,6 +50,7 @@ class ProfileFragment : Fragment() {
         sessionManager = SessionManager(requireContext())
         apiService = ApiClient()
         apiService.init(sessionManager)
+        swipeRefreshLayout = binding.swipeRefreshLayout
 
         return binding.root
     }
@@ -58,41 +58,40 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         NoInternetDialogFragment.showIfNoInternet(requireContext())
-
         salesPlanNumber = sessionManager.fetchSalesPlan()
+
+
+        swipeRefreshLayout.setOnRefreshListener {
+            getSalesPlan()
+        }
+
+
         val asd: Number? = salesPlanNumber
         binding.apply {
             tvName.text = sessionManager.fetchName()
             tvUserLogin.text = sessionManager.fetchLogin()
             tvSubsidiary.text = sessionManager.fetchLocation()
-
-            if (sessionManager.fetchEmail()?.isEmpty() == true){
+            if (sessionManager.fetchEmail()?.isEmpty() == true) {
                 tvMail.text = "Почта не указана!"
             } else {
                 tvMail.text = sessionManager.fetchEmail()
             }
-
-            if (sessionManager.fetchNumberPhone()?.isEmpty() == true || sessionManager.fetchNumberPhone()?.toInt() == 0 ){
+            if (sessionManager.fetchNumberPhone()
+                    ?.isEmpty() == true || sessionManager.fetchNumberPhone()?.toInt() == 0
+            ) {
                 tvNumberPhone.text = "Номер телефона не указан!"
             } else {
                 tvNumberPhone.text = sessionManager.fetchNumberPhone()
             }
-
             key = sessionManager.fetchKey()!!
             keyBase64 = Base64.decode(key, Base64.DEFAULT)
             encryptionKey = SecretKeySpec(keyBase64, "AES")
             encryptionManager = EncryptionManager(encryptionKey)
-
             tvUserLogin.text = encryptionManager.decryptData(sessionManager.fetchLogin()!!)
         }
-
         speedometerView(asd!!.toFloat())
         binding.btnChangePassword.setOnClickListener {
-            //changePassword()
-
             findNavController().navigate(R.id.action_profileFragment_to_codeFragment)
-
-
         }
     }
 
