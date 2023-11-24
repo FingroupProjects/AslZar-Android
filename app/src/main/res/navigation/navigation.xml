@@ -71,7 +71,7 @@
             app:argType="string" />
         <argument
             android:name="product"
-            app:argType="com.fin_group.aslzar.response.Product"
+            app:argType="com.fin_group.aslzar.response.ResultX"
             app:nullable="true" />
         <argument
             android:name="parentFragment"

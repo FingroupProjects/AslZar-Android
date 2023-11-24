@@ -11,6 +11,7 @@ import com.fin_group.aslzar.R
 import com.fin_group.aslzar.databinding.RowItemProductBinding
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.response.ProductSale
+import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.util.ProductOnClickListener
 import com.fin_group.aslzar.util.formatNumber
 
@@ -28,7 +29,7 @@ class SalesProductsAdapter(
         val code = binding.productKode
         val btnCheckingInStock = binding.ibHaveInStore
         val btnAddToCart = binding.ibAddToBasket
-        val saleTv = binding.productSale
+        private val saleTv = binding.productSale
 
         @SuppressLint("UseCompatLoadingForDrawables", "SetTextI18n")
         fun bind(product: ProductSale) {
@@ -56,6 +57,7 @@ class SalesProductsAdapter(
     }
 
 
+    @SuppressLint("NotifyDataSetChanged")
     fun updateProducts(newProducts: List<ProductSale>) {
         productList = newProducts
         notifyDataSetChanged()
@@ -79,27 +81,25 @@ class SalesProductsAdapter(
         holder.bind(product)
 
         binding.root.setOnClickListener {
-            val product2 = Product(
-                product.id,
+
+            val product2 = ResultX(
+                "",
+                "",
+                "",
+                "",
                 product.full_name,
-                product.name,
-                product.price,
-                "",
-                "",
-                product.sale,
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
+                product.id,
                 false,
+                "",
+                product.name,
+                product.price.toInt(),
+                "",
+                product.sale.toInt(),
+                "",
                 emptyList(),
-                product.img,
-                ""
+                product.img
             )
+
             listener.getData(product2)
         }
     }

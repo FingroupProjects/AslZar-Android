@@ -22,9 +22,11 @@ import com.fin_group.aslzar.adapter.SetInProductAdapter
 import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentSheetDialogSetInProductBottomBinding
+import com.fin_group.aslzar.response.GetAllProducts
 import com.fin_group.aslzar.response.GetAllProductsResponse
 import com.fin_group.aslzar.response.InStock
 import com.fin_group.aslzar.response.Product
+import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.ui.activities.LoginActivity
 import com.fin_group.aslzar.util.OnProductClickListener
 import com.fin_group.aslzar.util.SessionManager
@@ -43,13 +45,13 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnPro
     lateinit var recyclerView: RecyclerView
 
     val sharedViewModel: SharedViewModel by activityViewModels()
-    private lateinit var selectedProduct: Product
+    private lateinit var selectedProduct: ResultX
 
     private var currentSelectedPosition = RecyclerView.NO_POSITION
     lateinit var setInProductAdapter: SetInProductAdapter
 
     private var setInProductId: String = ""
-    var allProducts: List<Product> = emptyList()
+    var allProducts: List<ResultX> = emptyList()
 
     private lateinit var apiClient: ApiClient
     private lateinit var sessionManager: SessionManager
@@ -125,7 +127,7 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnPro
                     return@setOnClickListener
                 }
             }
-            toggleButton.addOnButtonCheckedListener { group, checkedId, isChecked ->
+            toggleButton.addOnButtonCheckedListener { _, checkedId, isChecked ->
                 if (isChecked) {
                     val isDataProductSelected = checkedId == R.id.dataProductBtn
                     dataProductLayout.visibility = if (isDataProductSelected) VISIBLE else INVISIBLE
@@ -144,78 +146,42 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnPro
     private fun setInitialProductAndInterface() {
         selectedProduct = allProducts[0]
         setDataProduct(selectedProduct)
-        if (selectedProduct.counts.isEmpty()) {
-            binding.apply {
-                inStockProductLayout.visibility = GONE
-                dataProductLayout.visibility = VISIBLE
-                toggleButton.visibility = INVISIBLE
-                textView48.visibility = VISIBLE
+        if (selectedProduct.types.isEmpty()) {
+            val firstType = selectedProduct.types[0]
+
+            if (firstType.counts.isNotEmpty()) {
+                binding.apply {
+                    inStockProductLayout.visibility = GONE
+                    dataProductLayout.visibility = VISIBLE
+                    toggleButton.visibility = INVISIBLE
+                    textView48.visibility = VISIBLE
+                }
             }
         } else {
-            binding.inStockProductLayout.visibility = INVISIBLE
-            binding.dataProductLayout.visibility = VISIBLE
-            binding.toggleButton.visibility = VISIBLE
-            binding.textView48.visibility = INVISIBLE
-            binding.rvInStock.visibility = VISIBLE
-            binding.inStockError.visibility = GONE
-            binding.textView33.visibility = VISIBLE
-            binding.textView34.visibility = VISIBLE
-            binding.textView35.visibility = VISIBLE
-            binding.rvInStock.layoutManager = LinearLayoutManager(requireContext())
-            binding.rvInStock.adapter = InStockAdapter(selectedProduct.counts)
+            val firstType = selectedProduct.types[0]
+            if (firstType.counts.isNotEmpty()) {
+                binding.apply {
+                    inStockProductLayout.visibility = INVISIBLE
+                    dataProductLayout.visibility = VISIBLE
+                    toggleButton.visibility = VISIBLE
+                    textView48.visibility = INVISIBLE
+                    rvInStock.visibility = VISIBLE
+                    inStockError.visibility = GONE
+                    textView33.visibility = VISIBLE
+                    textView34.visibility = VISIBLE
+                    textView35.visibility = VISIBLE
+                    rvInStock.layoutManager = LinearLayoutManager(requireContext())
+                    rvInStock.adapter = InStockAdapter(firstType.counts)
+                }
+            }
+
         }
         setInProductAdapter.setSelectedPositions(0)
         setInProductAdapter.updateList(allProducts)
     }
 
-    override fun setProduct(product: Product) {
-        val image = product.img[0]
-        selectedProduct = product
-        setDataProduct(product)
-        currentSelectedPosition = allProducts.indexOfFirst { it.id == product.id }
-        setInProductAdapter.setSelectedPositions(currentSelectedPosition)
-        Glide.with(requireContext()).load(image).into(binding.mainImageView)
 
-        binding.toggleButton.check(R.id.dataProductBtn)
-        if (selectedProduct.counts.isEmpty()) {
-            binding.apply {
-                inStockProductLayout.visibility = GONE
-                dataProductLayout.visibility = VISIBLE
-                toggleButton.visibility = INVISIBLE
-                textView48.visibility = VISIBLE
-            }
-        } else {
-            binding.inStockProductLayout.visibility = INVISIBLE
-            binding.dataProductLayout.visibility = VISIBLE
-            binding.toggleButton.visibility = VISIBLE
-            binding.textView48.visibility = INVISIBLE
-            binding.rvInStock.visibility = VISIBLE
-            binding.inStockError.visibility = GONE
-            binding.textView33.visibility = VISIBLE
-            binding.textView34.visibility = VISIBLE
-            binding.textView35.visibility = VISIBLE
-            binding.rvInStock.layoutManager = LinearLayoutManager(requireContext())
-            binding.rvInStock.adapter = InStockAdapter(selectedProduct.counts)
-        }
-
-//        if (product.counts.isNotEmpty()){
-//            binding.rvInStock.visibility = VISIBLE
-//            binding.inStockError.visibility = GONE
-//            binding.textView33.visibility = GONE
-//            binding.textView34.visibility = GONE
-//            binding.textView35.visibility = GONE
-//            binding.rvInStock.layoutManager = LinearLayoutManager(requireContext())
-//            binding.rvInStock.adapter = InStockAdapter(product.counts)
-//        } else {
-//            binding.apply {
-//                inStockProductLayout.visibility = GONE
-//                dataProductLayout.visibility = VISIBLE
-//                toggleButton.visibility = GONE
-//            }
-//        }
-    }
-
-    private fun setDataProduct(product: Product) {
+    private fun setDataProduct(product: ResultX) {
         binding.apply {
             Glide.with(requireContext()).load(product.img[0]).into(binding.mainImageView)
 
@@ -223,10 +189,13 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnPro
             sipCode.text = product.name
             sipPrice.text = product.price.toString()
             sipStone.text = product.stone_type
-            sipProbe.text = product.content
+            sipProbe.text = product.proba
             sipMetal.text = product.metal
-            sipWeight.text = product.weight
-            sipSize.text = product.size
+
+            val firstType = product.types.firstOrNull()
+            sipWeight.text = firstType?.weight.toString()
+            sipSize.text = firstType?.size.toString()
+
         }
     }
 
@@ -235,10 +204,10 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnPro
         try {
             val call = apiClient.getApiService()
                 .getSetInProduct("Bearer ${sessionManager.fetchToken()}", setInProductId)
-            call.enqueue(object : Callback<GetAllProductsResponse?> {
+            call.enqueue(object : Callback<GetAllProducts?> {
                 override fun onResponse(
-                    call: Call<GetAllProductsResponse?>,
-                    response: Response<GetAllProductsResponse?>
+                    call: Call<GetAllProducts?>,
+                    response: Response<GetAllProducts?>
                 ) {
                     Log.d("TAG", "onResponse: ${response.code()}")
                     Log.d("TAG", "onResponse: ${response.body()}")
@@ -251,15 +220,15 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnPro
                             Log.d("TAG", "onResponse: ${response.code()}")
                             Log.d("TAG", "onResponse: ${response.body()}")
                             allProducts = products.result
+                            val allCounts = allProducts.flatMap { it.types.flatMap { type -> type.counts } }
                             setInProductAdapter.updateList(allProducts)
                             setInitialProductAndInterface()
                             binding.toggleButton.check(R.id.dataProductBtn)
 
                             binding.inStockError.visibility = GONE
                             binding.rvInStock.layoutManager = LinearLayoutManager(requireContext())
-                            binding.rvInStock.adapter =
-                                InStockAdapter(allProducts.flatMap { it.counts })
-//                            setProductBottomSheet(selectedProduct)
+                            binding.rvInStock.adapter = InStockAdapter(allCounts)
+//                        setProductBottomSheet(selectedProduct)
                         } else {
                             val handler = Handler(Looper.getMainLooper())
                             handler.postDelayed({
@@ -274,7 +243,7 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnPro
                     }
                 }
 
-                override fun onFailure(call: Call<GetAllProductsResponse?>, t: Throwable) {
+                override fun onFailure(call: Call<GetAllProducts?>, t: Throwable) {
                     Log.d("TAG", "onFailure: ${t.message}")
                     progressBar.visibility = INVISIBLE
                 }
@@ -282,6 +251,49 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnPro
         } catch (e: Exception) {
             progressBar.visibility = INVISIBLE
             Log.d("TAG", "getSetInProduct: ${e.message}")
+        }
+    }
+
+
+    override fun setProduct(product: ResultX) {
+        val image = product.img[0]
+        selectedProduct = product
+        setDataProduct(product)
+        currentSelectedPosition = allProducts.indexOfFirst { it.id == product.id }
+        setInProductAdapter.setSelectedPositions(currentSelectedPosition)
+        Glide.with(requireContext()).load(image).into(binding.mainImageView)
+
+        binding.toggleButton.check(R.id.dataProductBtn)
+        if (selectedProduct.types.isEmpty()) {
+            val firstType = selectedProduct.types[0]
+            if (firstType.counts.isEmpty()) {
+                binding.apply {
+                    inStockProductLayout.visibility = GONE
+                    dataProductLayout.visibility = VISIBLE
+                    toggleButton.visibility = INVISIBLE
+                    textView48.visibility = VISIBLE
+                }
+            }
+
+        } else {
+
+
+            val firstType = selectedProduct.types[0]
+            if (firstType.counts.isNotEmpty()) {
+                binding.apply {
+                    inStockProductLayout.visibility = INVISIBLE
+                    dataProductLayout.visibility = VISIBLE
+                    toggleButton.visibility = VISIBLE
+                    textView48.visibility = INVISIBLE
+                    rvInStock.visibility = VISIBLE
+                    inStockError.visibility = GONE
+                    textView33.visibility = VISIBLE
+                    textView34.visibility = VISIBLE
+                    textView35.visibility = VISIBLE
+                    rvInStock.layoutManager = LinearLayoutManager(requireContext())
+                    rvInStock.adapter = InStockAdapter(firstType.counts)
+                }
+            }
         }
     }
 }

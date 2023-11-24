@@ -30,6 +30,7 @@ import com.fin_group.aslzar.databinding.FragmentSalesAndPromotionsBinding
 import com.fin_group.aslzar.response.Category
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.response.ProductSale
+import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.response.SaleProductsResponse
 import com.fin_group.aslzar.ui.activities.MainActivity
 import com.fin_group.aslzar.ui.fragments.main.MainFragmentDirections
@@ -71,15 +72,15 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener {
     var searchText: String = ""
     lateinit var searchView: SearchView
 
-    var allProducts: List<Product> = emptyList()
-    var filteredProducts: List<Product> = emptyList()
+    var allProducts: List<ResultX> = emptyList()
+    var filteredProducts: List<ResultX> = emptyList()
     lateinit var myAdapter: SalesProductsV2Adapter
 
     lateinit var viewCheckedCategory: ConstraintLayout
     var allCategories: List<Category> = emptyList()
     var selectCategory: Category? = null
 
-    lateinit var mainActivity: MainActivity
+    private lateinit var mainActivity: MainActivity
     lateinit var bottomNavigationView: BottomNavigationView
 
     lateinit var badgeManager: BadgeManager
@@ -117,7 +118,6 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener {
         binding.swipeRefreshLayout.setOnRefreshListener {
             fetchDataAndFilterProducts()
         }
-
         return binding.root
     }
 
@@ -196,48 +196,46 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener {
         updateBadge()
     }
 
-
-    override fun addToCart(product: Product) {
-        addProductToCart(product)
+    private fun fetchDataAndFilterProducts() {
+        getAllProductsFromApi()
+        filterProducts()
     }
 
-    override fun inStock(product: Product) {
-        if (product.counts.isNotEmpty()) {
-            callInStockDialog(product.full_name, product.counts)
-        } else {
-            callOutStock(product.id)
+    override fun addToCart(product: ResultX) {
+        addProductToCart(product)    }
+
+    override fun inStock(product: ResultX) {
+        if (product.types.isNotEmpty()) {
+            for (type in product.types) {
+                if (type.counts.isNotEmpty()) {
+                    callInStockDialog(product.full_name, type.counts)
+                    return
+                }
+            }
         }
+        callOutStock(product.id)
     }
 
-    override fun getData(product: Product) {
-        val product2 = Product(
-            product.id,
+    override fun getData(product: ResultX) {
+        val product2 =  ResultX(
+            "",
+            "",
+            "",
+            "",
             product.full_name,
+            product.id,
+            product.is_set,
+            "",
             product.name,
             product.price,
-            "",
-            "",
+            product.proba,
             0,
             "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            product.is_set,
-            product.counts,
-            product.img,
-            ""
+            product.types,
+            product.img
         )
 
         val action = SalesAndPromotionsFragmentDirections.actionSalesAndPromotionsFragmentToDataProductFragment(product2.id, product2, "SalesProducts")
         Navigation.findNavController(binding.root).navigate(action)
-    }
-
-    private fun fetchDataAndFilterProducts() {
-        getAllProductsFromApi()
-        filterProducts()
     }
 }

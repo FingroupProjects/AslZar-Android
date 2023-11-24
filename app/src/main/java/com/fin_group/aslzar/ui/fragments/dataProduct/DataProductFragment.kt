@@ -28,7 +28,9 @@ import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.databinding.FragmentDataProductBinding
 import com.fin_group.aslzar.response.PercentInstallment
 import com.fin_group.aslzar.response.Product
+import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.response.SimilarProduct
+import com.fin_group.aslzar.response.Type
 import com.fin_group.aslzar.ui.dialogs.AlikeProductBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.callInStockDialog
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.callSetInProduct
@@ -67,7 +69,7 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
     lateinit var badgeManager: BadgeManager
 
     lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    lateinit var product: Product
+    lateinit var product: ResultX
     lateinit var preferences: SharedPreferences
 
     lateinit var recyclerViewSomeImages: RecyclerView
@@ -81,7 +83,7 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
     lateinit var productSomeImagesAdapter: ProductSomeImagesAdapter
     lateinit var productAlikeAdapter: AlikeProductsAdapter
 
-    lateinit var weightChipGroup: ChipGroup
+    private lateinit var weightChipGroup: ChipGroup
     var weightSelected: String? = ""
 
     lateinit var sizeChipGroup: ChipGroup
@@ -176,17 +178,18 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
 
     }
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        if (product.is_set && product.counts.isNotEmpty()){
+        if (product.is_set && product.types.isNotEmpty() && product.types[0].counts.isNotEmpty()) {
             inflater.inflate(R.menu.product_data_menu, menu)
-        } else if (product.is_set && product.counts.isEmpty()) {
+        } else if (product.is_set && (product.types.isEmpty() || product.types[0].counts.isEmpty())) {
             inflater.inflate(R.menu.product_data_menu_3, menu)
-        } else if (product.counts.isNotEmpty() && !product.is_set){
+        } else if (!product.is_set && product.types.isNotEmpty() && product.types[0].counts.isNotEmpty()) {
             inflater.inflate(R.menu.product_data_menu_2, menu)
         } else {
             inflater.inflate(R.menu.product_data_menu_4, menu)
         }
         super.onCreateOptionsMenu(menu, inflater)
     }
+
 
     @SuppressLint("UnsafeOptInUsageError")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -198,8 +201,13 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
             }
         }
         if (item.itemId == R.id.product_in_stock_item) {
-            if (product.counts.isNotEmpty()) {
-                callInStockDialog(product.full_name, product.counts)
+            if (product.types.isNotEmpty()) {
+                val firstType: Type = product.types[0]
+                if (firstType.counts.isNotEmpty()) {
+                    callInStockDialog(product.full_name, firstType.counts)
+                } else {
+                    Toast.makeText(requireContext(), "Данного продукта нет в наличии", Toast.LENGTH_SHORT).show()
+                }
             } else {
                 Toast.makeText(requireContext(), "Данного продукта нет в наличии", Toast.LENGTH_SHORT).show()
             }

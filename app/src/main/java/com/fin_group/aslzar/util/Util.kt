@@ -30,6 +30,7 @@ import com.fin_group.aslzar.R
 import com.fin_group.aslzar.models.FilterModel
 import com.fin_group.aslzar.models.ProductInCart
 import com.fin_group.aslzar.response.Product
+import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.response.SimilarProduct
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -54,7 +55,7 @@ interface CalculatorResetListener {
 }
 
 interface OnProductClickListener{
-    fun setProduct(product: Product)
+    fun setProduct(product: ResultX)
 }
 
 interface OnImageClickListener{

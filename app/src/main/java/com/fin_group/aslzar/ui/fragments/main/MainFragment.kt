@@ -31,7 +31,9 @@ import com.fin_group.aslzar.cipher.EncryptionManager
 import com.fin_group.aslzar.databinding.FragmentMainBinding
 import com.fin_group.aslzar.models.FilterModel
 import com.fin_group.aslzar.response.Category
+import com.fin_group.aslzar.response.Count
 import com.fin_group.aslzar.response.Product
+import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.ui.activities.MainActivity
 import com.fin_group.aslzar.ui.fragments.main.functions.addProductToCart
 import com.fin_group.aslzar.util.CategoryClickListener
@@ -78,15 +80,15 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener,
     var searchText: String = ""
     lateinit var searchView: SearchView
 
-    var allProducts: List<Product> = emptyList()
-    var filteredProducts: List<Product> = emptyList()
+    var allProducts: List<ResultX> = emptyList()
+    var filteredProducts: List<ResultX> = emptyList()
     lateinit var myAdapter: ProductsAdapter
 
     lateinit var viewCheckedCategory: ConstraintLayout
     var allCategories: List<Category> = emptyList()
     var selectCategory: Category? = null
 
-    lateinit var mainActivity: MainActivity
+    private lateinit var mainActivity: MainActivity
     lateinit var bottomNavigationView: BottomNavigationView
 
     lateinit var badgeManager: BadgeManager
@@ -252,50 +254,12 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener,
         updateBadge()
     }
 
-    override fun addToCart(product: Product) {
-        addProductToCart(product)
-    }
 
     private fun fetchDataAndFilterProducts() {
         getAllProductsFromApi()
         getAllCategoriesFromApi()
         filterProducts()
         filterProducts2(filterViewModel.filterModel!!)
-    }
-
-    override fun inStock(product: Product) {
-        if (product.counts.isNotEmpty()) {
-            callInStockDialog(product.full_name, product.counts)
-        } else {
-            callOutStock(product.id)
-        }
-    }
-
-    override fun getData(product: Product) {
-        val product2 = Product(
-            product.id,
-            product.full_name,
-            product.name,
-            product.price,
-            "",
-            "",
-            0,
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            product.is_set,
-            product.counts,
-            product.img,
-            ""
-        )
-
-        val action = MainFragmentDirections.actionMainFragmentToDataProductFragment(product2.id, product2, "Main")
-        Navigation.findNavController(binding.root).navigate(action)
     }
 
     @SuppressLint("CommitPrefEdits")
@@ -308,5 +272,46 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener,
     override fun onFilterApplied(updatedFilterModel: FilterModel) {
         Log.d("TAG", "onFilterApplied: $updatedFilterModel")
         Toast.makeText(requireContext(), "$updatedFilterModel", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun addToCart(product: ResultX) {
+        addProductToCart(product)
+    }
+
+    override fun inStock(product: ResultX) {
+        if (product.types.isNotEmpty()) {
+            for (type in product.types) {
+                if (type.counts.isNotEmpty()) {
+                    callInStockDialog(product.full_name, type.counts)
+                    return
+                }
+            }
+        }
+        callOutStock(product.id)
+    }
+
+    override fun getData(product: ResultX) {
+
+        val product2 = ResultX(
+            product.barcode,
+            product.category_id,
+            product.color,
+            product.description,
+            product.full_name,
+            product.id,
+            product.is_set,
+            product.metal,
+            product.name,
+            product.price,
+            product.proba,
+            product.sale,
+            product.stone_type,
+            product.types,
+            product.img
+
+        )
+
+        val action = MainFragmentDirections.actionMainFragmentToDataProductFragment(product2.id, product2, "Main")
+        Navigation.findNavController(binding.root).navigate(action)
     }
 }

@@ -12,14 +12,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.databinding.RowItemProductBinding
+import com.fin_group.aslzar.response.GetAllProducts
 import com.fin_group.aslzar.response.Product
+import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.ui.fragments.main.MainFragmentDirections
 import com.fin_group.aslzar.util.CustomPopupView
 import com.fin_group.aslzar.util.ProductOnClickListener
 import com.fin_group.aslzar.util.formatNumber
 
+@Suppress("DEPRECATION")
 class ProductsAdapter(
-    var productList: List<Product>,
+    private var productList: List<ResultX>,
     val listener: ProductOnClickListener,
 ): RecyclerView.Adapter<ProductsAdapter.ViewHolder>() {
 
@@ -41,20 +44,20 @@ class ProductsAdapter(
         }
     }
 
-    inner class ViewHolder(binding: RowItemProductBinding): RecyclerView.ViewHolder(binding.root){
+    inner class ViewHolder(binding: RowItemProductBinding): RecyclerView.ViewHolder(binding.root) {
         val title = binding.productTitle
         val image = binding.productImage
         val code = binding.productKode
-        val btnCheckingInStock = binding.ibHaveInStore
-        val btnAddToCart = binding.ibAddToBasket
-        val saleTv = binding.productSale
+        private val btnCheckingInStock = binding.ibHaveInStore
+        private val btnAddToCart = binding.ibAddToBasket
+        private val saleTv = binding.productSale
 
         @SuppressLint("UseCompatLoadingForDrawables", "SetTextI18n")
-        fun bind(product: Product){
+        fun bind(product: ResultX) {
             title.text = product.full_name
             code.text = product.name
 
-            if (product.img.isNotEmpty()){
+            if (product.img.isNotEmpty()) {
                 Glide.with(itemView.context)
                     .load(product.img[0])
                     .override(200, 200)
@@ -64,16 +67,17 @@ class ProductsAdapter(
                 image.setImageResource(R.drawable.ic_no_image)
             }
 
-            if (product.sale.toDouble() <= 0.0){
+            if (product.sale.toDouble() <= 0.0) {
                 saleTv.visibility = GONE
             } else {
                 saleTv.text = "-${formatNumber(product.sale)}%"
                 saleTv.visibility = VISIBLE
             }
 
-            if (product.counts.isEmpty()){
+            if (product.types.isNotEmpty() && product.types[0].counts.isNotEmpty()) {
                 btnCheckingInStock.setImageResource(R.drawable.ic_clear_white)
                 btnCheckingInStock.background = context.resources.getDrawable(R.drawable.item_product_bottom_btn_2)
+
             } else {
                 btnCheckingInStock.setImageResource(R.drawable.ic_check)
                 btnCheckingInStock.background = context.resources.getDrawable(R.drawable.ripple_effect_bottom_btn)
@@ -87,7 +91,8 @@ class ProductsAdapter(
         }
     }
 
-    fun updateProducts(newProducts: List<Product>) {
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateProducts(newProducts: List<ResultX>) {
         productList = newProducts
         notifyDataSetChanged()
     }

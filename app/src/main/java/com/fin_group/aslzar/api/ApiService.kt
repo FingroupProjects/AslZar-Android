@@ -5,18 +5,18 @@ import com.fin_group.aslzar.response.ForgotPasswordResponse
 import com.fin_group.aslzar.response.GetAllCategoriesResponse
 import com.fin_group.aslzar.response.GetAllClientsResponse
 import com.fin_group.aslzar.response.GetAllNewProductsResponse
-import com.fin_group.aslzar.response.GetAllProductsResponse
+import com.fin_group.aslzar.response.GetAllProducts
 import com.fin_group.aslzar.response.GetSimilarProductsResponse
 import com.fin_group.aslzar.response.PercentInstallment
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.response.ResponseChangePassword
 import com.fin_group.aslzar.response.ResponseForgotPassword
+import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.response.SaleProductsResponse
 import com.fin_group.aslzar.response.SalesPlanResponse
 import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.Call
-import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Path
@@ -28,7 +28,7 @@ interface ApiService {
     fun userLogin(): Call<Auth>
 
     @GET(Constants.GET_ALL_PRODUCTS)
-    fun getAllProducts(@Header("Authorization") token: String): Call<GetAllProductsResponse>
+    fun getAllProducts(@Header("Authorization") token: String): Call<GetAllProducts>
 
     @GET(Constants.SALES_PRODUCTS)
     @Headers("Accept:application/json", "Content-Type:application/json")
@@ -36,11 +36,11 @@ interface ApiService {
 
     @GET(Constants.NEW_PRODUCTS)
     @Headers("Accept:application/json", "Content-Type:application/json")
-    fun getNewProducts(@Header("Authorization") token: String): Call<GetAllNewProductsResponse>
+    fun getNewProducts(@Header("Authorization") token: String): Call<GetAllProducts>
 
     @GET(Constants.GET_PRODUCT_BY_ID)
     @Headers("Accept:application/json", "Content-Type:application/json")
-    fun getProductByID(@Header("Authorization") token: String, @Path("id") id: String): Call<Product>
+    fun getProductByID(@Header("Authorization") token: String, @Path("id") id: String): Call<ResultX>
 
     @GET(Constants.SIMILAR_PRODUCTS)
     @Headers("Accept:application/json", "Content-Type:application/json")
@@ -48,7 +48,7 @@ interface ApiService {
 
     @GET(Constants.SET_IN_PRODUCT)
     @Headers("Accept:application/json", "Content-Type:application/json")
-    fun getSetInProduct(@Header("Authorization") token: String, @Path("id") id: String): Call<GetAllProductsResponse>
+    fun getSetInProduct(@Header("Authorization") token: String, @Path("id") id: String): Call<GetAllProducts>
 
     @GET(Constants.GET_CATEGORY)
     @Headers("Accept:application/json", "Content-Type:application/json")

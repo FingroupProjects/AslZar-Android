@@ -24,6 +24,7 @@ import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentAlikeProductBottomSheetDialogBinding
 import com.fin_group.aslzar.response.Product
+import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.response.SimilarProduct
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.CalculatorFragment
 import com.fin_group.aslzar.util.BaseBottomSheetDialogFragment
@@ -47,11 +48,11 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(),
     lateinit var recyclerView: RecyclerView
 
     private var currentSelectedPosition = RecyclerView.NO_POSITION
-    var alikeImageList: List<String> = emptyList()
+    private var alikeImageList: List<String> = emptyList()
 
     lateinit var adapter: ProductSomeImagesAdapter
     private lateinit var similarProduct: SimilarProduct
-    private lateinit var fullSimilarProduct: Product
+    private lateinit var fullSimilarProduct: ResultX
 
     lateinit var progressBar: ProgressBar
     private lateinit var apiClient: ApiClient
@@ -111,7 +112,7 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(),
             refresh.setOnClickListener {
                 getSimilarProduct()
             }
-            toggleButton.addOnButtonCheckedListener { group, checkedId, isChecked ->
+            toggleButton.addOnButtonCheckedListener { _, checkedId, isChecked ->
                 if (isChecked) {
                     val isDataProductSelected = checkedId == R.id.dataProductBtn2
                     dataProductLayout2.visibility = if (isDataProductSelected) VISIBLE else View.INVISIBLE
@@ -125,11 +126,14 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(),
         setDataProduct(fullSimilarProduct)
         Log.d("TAG", "setInitialProductAndInterface: $fullSimilarProduct")
 
-        if (fullSimilarProduct.counts.isEmpty()){
-            binding.apply {
-                inStockProductLayout2.visibility = GONE
-                dataProductLayout2.visibility = VISIBLE
-                toggleButton.visibility = GONE
+        if (fullSimilarProduct.types.isNotEmpty()) {
+            val firstType = fullSimilarProduct.types[0]
+            if (firstType.counts.isNotEmpty()) {
+                binding.apply {
+                    inStockProductLayout2.visibility = GONE
+                    dataProductLayout2.visibility = VISIBLE
+                    toggleButton.visibility = GONE
+                }
             }
         } else {
             binding.inStockProductLayout2.visibility = INVISIBLE
@@ -157,7 +161,7 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(),
         adapter.updateList(imageList)
     }
 
-    private fun addToCart(product: Product, productId: String){
+    private fun addToCart(product: ResultX, productId: String){
         binding.apply {
             addToCart.setOnClickListener {
                 Log.d("TAG", "onViewCreated: $product")
@@ -172,11 +176,11 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(),
         }
     }
 
-    private fun setDataProduct(product: Product) {
-        if (product.img.size <= 1){
-            binding.lpSomeImagesRv.visibility = GONE
+    private fun setDataProduct(product: ResultX) {
+        if (product.img.size <= 1) {
+            binding.lpSomeImagesRv.visibility = View.GONE
         } else {
-            binding.lpSomeImagesRv.visibility = VISIBLE
+            binding.lpSomeImagesRv.visibility = View.VISIBLE
         }
 
         binding.apply {
@@ -184,12 +188,16 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(),
             apCode.text = product.name
             apPrice.text = product.price.toString()
             apStone.text = product.stone_type
-            apProbe.text = product.content
+            apProbe.text = product.proba
             apMetal.text = product.metal
-            apWeight.text = product.weight
-            apSize.text = product.size
+            val type = product.types.firstOrNull()
+            if (type != null) {
+                apWeight.text = type.weight.toString()
+                apSize.text = type.size.toString()
+            }
         }
     }
+
 
     override fun setImage(image: String) {
         currentSelectedPosition = similarProduct.img.indexOfFirst { it == image }
@@ -206,10 +214,10 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(),
         progressBar.visibility = VISIBLE
         try {
             val call = apiClient.getApiService().getProductByID("Bearer ${sessionManager.fetchToken()}", similarProduct.id)
-            call.enqueue(object : Callback<Product?> {
+            call.enqueue(object : Callback<ResultX?> {
                 override fun onResponse(
-                    call: Call<Product?>,
-                    response: Response<Product?>
+                    call: Call<ResultX?>,
+                    response: Response<ResultX?>
                 ) {
                     progressBar.visibility = INVISIBLE
                     if (response.isSuccessful) {
@@ -219,14 +227,17 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(),
                             setDataProduct(fullSimilarProduct)
                             setInitialProductAndInterface()
 
-                            binding.inStockError2.visibility = GONE
-                            binding.rvInStock.layoutManager = LinearLayoutManager(requireContext())
-                            binding.rvInStock.adapter = InStockAdapter(fullSimilarProduct.counts)
+                            if (fullSimilarProduct.types.isNotEmpty()) {
+                                binding.inStockError2.visibility = GONE
+                                binding.rvInStock.layoutManager = LinearLayoutManager(requireContext())
+                                binding.rvInStock.adapter = InStockAdapter(fullSimilarProduct.types[0].counts)
+
+                            }
                         }
                     }
                 }
 
-                override fun onFailure(call: Call<Product?>, t: Throwable) {
+                override fun onFailure(call: Call<ResultX?>, t: Throwable) {
                     Toast.makeText(requireContext(), "Загрузка прошла не успешно, пожалуйста повторите попытку", Toast.LENGTH_SHORT).show()
                     progressBar.visibility = INVISIBLE
                     Log.d("TAG", "onFailure: ${t.message}")
