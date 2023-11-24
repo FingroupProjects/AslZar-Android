@@ -28,6 +28,7 @@ import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentNewProductsBinding
 import com.fin_group.aslzar.response.Category
 import com.fin_group.aslzar.response.Product
+import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.ui.activities.MainActivity
 import com.fin_group.aslzar.ui.fragments.dataProduct.DataProductFragment
 import com.fin_group.aslzar.ui.fragments.main.MainFragmentDirections
@@ -58,34 +59,24 @@ class NewProductsFragment : Fragment(), ProductOnClickListener {
 
     private var _binding: FragmentNewProductsBinding? = null
     private val binding get() = _binding!!
-
     val sharedViewModel: SharedViewModel by activityViewModels()
-
     lateinit var toolbar: MaterialToolbar
-
     lateinit var preferences: SharedPreferences
-
     lateinit var viewSearch: ConstraintLayout
     var searchText: String = ""
     lateinit var searchView: SearchView
-
-    var allProducts: List<Product> = emptyList()
-    var filteredProducts: List<Product> = emptyList()
+    var allProducts: List<ResultX> = emptyList()
+    var filteredProducts: List<ResultX> = emptyList()
     lateinit var myAdapter: ProductsAdapter
-
     lateinit var viewCheckedCategory: ConstraintLayout
     var allCategories: List<Category> = emptyList()
     var selectCategory: Category? = null
-
-    lateinit var mainActivity: MainActivity
+    private lateinit var mainActivity: MainActivity
     lateinit var bottomNavigationView: BottomNavigationView
-
     lateinit var badgeManager: BadgeManager
     lateinit var swipeRefreshLayout: SwipeRefreshLayout
-
     lateinit var sessionManager: SessionManager
     lateinit var apiService: ApiClient
-
     lateinit var recyclerView: RecyclerView
     var backPressedTime: Long = 0
 
@@ -95,14 +86,12 @@ class NewProductsFragment : Fragment(), ProductOnClickListener {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentNewProductsBinding.inflate(inflater, container, false)
-        setHasOptionsMenu(true)
-
         preferences = context?.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)!!
+        setHasOptionsMenu(true)
         sessionManager = SessionManager(requireContext())
         apiService = ApiClient()
         apiService.init(sessionManager)
         swipeRefreshLayout = binding.swipeRefreshLayout
-        setHasOptionsMenu(true)
         viewSearch = binding.viewSearch
         viewCheckedCategory = binding.viewCheckedCategory
         recyclerView = binding.mainRecyclerView
@@ -116,7 +105,6 @@ class NewProductsFragment : Fragment(), ProductOnClickListener {
         binding.swipeRefreshLayout.setOnRefreshListener {
             fetchDataAndFilterProducts()
         }
-
         return binding.root
     }
 
@@ -181,14 +169,6 @@ class NewProductsFragment : Fragment(), ProductOnClickListener {
         badgeManager = BadgeManager(requireContext(), "badge_cart_prefs")
     }
 
-    override fun inStock(product: Product) {
-        if (product.counts.isNotEmpty()) {
-            callInStockDialog(product.full_name, product.counts)
-        } else {
-            callOutStock(product.id)
-        }
-    }
-
     override fun onResume() {
         super.onResume()
         bottomNavigationView = mainActivity.findViewById(R.id.bottomNavigationView)
@@ -210,45 +190,12 @@ class NewProductsFragment : Fragment(), ProductOnClickListener {
         super.onDestroy()
         preferences.edit()?.putBoolean("first_run", true)?.apply()
     }
-
-    override fun addToCart(product: Product) {
-        addProductToCart(product)
-    }
-
-    override fun getData(product: Product) {
-        val product2 = Product(
-            product.id,
-            product.full_name,
-            product.name,
-            product.price,
-            "",
-            "",
-            0,
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            product.is_set,
-            product.counts,
-            product.img,
-            ""
-        )
-
-
-        val action = NewProductsFragmentDirections.actionNewProductsFragmentToDataProductFragment(product2.id, product2, "NewProducts")
-        Navigation.findNavController(binding.root).navigate(action)
-    }
-
     private fun fetchDataAndFilterProducts() {
         getAllProductsFromApi()
         filterProducts()
     }
 
-    fun onBackPressed() {
+    private fun onBackPressed() {
         requireActivity().onBackPressedDispatcher.addCallback(
             viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
@@ -261,5 +208,46 @@ class NewProductsFragment : Fragment(), ProductOnClickListener {
                     backPressedTime = System.currentTimeMillis()
                 }
             })
+    }
+
+    override fun addToCart(product: ResultX) {
+        addProductToCart(product)
+    }
+
+    override fun inStock(product: ResultX) {
+        if (product.types.isNotEmpty()) {
+            for (type in product.types) {
+                if (type.counts.isNotEmpty()) {
+                    callInStockDialog(product.full_name, type.counts)
+                    return
+                }
+            }
+        }
+        callOutStock(product.id)
+    }
+
+
+    override fun getData(product: ResultX) {
+
+        val product2 =  ResultX(
+            "",
+            "",
+            "",
+            "",
+            product.full_name,
+            product.id,
+            product.is_set,
+            "",
+            product.name,
+            product.price,
+            product.proba,
+            0,
+            "",
+            product.types,
+            product.img
+        )
+
+        val action = NewProductsFragmentDirections.actionNewProductsFragmentToDataProductFragment(product2.id, product2, "NewProducts")
+        Navigation.findNavController(binding.root).navigate(action)
     }
 }

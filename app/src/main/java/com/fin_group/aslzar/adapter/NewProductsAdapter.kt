@@ -10,12 +10,14 @@ import com.bumptech.glide.Glide
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.databinding.RowItemProductBinding
 import com.fin_group.aslzar.response.Product
+import com.fin_group.aslzar.response.ResultX
+import com.fin_group.aslzar.response.Type
 import com.fin_group.aslzar.util.ProductOnClickListener
 import com.fin_group.aslzar.util.formatNumber
 
 @Suppress("DEPRECATION")
 class NewProductsAdapter(
-    var productList: List<Product>,
+    private var productList: List<ResultX>,
     val listener: ProductOnClickListener
 ) : RecyclerView.Adapter<NewProductsAdapter.ViewHolder>() {
 
@@ -26,12 +28,12 @@ class NewProductsAdapter(
         val title = binding.productTitle
         val image = binding.productImage
         val code = binding.productKode
-        val btnCheckingInStock = binding.ibHaveInStore
-        val btnAddToCart = binding.ibAddToBasket
-        val saleTv = binding.productSale
+        private val btnCheckingInStock = binding.ibHaveInStore
+        private val btnAddToCart = binding.ibAddToBasket
+        private val saleTv = binding.productSale
 
         @SuppressLint("UseCompatLoadingForDrawables", "SetTextI18n")
-        fun bind(product: Product) {
+        fun bind(product: ResultX) {
             title.text = product.full_name
             code.text = product.name
 
@@ -52,10 +54,14 @@ class NewProductsAdapter(
                 saleTv.visibility = View.VISIBLE
             }
 
-            if (product.counts.isEmpty()) {
-                btnCheckingInStock.setImageResource(R.drawable.ic_clear_white)
-                btnCheckingInStock.background =
-                    context.resources.getDrawable(R.drawable.item_product_bottom_btn_2)
+            if (product.types.isEmpty()) {
+                val type: Type = product.types[0]
+                if (type.counts.isEmpty()) {
+                    btnCheckingInStock.setImageResource(R.drawable.ic_clear_white)
+                    btnCheckingInStock.background =
+                        context.resources.getDrawable(R.drawable.item_product_bottom_btn_2)
+                }
+
             } else {
                 btnCheckingInStock.setImageResource(R.drawable.ic_check)
                 btnCheckingInStock.background =
@@ -80,7 +86,8 @@ class NewProductsAdapter(
         return productList.size
     }
 
-    fun updateProducts(newProducts: List<Product>) {
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateProducts(newProducts: List<ResultX>) {
         productList = newProducts
         notifyDataSetChanged()
     }

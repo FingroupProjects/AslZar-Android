@@ -26,6 +26,7 @@ import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentCartBinding
 import com.fin_group.aslzar.models.ProductInCart
 import com.fin_group.aslzar.response.Product
+import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.ui.activities.MainActivity
 import com.fin_group.aslzar.ui.dialogs.DataProductInCartFragment
 import com.fin_group.aslzar.ui.dialogs.DeleteAllProductFromCartFragmentDialog
@@ -127,26 +128,23 @@ class CartFragment : Fragment(), EditProductInCart, OnProductAddedToCartListener
 
     override fun openDialogDataProduct(productInCart: ProductInCart) {
 
-        val product = Product(
+
+        val product = ResultX(
+            "",
+            "",
+            "",
+            "",
+           "",
             productInCart.id,
-            productInCart.name,
-            productInCart.code,
-            productInCart.price,
-            "",
-            "",
-            productInCart.sale,
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
             false,
+            "",
+            productInCart.name,
+            productInCart.price.toInt(),
+            "",
+            productInCart.sale.toInt(),
+            "",
             emptyList(),
-            productInCart.image,
-            ""
+            productInCart.image
         )
 
         try {

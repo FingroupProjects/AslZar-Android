@@ -5,14 +5,15 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.fin_group.aslzar.databinding.RowItemHaveingInStoreBinding
 import com.fin_group.aslzar.models.InStockProduct
+import com.fin_group.aslzar.response.Count
 import com.fin_group.aslzar.response.InStock
 
-class InStockAdapter(private val inStockList: List<InStock>): RecyclerView.Adapter<InStockAdapter.ViewHolder>() {
+class InStockAdapter(private val inStockList: List<Count>): RecyclerView.Adapter<InStockAdapter.ViewHolder>() {
     inner class ViewHolder(val binding: RowItemHaveingInStoreBinding): RecyclerView.ViewHolder(binding.root) {
-        fun bind(inStock: InStock){
+        fun bind(inStock: Count){
             binding.apply {
-                store.text = inStock.subsidiary
-                showCase.text = inStock.store_house
+                store.text = inStock.filial
+                showCase.text = inStock.sclad
                 count.text = inStock.count.toString()
             }
         }

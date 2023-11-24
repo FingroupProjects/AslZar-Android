@@ -22,11 +22,13 @@ import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.TableInstallmentAdapter
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentDataProductBinding
+import com.fin_group.aslzar.response.Count
 import com.fin_group.aslzar.response.GetSimilarProductsResponse
 import com.fin_group.aslzar.response.InStock
 import com.fin_group.aslzar.response.Percent
 import com.fin_group.aslzar.response.PercentInstallment
 import com.fin_group.aslzar.response.Product
+import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.SetInProductBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.WarningNoHaveProductFragmentDialog
@@ -40,7 +42,7 @@ import com.google.gson.reflect.TypeToken
 import retrofit2.Call
 import retrofit2.Response
 
-fun DataProductFragment.callInStockDialog(name: String, counts: List<InStock>) {
+fun DataProductFragment.callInStockDialog(name: String, counts: List<Count>) {
     val fragmentManager = requireFragmentManager()
     val tag = "Product in stock Dialog"
     val existingFragment = fragmentManager.findFragmentByTag(tag)
@@ -62,7 +64,7 @@ fun DataProductFragment.callOutStock(id: String) {
     }
 }
 
-fun DataProductFragment.addProduct(product: Product) {
+fun DataProductFragment.addProduct(product: ResultX) {
     sharedViewModel.onProductAddedToCart(product, requireContext())
     Toast.makeText(requireContext(), "Продукт добавлен в корзину", Toast.LENGTH_SHORT).show()
 }
@@ -93,7 +95,7 @@ fun DataProductFragment.likeProducts() {
 }
 
 @SuppressLint("SetTextI18n", "UnsafeOptInUsageError")
-fun DataProductFragment.setDataProduct(product: Product, binding: FragmentDataProductBinding) {
+fun DataProductFragment.setDataProduct(product: ResultX, binding: FragmentDataProductBinding) {
     if (product.img.size <= 1) {
         binding.otherImgRv.visibility = GONE
     } else {
@@ -126,7 +128,7 @@ fun DataProductFragment.setDataProduct(product: Product, binding: FragmentDataPr
         dpCode.text = product.name
         dpPrice.text = product.price.toString()
         dpStone.text = product.stone_type.ifEmpty { "Без камня" }
-        dpProbe.text = product.content
+        dpProbe.text = product.proba
         dpMetal.text = product.metal
 //        dpWeight.text = product.weight
 //        dpSize.text = product.size
@@ -201,9 +203,9 @@ fun DataProductFragment.getProductByID() {
     try {
         val call = apiService.getApiService()
             .getProductByID("Bearer ${sessionManager.fetchToken()}", args.productId)
-        call.enqueue(object : Callback<Product?> {
+        call.enqueue(object : Callback<ResultX?> {
             @SuppressLint("UnsafeOptInUsageError")
-            override fun onResponse(call: Call<Product?>, response: Response<Product?>) {
+            override fun onResponse(call: Call<ResultX?>, response: Response<ResultX?>) {
                 swipeRefreshLayout.isRefreshing = false
                 if (response.isSuccessful) {
                     val productResponse = response.body()
@@ -217,7 +219,7 @@ fun DataProductFragment.getProductByID() {
                 }
             }
 
-            override fun onFailure(call: Call<Product?>, t: Throwable) {
+            override fun onFailure(call: Call<ResultX?>, t: Throwable) {
                 swipeRefreshLayout.isRefreshing = false
                 Log.d("TAG", "onFailure: ${t.message}")
             }
@@ -228,7 +230,7 @@ fun DataProductFragment.getProductByID() {
     }
 }
 
-fun DataProductFragment.retrieveFilteredProducts(): List<Product> {
+fun DataProductFragment.retrieveFilteredProducts(): List<ResultX> {
     val productJson = preferences.getString("filteredProducts", null)
     return if (productJson != null) {
         val productListType = object : TypeToken<List<Product>>() {}.type

@@ -15,10 +15,13 @@ import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentMainBinding
 import com.fin_group.aslzar.models.FilterModel
 import com.fin_group.aslzar.response.Category
+import com.fin_group.aslzar.response.Count
 import com.fin_group.aslzar.response.GetAllCategoriesResponse
+import com.fin_group.aslzar.response.GetAllProducts
 import com.fin_group.aslzar.response.GetAllProductsResponse
 import com.fin_group.aslzar.response.InStock
 import com.fin_group.aslzar.response.Product
+import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.ui.dialogs.CheckCategoryFragmentDialog
 import com.fin_group.aslzar.ui.dialogs.FilterDialogFragment
 import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
@@ -39,7 +42,7 @@ import retrofit2.Response
 //    categoryDialog.show(activity?.supportFragmentManager!!, "category check dialog")
 //}
 
-fun MainFragment.callFilterDialog(listener: FilterDialogListener){
+fun MainFragment.callFilterDialog(listener: FilterDialogListener) {
     val filterDialog = FilterDialogFragment()
     filterDialog.setFilterListener(listener)
     filterDialog.show(activity?.supportFragmentManager!!, "filter dialog")
@@ -51,7 +54,7 @@ fun MainFragment.callCategoryDialog(listener: CategoryClickListener) {
     categoryDialog.show(activity?.supportFragmentManager!!, "category check dialog")
 }
 
-fun MainFragment.callInStockDialog(name: String, counts: List<InStock>) {
+fun MainFragment.callInStockDialog(name: String, counts: List<Count>) {
     val fragmentManager = requireFragmentManager()
     val tag = "Product in stock Dialog"
     val existingFragment = fragmentManager.findFragmentByTag(tag)
@@ -115,7 +118,7 @@ fun MainFragment.filterFun() {
     callCategoryDialog(this)
 }
 
-fun MainFragment.addProductToCart(product: Product) {
+fun MainFragment.addProductToCart(product: ResultX) {
     sharedViewModel.onProductAddedToCart(product, requireContext())
     updateBadge()
 }
@@ -226,9 +229,14 @@ fun MainFragment.filterProducts() {
 fun MainFragment.filterProducts2(filterModel: FilterModel) {
 
     filteredProducts = filteredProducts.filter { product ->
-        product.price.toDouble() >= filterModel.priceFrom.toDouble() && product.price.toDouble() <= filterModel.priceTo.toDouble()
-                && product.size.toDouble() >= filterModel.sizeFrom.toDouble() && product.size.toDouble() <= filterModel.sizeTo.toDouble()
-                && product.weight.toDouble() >= filterModel.weightFrom.toDouble() && product.weight.toDouble() <= filterModel.weightTo.toDouble()
+        product.types.any { type ->
+            type.size.toDouble() >= filterModel.sizeFrom.toDouble()
+                    && product.price.toDouble() <= filterModel.priceTo.toDouble()
+                    && type.size.toDouble() <= filterModel.sizeTo.toDouble()
+                    && type.size.toDouble() <= filterModel.sizeFrom.toDouble()
+                    && type.weight.toDouble() >= filterModel.weightFrom.toDouble()
+                    && type.weight.toDouble() <= filterModel.weightTo.toDouble()
+        }
     }
     myAdapter.updateProducts(filteredProducts)
 }
@@ -237,8 +245,8 @@ fun MainFragment.getAllProductFromPrefs() {
     try {
         val products = preferences.getString("productList", null)
         if (products != null) {
-            val productsListType = object : TypeToken<List<Product>>() {}.type
-            val productList = Gson().fromJson<List<Product>>(products, productsListType)
+            val productsListType = object : TypeToken<List<ResultX>>() {}.type
+            val productList = Gson().fromJson<List<ResultX>>(products, productsListType)
             allProducts = productList
             fetchRV(allProducts)
         } else {
@@ -251,21 +259,21 @@ fun MainFragment.getAllProductFromPrefs() {
     }
 }
 
-fun MainFragment.retrieveProducts(): List<Product> {
+fun MainFragment.retrieveProducts(): List<ResultX> {
     val productJson = preferences.getString("productList", null)
     return if (productJson != null) {
-        val productsListType = object : TypeToken<List<Product>>() {}.type
-        val productList = Gson().fromJson<List<Product>>(productJson, productsListType)
+        val productsListType = object : TypeToken<List<ResultX>>() {}.type
+        val productList = Gson().fromJson<List<ResultX>>(productJson, productsListType)
         productList
     } else {
         emptyList()
     }
 }
 
-fun MainFragment.retrieveFilteredProducts(): List<Product> {
+fun MainFragment.retrieveFilteredProducts(): List<ResultX> {
     val productJson = preferences.getString("filteredProducts", null)
     return if (productJson != null) {
-        val productListType = object : TypeToken<List<Product>>() {}.type
+        val productListType = object : TypeToken<List<ResultX>>() {}.type
         Gson().fromJson(productJson, productListType)
     } else {
         emptyList()
@@ -273,7 +281,7 @@ fun MainFragment.retrieveFilteredProducts(): List<Product> {
 }
 
 @SuppressLint("NotifyDataSetChanged")
-fun MainFragment.fetchRV(productList: List<Product>) {
+fun MainFragment.fetchRV(productList: List<ResultX>) {
     recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
     myAdapter = ProductsAdapter(productList, this)
     recyclerView.adapter = myAdapter
@@ -283,11 +291,12 @@ fun MainFragment.fetchRV(productList: List<Product>) {
 fun MainFragment.getAllProductsFromApi() {
     swipeRefreshLayout.isRefreshing = true
     try {
-        val call = apiService.getApiService().getAllProducts("Bearer ${sessionManager.fetchToken()}")
-        call.enqueue(object : Callback<GetAllProductsResponse?> {
+        val call =
+            apiService.getApiService().getAllProducts("Bearer ${sessionManager.fetchToken()}")
+        call.enqueue(object : Callback<GetAllProducts> {
             override fun onResponse(
-                call: Call<GetAllProductsResponse?>,
-                response: Response<GetAllProductsResponse?>
+                call: Call<GetAllProducts>,
+                response: Response<GetAllProducts>
             ) {
                 swipeRefreshLayout.isRefreshing = false
                 if (response.isSuccessful) {
@@ -302,13 +311,15 @@ fun MainFragment.getAllProductsFromApi() {
                         Log.d("TAG", "onResponse: ${response.body()}")
                         Log.d("TAG", "onResponse: ${response.code()}")
                     } else {
-                        Toast.makeText(requireContext(), "Произошла ошибка", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), "Произошла ошибка", Toast.LENGTH_SHORT)
+                            .show()
                     }
                 } else {
                     Log.d("TAG", "onResponse if un success: ${response.raw()}")
                 }
             }
-            override fun onFailure(call: Call<GetAllProductsResponse?>, t: Throwable) {
+
+            override fun onFailure(call: Call<GetAllProducts>, t: Throwable) {
                 Log.d("TAG", "onFailure: ${t.message}")
                 swipeRefreshLayout.isRefreshing = false
             }
@@ -337,23 +348,37 @@ fun MainFragment.getAllCategoriesPrefs() {
     }
 }
 
-fun MainFragment.setFilterViewModel(){
+fun MainFragment.setFilterViewModel() {
     val filterDialogFragment = FilterDialogFragment()
     allProducts = retrieveProducts()
     val minPrice = allProducts.minBy { it.price.toDouble() }.price
     val maxPrice = allProducts.maxBy { it.price.toDouble() }.price
-    val minSize = returnNumber(allProducts.minBy { it.size }.size)
-    val maxSize = returnNumber(allProducts.maxBy { it.size }.size)
-    val minWeight = returnNumber(allProducts.minBy { it.weight }.weight)
-    val maxWeight = returnNumber(allProducts.maxBy { it.weight }.weight)
+    val minSize = allProducts.minByOrNull {
+        it.types.minByOrNull { type -> returnNumber(type.size.toString()).toInt() }?.size ?: 0
+    }?.types?.minByOrNull { returnNumber(it.size.toString()).toInt() }?.size ?: 0
+    val maxSize = allProducts.maxByOrNull {
+        it.types.maxByOrNull { type -> returnNumber(type.size.toString()).toInt() }?.size ?: 0
+    }?.types?.maxByOrNull { returnNumber(it.size.toString()).toInt() }?.size ?: 0
+    val minWeight = allProducts.minByOrNull {
+        it.types.minByOrNull { type -> returnNumber(type.weight.toString()).toInt() }?.weight ?: 0
+    }?.types?.minByOrNull { returnNumber(it.weight.toString()).toInt() }?.weight ?: 0
+    val maxWeight = allProducts.maxByOrNull {
+        it.types.maxByOrNull { type -> returnNumber(type.weight.toString()).toInt() }?.weight ?: 0
+    }?.types?.maxByOrNull { returnNumber(it.weight.toString()).toInt() }?.weight ?: 0
     val selectedCategoryId = preferences.getString("selectedCategory", "all")
     selectCategory = allCategories.find { it.id == selectedCategoryId }
     val updatedFilterModel = FilterModel(
-        minPrice, maxPrice, minSize, maxSize, minWeight, maxWeight, selectCategory ?: Category("all", "Все")
+        minPrice,
+        maxPrice,
+        minSize,
+        maxSize,
+        minWeight,
+        maxWeight,
+        selectCategory ?: Category("all", "Все")
     )
     filterViewModel.defaultFilterModel = updatedFilterModel
 
-    if (filterModel == null){
+    if (filterModel == null) {
         filterViewModel.filterModel = updatedFilterModel
     } else {
         filterViewModel.filterModel = filterModel
@@ -362,39 +387,68 @@ fun MainFragment.setFilterViewModel(){
     filterDialogFragment.show(parentFragmentManager, "filterDialog")
 }
 
-fun MainFragment.setFilterViewModelData(){
+fun MainFragment.setFilterViewModelData() {
     allProducts = retrieveProducts()
     val minPrice = allProducts.minBy { it.price.toDouble() }.price
     val maxPrice = allProducts.maxBy { it.price.toDouble() }.price
-    val minSize = returnNumber(allProducts.minBy { it.size }.size)
-    val maxSize = returnNumber(allProducts.maxBy { it.size }.size)
-    val minWeight = returnNumber(allProducts.minBy { it.weight }.weight)
-    val maxWeight = returnNumber(allProducts.maxBy { it.weight }.weight)
+    val minSize = allProducts.minByOrNull {
+        it.types.minByOrNull { type -> returnNumber(type.size.toString()).toInt() }?.size ?: 0
+    }?.types?.minByOrNull { returnNumber(it.size.toString()).toInt() }?.size ?: 0
+    val maxSize = allProducts.maxByOrNull {
+        it.types.maxByOrNull { type -> returnNumber(type.size.toString()).toInt() }?.size ?: 0
+    }?.types?.maxByOrNull { returnNumber(it.size.toString()).toInt() }?.size ?: 0
+    val minWeight = allProducts.minByOrNull {
+        it.types.minByOrNull { type -> returnNumber(type.weight.toString()).toInt() }?.weight ?: 0
+    }?.types?.minByOrNull { returnNumber(it.weight.toString()).toInt() }?.weight ?: 0
+    val maxWeight = allProducts.maxByOrNull {
+        it.types.maxByOrNull { type -> returnNumber(type.weight.toString()).toInt() }?.weight ?: 0
+    }?.types?.maxByOrNull { returnNumber(it.weight.toString()).toInt() }?.weight ?: 0
     val selectedCategoryId = preferences.getString("selectedCategory", "all")
     selectCategory = allCategories.find { it.id == selectedCategoryId }
     val updatedFilterModel = FilterModel(
-        minPrice, maxPrice, minSize, maxSize, minWeight, maxWeight, selectCategory ?: Category("all", "Все")
+        minPrice,
+        maxPrice,
+        minSize,
+        maxSize,
+        minWeight,
+        maxWeight,
+        selectCategory ?: Category("all", "Все")
     )
     filterViewModel.defaultFilterModel = updatedFilterModel
-    if (filterModel == null){
+    if (filterModel == null) {
         filterViewModel.filterModel = updatedFilterModel
     } else {
         filterViewModel.filterModel = filterModel
     }
 }
 
-fun MainFragment.setDefaultFilterViewModelData(){
+fun MainFragment.setDefaultFilterViewModelData() {
     allProducts = retrieveProducts()
     val minPrice = allProducts.minBy { it.price.toDouble() }.price
     val maxPrice = allProducts.maxBy { it.price.toDouble() }.price
-    val minSize = returnNumber(allProducts.minBy { it.size }.size)
-    val maxSize = returnNumber(allProducts.maxBy { it.size }.size)
-    val minWeight = returnNumber(allProducts.minBy { it.weight }.weight)
-    val maxWeight = returnNumber(allProducts.maxBy { it.weight }.weight)
+
+    val minSize = allProducts.minByOrNull {
+        it.types.minByOrNull { type -> returnNumber(type.size.toString()).toInt() }?.size ?: 0
+    }?.types?.minByOrNull { returnNumber(it.size.toString()).toInt() }?.size ?: 0
+    val maxSize = allProducts.maxByOrNull {
+        it.types.maxByOrNull { type -> returnNumber(type.size.toString()).toInt() }?.size ?: 0
+    }?.types?.maxByOrNull { returnNumber(it.size.toString()).toInt() }?.size ?: 0
+    val minWeight = allProducts.minByOrNull {
+        it.types.minByOrNull { type -> returnNumber(type.weight.toString()).toInt() }?.weight ?: 0
+    }?.types?.minByOrNull { returnNumber(it.weight.toString()).toInt() }?.weight ?: 0
+    val maxWeight = allProducts.maxByOrNull {
+        it.types.maxByOrNull { type -> returnNumber(type.weight.toString()).toInt() }?.weight ?: 0
+    }?.types?.maxByOrNull { returnNumber(it.weight.toString()).toInt() }?.weight ?: 0
     val selectedCategoryId = preferences.getString("selectedCategory", "all")
     selectCategory = allCategories.find { it.id == selectedCategoryId }
     val updatedFilterModel = FilterModel(
-        minPrice, maxPrice, minSize, maxSize, minWeight, maxWeight, selectCategory ?: Category("all", "Все")
+        minPrice,
+        maxPrice,
+        minSize,
+        maxSize,
+        minWeight,
+        maxWeight,
+        selectCategory ?: Category("all", "Все")
     )
     filterViewModel.defaultFilterModel = updatedFilterModel
     filterViewModel.filterModel = updatedFilterModel
@@ -418,12 +472,18 @@ fun MainFragment.getAllCategoriesFromApi() {
                         allCategories = categoryList
                         allCategories = mutableListOf(firstCategory).plus(allCategories)
                     } else {
-                        Toast.makeText(requireContext(), "Категории не найдены", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), "Категории не найдены", Toast.LENGTH_SHORT)
+                            .show()
                     }
                 } else {
-                    Toast.makeText(requireContext(), "Ошибка, повторите попытку", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Ошибка, повторите попытку",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
+
             override fun onFailure(call: Call<GetAllCategoriesResponse?>, t: Throwable) {
                 Log.d("TAG", "onFailure: ${t.message}")
                 swipeRefreshLayout.isRefreshing = false

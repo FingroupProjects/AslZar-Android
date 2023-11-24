@@ -9,14 +9,15 @@ import com.bumptech.glide.Glide
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.databinding.ListItemBinding
 import com.fin_group.aslzar.response.Product
+import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.util.OnProductClickListener
 
 class SetInProductAdapter(
-    private var productList: List<Product>,
+    private var productList: List<ResultX>,
     private val listener: OnProductClickListener
 ) : RecyclerView.Adapter<SetInProductAdapter.ViewHolder>() {
 
-    var selectedItemPosition = RecyclerView.NO_POSITION
+    private var selectedItemPosition = RecyclerView.NO_POSITION
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
@@ -34,12 +35,12 @@ class SetInProductAdapter(
         }
     }
 
-    fun getProductByPosition(position: Int): Product {
+    fun getProductByPosition(position: Int): ResultX {
         return productList[position]
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateList(newList: List<Product>) {
+    fun updateList(newList: List<ResultX>) {
         productList = newList
         notifyDataSetChanged()
     }
@@ -51,7 +52,7 @@ class SetInProductAdapter(
     }
 
     inner class ViewHolder(binding: ListItemBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bindSetProductItems(imageDataModel: Product, isSelected: Boolean) {
+        fun bindSetProductItems(imageDataModel: ResultX, isSelected: Boolean) {
             val imageView = itemView.findViewById<ImageView>(R.id.image)
 //            val textView = itemView.findViewById<TextView>(R.id.tvName)
 //            textView.text = imageDataModel.name
