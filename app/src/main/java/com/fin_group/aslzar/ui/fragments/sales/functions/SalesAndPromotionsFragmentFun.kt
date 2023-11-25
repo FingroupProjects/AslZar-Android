@@ -9,25 +9,15 @@ import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import com.fin_group.aslzar.R
-import com.fin_group.aslzar.adapter.ProductsAdapter
-import com.fin_group.aslzar.adapter.SalesProductsAdapter
 import com.fin_group.aslzar.adapter.SalesProductsV2Adapter
 import com.fin_group.aslzar.cart.Cart
-import com.fin_group.aslzar.databinding.FragmentMainBinding
 import com.fin_group.aslzar.databinding.FragmentSalesAndPromotionsBinding
-import com.fin_group.aslzar.response.Category
-import com.fin_group.aslzar.response.Count
-import com.fin_group.aslzar.response.GetAllCategoriesResponse
-import com.fin_group.aslzar.response.GetAllProductsResponse
-import com.fin_group.aslzar.response.InStock
-import com.fin_group.aslzar.response.Product
-import com.fin_group.aslzar.response.ProductSale
-import com.fin_group.aslzar.response.ResultX
+import com.fin_group.aslzar.response.CountV2
+import com.fin_group.aslzar.response.ResultXV2
 import com.fin_group.aslzar.response.SaleProductsResponse
 import com.fin_group.aslzar.ui.dialogs.CheckCategoryFragmentDialog
 import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.WarningNoHaveProductFragmentDialog
-import com.fin_group.aslzar.ui.fragments.main.MainFragment
 import com.fin_group.aslzar.ui.fragments.sales.SalesAndPromotionsFragment
 import com.fin_group.aslzar.util.CategoryClickListener
 import com.google.gson.Gson
@@ -43,7 +33,7 @@ fun SalesAndPromotionsFragment.callCategoryDialog(listener: CategoryClickListene
     categoryDialog.show(activity?.supportFragmentManager!!, "category check dialog")
 }
 
-fun SalesAndPromotionsFragment.callInStockDialog(name: String, counts: List<Count>) {
+fun SalesAndPromotionsFragment.callInStockDialog(name: String, counts: List<CountV2>) {
     val fragmentManager = requireFragmentManager()
     val tag = "Product in stock Dialog"
     val existingFragment = fragmentManager.findFragmentByTag(tag)
@@ -97,7 +87,7 @@ fun SalesAndPromotionsFragment.searchViewFun() {
     }
 }
 
-fun SalesAndPromotionsFragment.addProductToCart(product: ResultX) {
+fun SalesAndPromotionsFragment.addProductToCart(product: ResultXV2) {
     sharedViewModel.onProductAddedToCart(product, requireContext())
     updateBadge()
 }
@@ -149,8 +139,8 @@ fun SalesAndPromotionsFragment.getAllProductFromPrefs() {
     try {
         val products = preferences.getString("productListSales", null)
         if (products != null) {
-            val productsListType = object : TypeToken<List<ResultX>>() {}.type
-            val productList = Gson().fromJson<List<ResultX>>(products, productsListType)
+            val productsListType = object : TypeToken<List<ResultXV2>>() {}.type
+            val productList = Gson().fromJson<List<ResultXV2>>(products, productsListType)
             allProducts = productList
             fetchRV(allProducts)
         } else {
@@ -163,10 +153,10 @@ fun SalesAndPromotionsFragment.getAllProductFromPrefs() {
     }
 }
 
-fun SalesAndPromotionsFragment.retrieveFilteredProducts(): List<ResultX> {
+fun SalesAndPromotionsFragment.retrieveFilteredProducts(): List<ResultXV2> {
     val productJson = preferences.getString("filteredProductsSales", null)
     return if (productJson != null) {
-        val productListType = object : TypeToken<List<ResultX>>() {}.type
+        val productListType = object : TypeToken<List<ResultXV2>>() {}.type
         Gson().fromJson(productJson, productListType)
     } else {
         emptyList()
@@ -174,7 +164,7 @@ fun SalesAndPromotionsFragment.retrieveFilteredProducts(): List<ResultX> {
 }
 
 @SuppressLint("NotifyDataSetChanged")
-fun SalesAndPromotionsFragment.fetchRV(productList: List<ResultX>) {
+fun SalesAndPromotionsFragment.fetchRV(productList: List<ResultXV2>) {
     recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
     myAdapter = SalesProductsV2Adapter(productList, this)
     recyclerView.adapter = myAdapter

@@ -8,12 +8,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.databinding.ListItemBinding
-import com.fin_group.aslzar.response.Product
-import com.fin_group.aslzar.response.ResultX
+import com.fin_group.aslzar.response.ResultXV2
 import com.fin_group.aslzar.util.OnProductClickListener
 
 class SetInProductAdapter(
-    private var productList: List<ResultX>,
+    private var productList: List<ResultXV2>,
     private val listener: OnProductClickListener
 ) : RecyclerView.Adapter<SetInProductAdapter.ViewHolder>() {
 
@@ -35,12 +34,12 @@ class SetInProductAdapter(
         }
     }
 
-    fun getProductByPosition(position: Int): ResultX {
+    fun getProductByPosition(position: Int): ResultXV2 {
         return productList[position]
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateList(newList: List<ResultX>) {
+    fun updateList(newList: List<ResultXV2>) {
         productList = newList
         notifyDataSetChanged()
     }
@@ -52,7 +51,7 @@ class SetInProductAdapter(
     }
 
     inner class ViewHolder(binding: ListItemBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bindSetProductItems(imageDataModel: ResultX, isSelected: Boolean) {
+        fun bindSetProductItems(imageDataModel: ResultXV2, isSelected: Boolean) {
             val imageView = itemView.findViewById<ImageView>(R.id.image)
 //            val textView = itemView.findViewById<TextView>(R.id.tvName)
 //            textView.text = imageDataModel.name

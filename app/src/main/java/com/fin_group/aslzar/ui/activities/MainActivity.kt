@@ -18,7 +18,7 @@ import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.ActivityMainBinding
 import com.fin_group.aslzar.response.GetAllCategoriesResponse
 import com.fin_group.aslzar.response.GetAllClientsResponse
-import com.fin_group.aslzar.response.GetAllProducts
+import com.fin_group.aslzar.response.GetAllProductV2
 import com.fin_group.aslzar.response.PercentInstallment
 import com.fin_group.aslzar.util.BadgeManager
 import com.fin_group.aslzar.util.SessionManager
@@ -143,10 +143,10 @@ class MainActivity : AppCompatActivity() {
         try {
             val call =
                 apiClient.getApiService().getAllProducts("Bearer ${sessionManager.fetchToken()}")
-            call.enqueue(object : Callback<GetAllProducts?> {
+            call.enqueue(object : Callback<GetAllProductV2?> {
                 override fun onResponse(
-                    call: Call<GetAllProducts?>,
-                    response: Response<GetAllProducts?>
+                    call: Call<GetAllProductV2?>,
+                    response: Response<GetAllProductV2?>
                 ) {
                     if (response.isSuccessful) {
                         val productList = response.body()
@@ -157,7 +157,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
 
-                override fun onFailure(call: Call<GetAllProducts?>, t: Throwable) {
+                override fun onFailure(call: Call<GetAllProductV2?>, t: Throwable) {
                     Log.d("TAG", "onViewCreated fetchProductsFromApi: ${t.message}")
                 }
             })

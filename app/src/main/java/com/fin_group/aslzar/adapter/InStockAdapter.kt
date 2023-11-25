@@ -4,13 +4,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.fin_group.aslzar.databinding.RowItemHaveingInStoreBinding
-import com.fin_group.aslzar.models.InStockProduct
-import com.fin_group.aslzar.response.Count
-import com.fin_group.aslzar.response.InStock
+import com.fin_group.aslzar.response.CountV2
 
-class InStockAdapter(private val inStockList: List<Count>): RecyclerView.Adapter<InStockAdapter.ViewHolder>() {
+
+class InStockAdapter(private val inStockList: List<CountV2>): RecyclerView.Adapter<InStockAdapter.ViewHolder>() {
     inner class ViewHolder(val binding: RowItemHaveingInStoreBinding): RecyclerView.ViewHolder(binding.root) {
-        fun bind(inStock: Count){
+        fun bind(inStock: CountV2){
             binding.apply {
                 store.text = inStock.filial
                 showCase.text = inStock.sclad

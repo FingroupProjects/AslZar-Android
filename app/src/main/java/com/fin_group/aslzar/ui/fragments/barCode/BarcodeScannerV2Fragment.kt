@@ -1,6 +1,5 @@
 package com.fin_group.aslzar.ui.fragments.barCode
 
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
@@ -20,9 +19,7 @@ import com.budiyev.android.codescanner.CodeScanner
 import com.budiyev.android.codescanner.DecodeCallback
 import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.databinding.FragmentBarcodeScannerV2Binding
-import com.fin_group.aslzar.response.Product
-import com.fin_group.aslzar.response.ResultX
-import com.fin_group.aslzar.ui.activities.LoginActivity
+import com.fin_group.aslzar.response.ResultXV2
 import com.fin_group.aslzar.util.NoInternetDialogFragment
 import com.fin_group.aslzar.util.SessionManager
 import com.fin_group.aslzar.util.hideBottomNav
@@ -94,10 +91,10 @@ class BarcodeScannerV2Fragment : Fragment() {
         try {
             val call = apiClient.getApiService()
                 .getProductByID("Bearer ${sessionManager.fetchToken()}", productId)
-            call.enqueue(object : Callback<ResultX?> {
+            call.enqueue(object : Callback<ResultXV2?> {
                 override fun onResponse(
-                    call: Call<ResultX?>,
-                    response: Response<ResultX?>
+                    call: Call<ResultXV2?>,
+                    response: Response<ResultXV2?>
                 ) {
                     if (response.isSuccessful) {
                         val productResponse = response.body()
@@ -114,7 +111,7 @@ class BarcodeScannerV2Fragment : Fragment() {
                         showBottomNav()
                     }
                 }
-                override fun onFailure(call: Call<ResultX?>, t: Throwable) {
+                override fun onFailure(call: Call<ResultXV2?>, t: Throwable) {
                     Navigation.findNavController(binding.root).popBackStack()
                     Toast.makeText(requireContext(),"Загрузка прошла не успешно, пожалуйста повторите попытку",Toast.LENGTH_SHORT).show()
                     Log.d("TAG", "onFailure: ${t.message}")
@@ -127,7 +124,7 @@ class BarcodeScannerV2Fragment : Fragment() {
         }
     }
 
-    private fun navigateToDataProductFragment(productId: String, product: ResultX) {
+    private fun navigateToDataProductFragment(productId: String, product: ResultXV2) {
         hideBottomNav()
         val action = BarcodeScannerV2FragmentDirections.actionBarCodeScannerFragmentToDataProductFragment(
             productId, product, args.parentFragment)

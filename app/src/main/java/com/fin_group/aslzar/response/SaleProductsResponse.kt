@@ -6,7 +6,7 @@ import java.io.Serializable
 
 @Parcelize
 data class SaleProductsResponse(
-    val result: List<ResultX>
+    val result: List<ResultXV2>
 ): Parcelable, Serializable
 
 @Parcelize

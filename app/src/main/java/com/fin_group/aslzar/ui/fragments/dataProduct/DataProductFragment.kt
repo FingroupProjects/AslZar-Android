@@ -27,14 +27,12 @@ import com.fin_group.aslzar.adapter.TableInstallmentAdapter
 import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.databinding.FragmentDataProductBinding
 import com.fin_group.aslzar.response.PercentInstallment
-import com.fin_group.aslzar.response.Product
-import com.fin_group.aslzar.response.ResultX
+import com.fin_group.aslzar.response.ResultXV2
 import com.fin_group.aslzar.response.SimilarProduct
-import com.fin_group.aslzar.response.Type
+import com.fin_group.aslzar.response.TypeV2
 import com.fin_group.aslzar.ui.dialogs.AlikeProductBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.callInStockDialog
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.callSetInProduct
-import com.fin_group.aslzar.ui.fragments.dataProduct.functions.chipGroup
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.fetchCoefficientPlanFromApi
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.fetchCoefficientPlanFromPrefs
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.getProductByID
@@ -53,7 +51,6 @@ import com.fin_group.aslzar.util.showBottomNav
 import com.fin_group.aslzar.viewmodel.SharedViewModel
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.badge.BadgeDrawable
-import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 
 
@@ -62,47 +59,30 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
 
     private var _binding: FragmentDataProductBinding? = null
     val binding get() = _binding!!
-
     val args by navArgs<DataProductFragmentArgs>()
     val sharedViewModel: SharedViewModel by activityViewModels()
-
     lateinit var badgeManager: BadgeManager
-
     lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    lateinit var product: ResultX
+    lateinit var product: ResultXV2
     lateinit var preferences: SharedPreferences
-
     lateinit var recyclerViewSomeImages: RecyclerView
     lateinit var recyclerViewLikeProducts: RecyclerView
-
     private var currentSelectedPosition = RecyclerView.NO_POSITION
-    lateinit var toolbar: MaterialToolbar
-
+    private lateinit var toolbar: MaterialToolbar
     var imageList: List<String> = emptyList()
     var alikeProductsList: List<SimilarProduct> = emptyList()
     lateinit var productSomeImagesAdapter: ProductSomeImagesAdapter
     lateinit var productAlikeAdapter: AlikeProductsAdapter
-
     private lateinit var weightChipGroup: ChipGroup
-    var weightSelected: String? = ""
-
-    lateinit var sizeChipGroup: ChipGroup
-    var sizeSelected: String? = ""
-
+    private lateinit var sizeChipGroup: ChipGroup
     var getSimilarProduct: List<SimilarProduct> = emptyList()
     lateinit var sessionManager: SessionManager
-
-
     lateinit var apiService: ApiClient
-
     var isFilterOn: Boolean = false
     var filterBadge: BadgeDrawable? = null
-
     lateinit var percentInstallment: PercentInstallment
-
     lateinit var monthLinearLayout: LinearLayoutCompat
     lateinit var percentLinearLayout: LinearLayoutCompat
-
     lateinit var adapterPaymentPercent: TableInstallmentAdapter
     @SuppressLint("UnsafeOptInUsageError")
     override fun onCreateView(
@@ -173,10 +153,8 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
             getProductByID()
             fetchCoefficientPlanFromApi()
         }
-
-        chipGroup(binding)
-
     }
+    @Deprecated("Deprecated in Java")
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         if (product.is_set && product.types.isNotEmpty() && product.types[0].counts.isNotEmpty()) {
             inflater.inflate(R.menu.product_data_menu, menu)
@@ -191,6 +169,7 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
     }
 
 
+    @Deprecated("Deprecated in Java")
     @SuppressLint("UnsafeOptInUsageError")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.product_set_item) {
@@ -202,7 +181,7 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         }
         if (item.itemId == R.id.product_in_stock_item) {
             if (product.types.isNotEmpty()) {
-                val firstType: Type = product.types[0]
+                val firstType: TypeV2 = product.types[0]
                 if (firstType.counts.isNotEmpty()) {
                     callInStockDialog(product.full_name, firstType.counts)
                 } else {
