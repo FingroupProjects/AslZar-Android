@@ -27,7 +27,7 @@ class SalesProductsAdapter(
         val title = binding.productTitle
         val image = binding.productImage
         val code = binding.productKode
-        val btnCheckingInStock = binding.ibHaveInStore
+//        val btnCheckingInStock = binding.ibHaveInStore
         val btnAddToCart = binding.ibAddToBasket
         private val saleTv = binding.productSale
 

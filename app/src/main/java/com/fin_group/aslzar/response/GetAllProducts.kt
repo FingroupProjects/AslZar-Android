@@ -26,13 +26,6 @@ data class ResultX(
     val img: List<String>
 ): Parcelable, Serializable
 @Parcelize
-data class Count(
-    val count: Int,
-    val filial: String,
-    val price: Int,
-    val sclad: String
-): Parcelable, Serializable
-@Parcelize
 data class Type(
     val country_of_origin: String,
     val counts: List<Count>,
@@ -41,4 +34,11 @@ data class Type(
     val provider: String,
     val size: Int,
     val weight: Int
+): Parcelable, Serializable
+@Parcelize
+data class Count(
+    val count: Int,
+    val filial: String,
+    val price: Int,
+    val sclad: String
 ): Parcelable, Serializable

@@ -25,6 +25,7 @@ import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.fetchClie
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.fetchClientsFromApi
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.fetchClientsFromPrefs
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.fetchCoefficientPlanFromPrefs
+import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.getAllClientsFromApi
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.printPercent
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.resetCalculator
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.retrieveClientList
@@ -101,8 +102,7 @@ class CalculatorFragmentV2 : Fragment(), CalculatorResetListener {
         Cart.registerObserver(cartObserver)
 
         binding.btnRefresh.setOnClickListener {
-            cartObserver(binding)
-            fetchClientsAndTypePay(binding)
+            getAllClientsFromApi()
         }
 
 

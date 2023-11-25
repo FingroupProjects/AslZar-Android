@@ -2,21 +2,15 @@ package com.fin_group.aslzar.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.databinding.RowItemProductBinding
-import com.fin_group.aslzar.response.GetAllProducts
-import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.response.ResultX
-import com.fin_group.aslzar.ui.fragments.main.MainFragmentDirections
-import com.fin_group.aslzar.util.CustomPopupView
 import com.fin_group.aslzar.util.ProductOnClickListener
 import com.fin_group.aslzar.util.formatNumber
 
@@ -48,8 +42,7 @@ class ProductsAdapter(
         val title = binding.productTitle
         val image = binding.productImage
         val code = binding.productKode
-        private val btnCheckingInStock = binding.ibHaveInStore
-        private val btnAddToCart = binding.ibAddToBasket
+        private val btnAddProduct = binding.ibAddToBasket
         private val saleTv = binding.productSale
 
         @SuppressLint("UseCompatLoadingForDrawables", "SetTextI18n")
@@ -75,18 +68,16 @@ class ProductsAdapter(
             }
 
             if (product.types.isNotEmpty() && product.types[0].counts.isNotEmpty()) {
-                btnCheckingInStock.setImageResource(R.drawable.ic_clear_white)
-                btnCheckingInStock.background = context.resources.getDrawable(R.drawable.item_product_bottom_btn_2)
+                btnAddProduct.setImageResource(R.drawable.ic_clear_white)
+                btnAddProduct.background = context.resources.getDrawable(R.drawable.item_product_bottom_btn_2)
 
             } else {
-                btnCheckingInStock.setImageResource(R.drawable.ic_check)
-                btnCheckingInStock.background = context.resources.getDrawable(R.drawable.ripple_effect_bottom_btn)
+                btnAddProduct.setImageResource(R.drawable.ic_add_2)
+                btnAddProduct.background = context.resources.getDrawable(R.drawable.ripple_effect_top_btn)
             }
-            btnAddToCart.setOnClickListener {
+
+            btnAddProduct.setOnClickListener {
                 listener.addToCart(product)
-            }
-            btnCheckingInStock.setOnClickListener {
-                listener.inStock(product)
             }
         }
     }

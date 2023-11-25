@@ -29,6 +29,4 @@ object Constants {
     const val FORGOT_PASSWORD_WITH_MAIL = "FgtPass/{mail}"
     const val CHANGE_PASSWORD = "ChangePassword/{password}"
     const val FORGOT_PASSWORD = "ForgetPassword"
-
-    const val Get = "api/{id}/{from}/{to}"
 }

@@ -65,6 +65,40 @@ fun CalculatorFragmentV2.cartObserver(binding: FragmentCalculatorV2Binding) {
     }
 }
 
+fun CalculatorFragmentV2.updateClientsData(clients: List<Client>){
+    arrayAdapterTypeClient =
+        ArrayAdapter(requireContext(), R.layout.spinner_item, clients.map { it.client_name })
+}
+
+fun CalculatorFragmentV2.getAllClientsFromApi(){
+    try {
+        val call =
+            api.getApiService().getAllClients("Bearer ${sessionManager.fetchToken()}")
+        call.enqueue(object : Callback<GetAllClientsResponse?> {
+            override fun onResponse(
+                call: Call<GetAllClientsResponse?>,
+                response: Response<GetAllClientsResponse?>
+            ) {
+                if (response.isSuccessful) {
+                    val clientList = response.body()
+                    if (clientList != null) {
+                        val clientListJson = Gson().toJson(clientList.result)
+                        prefs.edit().putString("clientList", clientListJson).apply()
+                        updateClientsData(clientList.result)
+                        Log.d("TAG", "onResponse: ${clientList.result}")
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<GetAllClientsResponse?>, t: Throwable) {
+                Log.d("TAG", "onViewCreated fetchClientsFromApi: ${t.message}")
+            }
+        })
+    } catch (e: Exception) {
+        Log.d("TAG", "fetchClientsFromApi: ${e.message}")
+    }
+}
+
 @SuppressLint("SetTextI18n")
 fun CalculatorFragmentV2.fetchClientsAndTypePay(binding: FragmentCalculatorV2Binding) {
 
@@ -75,13 +109,13 @@ fun CalculatorFragmentV2.fetchClientsAndTypePay(binding: FragmentCalculatorV2Bin
         clientType.setAdapter(arrayAdapterTypeClient)
         clientType.setOnItemClickListener { parent, view, position, id ->
             selectedClient = clientList[position]
-            if (selectedClient!!.bonus.toDouble() > 0) {
-                binding.cbBonus.visibility = View.VISIBLE
-            } else {
-                binding.cbBonus.visibility = View.GONE
-                binding.cbBonus.isChecked = false
-                binding.bonus.setText("")
-            }
+//            if (selectedClient!!.bonus.toDouble() > 0) {
+//                binding.cbBonus.visibility = View.VISIBLE
+//            } else {
+//                binding.cbBonus.visibility = View.GONE
+//                binding.cbBonus.isChecked = false
+//                binding.bonus.setText("")
+//            }
 
             val cons = "розничный"
             val containsSubstring = selectedClient?.client_name.toString().contains(cons, true)

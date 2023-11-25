@@ -1,14 +1,13 @@
 package com.fin_group.aslzar.viewmodel
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.models.ProductInCart
-import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.response.ResultX
+import com.fin_group.aslzar.response.Type
 
 class SharedViewModel: ViewModel() {
 
@@ -26,7 +25,28 @@ class SharedViewModel: ViewModel() {
             product.name,
             1,
             product.sale,
-            product.price
+            product.price,
+            "",
+            0,
+            0
+        )
+
+        Cart.addProduct(cartProduct, context)
+        _productAdded.value = cartProduct
+    }
+
+    fun onProductAddedToCartV2(product: ResultX, context: Context) {
+        val cartProduct = ProductInCart (
+            product.id,
+            product.full_name,
+            product.img,
+            product.name,
+            1,
+            product.sale,
+            product.price,
+            "",
+            0,
+            0
         )
 
         Cart.addProduct(cartProduct, context)

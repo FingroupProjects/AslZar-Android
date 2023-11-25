@@ -43,32 +43,21 @@
             android:lines="2"
             android:text="Серьги золотые с бриллиантами"
             app:layout_constraintBottom_toTopOf="@+id/product_kode"
-            app:layout_constraintEnd_toStartOf="@+id/ib_haveInStore"
+            app:layout_constraintEnd_toStartOf="@id/ib_addToBasket"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/product_image" />
 
         <ImageButton
-            android:id="@+id/ib_haveInStore"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/ripple_effect_bottom_btn"
-            android:contentDescription="@string/checking_product"
-            android:padding="5dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:srcCompat="@drawable/ic_check"
-            tools:ignore="TouchTargetSizeCheck" />
-
-        <ImageButton
             android:id="@+id/ib_addToBasket"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="1dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="6dp"
             android:background="@drawable/ripple_effect_top_btn"
             android:contentDescription="@string/add_to_cart"
             android:padding="5dp"
-            app:layout_constraintBottom_toTopOf="@+id/ib_haveInStore"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/product_image"
             app:srcCompat="@drawable/ic_add_2"
             tools:ignore="TouchTargetSizeCheck" />
 
@@ -82,7 +71,7 @@
             android:layout_marginBottom="8dp"
             android:text="(2.7.2.1.096.1_7,9_0)"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/ib_haveInStore"
+            app:layout_constraintEnd_toStartOf="@id/ib_addToBasket"
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView

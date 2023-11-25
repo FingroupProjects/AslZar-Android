@@ -28,8 +28,8 @@ class SalesProductsV2Adapter(
         val title = binding.productTitle
         val image = binding.productImage
         val code = binding.productKode
-        private val btnCheckingInStock = binding.ibHaveInStore
-        private val btnAddToCart = binding.ibAddToBasket
+//        private val btnCheckingInStock = binding.ibHaveInStore
+        private val btnAddProduct = binding.ibAddToBasket
         private val saleTv = binding.productSale
 
         @SuppressLint("UseCompatLoadingForDrawables", "SetTextI18n")
@@ -54,24 +54,33 @@ class SalesProductsV2Adapter(
                 saleTv.visibility = View.VISIBLE
             }
 
-            if (product.types.isEmpty()) {
-                val firstType = product.types.firstOrNull()
-                if (firstType != null && firstType.counts.isEmpty()) {
-                    btnCheckingInStock.setImageResource(R.drawable.ic_clear_white)
-                    btnCheckingInStock.background =
-                        context.resources.getDrawable(R.drawable.item_product_bottom_btn_2)
-                }
+//            if (product.types.isEmpty()) {
+//                val firstType = product.types.firstOrNull()
+//                if (firstType != null && firstType.counts.isEmpty()) {
+//                    btnCheckingInStock.setImageResource(R.drawable.ic_clear_white)
+//                    btnCheckingInStock.background =
+//                        context.resources.getDrawable(R.drawable.item_product_bottom_btn_2)
+//                }
+//            } else {
+//                btnCheckingInStock.setImageResource(R.drawable.ic_check)
+//                btnCheckingInStock.background =
+//                    context.resources.getDrawable(R.drawable.ripple_effect_bottom_btn)
+//            }
+
+            if (product.types.isNotEmpty() && product.types[0].counts.isNotEmpty()) {
+                btnAddProduct.setImageResource(R.drawable.ic_clear_white)
+                btnAddProduct.background = context.resources.getDrawable(R.drawable.item_product_bottom_btn_2)
+
             } else {
-                btnCheckingInStock.setImageResource(R.drawable.ic_check)
-                btnCheckingInStock.background =
-                    context.resources.getDrawable(R.drawable.ripple_effect_bottom_btn)
+                btnAddProduct.setImageResource(R.drawable.ic_add_2)
+                btnAddProduct.background = context.resources.getDrawable(R.drawable.ripple_effect_top_btn)
             }
-            btnAddToCart.setOnClickListener {
+            btnAddProduct.setOnClickListener {
                 listener.addToCart(product)
             }
-            btnCheckingInStock.setOnClickListener {
-                listener.inStock(product)
-            }
+//            btnCheckingInStock.setOnClickListener {
+//                listener.inStock(product)
+//            }
         }
     }
 

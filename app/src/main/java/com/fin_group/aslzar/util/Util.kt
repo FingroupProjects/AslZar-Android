@@ -46,6 +46,10 @@ interface FunCallback {
     fun onError(errorMessage: String)
 }
 
+interface AddingProduct{
+    fun addProduct()
+}
+
 interface OnFriendAddedListener {
     fun onFriendAddedSuccessfully(success: Boolean)
 }

@@ -2,7 +2,6 @@ package com.fin_group.aslzar.cart
 
 import android.content.Context
 import android.util.Log
-import com.fin_group.aslzar.models.Installment
 import com.fin_group.aslzar.models.ProductInCart
 import com.fin_group.aslzar.util.CartObserver
 import com.google.gson.Gson
@@ -42,15 +41,15 @@ object Cart {
     }
 
     fun getTotalPriceWithoutSale(): Number {
-        return products.sumOf { it.price.toDouble() * it.count }
+        return products.sumOf { it.price.toDouble() * it.countInCart }
     }
 
     fun getTotalPriceWithSale(): Number {
-        return products.sumOf { it.count * (it.sale.toDouble() * it.price.toDouble()) / 100 }
+        return products.sumOf { it.countInCart * (it.sale.toDouble() * it.price.toDouble()) / 100 }
     }
 
     fun getTotalPrice(): Number {
-        return products.sumOf { (it.price.toDouble() * it.count) - (it.count * (it.sale.toDouble() * it.price.toDouble()) / 100) }
+        return products.sumOf { (it.price.toDouble() * it.countInCart) - (it.countInCart * (it.sale.toDouble() * it.price.toDouble()) / 100) }
     }
 
     fun getTotalCount(): Int {
@@ -71,11 +70,9 @@ object Cart {
 
             if (existingProduct == null) {
                 products.add(product)
-                //Toast.makeText(context, "Товар добавлен в корзину", Toast.LENGTH_SHORT).show()
                 saveCartToPrefs(context)
             } else {
                 plusProduct(product.id, context)
-                //Toast.makeText(context, "Товар увеличен на 1", Toast.LENGTH_SHORT).show()
                 saveCartToPrefs(context)
             }
             notifyObservers()
@@ -87,7 +84,7 @@ object Cart {
     fun plusProduct(productId: String, context: Context) {
         val product = getProductById(productId)
         if (product != null) {
-            updateProductCount(productId, product.count + 1, context)
+            updateProductCount(productId, product.countInCart + 1, context)
             saveCartToPrefs(context)
         }
     }
@@ -95,7 +92,7 @@ object Cart {
     fun minusProduct(productId: String, context: Context) {
         val product = getProductById(productId)
         if (product != null) {
-            updateProductCount(productId, product.count - 1, context)
+            updateProductCount(productId, product.countInCart - 1, context)
             saveCartToPrefs(context)
         }
     }
@@ -103,8 +100,8 @@ object Cart {
     fun updateProductCount(productId: String, newCount: Int, context: Context): Boolean {
         val productToUpdate = getProductById(productId)
         return if (productToUpdate != null) {
-            productToUpdate.count = newCount
-            if (productToUpdate.count + newCount <= 0) {
+            productToUpdate.countInCart = newCount
+            if (productToUpdate.countInCart + newCount <= 0) {
                 removeProduct(productId, context)
             }
             true

@@ -34,6 +34,7 @@ import com.fin_group.aslzar.response.Category
 import com.fin_group.aslzar.response.Count
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.response.ResultX
+import com.fin_group.aslzar.response.Type
 import com.fin_group.aslzar.ui.activities.MainActivity
 import com.fin_group.aslzar.ui.fragments.main.functions.addProductToCart
 import com.fin_group.aslzar.util.CategoryClickListener
@@ -291,7 +292,6 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener,
     }
 
     override fun getData(product: ResultX) {
-
         val product2 = ResultX(
             product.barcode,
             product.category_id,
@@ -308,7 +308,6 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener,
             product.stone_type,
             product.types,
             product.img
-
         )
 
         val action = MainFragmentDirections.actionMainFragmentToDataProductFragment(product2.id, product2, "Main")

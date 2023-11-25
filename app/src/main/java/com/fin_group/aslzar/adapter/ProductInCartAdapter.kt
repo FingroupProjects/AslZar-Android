@@ -2,19 +2,13 @@ package com.fin_group.aslzar.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.navigation.Navigation
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.databinding.RowItemProductInCartBinding
-import com.fin_group.aslzar.models.ImageDataModel2
 import com.fin_group.aslzar.models.ProductInCart
-import com.fin_group.aslzar.ui.fragments.main.MainFragmentDirections
 import com.fin_group.aslzar.util.EditProductInCart
 
 class ProductInCartAdapter(private var listProductInCart: List<ProductInCart>, private var listener: EditProductInCart)
@@ -65,7 +59,7 @@ class ProductInCartAdapter(private var listProductInCart: List<ProductInCart>, p
             }
             name.text = product.name
             code.text = product.code
-            count.text = product.count.toString()
+            count.text = product.countInCart.toString()
 
             btnPlus.setOnClickListener {
                 listener.plusProductInCart(product)

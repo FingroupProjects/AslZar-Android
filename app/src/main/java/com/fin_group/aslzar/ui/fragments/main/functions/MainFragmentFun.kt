@@ -119,7 +119,7 @@ fun MainFragment.filterFun() {
 }
 
 fun MainFragment.addProductToCart(product: ResultX) {
-    sharedViewModel.onProductAddedToCart(product, requireContext())
+    sharedViewModel.onProductAddedToCartV2(product, requireContext())
     updateBadge()
 }
 
