@@ -4,17 +4,19 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 import java.io.Serializable
 
-data class GetAllProducts(
-    val result: List<ResultX>
+data class GetAllProductV2(
+    val result: List<ResultXV2>
 )
 @Parcelize
-data class ResultX(
+
+data class ResultXV2(
     val barcode: String,
     val category_id: String,
     val color: String,
     val description: String,
     val full_name: String,
     val id: String,
+    val img: List<String>,
     val is_set: Boolean,
     val metal: String,
     val name: String,
@@ -22,23 +24,22 @@ data class ResultX(
     val proba: String,
     val sale: Int,
     val stone_type: String,
-    val types: List<Type>,
-    val img: List<String>
+    val types: List<TypeV2>
 ): Parcelable, Serializable
 @Parcelize
-data class Count(
-    val count: Int,
-    val filial: String,
-    val price: Int,
-    val sclad: String
-): Parcelable, Serializable
-@Parcelize
-data class Type(
+data class TypeV2(
     val country_of_origin: String,
-    val counts: List<Count>,
+    val counts: List<CountV2>,
     val id: String,
     val name: String,
     val provider: String,
     val size: Int,
     val weight: Int
+): Parcelable, Serializable
+@Parcelize
+data class CountV2(
+    val count: Int,
+    val filial: String,
+    val price: Int,
+    val sclad: String
 ): Parcelable, Serializable

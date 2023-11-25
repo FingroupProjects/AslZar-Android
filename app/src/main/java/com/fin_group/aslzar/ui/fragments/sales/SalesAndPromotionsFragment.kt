@@ -11,7 +11,6 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -21,19 +20,13 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.fin_group.aslzar.R
-import com.fin_group.aslzar.adapter.ProductsAdapter
-import com.fin_group.aslzar.adapter.SalesProductsAdapter
 import com.fin_group.aslzar.adapter.SalesProductsV2Adapter
 import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentSalesAndPromotionsBinding
 import com.fin_group.aslzar.response.Category
-import com.fin_group.aslzar.response.Product
-import com.fin_group.aslzar.response.ProductSale
-import com.fin_group.aslzar.response.ResultX
-import com.fin_group.aslzar.response.SaleProductsResponse
+import com.fin_group.aslzar.response.ResultXV2
 import com.fin_group.aslzar.ui.activities.MainActivity
-import com.fin_group.aslzar.ui.fragments.main.MainFragmentDirections
 import com.fin_group.aslzar.ui.fragments.sales.functions.addProductToCart
 import com.fin_group.aslzar.ui.fragments.sales.functions.callInStockDialog
 import com.fin_group.aslzar.ui.fragments.sales.functions.callOutStock
@@ -45,15 +38,11 @@ import com.fin_group.aslzar.ui.fragments.sales.functions.savingAndFetchSearch
 import com.fin_group.aslzar.ui.fragments.sales.functions.searchViewFun
 import com.fin_group.aslzar.ui.fragments.sales.functions.updateBadge
 import com.fin_group.aslzar.util.BadgeManager
-import com.fin_group.aslzar.util.CategoryClickListener
 import com.fin_group.aslzar.util.NoInternetDialogFragment
 import com.fin_group.aslzar.util.ProductOnClickListener
 import com.fin_group.aslzar.util.SessionManager
 import com.fin_group.aslzar.viewmodel.SharedViewModel
 import com.google.android.material.appbar.MaterialToolbar
-import com.google.android.material.badge.BadgeDrawable
-import com.google.android.material.badge.BadgeUtils
-import com.google.android.material.badge.ExperimentalBadgeUtils
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 @Suppress("DEPRECATION")
@@ -72,8 +61,8 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener {
     var searchText: String = ""
     lateinit var searchView: SearchView
 
-    var allProducts: List<ResultX> = emptyList()
-    var filteredProducts: List<ResultX> = emptyList()
+    var allProducts: List<ResultXV2> = emptyList()
+    var filteredProducts: List<ResultXV2> = emptyList()
     lateinit var myAdapter: SalesProductsV2Adapter
 
     lateinit var viewCheckedCategory: ConstraintLayout
@@ -201,10 +190,10 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener {
         filterProducts()
     }
 
-    override fun addToCart(product: ResultX) {
+    override fun addToCart(product: ResultXV2) {
         addProductToCart(product)    }
 
-    override fun inStock(product: ResultX) {
+    override fun inStock(product: ResultXV2) {
         if (product.types.isNotEmpty()) {
             for (type in product.types) {
                 if (type.counts.isNotEmpty()) {
@@ -216,14 +205,15 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener {
         callOutStock(product.id)
     }
 
-    override fun getData(product: ResultX) {
-        val product2 =  ResultX(
+    override fun getData(product: ResultXV2) {
+        val product2 =  ResultXV2(
             "",
             "",
             "",
             "",
             product.full_name,
             product.id,
+            product.img,
             product.is_set,
             "",
             product.name,
@@ -231,8 +221,7 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener {
             product.proba,
             0,
             "",
-            product.types,
-            product.img
+            product.types
         )
 
         val action = SalesAndPromotionsFragmentDirections.actionSalesAndPromotionsFragmentToDataProductFragment(product2.id, product2, "SalesProducts")

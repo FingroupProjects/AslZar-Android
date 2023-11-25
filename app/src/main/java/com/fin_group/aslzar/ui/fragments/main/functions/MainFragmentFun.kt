@@ -15,13 +15,10 @@ import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentMainBinding
 import com.fin_group.aslzar.models.FilterModel
 import com.fin_group.aslzar.response.Category
-import com.fin_group.aslzar.response.Count
+import com.fin_group.aslzar.response.CountV2
 import com.fin_group.aslzar.response.GetAllCategoriesResponse
-import com.fin_group.aslzar.response.GetAllProducts
-import com.fin_group.aslzar.response.GetAllProductsResponse
-import com.fin_group.aslzar.response.InStock
-import com.fin_group.aslzar.response.Product
-import com.fin_group.aslzar.response.ResultX
+import com.fin_group.aslzar.response.GetAllProductV2
+import com.fin_group.aslzar.response.ResultXV2
 import com.fin_group.aslzar.ui.dialogs.CheckCategoryFragmentDialog
 import com.fin_group.aslzar.ui.dialogs.FilterDialogFragment
 import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
@@ -54,7 +51,7 @@ fun MainFragment.callCategoryDialog(listener: CategoryClickListener) {
     categoryDialog.show(activity?.supportFragmentManager!!, "category check dialog")
 }
 
-fun MainFragment.callInStockDialog(name: String, counts: List<Count>) {
+fun MainFragment.callInStockDialog(name: String, counts: List<CountV2>) {
     val fragmentManager = requireFragmentManager()
     val tag = "Product in stock Dialog"
     val existingFragment = fragmentManager.findFragmentByTag(tag)
@@ -118,7 +115,7 @@ fun MainFragment.filterFun() {
     callCategoryDialog(this)
 }
 
-fun MainFragment.addProductToCart(product: ResultX) {
+fun MainFragment.addProductToCart(product: ResultXV2) {
     sharedViewModel.onProductAddedToCart(product, requireContext())
     updateBadge()
 }
@@ -245,8 +242,8 @@ fun MainFragment.getAllProductFromPrefs() {
     try {
         val products = preferences.getString("productList", null)
         if (products != null) {
-            val productsListType = object : TypeToken<List<ResultX>>() {}.type
-            val productList = Gson().fromJson<List<ResultX>>(products, productsListType)
+            val productsListType = object : TypeToken<List<ResultXV2>>() {}.type
+            val productList = Gson().fromJson<List<ResultXV2>>(products, productsListType)
             allProducts = productList
             fetchRV(allProducts)
         } else {
@@ -259,21 +256,21 @@ fun MainFragment.getAllProductFromPrefs() {
     }
 }
 
-fun MainFragment.retrieveProducts(): List<ResultX> {
+fun MainFragment.retrieveProducts(): List<ResultXV2> {
     val productJson = preferences.getString("productList", null)
     return if (productJson != null) {
-        val productsListType = object : TypeToken<List<ResultX>>() {}.type
-        val productList = Gson().fromJson<List<ResultX>>(productJson, productsListType)
+        val productsListType = object : TypeToken<List<ResultXV2>>() {}.type
+        val productList = Gson().fromJson<List<ResultXV2>>(productJson, productsListType)
         productList
     } else {
         emptyList()
     }
 }
 
-fun MainFragment.retrieveFilteredProducts(): List<ResultX> {
+fun MainFragment.retrieveFilteredProducts(): List<ResultXV2> {
     val productJson = preferences.getString("filteredProducts", null)
     return if (productJson != null) {
-        val productListType = object : TypeToken<List<ResultX>>() {}.type
+        val productListType = object : TypeToken<List<ResultXV2>>() {}.type
         Gson().fromJson(productJson, productListType)
     } else {
         emptyList()
@@ -281,7 +278,7 @@ fun MainFragment.retrieveFilteredProducts(): List<ResultX> {
 }
 
 @SuppressLint("NotifyDataSetChanged")
-fun MainFragment.fetchRV(productList: List<ResultX>) {
+fun MainFragment.fetchRV(productList: List<ResultXV2>) {
     recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
     myAdapter = ProductsAdapter(productList, this)
     recyclerView.adapter = myAdapter
@@ -293,10 +290,10 @@ fun MainFragment.getAllProductsFromApi() {
     try {
         val call =
             apiService.getApiService().getAllProducts("Bearer ${sessionManager.fetchToken()}")
-        call.enqueue(object : Callback<GetAllProducts> {
+        call.enqueue(object : Callback<GetAllProductV2> {
             override fun onResponse(
-                call: Call<GetAllProducts>,
-                response: Response<GetAllProducts>
+                call: Call<GetAllProductV2>,
+                response: Response<GetAllProductV2>
             ) {
                 swipeRefreshLayout.isRefreshing = false
                 if (response.isSuccessful) {
@@ -319,7 +316,7 @@ fun MainFragment.getAllProductsFromApi() {
                 }
             }
 
-            override fun onFailure(call: Call<GetAllProducts>, t: Throwable) {
+            override fun onFailure(call: Call<GetAllProductV2>, t: Throwable) {
                 Log.d("TAG", "onFailure: ${t.message}")
                 swipeRefreshLayout.isRefreshing = false
             }

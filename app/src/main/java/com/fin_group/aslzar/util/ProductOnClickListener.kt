@@ -1,15 +1,13 @@
 package com.fin_group.aslzar.util
 
-import com.fin_group.aslzar.models.ProductV2
 import com.fin_group.aslzar.response.Category
-import com.fin_group.aslzar.response.Product
-import com.fin_group.aslzar.response.ResultX
+import com.fin_group.aslzar.response.ResultXV2
 
 interface ProductOnClickListener {
 
-    fun addToCart(product: ResultX)
-    fun inStock(product: ResultX)
-    fun getData(product: ResultX)
+    fun addToCart(product: ResultXV2)
+    fun inStock(product: ResultXV2)
+    fun getData(product: ResultXV2)
 }
 
 interface CategoryClickListener {

@@ -2,27 +2,21 @@ package com.fin_group.aslzar.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.databinding.RowItemProductBinding
-import com.fin_group.aslzar.response.GetAllProducts
-import com.fin_group.aslzar.response.Product
-import com.fin_group.aslzar.response.ResultX
-import com.fin_group.aslzar.ui.fragments.main.MainFragmentDirections
-import com.fin_group.aslzar.util.CustomPopupView
+import com.fin_group.aslzar.response.ResultXV2
 import com.fin_group.aslzar.util.ProductOnClickListener
 import com.fin_group.aslzar.util.formatNumber
 
 @Suppress("DEPRECATION")
 class ProductsAdapter(
-    private var productList: List<ResultX>,
+    private var productList: List<ResultXV2>,
     val listener: ProductOnClickListener,
 ): RecyclerView.Adapter<ProductsAdapter.ViewHolder>() {
 
@@ -53,7 +47,7 @@ class ProductsAdapter(
         private val saleTv = binding.productSale
 
         @SuppressLint("UseCompatLoadingForDrawables", "SetTextI18n")
-        fun bind(product: ResultX) {
+        fun bind(product: ResultXV2) {
             title.text = product.full_name
             code.text = product.name
 
@@ -92,7 +86,7 @@ class ProductsAdapter(
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateProducts(newProducts: List<ResultX>) {
+    fun updateProducts(newProducts: List<ResultXV2>) {
         productList = newProducts
         notifyDataSetChanged()
     }

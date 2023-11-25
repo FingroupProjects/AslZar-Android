@@ -23,10 +23,8 @@ import com.fin_group.aslzar.adapter.ProductSomeImagesAdapter
 import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentAlikeProductBottomSheetDialogBinding
-import com.fin_group.aslzar.response.Product
-import com.fin_group.aslzar.response.ResultX
+import com.fin_group.aslzar.response.ResultXV2
 import com.fin_group.aslzar.response.SimilarProduct
-import com.fin_group.aslzar.ui.fragments.cartMain.calculator.CalculatorFragment
 import com.fin_group.aslzar.util.BaseBottomSheetDialogFragment
 import com.fin_group.aslzar.util.OnImageClickListener
 import com.fin_group.aslzar.util.SessionManager
@@ -52,7 +50,7 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(),
 
     lateinit var adapter: ProductSomeImagesAdapter
     private lateinit var similarProduct: SimilarProduct
-    private lateinit var fullSimilarProduct: ResultX
+    private lateinit var fullSimilarProduct: ResultXV2
 
     lateinit var progressBar: ProgressBar
     private lateinit var apiClient: ApiClient
@@ -161,7 +159,7 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(),
         adapter.updateList(imageList)
     }
 
-    private fun addToCart(product: ResultX, productId: String){
+    private fun addToCart(product: ResultXV2, productId: String){
         binding.apply {
             addToCart.setOnClickListener {
                 Log.d("TAG", "onViewCreated: $product")
@@ -176,7 +174,7 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(),
         }
     }
 
-    private fun setDataProduct(product: ResultX) {
+    private fun setDataProduct(product: ResultXV2) {
         if (product.img.size <= 1) {
             binding.lpSomeImagesRv.visibility = View.GONE
         } else {
@@ -214,10 +212,10 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(),
         progressBar.visibility = VISIBLE
         try {
             val call = apiClient.getApiService().getProductByID("Bearer ${sessionManager.fetchToken()}", similarProduct.id)
-            call.enqueue(object : Callback<ResultX?> {
+            call.enqueue(object : Callback<ResultXV2?> {
                 override fun onResponse(
-                    call: Call<ResultX?>,
-                    response: Response<ResultX?>
+                    call: Call<ResultXV2?>,
+                    response: Response<ResultXV2?>
                 ) {
                     progressBar.visibility = INVISIBLE
                     if (response.isSuccessful) {
@@ -237,7 +235,7 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(),
                     }
                 }
 
-                override fun onFailure(call: Call<ResultX?>, t: Throwable) {
+                override fun onFailure(call: Call<ResultXV2?>, t: Throwable) {
                     Toast.makeText(requireContext(), "Загрузка прошла не успешно, пожалуйста повторите попытку", Toast.LENGTH_SHORT).show()
                     progressBar.visibility = INVISIBLE
                     Log.d("TAG", "onFailure: ${t.message}")

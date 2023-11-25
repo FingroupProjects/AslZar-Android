@@ -1,14 +1,12 @@
 package com.fin_group.aslzar.viewmodel
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.models.ProductInCart
-import com.fin_group.aslzar.response.Product
-import com.fin_group.aslzar.response.ResultX
+import com.fin_group.aslzar.response.ResultXV2
 
 class SharedViewModel: ViewModel() {
 
@@ -18,7 +16,7 @@ class SharedViewModel: ViewModel() {
     private val _hideCategory = MutableLiveData<Boolean>()
     val hideCategory: LiveData<Boolean> = _hideCategory
 
-    fun onProductAddedToCart(product: ResultX, context: Context) {
+    fun onProductAddedToCart(product: ResultXV2, context: Context) {
         val cartProduct = ProductInCart (
             product.id,
             product.full_name,

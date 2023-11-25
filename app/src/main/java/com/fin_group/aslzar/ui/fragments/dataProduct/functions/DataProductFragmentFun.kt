@@ -22,13 +22,12 @@ import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.TableInstallmentAdapter
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentDataProductBinding
-import com.fin_group.aslzar.response.Count
+import com.fin_group.aslzar.response.CountV2
 import com.fin_group.aslzar.response.GetSimilarProductsResponse
-import com.fin_group.aslzar.response.InStock
 import com.fin_group.aslzar.response.Percent
 import com.fin_group.aslzar.response.PercentInstallment
 import com.fin_group.aslzar.response.Product
-import com.fin_group.aslzar.response.ResultX
+import com.fin_group.aslzar.response.ResultXV2
 import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.SetInProductBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.WarningNoHaveProductFragmentDialog
@@ -42,7 +41,7 @@ import com.google.gson.reflect.TypeToken
 import retrofit2.Call
 import retrofit2.Response
 
-fun DataProductFragment.callInStockDialog(name: String, counts: List<Count>) {
+fun DataProductFragment.callInStockDialog(name: String, counts: List<CountV2>) {
     val fragmentManager = requireFragmentManager()
     val tag = "Product in stock Dialog"
     val existingFragment = fragmentManager.findFragmentByTag(tag)
@@ -64,7 +63,7 @@ fun DataProductFragment.callOutStock(id: String) {
     }
 }
 
-fun DataProductFragment.addProduct(product: ResultX) {
+fun DataProductFragment.addProduct(product: ResultXV2) {
     sharedViewModel.onProductAddedToCart(product, requireContext())
     Toast.makeText(requireContext(), "Продукт добавлен в корзину", Toast.LENGTH_SHORT).show()
 }
@@ -95,7 +94,7 @@ fun DataProductFragment.likeProducts() {
 }
 
 @SuppressLint("SetTextI18n", "UnsafeOptInUsageError")
-fun DataProductFragment.setDataProduct(product: ResultX, binding: FragmentDataProductBinding) {
+fun DataProductFragment.setDataProduct(product: ResultXV2, binding: FragmentDataProductBinding) {
     if (product.img.size <= 1) {
         binding.otherImgRv.visibility = GONE
     } else {
@@ -119,6 +118,24 @@ fun DataProductFragment.setDataProduct(product: ResultX, binding: FragmentDataPr
         binding.textView46.visibility = GONE
     }
 
+    if (product.proba.isNotEmpty()){
+        binding.dpProbe.visibility = VISIBLE
+        binding.textView16.visibility = VISIBLE
+        binding.dpProbe.text = product.proba
+    } else{
+        binding.dpProbe.visibility = GONE
+        binding.textView16.visibility = GONE
+    }
+
+    if (product.metal.isNotEmpty()){
+        binding.dpMetal.visibility = VISIBLE
+        binding.textView19.visibility = VISIBLE
+        binding.dpMetal.text = product.metal
+    }else{
+        binding.dpMetal.visibility = GONE
+        binding.textView19.visibility = GONE
+    }
+
     binding.apply {
         if (product.img.isNotEmpty()) {
             Glide.with(requireContext()).load(product.img[0]).into(binding.imageView2)
@@ -130,8 +147,64 @@ fun DataProductFragment.setDataProduct(product: ResultX, binding: FragmentDataPr
         dpStone.text = product.stone_type.ifEmpty { "Без камня" }
         dpProbe.text = product.proba
         dpMetal.text = product.metal
-//        dpWeight.text = product.weight
-//        dpSize.text = product.size
+
+        for (type in product.types) {
+            val chip = Chip(requireContext())
+            chip.text = type.size.toString()
+            binding.chipGroupSize.addView(chip)
+        }
+
+        for (type in product.types) {
+            val chip = Chip(requireContext())
+            chip.text = type.weight.toString()
+            binding.chipGroupVes.addView(chip)
+        }
+
+
+        var lastSelectedChipSize: Chip? = null
+        var lastSelectedChipWeight: Chip? = null
+
+        binding.chipGroupSize.setOnCheckedChangeListener { group, checkedId ->
+            val selectedChip = group.findViewById<Chip>(checkedId)
+            val selectedIndex = group.indexOfChild(selectedChip)
+
+            if (selectedIndex != -1 && selectedIndex < binding.chipGroupVes.childCount) {
+                binding.chipGroupVes.clearCheck()
+                lastSelectedChipSize?.setChipBackgroundColorResource(R.color.background_1)
+                lastSelectedChipWeight?.setChipBackgroundColorResource(R.color.background_1)
+
+                val chipWeight = binding.chipGroupVes.getChildAt(selectedIndex) as? Chip
+                chipWeight?.isChecked = true
+
+                selectedChip.setChipBackgroundColorResource(R.color.background_3)
+                chipWeight?.setChipBackgroundColorResource(R.color.background_3)
+
+                lastSelectedChipSize = selectedChip
+                lastSelectedChipWeight = chipWeight
+
+                updatePrice(binding, product, selectedChip.text.toString(), lastSelectedChipWeight?.text.toString())
+            }
+        }
+
+        binding.chipGroupVes.setOnCheckedChangeListener { group, checkedId ->
+            val selectedChip = group.findViewById<Chip>(checkedId)
+            val selectedIndex = group.indexOfChild(selectedChip)
+
+            lastSelectedChipWeight?.setChipBackgroundColorResource(R.color.background_1)
+            lastSelectedChipSize?.setChipBackgroundColorResource(R.color.background_1)
+
+            if (selectedIndex != -1 && selectedIndex < binding.chipGroupSize.childCount) {
+                binding.chipGroupSize.clearCheck()
+                val chipSize = binding.chipGroupSize.getChildAt(selectedIndex) as? Chip
+                chipSize?.isChecked = true
+                selectedChip.setChipBackgroundColorResource(R.color.background_3)
+                chipSize?.setChipBackgroundColorResource(R.color.background_3)
+                lastSelectedChipWeight = selectedChip
+                lastSelectedChipSize = chipSize
+
+                updatePrice(binding, product, lastSelectedChipSize?.text.toString(), selectedChip.text.toString())
+            }
+        }
 
         dpInstallmentPrice.text = "(${((product.price.toDouble() * percentInstallment.first_pay.toDouble()) / 100)} UZS п.в.)"
         btnAddToCart.setOnClickListener {
@@ -150,6 +223,19 @@ fun DataProductFragment.setDataProduct(product: ResultX, binding: FragmentDataPr
         }
     }
 }
+
+
+@SuppressLint("SetTextI18n")
+private fun updatePrice(binding: FragmentDataProductBinding, product: ResultXV2, selectedSize: String?, selectedWeight: String?) {
+    val matchingType = product.types.find { it.size.toString() == selectedSize && it.weight.toString() == selectedWeight }
+
+    if (matchingType != null) {
+        val price = matchingType.counts.firstOrNull()?.price ?: 0
+        binding.dpPrice.text = "$price UZS"
+    }
+}
+
+
 
 fun DataProductFragment.getSimilarProducts() {
     swipeRefreshLayout.isRefreshing = true
@@ -203,9 +289,9 @@ fun DataProductFragment.getProductByID() {
     try {
         val call = apiService.getApiService()
             .getProductByID("Bearer ${sessionManager.fetchToken()}", args.productId)
-        call.enqueue(object : Callback<ResultX?> {
+        call.enqueue(object : Callback<ResultXV2?> {
             @SuppressLint("UnsafeOptInUsageError")
-            override fun onResponse(call: Call<ResultX?>, response: Response<ResultX?>) {
+            override fun onResponse(call: Call<ResultXV2?>, response: Response<ResultXV2?>) {
                 swipeRefreshLayout.isRefreshing = false
                 if (response.isSuccessful) {
                     val productResponse = response.body()
@@ -219,7 +305,7 @@ fun DataProductFragment.getProductByID() {
                 }
             }
 
-            override fun onFailure(call: Call<ResultX?>, t: Throwable) {
+            override fun onFailure(call: Call<ResultXV2?>, t: Throwable) {
                 swipeRefreshLayout.isRefreshing = false
                 Log.d("TAG", "onFailure: ${t.message}")
             }
@@ -230,7 +316,7 @@ fun DataProductFragment.getProductByID() {
     }
 }
 
-fun DataProductFragment.retrieveFilteredProducts(): List<ResultX> {
+fun DataProductFragment.retrieveFilteredProducts(): List<ResultXV2> {
     val productJson = preferences.getString("filteredProducts", null)
     return if (productJson != null) {
         val productListType = object : TypeToken<List<Product>>() {}.type
@@ -411,120 +497,4 @@ fun DataProductFragment.onBackPressed() {
                 showBottomNav()
             }
         })
-}
-
-fun DataProductFragment.chipGroup(binding: FragmentDataProductBinding){
-
-    val ves = binding.chipGroupVes
-    val size = binding.chipGroupSize
-    
-    ves.setOnCheckedChangeListener { group, checkedId ->
-        val chip: Chip? = group.findViewById(checkedId)
-        chip?.let {
-            when (checkedId) {
-                R.id.ves1 -> {
-                    binding.dpPrice.text = "100 UZS"
-                    resetSizeChipsBackground(binding)
-                    binding.ves1.setChipBackgroundColorResource(R.color.background_3)
-                    size.check(R.id.size4)
-                    binding.size4.setChipBackgroundColorResource(R.color.background_3)
-                }
-
-                R.id.ves2 -> {
-                    binding.dpPrice.text = "200 UZS"
-                    resetSizeChipsBackground(binding)
-                    binding.ves2.setChipBackgroundColorResource(R.color.background_3)
-                    size.check(R.id.size3)
-                    binding.size3.setChipBackgroundColorResource(R.color.background_3)
-                }
-
-                R.id.ves3 -> {
-                    binding.dpPrice.text = "300 UZS"
-                    resetSizeChipsBackground(binding)
-                    binding.ves3.setChipBackgroundColorResource(R.color.background_3)
-                    size.check(R.id.size2)
-                    binding.size2.setChipBackgroundColorResource(R.color.background_3)
-                }
-
-                R.id.ves4 -> {
-                    binding.dpPrice.text = "400 UZS"
-                    resetSizeChipsBackground(binding)
-                    binding.ves4.setChipBackgroundColorResource(R.color.background_3)
-                    size.check(R.id.size1)
-                    binding.size1.setChipBackgroundColorResource(R.color.background_3)
-
-                }
-                R.id.ves5 -> {
-                    binding.dpPrice.text = "500 UZS"
-                    resetSizeChipsBackground(binding)
-                    binding.ves5.setChipBackgroundColorResource(R.color.background_3)
-                    size.check(R.id.size5)
-                    binding.size5.setChipBackgroundColorResource(R.color.background_3)
-                }
-            }
-        }
-    }
-
-    size.setOnCheckedChangeListener { group, checkedId ->
-        val chip: Chip? = group.findViewById(checkedId)
-        chip?.let {
-            when (checkedId) {
-                R.id.size1 -> {
-                    binding.dpPrice.text = "400 UZS"
-                    resetVesChipsBackground(binding)
-                    binding.size1.setChipBackgroundColorResource(R.color.background_3)
-                    ves.check(R.id.ves4)
-                    binding.ves4.setChipBackgroundColorResource(R.color.background_3)
-
-                }
-
-                R.id.size2 -> {
-                    binding.dpPrice.text = "300 UZS"
-                    resetVesChipsBackground(binding)
-                    binding.size2.setChipBackgroundColorResource(R.color.background_3)
-                    ves.check(R.id.ves3)
-                    binding.ves3.setChipBackgroundColorResource(R.color.background_3)
-                }
-
-                R.id.size3 -> {
-                    binding.dpPrice.text = "200 UZS"
-                    resetVesChipsBackground(binding)
-                    binding.size3.setChipBackgroundColorResource(R.color.background_3)
-                    ves.check(R.id.ves2)
-                    binding.ves2.setChipBackgroundColorResource(R.color.background_3)
-                }
-
-                R.id.size4 -> {
-                    binding.dpPrice.text = "100 UZS"
-                    resetVesChipsBackground(binding)
-                    binding.size4.setChipBackgroundColorResource(R.color.background_3)
-                    ves.check(R.id.ves1)
-                    binding.ves1.setChipBackgroundColorResource(R.color.background_3)
-                }
-                R.id.size5 -> {
-                    binding.dpPrice.text = "500 UZS"
-                    resetVesChipsBackground(binding)
-                    binding.size5.setChipBackgroundColorResource(R.color.background_3)
-                    ves.check(R.id.ves5)
-                    binding.ves5.setChipBackgroundColorResource(R.color.background_3)
-                }
-            }
-        }
-    }
-}
-
-private fun resetVesChipsBackground(binding: FragmentDataProductBinding) {
-    binding.ves1.setChipBackgroundColorResource(R.color.background_1)
-    binding.ves2.setChipBackgroundColorResource(R.color.background_1)
-    binding.ves3.setChipBackgroundColorResource(R.color.background_1)
-    binding.ves4.setChipBackgroundColorResource(R.color.background_1)
-    binding.ves5.setChipBackgroundColorResource(R.color.background_1)
-}
-
-private fun resetSizeChipsBackground(binding: FragmentDataProductBinding) {
-    binding.size1.setChipBackgroundColorResource(R.color.background_1)
-    binding.size2.setChipBackgroundColorResource(R.color.background_1)
-    binding.size3.setChipBackgroundColorResource(R.color.background_1)
-    binding.size4.setChipBackgroundColorResource(R.color.background_1)
-    binding.size5.setChipBackgroundColorResource(R.color.background_1)
 }

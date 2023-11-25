@@ -2,7 +2,6 @@ package com.fin_group.aslzar.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,14 +9,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.databinding.RowItemProductBinding
-import com.fin_group.aslzar.response.Product
-import com.fin_group.aslzar.response.ResultX
+import com.fin_group.aslzar.response.ResultXV2
 import com.fin_group.aslzar.util.ProductOnClickListener
 import com.fin_group.aslzar.util.formatNumber
 
 @Suppress("DEPRECATION")
 class SalesProductsV2Adapter(
-    private var productList: List<ResultX>,
+    private var productList: List<ResultXV2>,
     val listener: ProductOnClickListener
 ) : RecyclerView.Adapter<SalesProductsV2Adapter.ViewHolder>() {
 
@@ -33,7 +31,7 @@ class SalesProductsV2Adapter(
         private val saleTv = binding.productSale
 
         @SuppressLint("UseCompatLoadingForDrawables", "SetTextI18n")
-        fun bind(product: ResultX) {
+        fun bind(product: ResultXV2) {
             title.text = product.full_name
             code.text = product.name
 
@@ -54,14 +52,15 @@ class SalesProductsV2Adapter(
                 saleTv.visibility = View.VISIBLE
             }
 
-            if (product.types.isEmpty()) {
+            if (product.types?.isEmpty() == true) {
                 val firstType = product.types.firstOrNull()
                 if (firstType != null && firstType.counts.isEmpty()) {
                     btnCheckingInStock.setImageResource(R.drawable.ic_clear_white)
                     btnCheckingInStock.background =
                         context.resources.getDrawable(R.drawable.item_product_bottom_btn_2)
                 }
-            } else {
+            }
+            else {
                 btnCheckingInStock.setImageResource(R.drawable.ic_check)
                 btnCheckingInStock.background =
                     context.resources.getDrawable(R.drawable.ripple_effect_bottom_btn)
@@ -86,7 +85,7 @@ class SalesProductsV2Adapter(
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateProducts(newProducts: List<ResultX>) {
+    fun updateProducts(newProducts: List<ResultXV2>) {
         productList = newProducts
         notifyDataSetChanged()
     }
@@ -98,22 +97,22 @@ class SalesProductsV2Adapter(
         binding.root.setOnClickListener {
 
 
-            val product2 = ResultX(
+            val product2 = ResultXV2(
                 "",
                 "",
                 "",
                 "",
                 product.full_name,
                 product.id,
+                product.img,
                 product.is_set,
                 "",
                 product.name,
                 product.price,
-                product.proba,
+                "",
                 product.sale,
                 "",
-                product.types,
-                product.img
+                product.types
             )
             listener.getData(product2)
         }

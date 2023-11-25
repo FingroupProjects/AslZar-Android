@@ -31,9 +31,7 @@ import com.fin_group.aslzar.cipher.EncryptionManager
 import com.fin_group.aslzar.databinding.FragmentMainBinding
 import com.fin_group.aslzar.models.FilterModel
 import com.fin_group.aslzar.response.Category
-import com.fin_group.aslzar.response.Count
-import com.fin_group.aslzar.response.Product
-import com.fin_group.aslzar.response.ResultX
+import com.fin_group.aslzar.response.ResultXV2
 import com.fin_group.aslzar.ui.activities.MainActivity
 import com.fin_group.aslzar.ui.fragments.main.functions.addProductToCart
 import com.fin_group.aslzar.util.CategoryClickListener
@@ -41,7 +39,6 @@ import com.fin_group.aslzar.util.ProductOnClickListener
 import com.fin_group.aslzar.ui.fragments.main.functions.callInStockDialog
 import com.fin_group.aslzar.ui.fragments.main.functions.callOutStock
 import com.fin_group.aslzar.ui.fragments.main.functions.fetchRV
-import com.fin_group.aslzar.ui.fragments.main.functions.filterFun
 import com.fin_group.aslzar.ui.fragments.main.functions.filterProducts
 import com.fin_group.aslzar.ui.fragments.main.functions.filterProducts2
 import com.fin_group.aslzar.ui.fragments.main.functions.getAllCategoriesFromApi
@@ -80,8 +77,8 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener,
     var searchText: String = ""
     lateinit var searchView: SearchView
 
-    var allProducts: List<ResultX> = emptyList()
-    var filteredProducts: List<ResultX> = emptyList()
+    var allProducts: List<ResultXV2> = emptyList()
+    var filteredProducts: List<ResultXV2> = emptyList()
     lateinit var myAdapter: ProductsAdapter
 
     lateinit var viewCheckedCategory: ConstraintLayout
@@ -274,11 +271,11 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener,
         Toast.makeText(requireContext(), "$updatedFilterModel", Toast.LENGTH_SHORT).show()
     }
 
-    override fun addToCart(product: ResultX) {
+    override fun addToCart(product: ResultXV2) {
         addProductToCart(product)
     }
 
-    override fun inStock(product: ResultX) {
+    override fun inStock(product: ResultXV2) {
         if (product.types.isNotEmpty()) {
             for (type in product.types) {
                 if (type.counts.isNotEmpty()) {
@@ -290,15 +287,16 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener,
         callOutStock(product.id)
     }
 
-    override fun getData(product: ResultX) {
+    override fun getData(product: ResultXV2) {
 
-        val product2 = ResultX(
+        val product2 = ResultXV2(
             product.barcode,
             product.category_id,
             product.color,
             product.description,
             product.full_name,
             product.id,
+            product.img,
             product.is_set,
             product.metal,
             product.name,
@@ -306,9 +304,7 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener,
             product.proba,
             product.sale,
             product.stone_type,
-            product.types,
-            product.img
-
+            product.types
         )
 
         val action = MainFragmentDirections.actionMainFragmentToDataProductFragment(product2.id, product2, "Main")

@@ -9,15 +9,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.databinding.RowItemProductBinding
-import com.fin_group.aslzar.response.Product
-import com.fin_group.aslzar.response.ResultX
-import com.fin_group.aslzar.response.Type
+import com.fin_group.aslzar.response.ResultXV2
+import com.fin_group.aslzar.response.TypeV2
 import com.fin_group.aslzar.util.ProductOnClickListener
 import com.fin_group.aslzar.util.formatNumber
 
 @Suppress("DEPRECATION")
 class NewProductsAdapter(
-    private var productList: List<ResultX>,
+    private var productList: List<ResultXV2>,
     val listener: ProductOnClickListener
 ) : RecyclerView.Adapter<NewProductsAdapter.ViewHolder>() {
 
@@ -33,7 +32,7 @@ class NewProductsAdapter(
         private val saleTv = binding.productSale
 
         @SuppressLint("UseCompatLoadingForDrawables", "SetTextI18n")
-        fun bind(product: ResultX) {
+        fun bind(product: ResultXV2) {
             title.text = product.full_name
             code.text = product.name
 
@@ -55,7 +54,7 @@ class NewProductsAdapter(
             }
 
             if (product.types.isEmpty()) {
-                val type: Type = product.types[0]
+                val type: TypeV2 = product.types[0]
                 if (type.counts.isEmpty()) {
                     btnCheckingInStock.setImageResource(R.drawable.ic_clear_white)
                     btnCheckingInStock.background =
@@ -87,7 +86,7 @@ class NewProductsAdapter(
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateProducts(newProducts: List<ResultX>) {
+    fun updateProducts(newProducts: List<ResultXV2>) {
         productList = newProducts
         notifyDataSetChanged()
     }

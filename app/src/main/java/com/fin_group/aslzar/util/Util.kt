@@ -29,8 +29,7 @@ import androidx.navigation.fragment.findNavController
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.models.FilterModel
 import com.fin_group.aslzar.models.ProductInCart
-import com.fin_group.aslzar.response.Product
-import com.fin_group.aslzar.response.ResultX
+import com.fin_group.aslzar.response.ResultXV2
 import com.fin_group.aslzar.response.SimilarProduct
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -55,7 +54,7 @@ interface CalculatorResetListener {
 }
 
 interface OnProductClickListener{
-    fun setProduct(product: ResultX)
+    fun setProduct(product: ResultXV2)
 }
 
 interface OnImageClickListener{
