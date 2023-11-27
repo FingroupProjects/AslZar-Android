@@ -27,7 +27,7 @@ import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentNewProductsBinding
 import com.fin_group.aslzar.response.Category
-import com.fin_group.aslzar.response.ResultXV2
+import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.ui.activities.MainActivity
 import com.fin_group.aslzar.ui.fragments.new_products.functions.addProductToCart
 import com.fin_group.aslzar.ui.fragments.new_products.functions.callInStockDialog
@@ -59,8 +59,8 @@ class NewProductsFragment : Fragment(), ProductOnClickListener {
     lateinit var viewSearch: ConstraintLayout
     var searchText: String = ""
     lateinit var searchView: SearchView
-    var allProducts: List<ResultXV2> = emptyList()
-    var filteredProducts: List<ResultXV2> = emptyList()
+    var allProducts: List<ResultX> = emptyList()
+    var filteredProducts: List<ResultX> = emptyList()
     lateinit var myAdapter: ProductsAdapter
     lateinit var viewCheckedCategory: ConstraintLayout
     var allCategories: List<Category> = emptyList()
@@ -204,11 +204,11 @@ class NewProductsFragment : Fragment(), ProductOnClickListener {
             })
     }
 
-    override fun addToCart(product: ResultXV2) {
+    override fun addToCart(product: ResultX) {
         addProductToCart(product)
     }
 
-    override fun inStock(product: ResultXV2) {
+    override fun inStock(product: ResultX) {
         if (product.types.isNotEmpty()) {
             for (type in product.types) {
                 if (type.counts.isNotEmpty()) {
@@ -221,9 +221,9 @@ class NewProductsFragment : Fragment(), ProductOnClickListener {
     }
 
 
-    override fun getData(product: ResultXV2) {
+    override fun getData(product: ResultX) {
 
-        val product2 =  ResultXV2(
+        val product2 =  ResultX(
             "",
             "",
             "",

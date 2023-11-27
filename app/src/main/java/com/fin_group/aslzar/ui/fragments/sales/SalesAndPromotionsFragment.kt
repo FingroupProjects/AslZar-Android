@@ -25,7 +25,7 @@ import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentSalesAndPromotionsBinding
 import com.fin_group.aslzar.response.Category
-import com.fin_group.aslzar.response.ResultXV2
+import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.ui.activities.MainActivity
 import com.fin_group.aslzar.ui.fragments.sales.functions.addProductToCart
 import com.fin_group.aslzar.ui.fragments.sales.functions.callInStockDialog
@@ -61,8 +61,8 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener {
     var searchText: String = ""
     lateinit var searchView: SearchView
 
-    var allProducts: List<ResultXV2> = emptyList()
-    var filteredProducts: List<ResultXV2> = emptyList()
+    var allProducts: List<ResultX> = emptyList()
+    var filteredProducts: List<ResultX> = emptyList()
     lateinit var myAdapter: SalesProductsV2Adapter
 
     lateinit var viewCheckedCategory: ConstraintLayout
@@ -190,10 +190,10 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener {
         filterProducts()
     }
 
-    override fun addToCart(product: ResultXV2) {
+    override fun addToCart(product: ResultX) {
         addProductToCart(product)    }
 
-    override fun inStock(product: ResultXV2) {
+    override fun inStock(product: ResultX) {
         if (product.types.isNotEmpty()) {
             for (type in product.types) {
                 if (type.counts.isNotEmpty()) {
@@ -205,8 +205,8 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener {
         callOutStock(product.id)
     }
 
-    override fun getData(product: ResultXV2) {
-        val product2 =  ResultXV2(
+    override fun getData(product: ResultX) {
+        val product2 =  ResultX(
             "",
             "",
             "",

@@ -23,7 +23,7 @@ import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentSheetDialogSetInProductBottomBinding
 import com.fin_group.aslzar.response.GetAllProductV2
-import com.fin_group.aslzar.response.ResultXV2
+import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.util.OnProductClickListener
 import com.fin_group.aslzar.util.SessionManager
 import com.fin_group.aslzar.viewmodel.SharedViewModel
@@ -41,13 +41,13 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnPro
     lateinit var recyclerView: RecyclerView
 
     val sharedViewModel: SharedViewModel by activityViewModels()
-    private lateinit var selectedProduct: ResultXV2
+    private lateinit var selectedProduct: ResultX
 
     private var currentSelectedPosition = RecyclerView.NO_POSITION
     lateinit var setInProductAdapter: SetInProductAdapter
 
     private var setInProductId: String = ""
-    var allProducts: List<ResultXV2> = emptyList()
+    var allProducts: List<ResultX> = emptyList()
 
     private lateinit var apiClient: ApiClient
     private lateinit var sessionManager: SessionManager
@@ -177,7 +177,7 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnPro
     }
 
 
-    private fun setDataProduct(product: ResultXV2) {
+    private fun setDataProduct(product: ResultX) {
         binding.apply {
             Glide.with(requireContext()).load(product.img[0]).into(binding.mainImageView)
 
@@ -251,7 +251,7 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnPro
     }
 
 
-    override fun setProduct(product: ResultXV2) {
+    override fun setProduct(product: ResultX) {
         val image = product.img[0]
         selectedProduct = product
         setDataProduct(product)

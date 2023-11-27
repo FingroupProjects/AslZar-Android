@@ -9,7 +9,7 @@ import com.fin_group.aslzar.response.GetSimilarProductsResponse
 import com.fin_group.aslzar.response.PercentInstallment
 import com.fin_group.aslzar.response.ResponseChangePassword
 import com.fin_group.aslzar.response.ResponseForgotPassword
-import com.fin_group.aslzar.response.ResultXV2
+import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.response.SaleProductsResponse
 import com.fin_group.aslzar.response.SalesPlanResponse
 import retrofit2.http.Headers
@@ -38,7 +38,7 @@ interface ApiService {
 
     @GET(Constants.GET_PRODUCT_BY_ID)
     @Headers("Accept:application/json", "Content-Type:application/json")
-    fun getProductByID(@Header("Authorization") token: String, @Path("id") id: String): Call<ResultXV2>
+    fun getProductByID(@Header("Authorization") token: String, @Path("id") id: String): Call<ResultX>
 
     @GET(Constants.SIMILAR_PRODUCTS)
     @Headers("Accept:application/json", "Content-Type:application/json")

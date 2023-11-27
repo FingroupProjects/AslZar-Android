@@ -8,7 +8,6 @@ import android.view.View.GONE
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
@@ -23,7 +22,7 @@ import com.fin_group.aslzar.adapter.ProductSomeImagesAdapter
 import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentAlikeProductBottomSheetDialogBinding
-import com.fin_group.aslzar.response.ResultXV2
+import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.response.SimilarProduct
 import com.fin_group.aslzar.util.BaseBottomSheetDialogFragment
 import com.fin_group.aslzar.util.OnImageClickListener
@@ -50,7 +49,7 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(),
 
     lateinit var adapter: ProductSomeImagesAdapter
     private lateinit var similarProduct: SimilarProduct
-    private lateinit var fullSimilarProduct: ResultXV2
+    private lateinit var fullSimilarProduct: ResultX
 
     lateinit var progressBar: ProgressBar
     private lateinit var apiClient: ApiClient
@@ -159,7 +158,7 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(),
         adapter.updateList(imageList)
     }
 
-    private fun addToCart(product: ResultXV2, productId: String){
+    private fun addToCart(product: ResultX, productId: String){
         binding.apply {
             addToCart.setOnClickListener {
                 Log.d("TAG", "onViewCreated: $product")
@@ -174,7 +173,7 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(),
         }
     }
 
-    private fun setDataProduct(product: ResultXV2) {
+    private fun setDataProduct(product: ResultX) {
         if (product.img.size <= 1) {
             binding.lpSomeImagesRv.visibility = View.GONE
         } else {
@@ -212,10 +211,10 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(),
         progressBar.visibility = VISIBLE
         try {
             val call = apiClient.getApiService().getProductByID("Bearer ${sessionManager.fetchToken()}", similarProduct.id)
-            call.enqueue(object : Callback<ResultXV2?> {
+            call.enqueue(object : Callback<ResultX?> {
                 override fun onResponse(
-                    call: Call<ResultXV2?>,
-                    response: Response<ResultXV2?>
+                    call: Call<ResultX?>,
+                    response: Response<ResultX?>
                 ) {
                     progressBar.visibility = INVISIBLE
                     if (response.isSuccessful) {
@@ -235,7 +234,7 @@ class AlikeProductBottomSheetDialogFragment : BaseBottomSheetDialogFragment(),
                     }
                 }
 
-                override fun onFailure(call: Call<ResultXV2?>, t: Throwable) {
+                override fun onFailure(call: Call<ResultX?>, t: Throwable) {
                     Toast.makeText(requireContext(), "Загрузка прошла не успешно, пожалуйста повторите попытку", Toast.LENGTH_SHORT).show()
                     progressBar.visibility = INVISIBLE
                     Log.d("TAG", "onFailure: ${t.message}")

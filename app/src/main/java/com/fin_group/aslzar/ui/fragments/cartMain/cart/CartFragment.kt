@@ -17,7 +17,7 @@ import com.fin_group.aslzar.adapter.ProductInCartAdapter
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentCartBinding
 import com.fin_group.aslzar.models.ProductInCart
-import com.fin_group.aslzar.response.ResultXV2
+import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.ui.activities.MainActivity
 import com.fin_group.aslzar.ui.fragments.cartMain.MainCartFragmentDirections
 import com.fin_group.aslzar.ui.fragments.cartMain.cart.functions.cartObserver
@@ -114,7 +114,7 @@ class CartFragment : Fragment(), EditProductInCart, OnProductAddedToCartListener
 
 
 
-        val product = ResultXV2(
+        val product = ResultX(
             "",
             "",
             "",

@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.fin_group.aslzar.adapter.InStockAdapter
 import com.fin_group.aslzar.databinding.FragmentBottomSheetDialogInStockBinding
-import com.fin_group.aslzar.response.CountV2
-import com.fin_group.aslzar.response.ResultXV2
+import com.fin_group.aslzar.response.Count
+import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.util.BaseBottomSheetDialogFragment
 
 @Suppress("DEPRECATION")
@@ -17,9 +17,9 @@ class InStockBottomSheetDialogFragment : BaseBottomSheetDialogFragment() {
     private var _binding: FragmentBottomSheetDialogInStockBinding? = null
     private val binding get() = _binding!!
 
-    private var inStockList: ArrayList<CountV2> = ArrayList()
+    private var inStockList: ArrayList<Count> = ArrayList()
     private var inStockProductId: String = ""
-    private lateinit var product: ResultXV2
+    private lateinit var product: ResultX
 //    private lateinit var inStockList: InStockList
 
     companion object {
@@ -30,7 +30,7 @@ class InStockBottomSheetDialogFragment : BaseBottomSheetDialogFragment() {
 //            dialog.arguments = args
 //            return dialog
 //        }
-        fun newInstance(productName: String, counts: List<CountV2>): InStockBottomSheetDialogFragment{
+        fun newInstance(productName: String, counts: List<Count>): InStockBottomSheetDialogFragment{
             val dialog = InStockBottomSheetDialogFragment()
             val args = Bundle()
             args.putString(ARG_PRODUCT_ID, productName)

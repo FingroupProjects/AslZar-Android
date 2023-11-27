@@ -27,9 +27,9 @@ import com.fin_group.aslzar.adapter.TableInstallmentAdapter
 import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.databinding.FragmentDataProductBinding
 import com.fin_group.aslzar.response.PercentInstallment
-import com.fin_group.aslzar.response.ResultXV2
+import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.response.SimilarProduct
-import com.fin_group.aslzar.response.TypeV2
+import com.fin_group.aslzar.response.Type
 import com.fin_group.aslzar.ui.dialogs.AlikeProductBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.callInStockDialog
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.callSetInProduct
@@ -63,7 +63,7 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
     val sharedViewModel: SharedViewModel by activityViewModels()
     lateinit var badgeManager: BadgeManager
     lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    lateinit var product: ResultXV2
+    lateinit var product: ResultX
     lateinit var preferences: SharedPreferences
     lateinit var recyclerViewSomeImages: RecyclerView
     lateinit var recyclerViewLikeProducts: RecyclerView
@@ -181,7 +181,7 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         }
         if (item.itemId == R.id.product_in_stock_item) {
             if (product.types.isNotEmpty()) {
-                val firstType: TypeV2 = product.types[0]
+                val firstType: Type = product.types[0]
                 if (firstType.counts.isNotEmpty()) {
                     callInStockDialog(product.full_name, firstType.counts)
                 } else {
