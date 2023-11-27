@@ -17,17 +17,13 @@ import com.fin_group.aslzar.models.FilterModel
 import com.fin_group.aslzar.response.Category
 import com.fin_group.aslzar.response.Count
 import com.fin_group.aslzar.response.GetAllCategoriesResponse
-import com.fin_group.aslzar.response.GetAllProducts
-import com.fin_group.aslzar.response.GetAllProductsResponse
-import com.fin_group.aslzar.response.InStock
-import com.fin_group.aslzar.response.Product
+import com.fin_group.aslzar.response.GetAllProductV2
 import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.ui.dialogs.CheckCategoryFragmentDialog
 import com.fin_group.aslzar.ui.dialogs.FilterDialogFragment
 import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.WarningNoHaveProductFragmentDialog
 import com.fin_group.aslzar.ui.fragments.main.MainFragment
-import com.fin_group.aslzar.util.CategoryClickListener
 import com.fin_group.aslzar.util.FilterDialogListener
 import com.fin_group.aslzar.util.returnNumber
 import com.google.gson.Gson
@@ -48,11 +44,11 @@ fun MainFragment.callFilterDialog(listener: FilterDialogListener) {
     filterDialog.show(activity?.supportFragmentManager!!, "filter dialog")
 }
 
-fun MainFragment.callCategoryDialog(listener: CategoryClickListener) {
-    val categoryDialog = CheckCategoryFragmentDialog()
-    categoryDialog.setCategoryClickListener(listener)
-    categoryDialog.show(activity?.supportFragmentManager!!, "category check dialog")
-}
+//fun MainFragment.callCategoryDialog(listener: CategoryClickListener) {
+//    val categoryDialog = CheckCategoryFragmentDialog()
+//    categoryDialog.setCategoryClickListener(listener)
+//    categoryDialog.show(activity?.supportFragmentManager!!, "category check dialog")
+//}
 
 fun MainFragment.callInStockDialog(name: String, counts: List<Count>) {
     val fragmentManager = requireFragmentManager()
@@ -115,11 +111,12 @@ fun MainFragment.filterFun() {
         viewSearch.visibility = GONE
     }
 
-    callCategoryDialog(this)
+//    callCategoryDialog(this)
 }
 
+
 fun MainFragment.addProductToCart(product: ResultX) {
-    sharedViewModel.onProductAddedToCartV2(product, requireContext())
+    sharedViewModel.onProductAddedToCart(product, requireContext())
     updateBadge()
 }
 
@@ -293,10 +290,10 @@ fun MainFragment.getAllProductsFromApi() {
     try {
         val call =
             apiService.getApiService().getAllProducts("Bearer ${sessionManager.fetchToken()}")
-        call.enqueue(object : Callback<GetAllProducts> {
+        call.enqueue(object : Callback<GetAllProductV2> {
             override fun onResponse(
-                call: Call<GetAllProducts>,
-                response: Response<GetAllProducts>
+                call: Call<GetAllProductV2>,
+                response: Response<GetAllProductV2>
             ) {
                 swipeRefreshLayout.isRefreshing = false
                 if (response.isSuccessful) {
@@ -319,7 +316,7 @@ fun MainFragment.getAllProductsFromApi() {
                 }
             }
 
-            override fun onFailure(call: Call<GetAllProducts>, t: Throwable) {
+            override fun onFailure(call: Call<GetAllProductV2>, t: Throwable) {
                 Log.d("TAG", "onFailure: ${t.message}")
                 swipeRefreshLayout.isRefreshing = false
             }

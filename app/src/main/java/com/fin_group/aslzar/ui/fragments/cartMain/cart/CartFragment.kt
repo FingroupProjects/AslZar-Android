@@ -3,35 +3,23 @@ package com.fin_group.aslzar.ui.fragments.cartMain.cart
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.util.Log
-import android.util.TypedValue
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageButton
-import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
-import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.ProductInCartAdapter
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentCartBinding
 import com.fin_group.aslzar.models.ProductInCart
-import com.fin_group.aslzar.response.Product
-import com.fin_group.aslzar.response.ResultX
+import com.fin_group.aslzar.response.ResultXV2
 import com.fin_group.aslzar.ui.activities.MainActivity
-import com.fin_group.aslzar.ui.dialogs.DataProductInCartFragment
-import com.fin_group.aslzar.ui.dialogs.DeleteAllProductFromCartFragmentDialog
 import com.fin_group.aslzar.ui.fragments.cartMain.MainCartFragmentDirections
-import com.fin_group.aslzar.ui.fragments.cartMain.calculator.CalculatorFragmentV2
 import com.fin_group.aslzar.ui.fragments.cartMain.cart.functions.cartObserver
 import com.fin_group.aslzar.ui.fragments.cartMain.cart.functions.deleteAllProductFromCart
 import com.fin_group.aslzar.ui.fragments.cartMain.cart.functions.fetchItemTouchHelper
@@ -42,13 +30,9 @@ import com.fin_group.aslzar.util.BadgeManager
 import com.fin_group.aslzar.util.CartObserver
 import com.fin_group.aslzar.util.EditProductInCart
 import com.fin_group.aslzar.util.OnProductAddedToCartListener
-import com.fin_group.aslzar.util.doubleFormat
-import com.fin_group.aslzar.util.formatNumber
 import com.fin_group.aslzar.viewmodel.SharedViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
-import kotlin.math.roundToInt
 
 
 class CartFragment : Fragment(), EditProductInCart, OnProductAddedToCartListener {
@@ -129,13 +113,15 @@ class CartFragment : Fragment(), EditProductInCart, OnProductAddedToCartListener
     override fun openDialogDataProduct(productInCart: ProductInCart) {
 
 
-        val product = ResultX(
+
+        val product = ResultXV2(
             "",
             "",
             "",
             "",
-           "",
+            "",
             productInCart.id,
+            productInCart.image,
             false,
             "",
             productInCart.name,
@@ -143,8 +129,7 @@ class CartFragment : Fragment(), EditProductInCart, OnProductAddedToCartListener
             "",
             productInCart.sale.toInt(),
             "",
-            emptyList(),
-            productInCart.image
+            emptyList()
         )
 
         try {

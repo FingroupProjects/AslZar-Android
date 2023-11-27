@@ -13,10 +13,10 @@ import com.fin_group.aslzar.adapter.ProductsAdapter
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentNewProductsBinding
 import com.fin_group.aslzar.response.Category
-import com.fin_group.aslzar.response.Count
+import com.fin_group.aslzar.response.CountV2
 import com.fin_group.aslzar.response.GetAllCategoriesResponse
-import com.fin_group.aslzar.response.GetAllProducts
-import com.fin_group.aslzar.response.ResultX
+import com.fin_group.aslzar.response.GetAllProductV2
+import com.fin_group.aslzar.response.ResultXV2
 import com.fin_group.aslzar.ui.dialogs.CheckCategoryFragmentDialog
 import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.WarningNoHaveProductFragmentDialog
@@ -34,7 +34,7 @@ fun NewProductsFragment.callCategoryDialog(listener: CategoryClickListener) {
     categoryDialog.show(activity?.supportFragmentManager!!, "category check dialog")
 }
 
-fun NewProductsFragment.callInStockDialog(name: String, counts: List<Count>) {
+fun NewProductsFragment.callInStockDialog(name: String, counts: List<CountV2>) {
     val fragmentManager = requireFragmentManager()
     val tag = "Product in stock Dialog"
     val existingFragment = fragmentManager.findFragmentByTag(tag)
@@ -88,7 +88,7 @@ fun NewProductsFragment.searchViewFun() {
     }
 }
 
-fun NewProductsFragment.addProductToCart(product: ResultX) {
+fun NewProductsFragment.addProductToCart(product: ResultXV2) {
     sharedViewModel.onProductAddedToCart(product, requireContext())
     updateBadge()
 }
@@ -146,8 +146,8 @@ fun NewProductsFragment.getAllProductFromPrefs() {
     try {
         val products = preferences.getString("newProductList", null)
         if (products != null) {
-            val productsListType = object : TypeToken<List<ResultX>>() {}.type
-            val productList = Gson().fromJson<List<ResultX>>(products, productsListType)
+            val productsListType = object : TypeToken<List<ResultXV2>>() {}.type
+            val productList = Gson().fromJson<List<ResultXV2>>(products, productsListType)
             allProducts = productList
             fetchRV(allProducts)
         } else {
@@ -160,10 +160,10 @@ fun NewProductsFragment.getAllProductFromPrefs() {
     }
 }
 
-fun NewProductsFragment.retrieveFilteredProducts(): List<ResultX> {
+fun NewProductsFragment.retrieveFilteredProducts(): List<ResultXV2> {
     val productJson = preferences.getString("filteredNewProducts", null)
     return if (productJson != null) {
-        val productListType = object : TypeToken<List<ResultX>>() {}.type
+        val productListType = object : TypeToken<List<ResultXV2>>() {}.type
         Gson().fromJson(productJson, productListType)
     } else {
         emptyList()
@@ -171,7 +171,7 @@ fun NewProductsFragment.retrieveFilteredProducts(): List<ResultX> {
 }
 
 @SuppressLint("NotifyDataSetChanged")
-fun NewProductsFragment.fetchRV(productList: List<ResultX>) {
+fun NewProductsFragment.fetchRV(productList: List<ResultXV2>) {
     recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
     myAdapter = ProductsAdapter(productList, this)
     recyclerView.adapter = myAdapter
@@ -183,10 +183,10 @@ fun NewProductsFragment.getAllProductsFromApi() {
     try {
         val call =
             apiService.getApiService().getNewProducts("Bearer ${sessionManager.fetchToken()}")
-        call.enqueue(object : Callback<GetAllProducts> {
+        call.enqueue(object : Callback<GetAllProductV2> {
             override fun onResponse(
-                call: Call<GetAllProducts?>,
-                response: Response<GetAllProducts?>
+                call: Call<GetAllProductV2?>,
+                response: Response<GetAllProductV2?>
             ) {
                 swipeRefreshLayout.isRefreshing = false
                 if (response.isSuccessful) {
@@ -207,7 +207,7 @@ fun NewProductsFragment.getAllProductsFromApi() {
                 }
             }
 
-            override fun onFailure(call: Call<GetAllProducts?>, t: Throwable) {
+            override fun onFailure(call: Call<GetAllProductV2?>, t: Throwable) {
                 Log.d("TAG", "onFailure: ${t.message}")
                 swipeRefreshLayout.isRefreshing = false
             }

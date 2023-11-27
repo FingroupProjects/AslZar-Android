@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.models.ProductInCart
 import com.fin_group.aslzar.response.ResultX
-import com.fin_group.aslzar.response.Type
 
 class SharedViewModel: ViewModel() {
 

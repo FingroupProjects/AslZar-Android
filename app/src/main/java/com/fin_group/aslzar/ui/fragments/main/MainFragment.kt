@@ -31,10 +31,8 @@ import com.fin_group.aslzar.cipher.EncryptionManager
 import com.fin_group.aslzar.databinding.FragmentMainBinding
 import com.fin_group.aslzar.models.FilterModel
 import com.fin_group.aslzar.response.Category
-import com.fin_group.aslzar.response.Count
-import com.fin_group.aslzar.response.Product
+
 import com.fin_group.aslzar.response.ResultX
-import com.fin_group.aslzar.response.Type
 import com.fin_group.aslzar.ui.activities.MainActivity
 import com.fin_group.aslzar.ui.fragments.main.functions.addProductToCart
 import com.fin_group.aslzar.util.CategoryClickListener
@@ -42,7 +40,6 @@ import com.fin_group.aslzar.util.ProductOnClickListener
 import com.fin_group.aslzar.ui.fragments.main.functions.callInStockDialog
 import com.fin_group.aslzar.ui.fragments.main.functions.callOutStock
 import com.fin_group.aslzar.ui.fragments.main.functions.fetchRV
-import com.fin_group.aslzar.ui.fragments.main.functions.filterFun
 import com.fin_group.aslzar.ui.fragments.main.functions.filterProducts
 import com.fin_group.aslzar.ui.fragments.main.functions.filterProducts2
 import com.fin_group.aslzar.ui.fragments.main.functions.getAllCategoriesFromApi
@@ -65,8 +62,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
 @Suppress("DEPRECATION")
-class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener,
-    FilterDialogListener {
+class MainFragment : Fragment(), ProductOnClickListener,
+    CategoryClickListener, FilterDialogListener {
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
@@ -103,7 +100,7 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener,
     lateinit var encryptionManager: EncryptionManager
 
     lateinit var filterViewModel: FilterViewModel
-    var filterModel: FilterModel ?= null
+    var filterModel: FilterModel? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -140,7 +137,8 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener,
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         searchView = binding.searchViewMain
-        mainActivity = activity as? MainActivity ?: throw IllegalStateException("Activity is not MainActivity")
+        mainActivity =
+            activity as? MainActivity ?: throw IllegalStateException("Activity is not MainActivity")
 
         NoInternetDialogFragment.showIfNoInternet(requireContext())
 
@@ -151,6 +149,7 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener,
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return true
             }
+
             override fun onQueryTextChange(newText: String?): Boolean {
                 searchText = newText.toString()
                 filterProducts()
@@ -165,7 +164,11 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener,
 
         filterViewModel.filterChangeListener.observe(viewLifecycleOwner) { newFilterModel ->
             newFilterModel?.let { updatedFilterModel ->
-                Toast.makeText(requireContext(),"${updatedFilterModel.category}",Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    "${updatedFilterModel.category}",
+                    Toast.LENGTH_SHORT
+                ).show()
                 Log.d("TAG", "onFilterChanged: $updatedFilterModel")
 
                 filterModel = updatedFilterModel
@@ -192,13 +195,15 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener,
             R.id.search_item -> {
                 searchViewFun()
             }
+
             R.id.filter_item -> {
-                if (hasInternet){
+                if (hasInternet) {
                     setFilterViewModel()
                 } else {
                     NoInternetDialogFragment.showIfNoInternet(requireContext())
                 }
             }
+
             R.id.barcode_item -> {
                 if (hasInternet) {
                     val action =
@@ -208,11 +213,11 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener,
                     NoInternetDialogFragment.showIfNoInternet(requireContext())
                 }
             }
+
             R.id.profile_item -> {
                 if (hasInternet) {
                     findNavController().navigate(R.id.action_mainFragment_to_profileFragment)
-                }
-                else {
+                } else {
                     NoInternetDialogFragment.showIfNoInternet(requireContext())
                 }
             }
@@ -235,7 +240,7 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener,
     override fun onStart() {
         super.onStart()
         val firstRun = preferences.getBoolean("first_run", true)
-        if (firstRun){
+        if (firstRun) {
             viewCheckedCategory.visibility = GONE
         } else {
             savingAndFetchingCategory(binding, filterViewModel.filterModel!!)
@@ -291,7 +296,9 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener,
         callOutStock(product.id)
     }
 
+
     override fun getData(product: ResultX) {
+
         val product2 = ResultX(
             product.barcode,
             product.category_id,
@@ -299,6 +306,7 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener,
             product.description,
             product.full_name,
             product.id,
+            product.img,
             product.is_set,
             product.metal,
             product.name,
@@ -307,10 +315,13 @@ class MainFragment : Fragment(), ProductOnClickListener, CategoryClickListener,
             product.sale,
             product.stone_type,
             product.types,
-            product.img
         )
 
-        val action = MainFragmentDirections.actionMainFragmentToDataProductFragment(product2.id, product2, "Main")
+        val action = MainFragmentDirections.actionMainFragmentToDataProductFragment(
+            product2.id,
+            product2,
+            "Main"
+        )
         Navigation.findNavController(binding.root).navigate(action)
     }
 }

@@ -2,7 +2,6 @@ package com.fin_group.aslzar.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.databinding.RowItemProductBinding
-import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.util.ProductOnClickListener
 import com.fin_group.aslzar.util.formatNumber
@@ -28,7 +26,8 @@ class SalesProductsV2Adapter(
         val title = binding.productTitle
         val image = binding.productImage
         val code = binding.productKode
-//        private val btnCheckingInStock = binding.ibHaveInStore
+
+        //        private val btnCheckingInStock = binding.ibHaveInStore
         private val btnAddProduct = binding.ibAddToBasket
         private val saleTv = binding.productSale
 
@@ -69,12 +68,15 @@ class SalesProductsV2Adapter(
 
             if (product.types.isNotEmpty() && product.types[0].counts.isNotEmpty()) {
                 btnAddProduct.setImageResource(R.drawable.ic_clear_white)
-                btnAddProduct.background = context.resources.getDrawable(R.drawable.item_product_bottom_btn_2)
+                btnAddProduct.background =
+                    context.resources.getDrawable(R.drawable.item_product_bottom_btn_2)
 
             } else {
                 btnAddProduct.setImageResource(R.drawable.ic_add_2)
-                btnAddProduct.background = context.resources.getDrawable(R.drawable.ripple_effect_top_btn)
+                btnAddProduct.background =
+                    context.resources.getDrawable(R.drawable.ripple_effect_top_btn)
             }
+
             btnAddProduct.setOnClickListener {
                 listener.addToCart(product)
             }
@@ -114,15 +116,15 @@ class SalesProductsV2Adapter(
                 "",
                 product.full_name,
                 product.id,
+                product.img,
                 product.is_set,
                 "",
                 product.name,
                 product.price,
-                product.proba,
+                "",
                 product.sale,
                 "",
-                product.types,
-                product.img
+                product.types
             )
             listener.getData(product2)
         }

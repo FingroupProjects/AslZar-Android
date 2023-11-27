@@ -9,9 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.databinding.RowItemProductBinding
-import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.response.ProductSale
-import com.fin_group.aslzar.response.ResultX
+import com.fin_group.aslzar.response.ResultXV2
 import com.fin_group.aslzar.util.ProductOnClickListener
 import com.fin_group.aslzar.util.formatNumber
 
@@ -82,13 +81,14 @@ class SalesProductsAdapter(
 
         binding.root.setOnClickListener {
 
-            val product2 = ResultX(
+            val product2 = ResultXV2(
                 "",
                 "",
                 "",
                 "",
                 product.full_name,
                 product.id,
+                product.img,
                 false,
                 "",
                 product.name,
@@ -96,8 +96,7 @@ class SalesProductsAdapter(
                 "",
                 product.sale.toInt(),
                 "",
-                emptyList(),
-                product.img
+                emptyList()
             )
 
             listener.getData(product2)

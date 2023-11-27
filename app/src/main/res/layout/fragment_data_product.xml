@@ -275,54 +275,7 @@
                 app:layout_constraintTop_toTopOf="@+id/textView20"
                 app:singleSelection="true">
 
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/size1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="10"
-                    android:textColor="@color/black" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/size2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="11"
-                    android:textColor="@color/black" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/size3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="12"
-                    android:textColor="@color/black" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/size4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="13"
-                    android:textColor="@color/black" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/size5"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="14"
-                    android:textColor="@color/black" />
-
             </com.google.android.material.chip.ChipGroup>
-
-
-
-
-
-
-
-
-
-
-
-
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/chipGroupVes"
@@ -334,52 +287,7 @@
                 app:layout_constraintTop_toTopOf="@+id/textView27"
                 app:singleSelection="true">
 
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/ves1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/black"
-                    android:text="10" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/ves2"
-                    android:textColor="@color/black"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="11" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/ves3"
-                    android:textColor="@color/black"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="12" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/ves4"
-                    android:textColor="@color/black"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="13" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/ves5"
-                    android:textColor="@color/black"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="14" />
-
             </com.google.android.material.chip.ChipGroup>
-
-
-
-
-
-
-
-
-
-
 
             <TextView
                 android:id="@+id/textView46"

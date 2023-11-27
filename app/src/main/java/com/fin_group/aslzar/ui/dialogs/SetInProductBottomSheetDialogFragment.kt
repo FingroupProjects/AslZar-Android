@@ -22,12 +22,8 @@ import com.fin_group.aslzar.adapter.SetInProductAdapter
 import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentSheetDialogSetInProductBottomBinding
-import com.fin_group.aslzar.response.GetAllProducts
-import com.fin_group.aslzar.response.GetAllProductsResponse
-import com.fin_group.aslzar.response.InStock
-import com.fin_group.aslzar.response.Product
-import com.fin_group.aslzar.response.ResultX
-import com.fin_group.aslzar.ui.activities.LoginActivity
+import com.fin_group.aslzar.response.GetAllProductV2
+import com.fin_group.aslzar.response.ResultXV2
 import com.fin_group.aslzar.util.OnProductClickListener
 import com.fin_group.aslzar.util.SessionManager
 import com.fin_group.aslzar.viewmodel.SharedViewModel
@@ -45,13 +41,13 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnPro
     lateinit var recyclerView: RecyclerView
 
     val sharedViewModel: SharedViewModel by activityViewModels()
-    private lateinit var selectedProduct: ResultX
+    private lateinit var selectedProduct: ResultXV2
 
     private var currentSelectedPosition = RecyclerView.NO_POSITION
     lateinit var setInProductAdapter: SetInProductAdapter
 
     private var setInProductId: String = ""
-    var allProducts: List<ResultX> = emptyList()
+    var allProducts: List<ResultXV2> = emptyList()
 
     private lateinit var apiClient: ApiClient
     private lateinit var sessionManager: SessionManager
@@ -181,7 +177,7 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnPro
     }
 
 
-    private fun setDataProduct(product: ResultX) {
+    private fun setDataProduct(product: ResultXV2) {
         binding.apply {
             Glide.with(requireContext()).load(product.img[0]).into(binding.mainImageView)
 
@@ -204,10 +200,10 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnPro
         try {
             val call = apiClient.getApiService()
                 .getSetInProduct("Bearer ${sessionManager.fetchToken()}", setInProductId)
-            call.enqueue(object : Callback<GetAllProducts?> {
+            call.enqueue(object : Callback<GetAllProductV2?> {
                 override fun onResponse(
-                    call: Call<GetAllProducts?>,
-                    response: Response<GetAllProducts?>
+                    call: Call<GetAllProductV2?>,
+                    response: Response<GetAllProductV2?>
                 ) {
                     Log.d("TAG", "onResponse: ${response.code()}")
                     Log.d("TAG", "onResponse: ${response.body()}")
@@ -243,7 +239,7 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnPro
                     }
                 }
 
-                override fun onFailure(call: Call<GetAllProducts?>, t: Throwable) {
+                override fun onFailure(call: Call<GetAllProductV2?>, t: Throwable) {
                     Log.d("TAG", "onFailure: ${t.message}")
                     progressBar.visibility = INVISIBLE
                 }
@@ -255,7 +251,7 @@ class SetInProductBottomSheetDialogFragment : BottomSheetDialogFragment(), OnPro
     }
 
 
-    override fun setProduct(product: ResultX) {
+    override fun setProduct(product: ResultXV2) {
         val image = product.img[0]
         selectedProduct = product
         setDataProduct(product)

@@ -27,28 +27,22 @@ import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentNewProductsBinding
 import com.fin_group.aslzar.response.Category
-import com.fin_group.aslzar.response.Product
-import com.fin_group.aslzar.response.ResultX
+import com.fin_group.aslzar.response.ResultXV2
 import com.fin_group.aslzar.ui.activities.MainActivity
-import com.fin_group.aslzar.ui.fragments.dataProduct.DataProductFragment
-import com.fin_group.aslzar.ui.fragments.main.MainFragmentDirections
 import com.fin_group.aslzar.ui.fragments.new_products.functions.addProductToCart
 import com.fin_group.aslzar.ui.fragments.new_products.functions.callInStockDialog
 import com.fin_group.aslzar.ui.fragments.new_products.functions.callOutStock
 import com.fin_group.aslzar.ui.fragments.new_products.functions.fetchRV
 import com.fin_group.aslzar.ui.fragments.new_products.functions.filterProducts
-import com.fin_group.aslzar.ui.fragments.new_products.functions.getAllCategoriesFromApi
 import com.fin_group.aslzar.ui.fragments.new_products.functions.getAllProductFromPrefs
 import com.fin_group.aslzar.ui.fragments.new_products.functions.getAllProductsFromApi
 import com.fin_group.aslzar.ui.fragments.new_products.functions.savingAndFetchSearch
 import com.fin_group.aslzar.ui.fragments.new_products.functions.searchViewFun
 import com.fin_group.aslzar.ui.fragments.new_products.functions.updateBadge
 import com.fin_group.aslzar.util.BadgeManager
-import com.fin_group.aslzar.util.CategoryClickListener
 import com.fin_group.aslzar.util.NoInternetDialogFragment
 import com.fin_group.aslzar.util.ProductOnClickListener
 import com.fin_group.aslzar.util.SessionManager
-import com.fin_group.aslzar.util.showBottomNav
 import com.fin_group.aslzar.viewmodel.SharedViewModel
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -65,8 +59,8 @@ class NewProductsFragment : Fragment(), ProductOnClickListener {
     lateinit var viewSearch: ConstraintLayout
     var searchText: String = ""
     lateinit var searchView: SearchView
-    var allProducts: List<ResultX> = emptyList()
-    var filteredProducts: List<ResultX> = emptyList()
+    var allProducts: List<ResultXV2> = emptyList()
+    var filteredProducts: List<ResultXV2> = emptyList()
     lateinit var myAdapter: ProductsAdapter
     lateinit var viewCheckedCategory: ConstraintLayout
     var allCategories: List<Category> = emptyList()
@@ -210,11 +204,11 @@ class NewProductsFragment : Fragment(), ProductOnClickListener {
             })
     }
 
-    override fun addToCart(product: ResultX) {
+    override fun addToCart(product: ResultXV2) {
         addProductToCart(product)
     }
 
-    override fun inStock(product: ResultX) {
+    override fun inStock(product: ResultXV2) {
         if (product.types.isNotEmpty()) {
             for (type in product.types) {
                 if (type.counts.isNotEmpty()) {
@@ -227,15 +221,16 @@ class NewProductsFragment : Fragment(), ProductOnClickListener {
     }
 
 
-    override fun getData(product: ResultX) {
+    override fun getData(product: ResultXV2) {
 
-        val product2 =  ResultX(
+        val product2 =  ResultXV2(
             "",
             "",
             "",
             "",
             product.full_name,
             product.id,
+            product.img,
             product.is_set,
             "",
             product.name,
@@ -243,8 +238,7 @@ class NewProductsFragment : Fragment(), ProductOnClickListener {
             product.proba,
             0,
             "",
-            product.types,
-            product.img
+            product.types
         )
 
         val action = NewProductsFragmentDirections.actionNewProductsFragmentToDataProductFragment(product2.id, product2, "NewProducts")
