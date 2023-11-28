@@ -163,7 +163,6 @@ fun DataProductFragment.setDataProduct(product: ResultX, binding: FragmentDataPr
 
         var lastSelectedChipSize: Chip? = null
         var lastSelectedChipWeight: Chip? = null
-
         binding.chipGroupSize.setOnCheckedChangeListener { group, checkedId ->
             val selectedChip = group.findViewById<Chip>(checkedId)
             val selectedIndex = group.indexOfChild(selectedChip)
@@ -181,10 +180,12 @@ fun DataProductFragment.setDataProduct(product: ResultX, binding: FragmentDataPr
 
                 lastSelectedChipSize = selectedChip
                 lastSelectedChipWeight = chipWeight
-
                 updatePrice(binding, product, selectedChip.text.toString(), lastSelectedChipWeight?.text.toString())
             }
         }
+
+        val firstChipSize = binding.chipGroupSize.getChildAt(0) as? Chip
+        firstChipSize?.isChecked = true
 
         binding.chipGroupVes.setOnCheckedChangeListener { group, checkedId ->
             val selectedChip = group.findViewById<Chip>(checkedId)
@@ -201,12 +202,13 @@ fun DataProductFragment.setDataProduct(product: ResultX, binding: FragmentDataPr
                 chipSize?.setChipBackgroundColorResource(R.color.background_3)
                 lastSelectedChipWeight = selectedChip
                 lastSelectedChipSize = chipSize
-
                 updatePrice(binding, product, lastSelectedChipSize?.text.toString(), selectedChip.text.toString())
             }
         }
 
-        dpInstallmentPrice.text = "(${((product.price.toDouble() * percentInstallment.first_pay.toDouble()) / 100)} UZS п.в.)"
+        val firstChipVes = binding.chipGroupVes.getChildAt(0) as? Chip
+        firstChipVes?.isChecked = true
+
         btnAddToCart.setOnClickListener {
             val addedProduct = Cart.getProductById(product.id)
             if (addedProduct != null) {
@@ -224,18 +226,16 @@ fun DataProductFragment.setDataProduct(product: ResultX, binding: FragmentDataPr
     }
 }
 
-
 @SuppressLint("SetTextI18n")
-private fun updatePrice(binding: FragmentDataProductBinding, product: ResultX, selectedSize: String?, selectedWeight: String?) {
+private fun DataProductFragment.updatePrice(binding: FragmentDataProductBinding, product: ResultX, selectedSize: String?, selectedWeight: String?) {
     val matchingType = product.types.find { it.size.toString() == selectedSize && it.weight.toString() == selectedWeight }
 
     if (matchingType != null) {
         val price = matchingType.counts.firstOrNull()?.price ?: 0
         binding.dpPrice.text = "$price UZS"
+        binding.dpInstallmentPrice.text = "(${((price.toDouble() * percentInstallment.first_pay.toDouble()) / 100)} UZS п.в.)"
     }
 }
-
-
 
 fun DataProductFragment.getSimilarProducts() {
     swipeRefreshLayout.isRefreshing = true
@@ -299,8 +299,6 @@ fun DataProductFragment.getProductByID() {
                         product = productResponse
                         setDataProduct(product, binding)
                         productSomeImagesAdapter.updateList(product.img)
-
-
                     }
                 }
             }
