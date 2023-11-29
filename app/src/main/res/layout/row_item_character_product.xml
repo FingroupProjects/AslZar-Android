@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="10dp"
-    android:layout_marginBottom="10dp"
+    android:layout_marginTop="5dp"
+    android:layout_marginBottom="5dp"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?attr/selectableItemBackgroundBorderless"
@@ -15,11 +16,12 @@
     app:strokeColor="@android:color/transparent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/mainLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constraintLayout5"
+            android:id="@+id/firstProductLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_for_layout"
@@ -75,7 +77,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
                 android:layout_marginTop="12dp"
-                android:text="Цена:"
+                android:text="Цена от:"
                 android:textStyle="bold"
                 app:layout_constraintStart_toEndOf="@+id/characterCode"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -88,7 +90,7 @@
                 android:text="Размер:"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="@+id/textView57"
-                app:layout_constraintTop_toTopOf="@+id/characterCode2" />
+                app:layout_constraintTop_toTopOf="@+id/characterWeight" />
 
             <TextView
                 android:id="@+id/textView54"
@@ -117,32 +119,35 @@
                 app:layout_constraintTop_toTopOf="@+id/textView52" />
 
             <TextView
-                android:id="@+id/characterCode3"
+                android:id="@+id/characterPrice"
                 style="@style/forTextView"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="3dp"
+                android:layout_marginEnd="12dp"
                 android:text="7 000 000 UZS"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/textView57"
+                app:layout_constraintEnd_toStartOf="@+id/showGoodsBtn"
                 app:layout_constraintStart_toEndOf="@+id/textView57"
                 app:layout_constraintTop_toTopOf="@+id/textView57" />
 
             <TextView
-                android:id="@+id/characterCode4"
+                android:id="@+id/characterSize"
                 style="@style/forTextView"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="3dp"
                 android:text="17,2"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/textView58"
+                app:layout_constraintEnd_toEndOf="@+id/characterPrice"
                 app:layout_constraintStart_toEndOf="@+id/textView58"
                 app:layout_constraintTop_toTopOf="@+id/textView58"
                 app:layout_constraintVertical_bias="1.0" />
 
             <TextView
-                android:id="@+id/characterCode2"
+                android:id="@+id/characterWeight"
                 style="@style/forTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -158,12 +163,14 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/secondProductLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/constraintLayout5">
+            app:layout_constraintTop_toBottomOf="@+id/firstProductLayout">
 
             <TextView
                 android:id="@+id/textView60"
@@ -172,9 +179,9 @@
                 android:layout_height="wrap_content"
                 android:text="Поставщик:"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/characterCode5"
+                app:layout_constraintBottom_toBottomOf="@+id/characterProvider"
                 app:layout_constraintStart_toStartOf="@+id/guideline9"
-                app:layout_constraintTop_toTopOf="@+id/characterCode5" />
+                app:layout_constraintTop_toTopOf="@+id/characterProvider" />
 
             <TextView
                 android:id="@+id/textView61"
@@ -186,13 +193,13 @@
                 android:text="Made in:"
                 android:textAlignment="textEnd"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/characterCode6"
-                app:layout_constraintEnd_toStartOf="@+id/characterCode6"
-                app:layout_constraintStart_toEndOf="@+id/characterCode5"
-                app:layout_constraintTop_toTopOf="@+id/characterCode6" />
+                app:layout_constraintBottom_toBottomOf="@+id/characterMadeIn"
+                app:layout_constraintEnd_toStartOf="@+id/characterMadeIn"
+                app:layout_constraintStart_toEndOf="@+id/characterProvider"
+                app:layout_constraintTop_toTopOf="@+id/characterMadeIn" />
 
             <TextView
-                android:id="@+id/characterCode5"
+                android:id="@+id/characterProvider"
                 style="@style/forTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -200,13 +207,13 @@
                 android:layout_marginEnd="3dp"
                 android:text="Поставщик 2"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/characterCode6"
+                app:layout_constraintBottom_toBottomOf="@+id/characterMadeIn"
                 app:layout_constraintEnd_toStartOf="@+id/textView61"
                 app:layout_constraintStart_toEndOf="@+id/textView60"
-                app:layout_constraintTop_toTopOf="@+id/characterCode6" />
+                app:layout_constraintTop_toTopOf="@+id/characterMadeIn" />
 
             <TextView
-                android:id="@+id/characterCode6"
+                android:id="@+id/characterMadeIn"
                 style="@style/forTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -288,6 +295,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/textView60" />
 
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvFilials"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="6dp"
@@ -295,6 +303,7 @@
                 app:layout_constraintEnd_toStartOf="@+id/guideline8"
                 app:layout_constraintStart_toStartOf="@+id/guideline9"
                 app:layout_constraintTop_toBottomOf="@+id/textView62"
+                tools:itemCount="4"
                 tools:listitem="@layout/row_item_filial_character" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

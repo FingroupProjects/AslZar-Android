@@ -31,7 +31,7 @@
         app:layout_constraintTop_toBottomOf="@+id/view8" />
 
     <TextView
-        android:id="@+id/branchName2"
+        android:id="@+id/branchShowcase"
         style="@style/forTextView.12"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -45,7 +45,7 @@
         app:layout_constraintTop_toBottomOf="@+id/view8" />
 
     <TextView
-        android:id="@+id/branchName3"
+        android:id="@+id/branchPrice"
         style="@style/forTextView.12"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -80,7 +80,7 @@
         app:layout_constraintGuide_percent="0.86" />
 
     <ImageButton
-        android:id="@+id/showGoodsBtn"
+        android:id="@+id/branchAddToCart"
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:layout_marginTop="4dp"

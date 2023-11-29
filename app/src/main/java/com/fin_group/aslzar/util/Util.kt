@@ -29,8 +29,10 @@ import androidx.navigation.fragment.findNavController
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.models.FilterModel
 import com.fin_group.aslzar.models.ProductInCart
+import com.fin_group.aslzar.response.Count
 import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.response.SimilarProduct
+import com.fin_group.aslzar.response.Type
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -45,8 +47,12 @@ interface FunCallback {
     fun onError(errorMessage: String)
 }
 
-interface AddingProduct{
-    fun addProduct()
+interface AddingProduct {
+    fun addProduct(type: Type, count: Count)
+}
+
+interface FilialListener {
+    fun addFilial(filial: Count, position: Int)
 }
 
 interface OnFriendAddedListener {

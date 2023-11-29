@@ -9,10 +9,10 @@
 
         <item name="android:statusBarColor">@color/primary_color_1</item>
         <item name="android:windowLightStatusBar">true</item>
-        
+
         <item name="alertDialogTheme">@style/DialogFragmentTheme</item>
         <item name="bottomSheetDialogTheme">@style/BottomSheetDialogTheme</item>
-<!--        <item name="fontFamily">@font/palanquin</item>-->
+        <!--        <item name="fontFamily">@font/palanquin</item>-->
 
         <item name="chipStyle">@style/Widget.App.Chip</item>
 
@@ -98,6 +98,20 @@
         <item name="android:background">@drawable/shape_dialog_background</item>
     </style>
 
+    <style name="DialogFragmentTheme2" parent="Theme.AppCompat.Dialog">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">false</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowAnimationStyle">@style/DialogFragmentAnimation</item>
+    </style>
+
+    <style name="DialogFragmentAnimation">
+        <item name="android:windowEnterAnimation">@anim/slide_up</item>
+        <item name="android:windowExitAnimation">@anim/slide_down</item>
+    </style>
+
+
     <style name="BottomSheetDialogTheme" parent="ThemeOverlay.Material3.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/BottomSheetDialogStyle</item>
         <item name="android:windowSoftInputMode">adjustResize</item>
@@ -121,6 +135,7 @@
     <style name="Theme.AslZar" parent="Base.Theme.AslZar" />
 
     //for TabLayout
+
     <style name="MyTabTextAppearance" parent="TextAppearance.Design.Tab">
         <item name="android:textSize">20sp</item>
         <item name="android:textColor">@color/text_color_1</item>
@@ -128,6 +143,7 @@
     </style>
 
     //for MaterialCardView
+
     <style name="CardView.Cart" parent="Widget.Material3.CardView.Elevated">
         <item name="cardBackgroundColor">@drawable/bg_card_view_for_cart_check</item>
         <item name="strokeWidth">0dp</item>
@@ -136,11 +152,13 @@
     </style>
 
     //for checkBox
+
     <style name="Widget.App.CheckBox" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
         <item name="buttonTint">@color/primary_color_2</item>
     </style>
 
     //Badges
+
     <style name="CustomBadge" parent="@style/Widget.MaterialComponents.Badge">
         <item name="backgroundColor">@color/background_2</item>
     </style>

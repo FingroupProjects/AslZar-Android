@@ -8,7 +8,6 @@ data class GetAllProductV2(
     val result: List<ResultX>
 )
 @Parcelize
-
 data class ResultX(
     val barcode: String,
     val category_id: String,
@@ -20,9 +19,9 @@ data class ResultX(
     val is_set: Boolean,
     val metal: String,
     val name: String,
-    val price: Int,
+    val price: Number,
     val proba: String,
-    val sale: Int,
+    val sale: Number,
     val stone_type: String,
     val types: List<Type>
 ): Parcelable, Serializable
@@ -34,14 +33,15 @@ data class Type(
     val id: String,
     val name: String,
     val provider: String,
-    val size: Int,
-    val weight: Int
+    val size: Number,
+    val weight: Number,
+    var isExpandable: Boolean = false
 ): Parcelable, Serializable
 
 @Parcelize
 data class Count(
     val count: Int,
     val filial: String,
-    val price: Int,
+    val price: Number,
     val sclad: String
 ): Parcelable, Serializable

@@ -6,7 +6,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.models.ProductInCart
+import com.fin_group.aslzar.response.Count
 import com.fin_group.aslzar.response.ResultX
+import com.fin_group.aslzar.response.Type
 
 class SharedViewModel: ViewModel() {
 
@@ -27,6 +29,7 @@ class SharedViewModel: ViewModel() {
             product.price,
             "",
             0,
+            0,
             0
         )
 
@@ -34,7 +37,7 @@ class SharedViewModel: ViewModel() {
         _productAdded.value = cartProduct
     }
 
-    fun onProductAddedToCartV2(product: ResultX, context: Context) {
+    fun onProductAddedToCartV2(product: ResultX, context: Context, type: Type, count: Count) {
         val cartProduct = ProductInCart (
             product.id,
             product.full_name,
@@ -43,9 +46,10 @@ class SharedViewModel: ViewModel() {
             1,
             product.sale,
             product.price,
-            "",
-            0,
-            0
+            type.id,
+            type.size,
+            type.weight,
+            count.price
         )
 
         Cart.addProduct(cartProduct, context)
@@ -60,7 +64,4 @@ class SharedViewModel: ViewModel() {
         Cart.removeProduct(productInCart.id, context)
         _productAdded.value = null
     }
-
-
-
 }
