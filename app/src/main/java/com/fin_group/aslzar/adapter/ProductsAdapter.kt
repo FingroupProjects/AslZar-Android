@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.fin_group.aslzar.R
@@ -18,7 +19,7 @@ import com.fin_group.aslzar.util.formatNumber
 class ProductsAdapter(
     private var productList: List<ResultX>,
     val listener: ProductOnClickListener,
-): RecyclerView.Adapter<ProductsAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<ProductsAdapter.ViewHolder>() {
 
     private lateinit var binding: RowItemProductBinding
     private lateinit var context: Context
@@ -38,7 +39,7 @@ class ProductsAdapter(
         }
     }
 
-    inner class ViewHolder(binding: RowItemProductBinding): RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(binding: RowItemProductBinding) : RecyclerView.ViewHolder(binding.root) {
         val title = binding.productTitle
         val image = binding.productImage
         val code = binding.productKode
@@ -48,7 +49,6 @@ class ProductsAdapter(
         @SuppressLint("UseCompatLoadingForDrawables", "SetTextI18n")
         fun bind(product: ResultX) {
             title.text = product.full_name
-            code.text = product.name
 
             if (product.img.isNotEmpty()) {
                 Glide.with(itemView.context)
@@ -67,17 +67,24 @@ class ProductsAdapter(
                 saleTv.visibility = VISIBLE
             }
 
-            if (product.types.isNotEmpty() && product.types[0].counts.isNotEmpty()) {
+            if (product.types.all { it.counts.isEmpty() }) {
                 btnAddProduct.setImageResource(R.drawable.ic_clear_white)
                 btnAddProduct.background = context.resources.getDrawable(R.drawable.item_product_bottom_btn_2)
-
+                code.text = "Нет в наличии."
             } else {
                 btnAddProduct.setImageResource(R.drawable.ic_add_2)
-                btnAddProduct.background = context.resources.getDrawable(R.drawable.ripple_effect_top_btn)
+                btnAddProduct.background =
+                    context.resources.getDrawable(R.drawable.ripple_effect_top_btn)
+                code.text = "от: ${formatNumber(product.price)} UZS"
             }
 
             btnAddProduct.setOnClickListener {
-                listener.addToCart(product)
+                if (product.types.all { it.counts.isEmpty() }) {
+                    Toast.makeText(context, "Данного продукта нет в наличии.", Toast.LENGTH_SHORT)
+                        .show()
+                } else {
+                    listener.addToCart(product)
+                }
             }
         }
     }

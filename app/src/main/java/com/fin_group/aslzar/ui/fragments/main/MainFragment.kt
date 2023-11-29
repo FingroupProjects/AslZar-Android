@@ -31,27 +31,29 @@ import com.fin_group.aslzar.cipher.EncryptionManager
 import com.fin_group.aslzar.databinding.FragmentMainBinding
 import com.fin_group.aslzar.models.FilterModel
 import com.fin_group.aslzar.response.Category
+import com.fin_group.aslzar.response.Count
 
 import com.fin_group.aslzar.response.ResultX
+import com.fin_group.aslzar.response.Type
 import com.fin_group.aslzar.ui.activities.MainActivity
-import com.fin_group.aslzar.ui.fragments.main.functions.addProductToCart
 import com.fin_group.aslzar.util.CategoryClickListener
 import com.fin_group.aslzar.util.ProductOnClickListener
 import com.fin_group.aslzar.ui.fragments.main.functions.callInStockDialog
 import com.fin_group.aslzar.ui.fragments.main.functions.callOutStock
 import com.fin_group.aslzar.ui.fragments.main.functions.fetchRV
 import com.fin_group.aslzar.ui.fragments.main.functions.filterProducts
-import com.fin_group.aslzar.ui.fragments.main.functions.filterProducts2
 import com.fin_group.aslzar.ui.fragments.main.functions.getAllCategoriesFromApi
 import com.fin_group.aslzar.ui.fragments.main.functions.getAllCategoriesPrefs
 import com.fin_group.aslzar.ui.fragments.main.functions.getAllProductFromPrefs
 import com.fin_group.aslzar.ui.fragments.main.functions.getAllProductsFromApi
 import com.fin_group.aslzar.ui.fragments.main.functions.savingAndFetchSearch
-import com.fin_group.aslzar.ui.fragments.main.functions.savingAndFetchingCategory
 import com.fin_group.aslzar.ui.fragments.main.functions.searchViewFun
 import com.fin_group.aslzar.ui.fragments.main.functions.setFilterViewModel
+import com.fin_group.aslzar.ui.fragments.main.functions.showAddingToCartDialog
 import com.fin_group.aslzar.ui.fragments.main.functions.updateBadge
+import com.fin_group.aslzar.util.AddingProduct
 import com.fin_group.aslzar.util.BadgeManager
+import com.fin_group.aslzar.util.FilialListener
 import com.fin_group.aslzar.util.FilterDialogListener
 import com.fin_group.aslzar.util.FilterViewModel
 import com.fin_group.aslzar.util.NoInternetDialogFragment
@@ -63,7 +65,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 
 @Suppress("DEPRECATION")
 class MainFragment : Fragment(), ProductOnClickListener,
-    CategoryClickListener, FilterDialogListener {
+    CategoryClickListener, FilterDialogListener, AddingProduct, FilialListener {
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
@@ -173,7 +175,7 @@ class MainFragment : Fragment(), ProductOnClickListener,
 
                 filterModel = updatedFilterModel
                 selectCategory = updatedFilterModel.category
-                savingAndFetchingCategory(binding, filterModel!!)
+//                savingAndFetchingCategory(binding, filterModel!!)
             }
         }
     }
@@ -240,11 +242,11 @@ class MainFragment : Fragment(), ProductOnClickListener,
     override fun onStart() {
         super.onStart()
         val firstRun = preferences.getBoolean("first_run", true)
-        if (firstRun) {
-            viewCheckedCategory.visibility = GONE
-        } else {
-            savingAndFetchingCategory(binding, filterViewModel.filterModel!!)
-        }
+//        if (firstRun) {
+//            viewCheckedCategory.visibility = GONE
+//        } else {
+//            savingAndFetchingCategory(binding, filterViewModel.filterModel!!)
+//        }
         savingAndFetchSearch(binding)
         Cart.loadCartFromPrefs(requireContext())
     }
@@ -265,7 +267,7 @@ class MainFragment : Fragment(), ProductOnClickListener,
         getAllProductsFromApi()
         getAllCategoriesFromApi()
         filterProducts()
-        filterProducts2(filterViewModel.filterModel!!)
+//        filterProducts2(filterViewModel.filterModel!!)
     }
 
     @SuppressLint("CommitPrefEdits")
@@ -281,7 +283,8 @@ class MainFragment : Fragment(), ProductOnClickListener,
     }
 
     override fun addToCart(product: ResultX) {
-        addProductToCart(product)
+//        addProductToCart(product)
+        showAddingToCartDialog(product)
     }
 
     override fun inStock(product: ResultX) {
@@ -323,5 +326,15 @@ class MainFragment : Fragment(), ProductOnClickListener,
             "Main"
         )
         Navigation.findNavController(binding.root).navigate(action)
+    }
+
+
+
+    override fun addProduct(type: Type, count: Count) {
+        Toast.makeText(requireContext(), "Toast", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun addFilial(filial: Count, position: Int) {
+        Toast.makeText(requireContext(), "Toast 2", Toast.LENGTH_SHORT).show()
     }
 }

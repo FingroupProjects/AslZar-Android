@@ -22,6 +22,7 @@ import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.ui.dialogs.CheckCategoryFragmentDialog
 import com.fin_group.aslzar.ui.dialogs.FilterDialogFragment
 import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
+import com.fin_group.aslzar.ui.dialogs.PickCharacterProductDialogFragment
 import com.fin_group.aslzar.ui.dialogs.WarningNoHaveProductFragmentDialog
 import com.fin_group.aslzar.ui.fragments.main.MainFragment
 import com.fin_group.aslzar.util.FilterDialogListener
@@ -118,6 +119,12 @@ fun MainFragment.filterFun() {
 fun MainFragment.addProductToCart(product: ResultX) {
     sharedViewModel.onProductAddedToCart(product, requireContext())
     updateBadge()
+}
+
+fun MainFragment.showAddingToCartDialog(product: ResultX){
+    val filterDialog = PickCharacterProductDialogFragment.newInstance(product)
+    filterDialog.setListeners(this, this)
+    filterDialog.show(activity?.supportFragmentManager!!, "types dialog")
 }
 
 fun MainFragment.updateBadge() {
@@ -346,109 +353,109 @@ fun MainFragment.getAllCategoriesPrefs() {
 }
 
 fun MainFragment.setFilterViewModel() {
-    val filterDialogFragment = FilterDialogFragment()
-    allProducts = retrieveProducts()
-    val minPrice = allProducts.minBy { it.price.toDouble() }.price
-    val maxPrice = allProducts.maxBy { it.price.toDouble() }.price
-    val minSize = allProducts.minByOrNull {
-        it.types.minByOrNull { type -> returnNumber(type.size.toString()).toInt() }?.size ?: 0
-    }?.types?.minByOrNull { returnNumber(it.size.toString()).toInt() }?.size ?: 0
-    val maxSize = allProducts.maxByOrNull {
-        it.types.maxByOrNull { type -> returnNumber(type.size.toString()).toInt() }?.size ?: 0
-    }?.types?.maxByOrNull { returnNumber(it.size.toString()).toInt() }?.size ?: 0
-    val minWeight = allProducts.minByOrNull {
-        it.types.minByOrNull { type -> returnNumber(type.weight.toString()).toInt() }?.weight ?: 0
-    }?.types?.minByOrNull { returnNumber(it.weight.toString()).toInt() }?.weight ?: 0
-    val maxWeight = allProducts.maxByOrNull {
-        it.types.maxByOrNull { type -> returnNumber(type.weight.toString()).toInt() }?.weight ?: 0
-    }?.types?.maxByOrNull { returnNumber(it.weight.toString()).toInt() }?.weight ?: 0
-    val selectedCategoryId = preferences.getString("selectedCategory", "all")
-    selectCategory = allCategories.find { it.id == selectedCategoryId }
-    val updatedFilterModel = FilterModel(
-        minPrice,
-        maxPrice,
-        minSize,
-        maxSize,
-        minWeight,
-        maxWeight,
-        selectCategory ?: Category("all", "Все")
-    )
-    filterViewModel.defaultFilterModel = updatedFilterModel
-
-    if (filterModel == null) {
-        filterViewModel.filterModel = updatedFilterModel
-    } else {
-        filterViewModel.filterModel = filterModel
-    }
-
-    filterDialogFragment.show(parentFragmentManager, "filterDialog")
+//    val filterDialogFragment = FilterDialogFragment()
+//    allProducts = retrieveProducts()
+//    val minPrice = allProducts.minBy { it.price.toDouble() }.price
+//    val maxPrice = allProducts.maxBy { it.price.toDouble() }.price
+//    val minSize = allProducts.minByOrNull {
+//        it.types.minByOrNull { type -> returnNumber(type.size.toString()).toInt() }?.size ?: 0
+//    }?.types?.minByOrNull { returnNumber(it.size.toString()).toDouble() }?.size ?: 0
+//    val maxSize = allProducts.maxByOrNull {
+//        it.types.maxByOrNull { type -> returnNumber(type.size.toString()).toInt() }?.size ?: 0
+//    }?.types?.maxByOrNull { returnNumber(it.size.toString()).toInt() }?.size ?: 0
+//    val minWeight = allProducts.minByOrNull {
+//        it.types.minByOrNull { type -> returnNumber(type.weight.toString()).toInt() }?.weight ?: 0
+//    }?.types?.minByOrNull { returnNumber(it.weight.toString()).toInt() }?.weight ?: 0
+//    val maxWeight = allProducts.maxByOrNull {
+//        it.types.maxByOrNull { type -> returnNumber(type.weight.toString()).toInt() }?.weight ?: 0
+//    }?.types?.maxByOrNull { returnNumber(it.weight.toString()).toInt() }?.weight ?: 0
+//    val selectedCategoryId = preferences.getString("selectedCategory", "all")
+//    selectCategory = allCategories.find { it.id == selectedCategoryId }
+//    val updatedFilterModel = FilterModel(
+//        minPrice,
+//        maxPrice,
+//        minSize,
+//        maxSize,
+//        minWeight,
+//        maxWeight,
+//        selectCategory ?: Category("all", "Все")
+//    )
+//    filterViewModel.defaultFilterModel = updatedFilterModel
+//
+//    if (filterModel == null) {
+//        filterViewModel.filterModel = updatedFilterModel
+//    } else {
+//        filterViewModel.filterModel = filterModel
+//    }
+//
+//    filterDialogFragment.show(parentFragmentManager, "filterDialog")
 }
 
 fun MainFragment.setFilterViewModelData() {
     allProducts = retrieveProducts()
-    val minPrice = allProducts.minBy { it.price.toDouble() }.price
-    val maxPrice = allProducts.maxBy { it.price.toDouble() }.price
-    val minSize = allProducts.minByOrNull {
-        it.types.minByOrNull { type -> returnNumber(type.size.toString()).toInt() }?.size ?: 0
-    }?.types?.minByOrNull { returnNumber(it.size.toString()).toInt() }?.size ?: 0
-    val maxSize = allProducts.maxByOrNull {
-        it.types.maxByOrNull { type -> returnNumber(type.size.toString()).toInt() }?.size ?: 0
-    }?.types?.maxByOrNull { returnNumber(it.size.toString()).toInt() }?.size ?: 0
-    val minWeight = allProducts.minByOrNull {
-        it.types.minByOrNull { type -> returnNumber(type.weight.toString()).toInt() }?.weight ?: 0
-    }?.types?.minByOrNull { returnNumber(it.weight.toString()).toInt() }?.weight ?: 0
-    val maxWeight = allProducts.maxByOrNull {
-        it.types.maxByOrNull { type -> returnNumber(type.weight.toString()).toInt() }?.weight ?: 0
-    }?.types?.maxByOrNull { returnNumber(it.weight.toString()).toInt() }?.weight ?: 0
-    val selectedCategoryId = preferences.getString("selectedCategory", "all")
-    selectCategory = allCategories.find { it.id == selectedCategoryId }
-    val updatedFilterModel = FilterModel(
-        minPrice,
-        maxPrice,
-        minSize,
-        maxSize,
-        minWeight,
-        maxWeight,
-        selectCategory ?: Category("all", "Все")
-    )
-    filterViewModel.defaultFilterModel = updatedFilterModel
-    if (filterModel == null) {
-        filterViewModel.filterModel = updatedFilterModel
-    } else {
-        filterViewModel.filterModel = filterModel
-    }
+//    val minPrice = allProducts.minBy { it.price.toDouble() }.price
+//    val maxPrice = allProducts.maxBy { it.price.toDouble() }.price
+//    val minSize = (allProducts.minByOrNull {
+//        it.types.minByOrNull { type -> returnNumber(type.size.toString()).toInt() }?.size ?: 0
+//    }?.types?.minByOrNull { returnNumber(it.size.toString()).toInt() }?.size ?: 0)
+//    val maxSize = allProducts.maxByOrNull {
+//        it.types.maxByOrNull { type -> returnNumber(type.size.toString()).toInt() }?.size ?: 0
+//    }?.types?.maxByOrNull { returnNumber(it.size.toString()).toInt() }?.size ?: 0
+//    val minWeight = allProducts.minByOrNull {
+//        it.types.minByOrNull { type -> returnNumber(type.weight.toString()).toInt() }?.weight ?: 0
+//    }?.types?.minByOrNull { returnNumber(it.weight.toString()).toInt() }?.weight ?: 0
+//    val maxWeight = allProducts.maxByOrNull {
+//        it.types.maxByOrNull { type -> returnNumber(type.weight.toString()).toInt() }?.weight ?: 0
+//    }?.types?.maxByOrNull { returnNumber(it.weight.toString()).toInt() }?.weight ?: 0
+//    val selectedCategoryId = preferences.getString("selectedCategory", "all")
+//    selectCategory = allCategories.find { it.id == selectedCategoryId }
+//    val updatedFilterModel = FilterModel(
+//        minPrice,
+//        maxPrice,
+//        minSize,
+//        maxSize,
+//        minWeight,
+//        maxWeight,
+//        selectCategory ?: Category("all", "Все")
+//    )
+//    filterViewModel.defaultFilterModel = updatedFilterModel
+//    if (filterModel == null) {
+//        filterViewModel.filterModel = updatedFilterModel
+//    } else {
+//        filterViewModel.filterModel = filterModel
+//    }
 }
 
 fun MainFragment.setDefaultFilterViewModelData() {
-    allProducts = retrieveProducts()
-    val minPrice = allProducts.minBy { it.price.toDouble() }.price
-    val maxPrice = allProducts.maxBy { it.price.toDouble() }.price
-
-    val minSize = allProducts.minByOrNull {
-        it.types.minByOrNull { type -> returnNumber(type.size.toString()).toInt() }?.size ?: 0
-    }?.types?.minByOrNull { returnNumber(it.size.toString()).toInt() }?.size ?: 0
-    val maxSize = allProducts.maxByOrNull {
-        it.types.maxByOrNull { type -> returnNumber(type.size.toString()).toInt() }?.size ?: 0
-    }?.types?.maxByOrNull { returnNumber(it.size.toString()).toInt() }?.size ?: 0
-    val minWeight = allProducts.minByOrNull {
-        it.types.minByOrNull { type -> returnNumber(type.weight.toString()).toInt() }?.weight ?: 0
-    }?.types?.minByOrNull { returnNumber(it.weight.toString()).toInt() }?.weight ?: 0
-    val maxWeight = allProducts.maxByOrNull {
-        it.types.maxByOrNull { type -> returnNumber(type.weight.toString()).toInt() }?.weight ?: 0
-    }?.types?.maxByOrNull { returnNumber(it.weight.toString()).toInt() }?.weight ?: 0
-    val selectedCategoryId = preferences.getString("selectedCategory", "all")
-    selectCategory = allCategories.find { it.id == selectedCategoryId }
-    val updatedFilterModel = FilterModel(
-        minPrice,
-        maxPrice,
-        minSize,
-        maxSize,
-        minWeight,
-        maxWeight,
-        selectCategory ?: Category("all", "Все")
-    )
-    filterViewModel.defaultFilterModel = updatedFilterModel
-    filterViewModel.filterModel = updatedFilterModel
+//    allProducts = retrieveProducts()
+//    val minPrice = allProducts.minBy { it.price.toDouble() }.price
+//    val maxPrice = allProducts.maxBy { it.price.toDouble() }.price
+//
+//    val minSize = allProducts.minByOrNull {
+//        it.types.minByOrNull { type -> returnNumber(type.size.toString()).toInt() }?.size ?: 0
+//    }?.types?.minByOrNull { returnNumber(it.size.toString()).toInt() }?.size ?: 0
+//    val maxSize = allProducts.maxByOrNull {
+//        it.types.maxByOrNull { type -> returnNumber(type.size.toString()).toInt() }?.size ?: 0
+//    }?.types?.maxByOrNull { returnNumber(it.size.toString()).toInt() }?.size ?: 0
+//    val minWeight = allProducts.minByOrNull {
+//        it.types.minByOrNull { type -> returnNumber(type.weight.toString()).toInt() }?.weight ?: 0
+//    }?.types?.minByOrNull { returnNumber(it.weight.toString()).toInt() }?.weight ?: 0
+//    val maxWeight = allProducts.maxByOrNull {
+//        it.types.maxByOrNull { type -> returnNumber(type.weight.toString()).toInt() }?.weight ?: 0
+//    }?.types?.maxByOrNull { returnNumber(it.weight.toString()).toInt() }?.weight ?: 0
+//    val selectedCategoryId = preferences.getString("selectedCategory", "all")
+//    selectCategory = allCategories.find { it.id == selectedCategoryId }
+//    val updatedFilterModel = FilterModel(
+//        minPrice,
+//        maxPrice,
+//        minSize,
+//        maxSize,
+//        minWeight,
+//        maxWeight,
+//        selectCategory ?: Category("all", "Все")
+//    )
+//    filterViewModel.defaultFilterModel = updatedFilterModel
+//    filterViewModel.filterModel = updatedFilterModel
 }
 
 fun MainFragment.getAllCategoriesFromApi() {
