@@ -96,7 +96,7 @@ class CartFragment : Fragment(), EditProductInCart, OnProductAddedToCartListener
     }
 
     override fun plusProductInCart(productInCart: ProductInCart) {
-        Cart.plusProduct(productInCart.id, requireContext())
+        Cart.plusProduct(productInCart, requireContext())
         allProducts = Cart.getAllProducts()
         myAdapter.updateList(allProducts)
         Cart.notifyObservers()
@@ -104,16 +104,13 @@ class CartFragment : Fragment(), EditProductInCart, OnProductAddedToCartListener
     }
 
     override fun minusProductInCart(productInCart: ProductInCart) {
-        Cart.minusProduct(productInCart.id, requireContext())
+        Cart.minusProduct(productInCart, requireContext())
         allProducts = Cart.getAllProducts()
         myAdapter.updateList(allProducts)
         Cart.notifyObservers()
     }
 
     override fun openDialogDataProduct(productInCart: ProductInCart) {
-
-
-
         val product = ResultX(
             "",
             "",

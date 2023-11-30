@@ -1,22 +1,34 @@
 package com.fin_group.aslzar.ui.dialogs
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fin_group.aslzar.adapter.ProductsInAddAdapter
+import com.fin_group.aslzar.api.ApiClient
+import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentPickCharacterProductDialogBinding
 import com.fin_group.aslzar.models.ProductInCart
 import com.fin_group.aslzar.response.Count
 import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.response.Type
 import com.fin_group.aslzar.util.AddingProduct
-import com.fin_group.aslzar.util.BaseBottomSheetDialogFragment
 import com.fin_group.aslzar.util.BaseDialogFullFragment
 import com.fin_group.aslzar.util.FilialListener
+import com.fin_group.aslzar.util.SessionManager
+import com.fin_group.aslzar.util.UnauthorizedDialogFragment
+import com.fin_group.aslzar.viewmodel.SharedViewModel
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 @Suppress("DEPRECATION")
@@ -25,14 +37,21 @@ class PickCharacterProductDialogFragment : BaseDialogFullFragment(), FilialListe
     private var _binding: FragmentPickCharacterProductDialogBinding? = null
     private val binding get() = _binding!!
 
+    val sharedViewModel: SharedViewModel by activityViewModels()
+
     private lateinit var typeList: List<Type>
     private lateinit var product: ResultX
     private var sortedTypeList: MutableList<Type> = mutableListOf()
     private lateinit var myAdapter: ProductsInAddAdapter
     private lateinit var recyclerView: RecyclerView
 
+    lateinit var sharedPreferences: SharedPreferences
+
     private lateinit var listener: AddingProduct
     private lateinit var listener2: FilialListener
+
+    private lateinit var sessionManager: SessionManager
+    private lateinit var apiClient: ApiClient
 
 
     companion object {
@@ -53,10 +72,15 @@ class PickCharacterProductDialogFragment : BaseDialogFullFragment(), FilialListe
     ): View {
         _binding = FragmentPickCharacterProductDialogBinding.inflate(inflater, container, false)
         recyclerView = binding.rvCategories
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
 
         arguments?.let {
             product = it.getParcelable(ARG_PRODUCT)!!
         }
+
+        sessionManager = SessionManager(requireContext())
+        apiClient = ApiClient()
+        apiClient.init(sessionManager)
         return binding.root
     }
 
@@ -66,38 +90,11 @@ class PickCharacterProductDialogFragment : BaseDialogFullFragment(), FilialListe
         binding.btnClose.setOnClickListener {
             dismiss()
         }
+        binding.btnRefresh.setOnClickListener {
+            getTypesFromApi()
+        }
 
-        val hello = listOf<Count>(
-            Count(12, "filial 1", 255, "Sclad 1"),
-            Count(12, "filial 2", 255, "Sclad 2"),
-            Count(12, "filial 3", 255, "Sclad 3"),
-            Count(12, "filial 4", 255, "Sclad 4"),
-            Count(12, "filial 5", 255, "Sclad 5"),
-            Count(12, "filial 6", 255, "Sclad 6"),
-        )
-        val hello2 = listOf<Count>(
-            Count(12, "filial 1", 84, "Sclad 1"),
-            Count(12, "filial 2", 63, "Sclad 2"),
-            Count(12, "filial 3", 555, "Sclad 3"),
-            Count(12, "filial 4", 355, "Sclad 4"),
-            Count(12, "filial 5", 955, "Sclad 5"),
-            Count(12, "filial 6", 150, "Sclad 6"),
-        )
-        val hello3 = listOf<Count>(
-            Count(12, "filial 1", 255, "Sclad 1"),
-        )
-//        typeList = listOf(
-//            Type("Россия", hello2, "00001", "product 1", "provider 1", 10, 12),
-//            Type("Россия", hello3, "00002", "product 2", "provider 2", 10, 12),
-//            Type("Россия", emptyList(), "00003", "product 3", "provider 3", 10, 12),
-//            Type("Россия", emptyList(), "00004", "product 4", "provider 4", 10, 12),
-//            Type("Россия", hello, "00005", "product 5", "provider 5", 10, 12),
-//            Type("Россия", hello2, "00006", "product 6", "provider 6", 10, 12),
-//            Type("Россия", hello, "00007", "product 7", "provider 7", 10, 12),
-//            Type("Россия", hello3, "00008", "product 8", "provider 9", 10, 12),
-//        )
-
-        myAdapter = ProductsInAddAdapter(sortedTypeList, this, this)
+        myAdapter = ProductsInAddAdapter(product, sortedTypeList, this, this)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = myAdapter
         setData(product)
@@ -118,7 +115,6 @@ class PickCharacterProductDialogFragment : BaseDialogFullFragment(), FilialListe
 
     private fun setData(product: ResultX){
         typeList = product.types
-
         for (type in typeList){
             if (type.counts.isNotEmpty()){
                 sortedTypeList.add(type)
@@ -128,11 +124,49 @@ class PickCharacterProductDialogFragment : BaseDialogFullFragment(), FilialListe
         binding.productFullName.text = product.full_name
     }
 
-    override fun addProduct(type: Type, count: Count) {
-        TODO("Not yet implemented")
+    override fun addProduct(product: ResultX, type: Type, count: Count) {
+        listener.addProduct(product, type, count)
     }
 
-    override fun addFilial(filial: Count, position: Int) {
-        TODO("Not yet implemented")
+    override fun addFilial(product: ResultX, type: Type, filial: Count) {
+        listener2.addFilial(product, type, filial)
     }
+
+    private fun getTypesFromApi(){
+        val call = apiClient.getApiService().getProductByID("Bearer ${sessionManager.fetchToken()}", product.id)
+        call.enqueue(object : Callback<ResultX?> {
+            override fun onResponse(call: Call<ResultX?>, response: Response<ResultX?>) {
+                if (response.isSuccessful){
+                    val productResponse = response.body()
+                    if (productResponse != null){
+                        product = productResponse
+                        sortedTypeList = mutableListOf()
+                        setData(product)
+                    }
+                } else {
+                    when(response.code()){
+                        401 -> {
+                            UnauthorizedDialogFragment.showUnauthorizedError(
+                                requireContext(),
+                                sharedPreferences,
+                                this@PickCharacterProductDialogFragment
+                            )
+                        }
+                        500 -> {
+                            Toast.makeText(requireContext(), "Проблемы с сервером, повторите попытку позже", Toast.LENGTH_SHORT).show()
+                        }
+                        else -> {
+                            Toast.makeText(requireContext(), "Произошла ошибка.", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<ResultX?>, t: Throwable) {
+                Toast.makeText(requireContext(), "Произошла ошибка, повторите попытку позже", Toast.LENGTH_SHORT).show()
+                Log.d("TAG", "onFailure: ${t.message}")
+            }
+        })
+    }
+
 }

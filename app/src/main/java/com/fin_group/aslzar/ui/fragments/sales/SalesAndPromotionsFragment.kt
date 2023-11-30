@@ -25,7 +25,9 @@ import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentSalesAndPromotionsBinding
 import com.fin_group.aslzar.response.Category
+import com.fin_group.aslzar.response.Count
 import com.fin_group.aslzar.response.ResultX
+import com.fin_group.aslzar.response.Type
 import com.fin_group.aslzar.ui.activities.MainActivity
 import com.fin_group.aslzar.ui.fragments.sales.functions.addProductToCart
 import com.fin_group.aslzar.ui.fragments.sales.functions.callInStockDialog
@@ -36,8 +38,11 @@ import com.fin_group.aslzar.ui.fragments.sales.functions.getAllProductFromPrefs
 import com.fin_group.aslzar.ui.fragments.sales.functions.getAllProductsFromApi
 import com.fin_group.aslzar.ui.fragments.sales.functions.savingAndFetchSearch
 import com.fin_group.aslzar.ui.fragments.sales.functions.searchViewFun
+import com.fin_group.aslzar.ui.fragments.sales.functions.showAddingToCartDialog
 import com.fin_group.aslzar.ui.fragments.sales.functions.updateBadge
+import com.fin_group.aslzar.util.AddingProduct
 import com.fin_group.aslzar.util.BadgeManager
+import com.fin_group.aslzar.util.FilialListener
 import com.fin_group.aslzar.util.NoInternetDialogFragment
 import com.fin_group.aslzar.util.ProductOnClickListener
 import com.fin_group.aslzar.util.SessionManager
@@ -46,7 +51,8 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 @Suppress("DEPRECATION")
-class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener {
+class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener, AddingProduct,
+    FilialListener {
 
     private var _binding: FragmentSalesAndPromotionsBinding? = null
     private val binding get() = _binding!!
@@ -191,7 +197,8 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener {
     }
 
     override fun addToCart(product: ResultX) {
-        addProductToCart(product)    }
+        showAddingToCartDialog(product)
+    }
 
     override fun inStock(product: ResultX) {
         if (product.types.isNotEmpty()) {
@@ -226,5 +233,13 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener {
 
         val action = SalesAndPromotionsFragmentDirections.actionSalesAndPromotionsFragmentToDataProductFragment(product2.id, product2, "SalesProducts")
         Navigation.findNavController(binding.root).navigate(action)
+    }
+
+    override fun addProduct(product: ResultX, type: Type, count: Count) {
+        TODO("Not yet implemented")
+    }
+
+    override fun addFilial(product: ResultX, type: Type, filial: Count) {
+        TODO("Not yet implemented")
     }
 }

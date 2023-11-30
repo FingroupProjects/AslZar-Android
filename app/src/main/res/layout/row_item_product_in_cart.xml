@@ -55,34 +55,110 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
+                android:gravity="center_vertical"
                 android:lines="2"
                 android:text="Серьги золотые с бриллиантами"
-                app:layout_constraintEnd_toStartOf="@+id/minusProduct"
+                app:layout_constraintEnd_toStartOf="@+id/codeProductInCart2"
                 app:layout_constraintStart_toEndOf="@+id/imageProductInCart"
-                app:layout_constraintTop_toTopOf="@+id/imageProductInCart" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/codeProductInCart"
+                android:id="@+id/priceProductInCart"
+                style="@style/forTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="16dp"
+                android:text="4 555 321.00 UZS"
+                app:layout_constraintEnd_toStartOf="@+id/minusProduct"
+                app:layout_constraintStart_toEndOf="@+id/codeProductInCart6"
+                app:layout_constraintTop_toBottomOf="@+id/nameProductInCart" />
+
+            <TextView
+                android:id="@+id/filialProductInCart"
+                style="@style/forTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="8dp"
+                android:text="AslZar"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/priceProductInCart"
+                app:layout_constraintStart_toStartOf="@+id/codeProductInCart6"
+                app:layout_constraintTop_toBottomOf="@+id/codeProductInCart6" />
+
+            <TextView
+                android:id="@+id/sizeProductInCart"
+                style="@style/forTextView.12"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="12.9"
+                app:layout_constraintBottom_toBottomOf="@+id/codeProductInCart2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/codeProductInCart2"
+                app:layout_constraintVertical_bias="0.533" />
+
+            <TextView
+                android:id="@+id/weightProductInCart"
+                style="@style/forTextView.12"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="12.4"
+                app:layout_constraintBottom_toBottomOf="@+id/codeProductInCart3"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/codeProductInCart3" />
+
+            <TextView
+                android:id="@+id/codeProductInCart2"
                 style="@style/forTextView2.12"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:gravity="end"
+                android:text="Размер: "
+                app:layout_constraintEnd_toStartOf="@+id/sizeProductInCart"
+                app:layout_constraintTop_toTopOf="@+id/nameProductInCart" />
+
+            <TextView
+                android:id="@+id/codeProductInCart6"
+                style="@style/forTextView2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginBottom="4dp"
-                android:text="(2.7.2.1.096.1_7,9_0)"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:text="Цена/шт:"
+                app:layout_constraintBottom_toBottomOf="@+id/priceProductInCart"
                 app:layout_constraintStart_toEndOf="@+id/imageProductInCart"
-                app:layout_constraintTop_toBottomOf="@+id/nameProductInCart" />
+                app:layout_constraintTop_toTopOf="@+id/priceProductInCart" />
+
+            <TextView
+                android:id="@+id/codeProductInCart3"
+                style="@style/forTextView2.12"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="4dp"
+                android:gravity="end"
+                android:text="Вес: "
+
+                app:layout_constraintEnd_toStartOf="@+id/weightProductInCart"
+                app:layout_constraintStart_toStartOf="@+id/codeProductInCart2"
+                app:layout_constraintTop_toBottomOf="@+id/codeProductInCart2" />
 
             <ImageView
                 android:id="@+id/addProduct"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
                 android:src="@drawable/ic_add_1"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@+id/weightProductInCart" />
 
             <TextView
                 android:id="@+id/countProductInCart"
@@ -92,21 +168,19 @@
                 android:text="5"
                 android:textColor="@color/primary_color_2"
                 android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="@+id/minusProduct"
+                app:layout_constraintBottom_toBottomOf="@+id/addProduct"
                 app:layout_constraintEnd_toStartOf="@+id/addProduct"
-                app:layout_constraintTop_toTopOf="@+id/minusProduct" />
+                app:layout_constraintTop_toTopOf="@+id/addProduct" />
 
             <ImageView
                 android:id="@+id/minusProduct"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
                 android:src="@drawable/ic_minus_1"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/addProduct"
                 app:layout_constraintEnd_toStartOf="@+id/countProductInCart"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="@+id/addProduct" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

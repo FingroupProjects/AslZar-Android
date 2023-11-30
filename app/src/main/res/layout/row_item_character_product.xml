@@ -186,7 +186,7 @@
             <TextView
                 android:id="@+id/textView61"
                 style="@style/forTextView2.12"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="3dp"
                 android:layout_marginEnd="3dp"
@@ -204,7 +204,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="3dp"
-                android:layout_marginEnd="3dp"
+                android:layout_marginEnd="5dp"
                 android:text="Поставщик 2"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/characterMadeIn"

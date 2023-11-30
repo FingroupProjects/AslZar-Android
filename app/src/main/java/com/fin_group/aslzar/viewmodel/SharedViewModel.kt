@@ -30,7 +30,8 @@ class SharedViewModel: ViewModel() {
             "",
             0,
             0,
-            0
+            0,
+            ""
         )
 
         Cart.addProduct(cartProduct, context)
@@ -49,7 +50,8 @@ class SharedViewModel: ViewModel() {
             type.id,
             type.size,
             type.weight,
-            count.price
+            count.price,
+            count.filial
         )
 
         Cart.addProduct(cartProduct, context)
@@ -61,7 +63,7 @@ class SharedViewModel: ViewModel() {
     }
 
     fun removeProductFromCart(productInCart: ProductInCart, context: Context) {
-        Cart.removeProduct(productInCart.id, context)
+        Cart.removeProduct(productInCart, context)
         _productAdded.value = null
     }
 }

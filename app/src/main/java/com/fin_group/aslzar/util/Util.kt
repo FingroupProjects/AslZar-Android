@@ -48,11 +48,11 @@ interface FunCallback {
 }
 
 interface AddingProduct {
-    fun addProduct(type: Type, count: Count)
+    fun addProduct(product: ResultX, type: Type, count: Count)
 }
 
 interface FilialListener {
-    fun addFilial(filial: Count, position: Int)
+    fun addFilial(product: ResultX, type: Type, filial: Count)
 }
 
 interface OnFriendAddedListener {
@@ -63,14 +63,15 @@ interface CalculatorResetListener {
     fun resetCalculator()
 }
 
-interface OnProductClickListener{
+interface OnProductClickListener {
     fun setProduct(product: ResultX)
 }
 
-interface OnImageClickListener{
+interface OnImageClickListener {
     fun setImage(image: String)
 }
-interface EditProductInCart{
+
+interface EditProductInCart {
     fun plusProductInCart(productInCart: ProductInCart)
     fun minusProductInCart(productInCart: ProductInCart)
 
@@ -84,7 +85,7 @@ interface OnProductAddedToCartListener {
 }
 
 
-interface OnAlikeProductClickListener{
+interface OnAlikeProductClickListener {
     fun callBottomDialog(product: SimilarProduct)
 }
 
@@ -93,13 +94,13 @@ interface FilterDialogListener {
 }
 
 
-
 fun Fragment.showAction() {
     (activity as AppCompatActivity).supportActionBar?.show()
 }
 
 fun Fragment.redirectToChangeServerFragment(fragmentDirections: NavDirections) {
-    val navOptions = NavOptions.Builder().setPopUpTo(findNavController().currentDestination!!.id, true).build()
+    val navOptions =
+        NavOptions.Builder().setPopUpTo(findNavController().currentDestination!!.id, true).build()
     findNavController().navigate(fragmentDirections, navOptions)
 }
 
@@ -109,7 +110,12 @@ fun doubleFormat(double: Number): String {
 }
 
 interface CartObserver {
-    fun onCartChanged(totalPriceWithoutSale: Number, totalPriceWithSale: Number, totalCount: Int, totalPrice: Number)
+    fun onCartChanged(
+        totalPriceWithoutSale: Number,
+        totalPriceWithSale: Number,
+        totalCount: Int,
+        totalPrice: Number
+    )
 }
 
 
@@ -136,26 +142,32 @@ fun Context.hideKeyboard(view: View) {
     val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
     inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
 }
-fun Fragment.hideToolBar(){
+
+fun Fragment.hideToolBar() {
     val toolbar = requireActivity().findViewById<MaterialToolbar>(R.id.toolbar)
     val hideAnim: Animation = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_out)
     toolbar.startAnimation(hideAnim)
     toolbar.visibility = View.GONE
 }
-fun Fragment.showToolBar(){
+
+fun Fragment.showToolBar() {
     val toolbar = requireActivity().findViewById<MaterialToolbar>(R.id.toolbar)
     val showAnim: Animation = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_in)
     toolbar.startAnimation(showAnim)
     toolbar.visibility = View.VISIBLE
 }
-fun Fragment.hideBottomNav(){
-    val bottomNavBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+
+fun Fragment.hideBottomNav() {
+    val bottomNavBar =
+        requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView)
     val hideAnim: Animation = AnimationUtils.loadAnimation(requireContext(), R.anim.fade_out)
     bottomNavBar.startAnimation(hideAnim)
     bottomNavBar.visibility = View.GONE
 }
-fun Fragment.showBottomNav(){
-    val bottomNavBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+
+fun Fragment.showBottomNav() {
+    val bottomNavBar =
+        requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView)
     val showAnim: Animation = AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in)
     bottomNavBar.startAnimation(showAnim)
     bottomNavBar.visibility = View.VISIBLE
@@ -182,6 +194,7 @@ fun Fragment.setupKeyboardScrolling() {
                     view?.scrollBy(0, -10) // Adjust the scroll amount as needed
                     return@setOnKeyListener true
                 }
+
                 KeyEvent.KEYCODE_DPAD_DOWN -> {
                     // Scroll down
                     view?.scrollBy(0, 10) // Adjust the scroll amount as needed
@@ -251,9 +264,9 @@ fun Fragment.backPressed(action: Int) {
         })
 }
 
-fun returnNumber(str: String): Number{
-    return if (!str.isNullOrEmpty()){
-        if (str.contains('.')){
+fun returnNumber(str: String): Number {
+    return if (!str.isNullOrEmpty()) {
+        if (str.contains('.')) {
             str.toDouble()
         } else {
             str.toInt()
@@ -264,8 +277,7 @@ fun returnNumber(str: String): Number{
 }
 
 
-
-fun setMaxValueET(inputET: EditText, maxValue: Number){
+fun setMaxValueET(inputET: EditText, maxValue: Number) {
     val hello = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
@@ -275,7 +287,7 @@ fun setMaxValueET(inputET: EditText, maxValue: Number){
             val newText = s.toString().trim()
             if (!newText.isNullOrEmpty()) {
                 val currentValue = newText.replace(',', '.').toDouble()
-                if (currentValue > maxValue.toDouble()){
+                if (currentValue > maxValue.toDouble()) {
                     inputET.setText(maxValue.toString())
                     inputET.requestFocus()
                     inputET.setSelection(maxValue.toString().length)

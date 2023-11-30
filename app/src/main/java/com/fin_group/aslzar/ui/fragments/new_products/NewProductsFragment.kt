@@ -27,7 +27,9 @@ import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentNewProductsBinding
 import com.fin_group.aslzar.response.Category
+import com.fin_group.aslzar.response.Count
 import com.fin_group.aslzar.response.ResultX
+import com.fin_group.aslzar.response.Type
 import com.fin_group.aslzar.ui.activities.MainActivity
 import com.fin_group.aslzar.ui.fragments.new_products.functions.addProductToCart
 import com.fin_group.aslzar.ui.fragments.new_products.functions.callInStockDialog
@@ -38,8 +40,12 @@ import com.fin_group.aslzar.ui.fragments.new_products.functions.getAllProductFro
 import com.fin_group.aslzar.ui.fragments.new_products.functions.getAllProductsFromApi
 import com.fin_group.aslzar.ui.fragments.new_products.functions.savingAndFetchSearch
 import com.fin_group.aslzar.ui.fragments.new_products.functions.searchViewFun
+import com.fin_group.aslzar.ui.fragments.new_products.functions.showAddingToCartDialog
 import com.fin_group.aslzar.ui.fragments.new_products.functions.updateBadge
+import com.fin_group.aslzar.ui.fragments.sales.functions.updateBadge
+import com.fin_group.aslzar.util.AddingProduct
 import com.fin_group.aslzar.util.BadgeManager
+import com.fin_group.aslzar.util.FilialListener
 import com.fin_group.aslzar.util.NoInternetDialogFragment
 import com.fin_group.aslzar.util.ProductOnClickListener
 import com.fin_group.aslzar.util.SessionManager
@@ -49,7 +55,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
 @Suppress("DEPRECATION")
-class NewProductsFragment : Fragment(), ProductOnClickListener {
+class NewProductsFragment : Fragment(), ProductOnClickListener, AddingProduct, FilialListener {
 
     private var _binding: FragmentNewProductsBinding? = null
     private val binding get() = _binding!!
@@ -205,7 +211,7 @@ class NewProductsFragment : Fragment(), ProductOnClickListener {
     }
 
     override fun addToCart(product: ResultX) {
-        addProductToCart(product)
+        showAddingToCartDialog(product)
     }
 
     override fun inStock(product: ResultX) {
@@ -243,5 +249,17 @@ class NewProductsFragment : Fragment(), ProductOnClickListener {
 
         val action = NewProductsFragmentDirections.actionNewProductsFragmentToDataProductFragment(product2.id, product2, "NewProducts")
         Navigation.findNavController(binding.root).navigate(action)
+    }
+
+    override fun addProduct(product: ResultX, type: Type, count: Count) {
+        Toast.makeText(requireContext(), "Товар добавлен в корзину: ${product.full_name}", Toast.LENGTH_SHORT).show()
+        sharedViewModel.onProductAddedToCartV2(product, requireContext(), type, count)
+        updateBadge()
+    }
+
+    override fun addFilial(product: ResultX, type: Type, filial: Count) {
+        Toast.makeText(requireContext(), "Товар добавлен в корзину: ${product.full_name}", Toast.LENGTH_SHORT).show()
+        sharedViewModel.onProductAddedToCartV2(product, requireContext(), type, filial)
+        updateBadge()
     }
 }

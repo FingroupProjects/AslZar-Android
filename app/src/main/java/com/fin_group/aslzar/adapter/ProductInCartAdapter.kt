@@ -10,13 +10,13 @@ import com.fin_group.aslzar.R
 import com.fin_group.aslzar.databinding.RowItemProductInCartBinding
 import com.fin_group.aslzar.models.ProductInCart
 import com.fin_group.aslzar.util.EditProductInCart
+import com.fin_group.aslzar.util.formatNumber
 
 class ProductInCartAdapter(private var listProductInCart: List<ProductInCart>, private var listener: EditProductInCart)
     : RecyclerView.Adapter<ProductInCartAdapter.ViewHolder>() {
 
     private lateinit var binding: RowItemProductInCartBinding
     private lateinit var context: Context
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         context = parent.context
@@ -41,10 +41,14 @@ class ProductInCartAdapter(private var listProductInCart: List<ProductInCart>, p
     inner class ViewHolder(binding: RowItemProductInCartBinding): RecyclerView.ViewHolder(binding.root){
         val image = binding.imageProductInCart
         val name = binding.nameProductInCart
-        val code = binding.codeProductInCart
         val count = binding.countProductInCart
         val btnPlus = binding.addProduct
         val btnMinus = binding.minusProduct
+
+        val size = binding.sizeProductInCart
+        val weight = binding.weightProductInCart
+        val price = binding.priceProductInCart
+        val filial = binding.filialProductInCart
 
         @SuppressLint("UseCompatLoadingForDrawables")
         fun bind(product: ProductInCart){
@@ -58,8 +62,11 @@ class ProductInCartAdapter(private var listProductInCart: List<ProductInCart>, p
                 image.setImageResource(R.drawable.ic_no_image)
             }
             name.text = product.name
-            code.text = product.code
+            weight.text = product.weight.toString()
+            size.text = product.size.toString()
             count.text = product.countInCart.toString()
+            price.text = "${formatNumber(product.filialPrice)} UZS"
+            filial.text = product.filial
 
             btnPlus.setOnClickListener {
                 listener.plusProductInCart(product)

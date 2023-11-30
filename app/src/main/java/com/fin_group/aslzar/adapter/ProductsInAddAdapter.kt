@@ -9,18 +9,20 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.databinding.RowItemCharacterProductBinding
+import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.response.Type
 import com.fin_group.aslzar.util.AddingProduct
 import com.fin_group.aslzar.util.FilialListener
 import com.fin_group.aslzar.util.formatNumber
 
 class ProductsInAddAdapter(
+    private var product: ResultX,
     private var typeProductList: List<Type>,
     private var listener: AddingProduct,
     val listener2: FilialListener
 ) : RecyclerView.Adapter<ProductsInAddAdapter.ViewHolder>() {
 
-    var secondAdapter = FilialAdapter(emptyList(), listener2)
+    lateinit var secondAdapter: FilialAdapter
     private lateinit var context: Context
 
     inner class ViewHolder(binding: RowItemCharacterProductBinding) :
@@ -51,7 +53,7 @@ class ProductsInAddAdapter(
             showGoods.setImageResource(if (type.counts.size == 1) R.drawable.ic_add_2 else if (isExpandable) R.drawable.ic_less else R.drawable.ic_drop_down)
 
             filialList.layoutManager = LinearLayoutManager(context)
-            secondAdapter = FilialAdapter(type.counts, listener2)
+            secondAdapter = FilialAdapter(product, type, type.counts, listener2)
             filialList.adapter = secondAdapter
         }
     }
@@ -82,7 +84,7 @@ class ProductsInAddAdapter(
         holder.showGoods.setOnClickListener {
             when (type.counts.size) {
                 1 -> {
-                    listener.addProduct(type, type.counts[0])
+                    listener.addProduct(product, type, type.counts[0])
                 }
                 else -> {
                     isAnyItemExpand(position)

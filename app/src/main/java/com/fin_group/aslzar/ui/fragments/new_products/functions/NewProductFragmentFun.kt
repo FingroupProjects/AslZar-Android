@@ -19,7 +19,9 @@ import com.fin_group.aslzar.response.GetAllProductV2
 import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.ui.dialogs.CheckCategoryFragmentDialog
 import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
+import com.fin_group.aslzar.ui.dialogs.PickCharacterProductDialogFragment
 import com.fin_group.aslzar.ui.dialogs.WarningNoHaveProductFragmentDialog
+import com.fin_group.aslzar.ui.fragments.main.MainFragment
 import com.fin_group.aslzar.ui.fragments.new_products.NewProductsFragment
 import com.fin_group.aslzar.util.CategoryClickListener
 import com.google.gson.Gson
@@ -54,6 +56,12 @@ fun NewProductsFragment.callOutStock(id: String) {
         val bottomSheetFragment = WarningNoHaveProductFragmentDialog.newInstance(id)
         bottomSheetFragment.show(fragmentManager, tag)
     }
+}
+
+fun NewProductsFragment.showAddingToCartDialog(product: ResultX){
+    val filterDialog = PickCharacterProductDialogFragment.newInstance(product)
+    filterDialog.setListeners(this, this)
+    filterDialog.show(activity?.supportFragmentManager!!, "types dialog")
 }
 
 fun NewProductsFragment.searchBarChecked(view: ConstraintLayout): Boolean {

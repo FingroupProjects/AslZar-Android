@@ -16,5 +16,6 @@ data class ProductInCart(
     val typeId: String,
     val size: Number,
     val weight: Number,
-    val filialPrice: Number
+    val filialPrice: Number,
+    val filial: String
 ): Parcelable, Serializable

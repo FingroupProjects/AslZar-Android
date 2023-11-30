@@ -41,15 +41,15 @@ object Cart {
     }
 
     fun getTotalPriceWithoutSale(): Number {
-        return products.sumOf { it.price.toDouble() * it.countInCart }
+        return products.sumOf { it.filialPrice.toDouble() * it.countInCart }
     }
 
     fun getTotalPriceWithSale(): Number {
-        return products.sumOf { it.countInCart * (it.sale.toDouble() * it.price.toDouble()) / 100 }
+        return products.sumOf { it.countInCart * (it.sale.toDouble() * it.filialPrice.toDouble()) / 100 }
     }
 
     fun getTotalPrice(): Number {
-        return products.sumOf { (it.price.toDouble() * it.countInCart) - (it.countInCart * (it.sale.toDouble() * it.price.toDouble()) / 100) }
+        return products.sumOf { (it.filialPrice.toDouble() * it.countInCart) - (it.countInCart * (it.sale.toDouble() * it.filialPrice.toDouble()) / 100) }
     }
 
     fun getTotalCount(): Int {
@@ -61,48 +61,51 @@ object Cart {
     }
 
     fun getProductById(productId: String): ProductInCart? {
-        return products.find { it.id == productId }
+        return products.find { it.typeId == productId }
+    }
+
+    fun getProductById2(typeId: String, filial: String): ProductInCart? {
+        return products.find { it.typeId == typeId && it.filial == filial }
     }
 
     fun addProduct(product: ProductInCart, context: Context) {
         try {
-            val existingProduct = getProductById(product.id)
+            val existingProduct = getProductById2(product.typeId, product.filial)
 
             if (existingProduct == null) {
                 products.add(product)
-                saveCartToPrefs(context)
             } else {
-                plusProduct(product.id, context)
-                saveCartToPrefs(context)
+                updateProductCount(product, existingProduct.countInCart + 1, context)
             }
+            saveCartToPrefs(context)
             notifyObservers()
-        } catch (e: Exception){
+        } catch (e: Exception) {
             Log.d("TAG", "addProduct: ${e.message}")
         }
     }
 
-    fun plusProduct(productId: String, context: Context) {
-        val product = getProductById(productId)
-        if (product != null) {
-            updateProductCount(productId, product.countInCart + 1, context)
+    fun plusProduct(product: ProductInCart, context: Context) {
+        val productInCart = getProductById2(product.typeId, product.filial)
+        if (productInCart != null) {
+            updateProductCount(product, productInCart.countInCart + 1, context)
             saveCartToPrefs(context)
         }
     }
 
-    fun minusProduct(productId: String, context: Context) {
-        val product = getProductById(productId)
-        if (product != null) {
-            updateProductCount(productId, product.countInCart - 1, context)
+    fun minusProduct(product: ProductInCart, context: Context) {
+        val productInCart = getProductById2(product.typeId, product.filial)
+        if (productInCart != null) {
+            updateProductCount(product, productInCart.countInCart - 1, context)
             saveCartToPrefs(context)
         }
     }
 
-    fun updateProductCount(productId: String, newCount: Int, context: Context): Boolean {
-        val productToUpdate = getProductById(productId)
+    fun updateProductCount(product: ProductInCart, newCount: Int, context: Context): Boolean {
+        val productToUpdate = getProductById2(product.typeId, product.filial)
         return if (productToUpdate != null) {
             productToUpdate.countInCart = newCount
             if (productToUpdate.countInCart + newCount <= 0) {
-                removeProduct(productId, context)
+                removeProduct(product, context)
             }
             true
         } else {
@@ -110,8 +113,8 @@ object Cart {
         }
     }
 
-    fun removeProduct(productId: String, context: Context) {
-        val productToRemove = getProductById(productId)
+    fun removeProduct(product: ProductInCart, context: Context) {
+        val productToRemove = getProductById2(product.typeId, product.filial)
         if (productToRemove != null) {
             products.remove(productToRemove)
             saveCartToPrefs(context)
@@ -142,13 +145,13 @@ object Cart {
     }
 
     fun getUniqueProductTypesCount(): Int {
-        val cartProducts = Cart.getAllProducts()
-        val uniqueProductsIds = HashSet<String>()
+        val cartProducts = getAllProducts()
+        val uniqueProducts  = HashSet<Pair<String, String>>()
 
         for (product in cartProducts) {
-            uniqueProductsIds.add(product.id)
+            uniqueProducts.add(Pair(product.typeId, product.filial))
         }
 
-        return uniqueProductsIds.size
+        return uniqueProducts .size
     }
 }

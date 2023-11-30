@@ -68,7 +68,7 @@ fun CartFragment.fetchItemTouchHelper(){
         override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
             val position = viewHolder.adapterPosition
             val productToRemove = allProducts[position]
-            Cart.removeProduct(productToRemove.id, requireContext())
+            Cart.removeProduct(productToRemove, requireContext())
             allProducts = Cart.getAllProducts()
             myAdapter.updateList(allProducts)
             Cart.notifyObservers()

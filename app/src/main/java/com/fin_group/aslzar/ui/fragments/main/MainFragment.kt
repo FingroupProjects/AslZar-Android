@@ -51,6 +51,7 @@ import com.fin_group.aslzar.ui.fragments.main.functions.searchViewFun
 import com.fin_group.aslzar.ui.fragments.main.functions.setFilterViewModel
 import com.fin_group.aslzar.ui.fragments.main.functions.showAddingToCartDialog
 import com.fin_group.aslzar.ui.fragments.main.functions.updateBadge
+import com.fin_group.aslzar.ui.fragments.sales.functions.updateBadge
 import com.fin_group.aslzar.util.AddingProduct
 import com.fin_group.aslzar.util.BadgeManager
 import com.fin_group.aslzar.util.FilialListener
@@ -328,13 +329,15 @@ class MainFragment : Fragment(), ProductOnClickListener,
         Navigation.findNavController(binding.root).navigate(action)
     }
 
-
-
-    override fun addProduct(type: Type, count: Count) {
-        Toast.makeText(requireContext(), "Toast", Toast.LENGTH_SHORT).show()
+    override fun addProduct(product: ResultX, type: Type, count: Count) {
+        Toast.makeText(requireContext(), "Товар добавлен в корзину: ${product.full_name}", Toast.LENGTH_SHORT).show()
+        sharedViewModel.onProductAddedToCartV2(product, requireContext(), type, count)
+        updateBadge()
     }
 
-    override fun addFilial(filial: Count, position: Int) {
-        Toast.makeText(requireContext(), "Toast 2", Toast.LENGTH_SHORT).show()
+    override fun addFilial(product: ResultX, type: Type, filial: Count) {
+        Toast.makeText(requireContext(), "Товар добавлен в корзину: ${product.full_name}", Toast.LENGTH_SHORT).show()
+        sharedViewModel.onProductAddedToCartV2(product, requireContext(), type, filial)
+        updateBadge()
     }
 }
