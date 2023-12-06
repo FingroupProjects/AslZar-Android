@@ -4,6 +4,8 @@ package com.fin_group.aslzar.ui.fragments.dataProduct.functions
 
 import android.annotation.SuppressLint
 import android.graphics.Typeface
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.Gravity
 import android.view.View
@@ -19,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL
 import com.bumptech.glide.Glide
 import com.fin_group.aslzar.R
+import com.fin_group.aslzar.adapter.ProductCharacteristicAdapter
 import com.fin_group.aslzar.adapter.TableInstallmentAdapter
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentDataProductBinding
@@ -29,9 +32,11 @@ import com.fin_group.aslzar.response.PercentInstallment
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
+import com.fin_group.aslzar.ui.dialogs.PickCharacterProductDialogFragment
 import com.fin_group.aslzar.ui.dialogs.SetInProductBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.WarningNoHaveProductFragmentDialog
 import com.fin_group.aslzar.ui.fragments.dataProduct.DataProductFragment
+import com.fin_group.aslzar.ui.fragments.main.functions.showAddingToCartDialog
 import retrofit2.Callback
 import com.fin_group.aslzar.util.formatNumber
 import com.fin_group.aslzar.util.showBottomNav
@@ -79,11 +84,28 @@ fun DataProductFragment.callSetInProduct(id: String) {
     }
 }
 
+fun DataProductFragment.showProductCharacteristicDialog(product: ResultX){
+    val filterDialog = PickCharacterProductDialogFragment.newInstance(product)
+    filterDialog.setListeners(this, this)
+    filterDialog.show(activity?.supportFragmentManager!!, "types dialog")
+}
+
 fun DataProductFragment.someImagesProduct() {
     imageList = product.img
     recyclerViewSomeImages.layoutManager = LinearLayoutManager(requireContext(), HORIZONTAL, false)
     recyclerViewSomeImages.adapter = productSomeImagesAdapter
     productSomeImagesAdapter.updateList(imageList)
+}
+
+fun DataProductFragment.productCharacteristic(){
+    characteristicRv = binding.characteristicRv
+    productCharacteristicAdapter = ProductCharacteristicAdapter(characteristicList, this)
+    productCharacteristicAdapter.setSelectedPosition(0)
+    characteristicList = product.types
+    characteristicRv.layoutManager = LinearLayoutManager(requireContext(), HORIZONTAL, false)
+    characteristicRv.adapter = productCharacteristicAdapter
+    productCharacteristicAdapter.updateData(characteristicList)
+
 }
 
 fun DataProductFragment.likeProducts() {
@@ -109,31 +131,31 @@ fun DataProductFragment.setDataProduct(product: ResultX, binding: FragmentDataPr
             binding.productSale.visibility = GONE
         }
     }
-    if (product.description.isNotEmpty()){
-        binding.dpDescription.visibility = VISIBLE
-        binding.textView46.visibility = VISIBLE
-        binding.dpDescription.text = product.description
+    if (product.description.isNotEmpty()) {
+        binding.tvDescription.visibility = VISIBLE
+        binding.description.visibility = VISIBLE
+        binding.tvDescription.text = product.description
     } else {
-        binding.dpDescription.visibility = GONE
-        binding.textView46.visibility = GONE
+        binding.tvDescription.visibility = GONE
+        binding.description.visibility = GONE
     }
 
-    if (product.proba.isNotEmpty()){
-        binding.dpProbe.visibility = VISIBLE
-        binding.textView16.visibility = VISIBLE
-        binding.dpProbe.text = product.proba
-    } else{
-        binding.dpProbe.visibility = GONE
-        binding.textView16.visibility = GONE
+    if (product.proba.isNotEmpty()) {
+        binding.tvContent.visibility = VISIBLE
+        binding.content.visibility = VISIBLE
+        binding.tvContent.text = product.proba
+    } else {
+        binding.tvContent.visibility = GONE
+        binding.content.visibility = GONE
     }
 
-    if (product.metal.isNotEmpty()){
-        binding.dpMetal.visibility = VISIBLE
-        binding.textView19.visibility = VISIBLE
-        binding.dpMetal.text = product.metal
-    }else{
-        binding.dpMetal.visibility = GONE
-        binding.textView19.visibility = GONE
+    if (product.metal.isNotEmpty()) {
+        binding.tvMetal.visibility = VISIBLE
+        binding.metal.visibility = VISIBLE
+        binding.tvMetal.text = product.metal
+    } else {
+        binding.tvMetal.visibility = GONE
+        binding.metal.visibility = GONE
     }
 
     binding.apply {
@@ -142,72 +164,11 @@ fun DataProductFragment.setDataProduct(product: ResultX, binding: FragmentDataPr
         } else {
             imageView2.setImageResource(R.drawable.ic_no_image)
         }
-        dpCode.text = product.name
-        dpPrice.text = product.price.toString()
-        dpStone.text = product.stone_type.ifEmpty { "Без камня" }
-        dpProbe.text = product.proba
-        dpMetal.text = product.metal
-
-        for (type in product.types) {
-            val chip = Chip(requireContext())
-            chip.text = type.size.toString()
-            binding.chipGroupSize.addView(chip)
-        }
-
-        for (type in product.types) {
-            val chip = Chip(requireContext())
-            chip.text = type.weight.toString()
-            binding.chipGroupVes.addView(chip)
-        }
-
-
-        var lastSelectedChipSize: Chip? = null
-        var lastSelectedChipWeight: Chip? = null
-        binding.chipGroupSize.setOnCheckedChangeListener { group, checkedId ->
-            val selectedChip = group.findViewById<Chip>(checkedId)
-            val selectedIndex = group.indexOfChild(selectedChip)
-
-            if (selectedIndex != -1 && selectedIndex < binding.chipGroupVes.childCount) {
-                binding.chipGroupVes.clearCheck()
-                lastSelectedChipSize?.setChipBackgroundColorResource(R.color.background_1)
-                lastSelectedChipWeight?.setChipBackgroundColorResource(R.color.background_1)
-
-                val chipWeight = binding.chipGroupVes.getChildAt(selectedIndex) as? Chip
-                chipWeight?.isChecked = true
-
-                selectedChip.setChipBackgroundColorResource(R.color.background_3)
-                chipWeight?.setChipBackgroundColorResource(R.color.background_3)
-
-                lastSelectedChipSize = selectedChip
-                lastSelectedChipWeight = chipWeight
-                updatePrice(binding, product, selectedChip.text.toString(), lastSelectedChipWeight?.text.toString())
-            }
-        }
-
-        val firstChipSize = binding.chipGroupSize.getChildAt(0) as? Chip
-        firstChipSize?.isChecked = true
-
-        binding.chipGroupVes.setOnCheckedChangeListener { group, checkedId ->
-            val selectedChip = group.findViewById<Chip>(checkedId)
-            val selectedIndex = group.indexOfChild(selectedChip)
-
-            lastSelectedChipWeight?.setChipBackgroundColorResource(R.color.background_1)
-            lastSelectedChipSize?.setChipBackgroundColorResource(R.color.background_1)
-
-            if (selectedIndex != -1 && selectedIndex < binding.chipGroupSize.childCount) {
-                binding.chipGroupSize.clearCheck()
-                val chipSize = binding.chipGroupSize.getChildAt(selectedIndex) as? Chip
-                chipSize?.isChecked = true
-                selectedChip.setChipBackgroundColorResource(R.color.background_3)
-                chipSize?.setChipBackgroundColorResource(R.color.background_3)
-                lastSelectedChipWeight = selectedChip
-                lastSelectedChipSize = chipSize
-                updatePrice(binding, product, lastSelectedChipSize?.text.toString(), selectedChip.text.toString())
-            }
-        }
-
-        val firstChipVes = binding.chipGroupVes.getChildAt(0) as? Chip
-        firstChipVes?.isChecked = true
+        tvCode.text = product.name
+        tvPrice.text = product.price.toString()
+        tvStoneType.text = product.stone_type.ifEmpty { "Без камня" }
+        tvContent.text = product.proba
+        tvMetal.text = product.metal
 
         btnAddToCart.setOnClickListener {
             val addedProduct = Cart.getProductById(product.id)
@@ -232,7 +193,7 @@ private fun DataProductFragment.updatePrice(binding: FragmentDataProductBinding,
 
     if (matchingType != null) {
         val price = matchingType.counts.firstOrNull()?.price ?: 0
-        binding.dpPrice.text = "$price UZS"
+        binding.tvPrice.text = "$price UZS"
         binding.dpInstallmentPrice.text = "(${((price.toDouble() * percentInstallment.first_pay.toDouble()) / 100)} UZS п.в.)"
     }
 }
@@ -256,10 +217,10 @@ fun DataProductFragment.getSimilarProducts() {
                         getSimilarProduct = similarProduct
                         productAlikeAdapter.updateList(getSimilarProduct)
                         if (similarProduct.isEmpty()) {
-                            binding.textView28.visibility = GONE
+                            binding.similarProducts.visibility = GONE
                             binding.likeProductsRv.visibility = GONE
                         } else {
-                            binding.textView28.visibility = VISIBLE
+                            binding.similarProducts.visibility = VISIBLE
                             binding.likeProductsRv.visibility = VISIBLE
                         }
                     } else {
@@ -299,6 +260,7 @@ fun DataProductFragment.getProductByID() {
                         product = productResponse
                         setDataProduct(product, binding)
                         productSomeImagesAdapter.updateList(product.img)
+                        productCharacteristicAdapter.updateData(product.types)
                     }
                 }
             }

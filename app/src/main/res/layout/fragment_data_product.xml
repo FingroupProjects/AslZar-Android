@@ -2,10 +2,10 @@
 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipeRefreshLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_1"
-    android:id="@+id/swipeRefreshLayout"
     tools:context=".ui.fragments.dataProduct.DataProductFragment">
 
     <androidx.core.widget.NestedScrollView
@@ -17,72 +17,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/tv_table2"
-                style="@style/forTextView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:text="Таблица рассрочки"
-                android:textStyle="bold"
-                android:visibility="visible"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/likeProductsRv" />
-
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:id="@+id/tvTable"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="16dp"
-                android:background="@drawable/bg_table_calculator"
-                android:orientation="horizontal"
-                android:visibility="visible"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_table2">
-
-                <androidx.appcompat.widget.LinearLayoutCompat
-                    android:id="@+id/monthTable"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        style="@style/tableTextFirst"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_text_view_in_table_first"
-                        android:padding="5dp"
-                        android:text="Кол-во платежей" />
-                </androidx.appcompat.widget.LinearLayoutCompat>
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="@color/border_color_2" />
-
-                <androidx.appcompat.widget.LinearLayoutCompat
-                    android:id="@+id/percentTable"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        style="@style/tableTextFirst"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_text_view_in_table_last"
-                        android:padding="5dp"
-                        android:text="UZS/мес" />
-                </androidx.appcompat.widget.LinearLayoutCompat>
-
-            </androidx.appcompat.widget.LinearLayoutCompat>
-
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/materialCardView"
                 android:layout_width="match_parent"
@@ -90,8 +24,8 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
-                app:cardElevation="0dp"
                 android:background="@color/background_1"
+                app:cardElevation="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -99,8 +33,8 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:background="@color/background_1"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:background="@color/background_1">
 
                     <TextView
                         android:id="@+id/productSale"
@@ -158,11 +92,8 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:tint="@color/background_2" />
-
                 </androidx.constraintlayout.widget.ConstraintLayout>
-
             </com.google.android.material.card.MaterialCardView>
-
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/otherImgRv"
@@ -181,7 +112,7 @@
                 tools:listitem="@layout/row_slider_item" />
 
             <TextView
-                android:id="@+id/textView9"
+                android:id="@+id/code"
                 style="@style/forTextView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -193,7 +124,19 @@
                 app:layout_constraintTop_toBottomOf="@+id/otherImgRv" />
 
             <TextView
-                android:id="@+id/textView12"
+                android:id="@+id/tv_code"
+                style="@style/forTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:text="(2.7.2.1.096.1_7,9_0)"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/code"
+                app:layout_constraintStart_toEndOf="@+id/code"
+                app:layout_constraintTop_toTopOf="@+id/code" />
+
+            <TextView
+                android:id="@+id/price"
                 style="@style/forTextView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -202,129 +145,19 @@
                 android:text="Цена: "
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView9" />
+                app:layout_constraintTop_toBottomOf="@+id/code" />
 
             <TextView
-                android:id="@+id/textView14"
-                style="@style/forTextView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="3dp"
-                android:text="Камень: "
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView12" />
-
-            <TextView
-                android:id="@+id/textView16"
-                style="@style/forTextView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="3dp"
-                android:text="Проба: "
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView14" />
-
-            <TextView
-                android:id="@+id/textView19"
-                style="@style/forTextView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="3dp"
-                android:text="Металл: "
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView16" />
-
-            <TextView
-                android:id="@+id/textView27"
-                style="@style/forTextView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="20dp"
-                android:text="Вес:"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView19" />
-
-            <TextView
-                android:id="@+id/textView20"
-                style="@style/forTextView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="20dp"
-                android:text="Размер:"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView27" />
-
-
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chipGroupSize"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                app:layout_constraintBottom_toBottomOf="@+id/textView20"
-                app:layout_constraintStart_toEndOf="@+id/textView20"
-                app:layout_constraintTop_toTopOf="@+id/textView20"
-                app:singleSelection="true">
-
-            </com.google.android.material.chip.ChipGroup>
-
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chipGroupVes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                app:layout_constraintBottom_toBottomOf="@+id/textView27"
-                app:layout_constraintStart_toEndOf="@+id/textView27"
-                app:layout_constraintTop_toTopOf="@+id/textView27"
-                app:singleSelection="true">
-
-            </com.google.android.material.chip.ChipGroup>
-
-            <TextView
-                android:id="@+id/textView46"
-                style="@style/forTextView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="20dp"
-                android:text="Описание:"
-                android:textStyle="bold"
-                android:visibility="visible"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView20" />
-
-            <TextView
-                android:id="@+id/dp_code"
-                style="@style/forTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:text="(2.7.2.1.096.1_7,9_0)"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/textView9"
-                app:layout_constraintStart_toEndOf="@+id/textView9"
-                app:layout_constraintTop_toTopOf="@+id/textView9" />
-
-            <TextView
-                android:id="@+id/dp_price"
+                android:id="@+id/tv_price"
                 style="@style/forTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:text="3232000 UZS"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/textView12"
-                app:layout_constraintStart_toEndOf="@+id/textView12"
-                app:layout_constraintTop_toTopOf="@+id/textView12" />
+                app:layout_constraintBottom_toBottomOf="@+id/price"
+                app:layout_constraintStart_toEndOf="@+id/price"
+                app:layout_constraintTop_toTopOf="@+id/price" />
 
             <TextView
                 android:id="@+id/dp_installment_price"
@@ -333,49 +166,136 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:text="(289300 UZS/мес)"
+                android:visibility="gone"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/dp_price"
-                app:layout_constraintStart_toEndOf="@+id/dp_price"
-                app:layout_constraintTop_toTopOf="@+id/dp_price" />
+                app:layout_constraintBottom_toBottomOf="@+id/tv_price"
+                app:layout_constraintStart_toEndOf="@+id/tv_price"
+                app:layout_constraintTop_toTopOf="@+id/tv_price" />
+
+            <EditText
+                android:id="@+id/installment_price"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:inputType="numberDecimal"
+                app:layout_constraintBottom_toBottomOf="@+id/dp_installment_price"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/dp_installment_price"
+                app:layout_constraintTop_toTopOf="@+id/dp_installment_price" />
 
             <TextView
-                android:id="@+id/dp_stone"
+                android:id="@+id/stone_type"
+                style="@style/forTextView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="3dp"
+                android:text="Камень: "
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/price" />
+
+            <TextView
+                android:id="@+id/tv_stone_type"
                 style="@style/forTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:text="Бриллиант"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/textView14"
-                app:layout_constraintStart_toEndOf="@+id/textView14"
-                app:layout_constraintTop_toTopOf="@+id/textView14" />
+                app:layout_constraintBottom_toBottomOf="@+id/stone_type"
+                app:layout_constraintStart_toEndOf="@+id/stone_type"
+                app:layout_constraintTop_toTopOf="@+id/stone_type" />
 
             <TextView
-                android:id="@+id/dp_probe"
+                android:id="@+id/content"
+                style="@style/forTextView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="3dp"
+                android:text="Проба: "
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/stone_type" />
+
+            <TextView
+                android:id="@+id/tv_content"
                 style="@style/forTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:text="585"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/textView16"
-                app:layout_constraintStart_toEndOf="@+id/textView16"
-                app:layout_constraintTop_toTopOf="@+id/textView16" />
+                app:layout_constraintBottom_toBottomOf="@+id/content"
+                app:layout_constraintStart_toEndOf="@+id/content"
+                app:layout_constraintTop_toTopOf="@+id/content" />
 
             <TextView
-                android:id="@+id/dp_metal"
+                android:id="@+id/metal"
+                style="@style/forTextView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="3dp"
+                android:text="Металл: "
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/content" />
+
+            <TextView
+                android:id="@+id/tv_metal"
                 style="@style/forTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:text="Золото"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/textView19"
-                app:layout_constraintStart_toEndOf="@+id/textView19"
-                app:layout_constraintTop_toTopOf="@+id/textView19" />
+                app:layout_constraintBottom_toBottomOf="@+id/metal"
+                app:layout_constraintStart_toEndOf="@+id/metal"
+                app:layout_constraintTop_toTopOf="@+id/metal" />
 
             <TextView
-                android:id="@+id/dp_description"
+                android:id="@+id/characteristic"
+                style="@style/forTextView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="3dp"
+                android:text="Характеристика:"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/metal" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/characteristic_rv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/characteristic"
+                tools:ignore="SpeakableTextPresentCheck"
+                tools:listitem="@layout/row_characteristic_item" />
+
+            <TextView
+                android:id="@+id/description"
+                style="@style/forTextView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="3dp"
+                android:text="Описание:"
+                android:textStyle="bold"
+                android:visibility="visible"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/characteristic_rv" />
+
+            <TextView
+                android:id="@+id/tv_description"
                 style="@style/forTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -385,56 +305,11 @@
                 android:textStyle="bold"
                 android:visibility="visible"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/textView46"
-                app:layout_constraintTop_toBottomOf="@+id/textView46" />
-
-            <HorizontalScrollView
-                android:id="@+id/horizontalScrollViewWeight"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView27">
-
-                <com.google.android.material.chip.ChipGroup
-                    android:id="@+id/weightChipGroup"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    app:selectionRequired="true"
-                    app:singleLine="true"
-                    app:singleSelection="true">
-
-                </com.google.android.material.chip.ChipGroup>
-            </HorizontalScrollView>
-
-            <HorizontalScrollView
-                android:id="@+id/horizontalScrollViewSize"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView20">
-
-                <com.google.android.material.chip.ChipGroup
-                    android:id="@+id/sizeChipGroup"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    app:selectionRequired="true"
-                    app:singleLine="true"
-                    app:singleSelection="true">
-                </com.google.android.material.chip.ChipGroup>
-            </HorizontalScrollView>
+                app:layout_constraintStart_toStartOf="@+id/description"
+                app:layout_constraintTop_toBottomOf="@+id/description" />
 
             <TextView
-                android:id="@+id/textView28"
+                android:id="@+id/similar_products"
                 style="@style/forTextView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -444,7 +319,7 @@
                 android:textStyle="bold"
                 android:visibility="visible"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/dp_description" />
+                app:layout_constraintTop_toBottomOf="@+id/tv_description" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/likeProductsRv"
@@ -456,9 +331,95 @@
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView28"
+                app:layout_constraintTop_toBottomOf="@+id/similar_products"
                 tools:ignore="SpeakableTextPresentCheck"
                 tools:listitem="@layout/row_slider_item_2" />
+
+            <TextView
+                android:id="@+id/table"
+                style="@style/forTextView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:text="Таблица рассрочки"
+                android:textStyle="bold"
+                android:visibility="visible"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/likeProductsRv" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/tvTable"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/bg_table_calculator"
+                android:orientation="horizontal"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/table">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/monthTable"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/tableTextFirst"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_text_view_in_table_first"
+                        android:padding="5dp"
+                        android:text="Кол-во платежей" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/border_color_2" />
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/percentTable"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/tableTextFirst"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_text_view_in_table_last"
+                        android:padding="5dp"
+                        android:text="UZS/мес" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/printPercent"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
+                app:layout_constraintBottom_toTopOf="@id/view3"
+                app:layout_constraintEnd_toEndOf="@+id/tvTable"
+                app:layout_constraintStart_toStartOf="@+id/tvTable"
+                app:layout_constraintTop_toBottomOf="@+id/tvTable" />
+
+            <View
+                android:id="@+id/view3"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginEnd="3dp"
+                app:layout_constraintBottom_toTopOf="@+id/btn_add_to_cart"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/printPercent" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_add_to_cart"
@@ -475,26 +436,6 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
-
-            <View
-                android:id="@+id/view3"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginEnd="3dp"
-                app:layout_constraintBottom_toTopOf="@+id/btn_add_to_cart"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/printPercent" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/printPercent"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
-                app:layout_constraintBottom_toTopOf="@id/view3"
-                app:layout_constraintEnd_toEndOf="@+id/tvTable"
-                app:layout_constraintStart_toStartOf="@+id/tvTable"
-                app:layout_constraintTop_toBottomOf="@+id/tvTable" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

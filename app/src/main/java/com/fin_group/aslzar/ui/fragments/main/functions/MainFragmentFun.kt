@@ -4,11 +4,15 @@ package com.fin_group.aslzar.ui.fragments.main.functions
 
 import android.annotation.SuppressLint
 import android.util.Log
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.ProductsAdapter
 import com.fin_group.aslzar.cart.Cart
@@ -290,6 +294,36 @@ fun MainFragment.fetchRV(productList: List<ResultX>) {
     myAdapter = ProductsAdapter(productList, this)
     recyclerView.adapter = myAdapter
     myAdapter.notifyDataSetChanged()
+
+    recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener(){
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            super.onScrolled(recyclerView, dx, dy)
+
+            if (dy > 0 && isButtonVisible) {
+                hideButton()
+            } else if (dy < 0 && !isButtonVisible) {
+                showButton()
+            }
+        }
+        })
+        btnGoTo.setOnClickListener {
+        recyclerView.scrollToPosition(0)
+            hideButton()
+    }
+}
+
+fun MainFragment.showButton() {
+    val fadeIn = AnimationUtils.loadAnimation(context, R.anim.fade_in)
+    btnGoTo.startAnimation(fadeIn)
+    btnGoTo.visibility = VISIBLE
+    isButtonVisible = true
+}
+
+fun MainFragment.hideButton() {
+    val fadeOut = AnimationUtils.loadAnimation(context, R.anim.fade_out)
+    btnGoTo.startAnimation(fadeOut)
+    btnGoTo.visibility = View.INVISIBLE
+    isButtonVisible = false
 }
 
 fun MainFragment.getAllProductsFromApi() {
