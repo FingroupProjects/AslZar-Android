@@ -13,6 +13,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.View.GONE
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
@@ -100,10 +101,15 @@ class MainFragment : Fragment(), ProductOnClickListener,
 
     lateinit var recyclerView: RecyclerView
 
+    lateinit var btnGoTo: ImageButton
+
     lateinit var encryptionManager: EncryptionManager
 
     lateinit var filterViewModel: FilterViewModel
     var filterModel: FilterModel? = null
+
+    var isButtonVisible = false
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -123,6 +129,8 @@ class MainFragment : Fragment(), ProductOnClickListener,
         viewSearch = binding.viewSearch
         viewCheckedCategory = binding.viewCheckedCategory
         recyclerView = binding.mainRecyclerView
+
+        btnGoTo = binding.btnGoTo
 
         binding.fabClearSearch.setOnClickListener {
             if (searchText != "") {

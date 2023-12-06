@@ -22,16 +22,17 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.Glide
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.AlikeProductsAdapter
+import com.fin_group.aslzar.adapter.ProductCharacteristicAdapter
 import com.fin_group.aslzar.adapter.ProductSomeImagesAdapter
 import com.fin_group.aslzar.adapter.TableInstallmentAdapter
 import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.databinding.FragmentDataProductBinding
+import com.fin_group.aslzar.response.Count
 import com.fin_group.aslzar.response.PercentInstallment
 import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.response.SimilarProduct
 import com.fin_group.aslzar.response.Type
 import com.fin_group.aslzar.ui.dialogs.AlikeProductBottomSheetDialogFragment
-import com.fin_group.aslzar.ui.fragments.dataProduct.functions.callInStockDialog
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.callSetInProduct
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.fetchCoefficientPlanFromApi
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.fetchCoefficientPlanFromPrefs
@@ -39,23 +40,28 @@ import com.fin_group.aslzar.ui.fragments.dataProduct.functions.getProductByID
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.getSimilarProducts
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.likeProducts
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.onBackPressed
+import com.fin_group.aslzar.ui.fragments.dataProduct.functions.productCharacteristic
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.retrieveCoefficientPlan
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.setDataProduct
+import com.fin_group.aslzar.ui.fragments.dataProduct.functions.showProductCharacteristicDialog
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.someImagesProduct
+import com.fin_group.aslzar.util.AddingProduct
 import com.fin_group.aslzar.util.BadgeManager
+import com.fin_group.aslzar.util.FilialListener
 import com.fin_group.aslzar.util.OnAlikeProductClickListener
 import com.fin_group.aslzar.util.OnImageClickListener
+import com.fin_group.aslzar.util.OnProductCharacteristicClickListener
 import com.fin_group.aslzar.util.SessionManager
 import com.fin_group.aslzar.util.hideBottomNav
 import com.fin_group.aslzar.util.showBottomNav
 import com.fin_group.aslzar.viewmodel.SharedViewModel
 import com.google.android.material.appbar.MaterialToolbar
-import com.google.android.material.badge.BadgeDrawable
-import com.google.android.material.chip.ChipGroup
+import kotlin.reflect.typeOf
 
 
 @Suppress("DEPRECATION")
-class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClickListener {
+class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClickListener,
+    AddingProduct, FilialListener, OnProductCharacteristicClickListener {
 
     private var _binding: FragmentDataProductBinding? = null
     val binding get() = _binding!!
@@ -73,17 +79,20 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
     var alikeProductsList: List<SimilarProduct> = emptyList()
     lateinit var productSomeImagesAdapter: ProductSomeImagesAdapter
     lateinit var productAlikeAdapter: AlikeProductsAdapter
-    private lateinit var weightChipGroup: ChipGroup
-    private lateinit var sizeChipGroup: ChipGroup
     var getSimilarProduct: List<SimilarProduct> = emptyList()
     lateinit var sessionManager: SessionManager
     lateinit var apiService: ApiClient
-    var isFilterOn: Boolean = false
-    var filterBadge: BadgeDrawable? = null
     lateinit var percentInstallment: PercentInstallment
     lateinit var monthLinearLayout: LinearLayoutCompat
     lateinit var percentLinearLayout: LinearLayoutCompat
     lateinit var adapterPaymentPercent: TableInstallmentAdapter
+
+    lateinit var characteristicRv: RecyclerView
+    lateinit var productCharacteristicAdapter: ProductCharacteristicAdapter
+    var characteristicList: List<Type> = emptyList()
+    private var nextCharacteristic = RecyclerView.NO_POSITION
+
+
     @SuppressLint("UnsafeOptInUsageError")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -118,7 +127,7 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         fetchCoefficientPlanFromPrefs()
         try {
             percentInstallment = retrieveCoefficientPlan()
-        }catch (e: Exception){
+        } catch (e: Exception) {
             Log.d("TAG", "onCreateView: ${e.message}")
         }
         adapterPaymentPercent = TableInstallmentAdapter(percentInstallment, product.price, 0.0)
@@ -130,15 +139,13 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         setHasOptionsMenu(true)
         recyclerViewSomeImages = binding.otherImgRv
         recyclerViewLikeProducts = binding.likeProductsRv
-        weightChipGroup = binding.weightChipGroup
-        sizeChipGroup = binding.sizeChipGroup
 
         productSomeImagesAdapter = ProductSomeImagesAdapter(imageList, this)
         productSomeImagesAdapter.setSelectedPosition(0)
-
         productAlikeAdapter = AlikeProductsAdapter(alikeProductsList, this)
 
         someImagesProduct()
+        productCharacteristic()
         likeProducts()
         return binding.root
     }
@@ -180,16 +187,7 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
             }
         }
         if (item.itemId == R.id.product_in_stock_item) {
-            if (product.types.isNotEmpty()) {
-                val firstType: Type = product.types[0]
-                if (firstType.counts.isNotEmpty()) {
-                    callInStockDialog(product.full_name, firstType.counts)
-                } else {
-                    Toast.makeText(requireContext(), "Данного продукта нет в наличии", Toast.LENGTH_SHORT).show()
-                }
-            } else {
-                Toast.makeText(requireContext(), "Данного продукта нет в наличии", Toast.LENGTH_SHORT).show()
-            }
+            showProductCharacteristicDialog(product)
         }
         return super.onOptionsItemSelected(item)
     }
@@ -220,4 +218,18 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         super.onDestroy()
         showBottomNav()
     }
+
+    override fun addProduct(product: ResultX, type: Type, count: Count) {
+        Toast.makeText(requireContext(), "Товар добавлен в корзину: ${product.full_name}", Toast.LENGTH_SHORT).show()
+        sharedViewModel.onProductAddedToCartV2(product, requireContext(), type, count)
+    }
+
+    override fun addFilial(product: ResultX, type: Type, filial: Count) {
+        Toast.makeText(requireContext(), "Товар добавлен в корзину: ${product.full_name}", Toast.LENGTH_SHORT).show()
+        sharedViewModel.onProductAddedToCartV2(product, requireContext(), type, filial)
+    }
+
+    override fun clickCharacteristic(characteristic: Type) {
+        nextCharacteristic = characteristicList.indexOfFirst { it == characteristic}
+        productCharacteristicAdapter.setSelectedPosition(nextCharacteristic)    }
 }
