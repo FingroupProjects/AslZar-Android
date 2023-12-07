@@ -4,8 +4,6 @@ package com.fin_group.aslzar.ui.fragments.dataProduct.functions
 
 import android.annotation.SuppressLint
 import android.graphics.Typeface
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.Gravity
 import android.view.View
@@ -23,7 +21,6 @@ import com.bumptech.glide.Glide
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.ProductCharacteristicAdapter
 import com.fin_group.aslzar.adapter.TableInstallmentAdapter
-import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentDataProductBinding
 import com.fin_group.aslzar.response.Count
 import com.fin_group.aslzar.response.GetSimilarProductsResponse
@@ -36,11 +33,9 @@ import com.fin_group.aslzar.ui.dialogs.PickCharacterProductDialogFragment
 import com.fin_group.aslzar.ui.dialogs.SetInProductBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.WarningNoHaveProductFragmentDialog
 import com.fin_group.aslzar.ui.fragments.dataProduct.DataProductFragment
-import com.fin_group.aslzar.ui.fragments.main.functions.showAddingToCartDialog
 import retrofit2.Callback
 import com.fin_group.aslzar.util.formatNumber
 import com.fin_group.aslzar.util.showBottomNav
-import com.google.android.material.chip.Chip
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import retrofit2.Call
@@ -109,8 +104,7 @@ fun DataProductFragment.productCharacteristic(){
 }
 
 fun DataProductFragment.likeProducts() {
-    recyclerViewLikeProducts.layoutManager =
-        LinearLayoutManager(requireContext(), HORIZONTAL, false)
+    recyclerViewLikeProducts.layoutManager = LinearLayoutManager(requireContext(), HORIZONTAL, false)
     recyclerViewLikeProducts.adapter = productAlikeAdapter
     productAlikeAdapter.updateList(alikeProductsList)
 }
@@ -165,23 +159,20 @@ fun DataProductFragment.setDataProduct(product: ResultX, binding: FragmentDataPr
             imageView2.setImageResource(R.drawable.ic_no_image)
         }
         tvCode.text = product.name
-        tvPrice.text = product.price.toString()
+        val minPrice = product.types.flatMap { it.counts }.minOfOrNull { it.price.toDouble() }
+        tvPriceFirst.text = formatNumber(minPrice!!.toDouble())
         tvStoneType.text = product.stone_type.ifEmpty { "Без камня" }
         tvContent.text = product.proba
         tvMetal.text = product.metal
 
         btnAddToCart.setOnClickListener {
-            val addedProduct = Cart.getProductById(product.id)
-            if (addedProduct != null) {
-                Toast.makeText(
-                    requireContext(),
-                    "Количество товара увеличено на +1",
-                    Toast.LENGTH_SHORT
-                ).show()
-            } else {
-                Toast.makeText(requireContext(), "Товар добавлен в корзину", Toast.LENGTH_SHORT)
-                    .show()
-            }
+            showProductCharacteristicDialog(product)
+//            val addedProduct = Cart.getProductById(product.id)
+//            if (addedProduct != null) {
+//                Toast.makeText(requireContext(), "Количество товара увеличено на +1", Toast.LENGTH_SHORT).show()
+//            } else {
+//                Toast.makeText(requireContext(), "Товар добавлен в корзину", Toast.LENGTH_SHORT).show()
+//            }
             sharedViewModel.onProductAddedToCart(product, requireContext())
         }
     }
@@ -193,7 +184,7 @@ private fun DataProductFragment.updatePrice(binding: FragmentDataProductBinding,
 
     if (matchingType != null) {
         val price = matchingType.counts.firstOrNull()?.price ?: 0
-        binding.tvPrice.text = "$price UZS"
+        binding.tvPriceFirst.text = "$price UZS"
         binding.dpInstallmentPrice.text = "(${((price.toDouble() * percentInstallment.first_pay.toDouble()) / 100)} UZS п.в.)"
     }
 }
