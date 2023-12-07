@@ -52,11 +52,11 @@ import com.fin_group.aslzar.util.OnAlikeProductClickListener
 import com.fin_group.aslzar.util.OnImageClickListener
 import com.fin_group.aslzar.util.OnProductCharacteristicClickListener
 import com.fin_group.aslzar.util.SessionManager
+import com.fin_group.aslzar.util.formatNumber
 import com.fin_group.aslzar.util.hideBottomNav
 import com.fin_group.aslzar.util.showBottomNav
 import com.fin_group.aslzar.viewmodel.SharedViewModel
 import com.google.android.material.appbar.MaterialToolbar
-import kotlin.reflect.typeOf
 
 
 @Suppress("DEPRECATION")
@@ -91,6 +91,8 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
     lateinit var productCharacteristicAdapter: ProductCharacteristicAdapter
     var characteristicList: List<Type> = emptyList()
     private var nextCharacteristic = RecyclerView.NO_POSITION
+
+    private var selectedCharacteristic: Type? = null
 
 
     @SuppressLint("UnsafeOptInUsageError")
@@ -183,8 +185,7 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
             if (product.is_set) {
                 callSetInProduct(args.productId)
             } else {
-                Toast.makeText(requireContext(), "У данного продукта нет комплекта", Toast.LENGTH_SHORT).show()
-            }
+                Toast.makeText(requireContext(), "У данного продукта нет комплекта", Toast.LENGTH_SHORT).show() }
         }
         if (item.itemId == R.id.product_in_stock_item) {
             showProductCharacteristicDialog(product)
@@ -207,7 +208,6 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         val fragmentManager = requireFragmentManager()
         val tag = "alike_product_dialog"
         val existingFragment = fragmentManager.findFragmentByTag(tag)
-
         if (existingFragment == null) {
             val bottomSheetFragment = AlikeProductBottomSheetDialogFragment.newInstance(product)
             bottomSheetFragment.show(fragmentManager, tag)
@@ -230,6 +230,17 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
     }
 
     override fun clickCharacteristic(characteristic: Type) {
-        nextCharacteristic = characteristicList.indexOfFirst { it == characteristic}
-        productCharacteristicAdapter.setSelectedPosition(nextCharacteristic)    }
+        selectedCharacteristic = characteristic
+        updateTvPriceFirst()
+        nextCharacteristic = characteristicList.indexOfFirst { it == characteristic }
+        productCharacteristicAdapter.setSelectedPosition(nextCharacteristic)
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun updateTvPriceFirst() {
+        selectedCharacteristic?.let { characteristic ->
+            val minPrice = characteristic.counts.minByOrNull { it.price.toDouble() }?.price ?: 0
+            binding.tvPriceFirst.text = formatNumber(minPrice)
+        }
+    }
 }

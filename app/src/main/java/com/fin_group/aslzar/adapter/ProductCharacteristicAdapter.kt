@@ -1,17 +1,24 @@
 package com.fin_group.aslzar.adapter
 
+import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.AnimationUtils
+import android.view.animation.DecelerateInterpolator
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.response.Type
 import com.fin_group.aslzar.util.OnProductCharacteristicClickListener
+import com.fin_group.aslzar.util.formatNumber
 
-class ProductCharacteristicAdapter( var productList: List<Type>, private val listener: OnProductCharacteristicClickListener) :
-    RecyclerView.Adapter<ProductCharacteristicAdapter.ViewHolder>() {
+class ProductCharacteristicAdapter(
+    var productList: List<Type>,
+    private val listener: OnProductCharacteristicClickListener)
+    : RecyclerView.Adapter<ProductCharacteristicAdapter.ViewHolder>() {
 
     var selectedItemPosition = RecyclerView.NO_POSITION
 
@@ -29,7 +36,6 @@ class ProductCharacteristicAdapter( var productList: List<Type>, private val lis
             selectedItemPosition = position
             listener.clickCharacteristic(product)
         }
-
     }
 
     override fun getItemCount(): Int {
@@ -62,15 +68,17 @@ class ProductCharacteristicAdapter( var productList: List<Type>, private val lis
                 tvSize.text = product.size.toString()
                 tvWeight.text = product.weight.toString()
                 val priceValue = product.counts.firstOrNull()?.price ?: 0
-                tvPrice.text = priceValue.toString()
-
-
-                if (isSelected){
+                tvPrice.text = formatNumber(priceValue)
+                if (isSelected) {
                     itemView.setBackgroundResource(R.drawable.selected_item_background_2)
-                }else{
+                    val rotationAnimator = ObjectAnimator.ofFloat(itemView, "rotationY", 0f, -90f, -180f, -270f, -360f)
+                    rotationAnimator.interpolator = DecelerateInterpolator()
+                    rotationAnimator.duration = 2000
+                    rotationAnimator.start()
+                } else {
                     itemView.setBackgroundResource(R.drawable.selected_item_background_3)
+                    itemView.clearAnimation()
                 }
-
                 tvOtherFilial.text = product.counts.size.toString()
             } else {
                 itemView.visibility = View.GONE

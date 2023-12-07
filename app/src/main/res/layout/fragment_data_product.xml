@@ -148,12 +148,12 @@
                 app:layout_constraintTop_toBottomOf="@+id/code" />
 
             <TextView
-                android:id="@+id/tv_price"
+                android:id="@+id/tv_price_first"
                 style="@style/forTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
-                android:text="3232000 UZS"
+                android:text="3232000"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/price"
                 app:layout_constraintStart_toEndOf="@+id/price"
@@ -168,9 +168,9 @@
                 android:text="(289300 UZS/мес)"
                 android:visibility="gone"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/tv_price"
-                app:layout_constraintStart_toEndOf="@+id/tv_price"
-                app:layout_constraintTop_toTopOf="@+id/tv_price" />
+                app:layout_constraintBottom_toBottomOf="@+id/tv_price_first"
+                app:layout_constraintStart_toEndOf="@+id/tv_price_first"
+                app:layout_constraintTop_toTopOf="@+id/tv_price_first" />
 
             <EditText
                 android:id="@+id/installment_price"
