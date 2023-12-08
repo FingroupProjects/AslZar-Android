@@ -177,6 +177,8 @@ fun SalesAndPromotionsFragment.fetchRV(productList: List<ResultX>) {
     myAdapter = SalesProductsV2Adapter(productList, this)
     recyclerView.adapter = myAdapter
     myAdapter.updateProducts(productList)
+
+    recyclerView.startLayoutAnimation()
 }
 
 fun SalesAndPromotionsFragment.getAllProductsFromApi() {

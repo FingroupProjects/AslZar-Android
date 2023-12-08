@@ -20,6 +20,7 @@ import com.fin_group.aslzar.models.TypePay
 import com.fin_group.aslzar.response.Client
 import com.fin_group.aslzar.response.Percent
 import com.fin_group.aslzar.response.PercentInstallment
+import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.animation
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.cartObserver
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.fetchClientsAndTypePay
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.fetchClientsFromApi
@@ -41,7 +42,7 @@ import org.w3c.dom.Text
 class CalculatorFragmentV2 : Fragment(), CalculatorResetListener {
 
     private var _binding: FragmentCalculatorV2Binding? = null
-    private val binding get() = _binding!!
+    val binding get() = _binding!!
 
     lateinit var api: ApiClient
     lateinit var sessionManager: SessionManager
@@ -89,7 +90,7 @@ class CalculatorFragmentV2 : Fragment(), CalculatorResetListener {
         monthLinearLayout = binding.monthTable
         percentLinearLayout = binding.percentTable
         NoInternetDialogFragment.showIfNoInternet(requireContext())
-
+        animation()
         return binding.root
     }
 

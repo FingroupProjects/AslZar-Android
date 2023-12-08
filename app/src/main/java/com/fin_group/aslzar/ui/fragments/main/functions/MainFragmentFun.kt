@@ -294,7 +294,7 @@ fun MainFragment.fetchRV(productList: List<ResultX>) {
     myAdapter = ProductsAdapter(productList, this)
     recyclerView.adapter = myAdapter
     myAdapter.notifyDataSetChanged()
-
+    recyclerView.startLayoutAnimation()
     recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener(){
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)

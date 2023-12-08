@@ -58,6 +58,8 @@ class MainActivity : AppCompatActivity() {
         sessionManager = SessionManager(this)
         apiClient.init(sessionManager)
 
+
+
         prefs = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)!!
 
         prefs.edit()?.putString("selectedCategory", "all")?.apply()
@@ -84,7 +86,6 @@ class MainActivity : AppCompatActivity() {
 
         bottomNavBar = binding.bottomNavigationView
         val navController = findNavController(R.id.fragmentMain)
-
         val appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.newProductsFragment,

@@ -20,6 +20,7 @@ import com.fin_group.aslzar.models.ProductInCart
 import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.ui.activities.MainActivity
 import com.fin_group.aslzar.ui.fragments.cartMain.MainCartFragmentDirections
+import com.fin_group.aslzar.ui.fragments.cartMain.cart.functions.animation
 import com.fin_group.aslzar.ui.fragments.cartMain.cart.functions.cartObserver
 import com.fin_group.aslzar.ui.fragments.cartMain.cart.functions.deleteAllProductFromCart
 import com.fin_group.aslzar.ui.fragments.cartMain.cart.functions.fetchItemTouchHelper
@@ -38,32 +39,25 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 class CartFragment : Fragment(), EditProductInCart, OnProductAddedToCartListener {
 
     private var _binding: FragmentCartBinding? = null
-    private val binding get() = _binding!!
+    val binding get() = _binding!!
 
-    //    lateinit var myAdapter: ProductInCartAdapter
     var myAdapter = ProductInCartAdapter(emptyList(), this)
-
     var allProducts: List<ProductInCart> = emptyList()
     lateinit var recyclerView: RecyclerView
     lateinit var btnDeleteAllProducts: FloatingActionButton
-
     lateinit var cartObserver: CartObserver
-
     lateinit var mainActivity: MainActivity
     lateinit var bottomNavigationView: BottomNavigationView
     lateinit var badgeManager: BadgeManager
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentCartBinding.inflate(inflater, container, false)
         recyclerView = binding.cartRvItemsInCart
         allProducts = Cart.getAllProducts()
         btnDeleteAllProducts = binding.btnDelete
-
+        animation()
         return binding.root
     }
 

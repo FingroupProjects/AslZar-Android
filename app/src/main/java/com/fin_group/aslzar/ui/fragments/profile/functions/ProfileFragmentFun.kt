@@ -3,17 +3,21 @@ package com.fin_group.aslzar.ui.fragments.profile.functions
 import android.graphics.Color
 import android.util.Base64
 import android.util.Log
+import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.cipher.EncryptionManager
+import com.fin_group.aslzar.databinding.FragmentDataProductBinding
+import com.fin_group.aslzar.databinding.FragmentProfileBinding
 import com.fin_group.aslzar.response.ResponseForgotPassword
 import com.fin_group.aslzar.response.SalesPlanResponse
 import com.fin_group.aslzar.ui.dialogs.ChangePasswordProfileFragmentDialog
 import com.fin_group.aslzar.ui.fragments.CodeFragment
 import com.fin_group.aslzar.ui.fragments.forgotPassword.ForgotPasswordFragment
 import com.fin_group.aslzar.ui.fragments.profile.ProfileFragment
+import com.github.anastr.speedviewlib.Speedometer
 import com.github.anastr.speedviewlib.components.Style
 import retrofit2.Call
 import retrofit2.Callback
@@ -21,6 +25,8 @@ import retrofit2.Response
 import javax.crypto.spec.SecretKeySpec
 
 fun ProfileFragment.speedometerView(speed: Float) {
+    val speedometer: Speedometer
+    speedometer = binding.speedView
     speedometer.speedTo(speed)
     speedometer.makeSections(3, Color.CYAN, Style.BUTT)
     speedometer.sections[0].color = Color.parseColor("#8e5234")
@@ -28,18 +34,6 @@ fun ProfileFragment.speedometerView(speed: Float) {
     speedometer.sections[2].color = Color.parseColor("#f2c1ad")
     speedometer.ticks = arrayListOf(0f, .25f, .5f, .75f, 1f)
 }
-
-//fun ProfileFragment.goToChangePasswordDialog() {
-//    val changeDataPassword = ChangePasswordProfileFragmentDialog()
-//    val fragmentManager: FragmentManager? = activity?.supportFragmentManager
-//    fragmentManager?.let {
-//        val transaction: FragmentTransaction = it.beginTransaction()
-//        transaction.addToBackStack(null)
-//        changeDataPassword.show(transaction, "ChangePasswordProfileDialogFragment")
-//    }
-//}
-
-
 fun ProfileFragment.goToDialogShow(login: String, password: String) {
     val changeDataPassword = ChangePasswordProfileFragmentDialog.newInstancePass(login, password, "change")
     val fragmentManager: FragmentManager? = activity?.supportFragmentManager
@@ -129,4 +123,38 @@ fun ProfileFragment.getSalesPlan(){
         Log.d("TAG", "getSalesPlan: ${e.message}")
         swipeRefreshLayout.isRefreshing = false
     }
+}
+
+fun ProfileFragment.animation(binding: FragmentProfileBinding){
+    val constraintLayout = binding.constraintLayout
+    val animationController = AnimationUtils.loadLayoutAnimation(requireContext(), R.anim.rv_layout_anim)
+    constraintLayout.layoutAnimation = animationController
+    constraintLayout.scheduleLayoutAnimation()
+}
+
+fun ProfileFragment.getInformation(){
+    val salesPlan: Number? = salesPlanNumber
+    binding.apply {
+        tvName.text = sessionManager.fetchName()
+        tvUserLogin.text = sessionManager.fetchLogin()
+        tvSubsidiary.text = sessionManager.fetchLocation()
+        if (sessionManager.fetchEmail()?.isEmpty() == true) {
+            tvMail.text = "Почта не указана!"
+        } else {
+            tvMail.text = sessionManager.fetchEmail()
+        }
+        if (sessionManager.fetchNumberPhone()
+                ?.isEmpty() == true || sessionManager.fetchNumberPhone()?.toInt() == 0
+        ) {
+            tvNumberPhone.text = "Номер телефона не указан!"
+        } else {
+            tvNumberPhone.text = sessionManager.fetchNumberPhone()
+        }
+        key = sessionManager.fetchKey()!!
+        keyBase64 = Base64.decode(key, Base64.DEFAULT)
+        encryptionKey = SecretKeySpec(keyBase64, "AES")
+        encryptionManager = EncryptionManager(encryptionKey)
+        tvUserLogin.text = encryptionManager.decryptData(sessionManager.fetchLogin()!!)
+    }
+    speedometerView(salesPlan!!.toFloat())
 }

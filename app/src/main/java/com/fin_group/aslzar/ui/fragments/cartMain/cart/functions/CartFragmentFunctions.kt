@@ -4,6 +4,7 @@ import android.widget.Toast
 import android.annotation.SuppressLint
 import android.util.Log
 import android.view.View
+import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -95,4 +96,11 @@ fun CartFragment.updateBadge(){
     val badge = bottomNavigationView.getOrCreateBadge(R.id.mainCartFragment)
     badge.isVisible = uniqueProductTypes > 0
     badge.number = uniqueProductTypes
+}
+
+fun CartFragment.animation(){
+    val constraintLayout = binding.constraintLayout
+    val animationController = AnimationUtils.loadLayoutAnimation(requireContext(), R.anim.rv_layout_anim)
+    constraintLayout.layoutAnimation = animationController
+    constraintLayout.scheduleLayoutAnimation()
 }

@@ -449,3 +449,10 @@ fun DataProductFragment.onBackPressed() {
             }
         })
 }
+
+fun DataProductFragment.updateTvPriceFirst() {
+    selectedCharacteristic.let { characteristic ->
+        val minPrice = characteristic.counts.minByOrNull { it.price.toDouble() }?.price ?: 0
+        binding.tvPriceFirst.text = formatNumber(minPrice)
+    }
+}
