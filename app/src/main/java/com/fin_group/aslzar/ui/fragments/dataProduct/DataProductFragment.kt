@@ -45,6 +45,7 @@ import com.fin_group.aslzar.ui.fragments.dataProduct.functions.retrieveCoefficie
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.setDataProduct
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.showProductCharacteristicDialog
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.someImagesProduct
+import com.fin_group.aslzar.ui.fragments.dataProduct.functions.updateTvPriceFirst
 import com.fin_group.aslzar.util.AddingProduct
 import com.fin_group.aslzar.util.BadgeManager
 import com.fin_group.aslzar.util.FilialListener
@@ -92,7 +93,7 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
     var characteristicList: List<Type> = emptyList()
     private var nextCharacteristic = RecyclerView.NO_POSITION
 
-    private var selectedCharacteristic: Type? = null
+    lateinit var selectedCharacteristic: Type
 
 
     @SuppressLint("UnsafeOptInUsageError")
@@ -234,13 +235,7 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         updateTvPriceFirst()
         nextCharacteristic = characteristicList.indexOfFirst { it == characteristic }
         productCharacteristicAdapter.setSelectedPosition(nextCharacteristic)
+        //adapterPaymentPercent.updateData(percentInstallment, cha)
     }
 
-    @SuppressLint("SetTextI18n")
-    private fun updateTvPriceFirst() {
-        selectedCharacteristic?.let { characteristic ->
-            val minPrice = characteristic.counts.minByOrNull { it.price.toDouble() }?.price ?: 0
-            binding.tvPriceFirst.text = formatNumber(minPrice)
-        }
-    }
 }

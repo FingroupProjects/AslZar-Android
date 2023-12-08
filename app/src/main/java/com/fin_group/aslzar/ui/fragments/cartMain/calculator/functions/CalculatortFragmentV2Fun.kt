@@ -10,6 +10,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.TEXT_ALIGNMENT_CENTER
 import android.view.View.VISIBLE
+import android.view.animation.AnimationUtils
 import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -509,4 +510,11 @@ fun CalculatorFragmentV2.fetchClientsFromApi() {
     } catch (e: Exception) {
         Log.d("TAG", "fetchClientsFromApi: ${e.message}")
     }
+}
+
+fun CalculatorFragmentV2.animation(){
+    val constraintLayout = binding.constraintLayout
+    val animationController = AnimationUtils.loadLayoutAnimation(requireContext(), R.anim.rv_layout_anim)
+    constraintLayout.layoutAnimation = animationController
+    constraintLayout.scheduleLayoutAnimation()
 }

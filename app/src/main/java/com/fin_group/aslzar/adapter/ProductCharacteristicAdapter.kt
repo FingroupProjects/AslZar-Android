@@ -71,13 +71,14 @@ class ProductCharacteristicAdapter(
                 tvPrice.text = formatNumber(priceValue)
                 if (isSelected) {
                     itemView.setBackgroundResource(R.drawable.selected_item_background_2)
-                    val rotationAnimator = ObjectAnimator.ofFloat(itemView, "rotationY", 0f, -90f, -180f, -270f, -360f)
-                    rotationAnimator.interpolator = DecelerateInterpolator()
-                    rotationAnimator.duration = 2000
-                    rotationAnimator.start()
+
+//                    val rotationAnimator = ObjectAnimator.ofFloat(itemView, "rotationY", 0f, -90f, -180f, -270f, -360f)
+//                    rotationAnimator.interpolator = DecelerateInterpolator()
+//                    rotationAnimator.duration = 2000
+//                    rotationAnimator.start()
                 } else {
                     itemView.setBackgroundResource(R.drawable.selected_item_background_3)
-                    itemView.clearAnimation()
+                    //itemView.clearAnimation()
                 }
                 tvOtherFilial.text = product.counts.size.toString()
             } else {
