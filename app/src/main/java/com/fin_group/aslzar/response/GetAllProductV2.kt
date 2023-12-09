@@ -35,6 +35,7 @@ data class Type(
     val provider: String,
     val size: Number,
     val weight: Number,
+    val filter: Boolean,
     var isExpandable: Boolean = false
 ): Parcelable, Serializable
 

@@ -11,6 +11,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -236,10 +237,14 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener, AddingPro
     }
 
     override fun addProduct(product: ResultX, type: Type, count: Count) {
-        TODO("Not yet implemented")
+        Toast.makeText(requireContext(), "Товар добавлен в корзину: ${product.full_name}", Toast.LENGTH_SHORT).show()
+        sharedViewModel.onProductAddedToCartV2(product, requireContext(), type, count)
+        updateBadge()
     }
 
     override fun addFilial(product: ResultX, type: Type, filial: Count) {
-        TODO("Not yet implemented")
+        Toast.makeText(requireContext(), "Товар добавлен в корзину: ${product.full_name}", Toast.LENGTH_SHORT).show()
+        sharedViewModel.onProductAddedToCartV2(product, requireContext(), type, filial)
+        updateBadge()
     }
 }

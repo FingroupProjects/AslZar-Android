@@ -77,7 +77,7 @@ class ApiClient {
     }
 
     fun getApiServiceForgotPassword(): ApiService {
-        val credentials = Credentials.basic("Admin1", "2023")
+        val credentials = Credentials.basic("Admin1", "1999")
         okHttpClient = OkHttpClient.Builder().addInterceptor { chain ->
             val originalRequest = chain.request()
             val authenticatedRequest =

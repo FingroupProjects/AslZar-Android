@@ -281,7 +281,7 @@ fun CalculatorFragmentV2.textWatchers(
     } else {
         val maxValueBonus: Double = (totalPrice.toDouble() * percent.payment_bonus.toDouble()) / 100
         val minValueFirstPay: Double = (totalPrice.toDouble() * percent.first_pay.toDouble()) / 100
-        firstPayEditText.setText(formatNumber(minValueFirstPay))
+        firstPayEditText.setText(minValueFirstPay.toString())
 
         var finalTotalPrice = totalPrice.toDouble()
         var countTextBonus = 0.0

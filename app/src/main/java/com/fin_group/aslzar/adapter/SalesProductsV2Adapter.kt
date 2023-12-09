@@ -92,26 +92,7 @@ class SalesProductsV2Adapter(
         holder.bind(product)
 
         binding.root.setOnClickListener {
-
-
-            val product2 = ResultX(
-                "",
-                "",
-                "",
-                "",
-                product.full_name,
-                product.id,
-                product.img,
-                product.is_set,
-                "",
-                product.name,
-                product.price,
-                "",
-                product.sale,
-                "",
-                product.types
-            )
-            listener.getData(product2)
+            listener.getData(product)
         }
     }
 }

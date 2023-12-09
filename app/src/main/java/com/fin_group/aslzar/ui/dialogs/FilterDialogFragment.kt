@@ -169,21 +169,12 @@ class FilterDialogFragment : BaseBottomSheetDialogFragment() {
             filterModel.apply {
                 rangePriceFrom.setText(priceFrom.toString())
                 rangePriceTo.setText(priceTo.toString())
-                setMaxValueET(rangePriceFrom, priceTo)
-                setMaxValueET(rangePriceTo, priceTo)
-                filterPriceRange.text = "от $priceFrom / до $priceTo"
 
                 rangeSizeFrom.setText(sizeFrom.toString())
                 rangeSizeTo.setText(sizeTo.toString())
-                setMaxValueET(rangeSizeFrom, sizeTo)
-                setMaxValueET(rangeSizeTo, sizeTo)
-                filterSizeRange.text = "от $sizeFrom / до $sizeTo"
 
                 rangeWeightFrom.setText(weightFrom.toString())
                 rangeWeightTo.setText(weightTo.toString())
-                setMaxValueET(rangeWeightFrom, weightTo)
-                setMaxValueET(rangeWeightTo, weightTo)
-                filterWeightRange.text = "от $weightFrom / до $weightTo"
 
                 selectedCategory = category
                 binding.filterCategory.text = "Выбранная категория: ${selectedCategory.name}"
@@ -195,6 +186,21 @@ class FilterDialogFragment : BaseBottomSheetDialogFragment() {
     fun setDataFilter2(filterModel: FilterModel){
         binding.apply {
             filterModel.apply {
+                rangePriceFrom.hint = priceFrom.toString()
+                rangePriceTo.hint = priceTo.toString()
+                setMaxValueET(rangePriceFrom, priceTo)
+                setMaxValueET(rangePriceTo, priceTo)
+
+                rangeSizeFrom.hint = sizeFrom.toString()
+                rangeSizeTo.hint = sizeTo.toString()
+                setMaxValueET(rangeSizeFrom, sizeTo)
+                setMaxValueET(rangeSizeTo, sizeTo)
+
+                rangeWeightFrom.hint = weightFrom.toString()
+                rangeWeightTo.hint = weightTo.toString()
+                setMaxValueET(rangeWeightFrom, weightTo)
+                setMaxValueET(rangeWeightTo, weightTo)
+
                 filterPriceRange.text = "от $priceFrom / до $priceTo"
                 filterSizeRange.text = "от $sizeFrom / до $sizeTo"
                 filterWeightRange.text = "от $weightFrom / до $weightTo"

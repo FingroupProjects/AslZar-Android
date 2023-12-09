@@ -13,6 +13,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.View.GONE
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
@@ -47,11 +48,11 @@ import com.fin_group.aslzar.ui.fragments.main.functions.getAllCategoriesPrefs
 import com.fin_group.aslzar.ui.fragments.main.functions.getAllProductFromPrefs
 import com.fin_group.aslzar.ui.fragments.main.functions.getAllProductsFromApi
 import com.fin_group.aslzar.ui.fragments.main.functions.savingAndFetchSearch
+import com.fin_group.aslzar.ui.fragments.main.functions.savingAndFetchingFilter
 import com.fin_group.aslzar.ui.fragments.main.functions.searchViewFun
 import com.fin_group.aslzar.ui.fragments.main.functions.setFilterViewModel
 import com.fin_group.aslzar.ui.fragments.main.functions.showAddingToCartDialog
-import com.fin_group.aslzar.ui.fragments.main.functions.updateBadge
-import com.fin_group.aslzar.ui.fragments.sales.functions.updateBadge
+import com.fin_group.aslzar.ui.fragments.main.functions.updateCartBadge
 import com.fin_group.aslzar.util.AddingProduct
 import com.fin_group.aslzar.util.BadgeManager
 import com.fin_group.aslzar.util.FilialListener
@@ -105,13 +106,15 @@ class MainFragment : Fragment(), ProductOnClickListener,
     lateinit var filterViewModel: FilterViewModel
     var filterModel: FilterModel? = null
 
+    lateinit var checkedFiltersTv: TextView
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
         filterViewModel = ViewModelProvider(requireActivity())[FilterViewModel::class.java]
-
+        checkedFiltersTv = binding.checkedFiltersTv
 //        filterModel = filterViewModel.filterModel
 
         preferences = context?.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)!!
@@ -167,16 +170,11 @@ class MainFragment : Fragment(), ProductOnClickListener,
 
         filterViewModel.filterChangeListener.observe(viewLifecycleOwner) { newFilterModel ->
             newFilterModel?.let { updatedFilterModel ->
-                Toast.makeText(
-                    requireContext(),
-                    "${updatedFilterModel.category}",
-                    Toast.LENGTH_SHORT
-                ).show()
                 Log.d("TAG", "onFilterChanged: $updatedFilterModel")
 
                 filterModel = updatedFilterModel
                 selectCategory = updatedFilterModel.category
-//                savingAndFetchingCategory(binding, filterModel!!)
+                savingAndFetchingFilter(binding)
             }
         }
     }
@@ -260,7 +258,7 @@ class MainFragment : Fragment(), ProductOnClickListener,
     override fun onResume() {
         super.onResume()
         bottomNavigationView = mainActivity.findViewById(R.id.bottomNavigationView)
-        updateBadge()
+        updateCartBadge()
     }
 
 
@@ -332,12 +330,12 @@ class MainFragment : Fragment(), ProductOnClickListener,
     override fun addProduct(product: ResultX, type: Type, count: Count) {
         Toast.makeText(requireContext(), "Товар добавлен в корзину: ${product.full_name}", Toast.LENGTH_SHORT).show()
         sharedViewModel.onProductAddedToCartV2(product, requireContext(), type, count)
-        updateBadge()
+        updateCartBadge()
     }
 
     override fun addFilial(product: ResultX, type: Type, filial: Count) {
         Toast.makeText(requireContext(), "Товар добавлен в корзину: ${product.full_name}", Toast.LENGTH_SHORT).show()
         sharedViewModel.onProductAddedToCartV2(product, requireContext(), type, filial)
-        updateBadge()
+        updateCartBadge()
     }
 }
