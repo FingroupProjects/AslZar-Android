@@ -11,6 +11,7 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.fin_group.aslzar.R
+import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.response.Type
 import com.fin_group.aslzar.util.OnProductCharacteristicClickListener
 import com.fin_group.aslzar.util.formatNumber
@@ -20,13 +21,14 @@ class ProductCharacteristicAdapter(
     private val listener: OnProductCharacteristicClickListener)
     : RecyclerView.Adapter<ProductCharacteristicAdapter.ViewHolder>() {
 
-    var selectedItemPosition = RecyclerView.NO_POSITION
+    var selectedItemPosition = 0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.row_characteristic_item, parent, false)
         return ViewHolder(view)
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val product = productList[position]
         val isSelected = position == selectedItemPosition
@@ -35,6 +37,7 @@ class ProductCharacteristicAdapter(
         holder.itemView.setOnClickListener {
             selectedItemPosition = position
             listener.clickCharacteristic(product)
+            listener.showProductDialog(product)
         }
     }
 

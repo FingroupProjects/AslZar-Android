@@ -47,7 +47,7 @@ class AlikeProductsAdapter(
             } else {
                 itemView.background = null
             }
-            Glide.with(itemView.context).load(likeProduct.img[0]).override(180, 180).into(imageView)
+//            Glide.with(itemView.context).load(likeProduct.img[0]).override(180, 180).into(imageView)
         }
     }
     @SuppressLint("NotifyDataSetChanged")
