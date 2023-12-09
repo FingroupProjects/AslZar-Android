@@ -71,6 +71,10 @@ interface OnImageClickListener {
     fun setImage(image: String)
 }
 
+interface OnProductCharacteristicClickListener{
+    fun clickCharacteristic(characteristic: Type)
+}
+
 interface EditProductInCart {
     fun plusProductInCart(productInCart: ProductInCart)
     fun minusProductInCart(productInCart: ProductInCart)

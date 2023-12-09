@@ -184,6 +184,9 @@ fun NewProductsFragment.fetchRV(productList: List<ResultX>) {
     myAdapter = ProductsAdapter(productList, this)
     recyclerView.adapter = myAdapter
     myAdapter.notifyDataSetChanged()
+
+    recyclerView.startLayoutAnimation()
+
 }
 
 fun NewProductsFragment.getAllProductsFromApi() {

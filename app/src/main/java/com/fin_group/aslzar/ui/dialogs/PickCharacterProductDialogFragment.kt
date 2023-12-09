@@ -65,7 +65,6 @@ class PickCharacterProductDialogFragment : BaseDialogFullFragment(), FilialListe
 
         private const val ARG_PRODUCT = "addingProduct"
     }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
