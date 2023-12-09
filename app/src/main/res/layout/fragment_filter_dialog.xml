@@ -130,19 +130,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/range_weight_from" />
 
-        <TextView
-            android:id="@+id/textView56"
-            style="@style/forTextView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="16dp"
-            android:text="Таких продуктов найдено:"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/constraintLayout4" />
-
         <!--        <com.google.android.material.textfield.TextInputLayout-->
 <!--            android:id="@+id/typeProject"-->
 <!--            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"-->
@@ -190,18 +177,6 @@
             app:layout_constraintBottom_toBottomOf="@+id/textView53"
             app:layout_constraintStart_toEndOf="@+id/textView53"
             app:layout_constraintTop_toTopOf="@+id/textView53" />
-
-        <TextView
-            android:id="@+id/filtered_products"
-            style="@style/forTextView.18"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="2dp"
-            android:text="12 шт"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/textView56"
-            app:layout_constraintStart_toEndOf="@+id/textView56"
-            app:layout_constraintTop_toTopOf="@+id/textView56" />
 
         <EditText
             android:id="@+id/range_price_from"
@@ -338,14 +313,13 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/btnClearFilter"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView56" />
+            app:layout_constraintTop_toBottomOf="@id/constraintLayout4" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnClearFilter"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="6dp"
-            android:layout_marginTop="24dp"
             android:layout_marginEnd="12dp"
             android:layout_marginBottom="24dp"
             android:background="@drawable/ripple_effect_btn_2"
@@ -355,8 +329,7 @@
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/btnSetFilter"
-            app:layout_constraintTop_toBottomOf="@+id/textView56" />
+            app:layout_constraintStart_toEndOf="@+id/btnSetFilter" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayout4"

@@ -126,7 +126,7 @@
                             app:layout_constraintTop_toTopOf="parent" />
 
                         <TextView
-                            android:id="@+id/checked_category_tv"
+                            android:id="@+id/checkedFiltersTv"
                             style="@style/forTextView.16"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
