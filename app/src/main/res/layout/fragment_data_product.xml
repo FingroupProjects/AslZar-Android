@@ -153,7 +153,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
-                android:text="3232000"
+                android:text=""
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/price"
                 app:layout_constraintStart_toEndOf="@+id/price"
@@ -176,12 +176,14 @@
                 android:id="@+id/installment_price"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="100dp"
                 android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_constraint"
+                android:hint="    Введите первоначалльный взнос"
                 android:inputType="numberDecimal"
                 app:layout_constraintBottom_toBottomOf="@+id/dp_installment_price"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/dp_installment_price"
+                app:layout_constraintStart_toEndOf="@+id/tv_price_first"
                 app:layout_constraintTop_toTopOf="@+id/dp_installment_price" />
 
             <TextView
@@ -347,6 +349,32 @@
                 android:visibility="visible"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/likeProductsRv" />
+
+            <TextView
+                android:id="@+id/with_first_pay"
+                style="@style/forTextView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:text="С учетом п.в:"
+                android:textStyle="bold"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/table"
+                app:layout_constraintEnd_toStartOf="@+id/tv_with_first_pay"
+                app:layout_constraintTop_toTopOf="@+id/table" />
+
+
+            <TextView
+                android:id="@+id/tv_with_first_pay"
+                style="@style/forTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1000"
+                android:visibility="gone"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/table"
+                app:layout_constraintEnd_toEndOf="@+id/printPercent"
+                app:layout_constraintTop_toTopOf="@+id/table" />
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:id="@+id/tvTable"

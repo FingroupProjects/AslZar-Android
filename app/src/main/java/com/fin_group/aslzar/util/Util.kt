@@ -73,6 +73,7 @@ interface OnImageClickListener {
 
 interface OnProductCharacteristicClickListener{
     fun clickCharacteristic(characteristic: Type)
+    fun showProductDialog(product: Type)
 }
 
 interface EditProductInCart {

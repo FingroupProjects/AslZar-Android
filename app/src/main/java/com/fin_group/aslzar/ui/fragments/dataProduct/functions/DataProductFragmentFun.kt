@@ -4,6 +4,8 @@ package com.fin_group.aslzar.ui.fragments.dataProduct.functions
 
 import android.annotation.SuppressLint
 import android.graphics.Typeface
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.Gravity
 import android.view.View
@@ -21,6 +23,7 @@ import com.bumptech.glide.Glide
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.ProductCharacteristicAdapter
 import com.fin_group.aslzar.adapter.TableInstallmentAdapter
+import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentDataProductBinding
 import com.fin_group.aslzar.response.Count
 import com.fin_group.aslzar.response.GetSimilarProductsResponse
@@ -100,6 +103,7 @@ fun DataProductFragment.productCharacteristic(){
     characteristicRv.layoutManager = LinearLayoutManager(requireContext(), HORIZONTAL, false)
     characteristicRv.adapter = productCharacteristicAdapter
     productCharacteristicAdapter.updateData(characteristicList)
+    productCharacteristicAdapter.setSelectedPosition(0)
 
 }
 
@@ -159,21 +163,53 @@ fun DataProductFragment.setDataProduct(product: ResultX, binding: FragmentDataPr
             imageView2.setImageResource(R.drawable.ic_no_image)
         }
         tvCode.text = product.name
-        val minPrice = product.types.flatMap { it.counts }.minOfOrNull { it.price.toDouble() }
-        tvPriceFirst.text = formatNumber(minPrice!!.toDouble())
+        val price = product.types.flatMap { it.counts }.firstOrNull()?.price ?: 0
+        tvPriceFirst.text = formatNumber(price)
+        val tvPriceFirstSecond = price.toString()
         tvStoneType.text = product.stone_type.ifEmpty { "Без камня" }
         tvContent.text = product.proba
         tvMetal.text = product.metal
 
+
+        val installmentPrice = binding.installmentPrice
+        val tvWithFirstPay = binding.tvWithFirstPay
+
+        installmentPrice.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun afterTextChanged(s: Editable?) {
+
+                if (!s.isNullOrEmpty()) {
+
+                    val userInput = s.toString().toDoubleOrNull()
+
+                    if (userInput != null && userInput <= tvPriceFirstSecond.toDouble()) {
+                        binding.withFirstPay.visibility = VISIBLE
+                        tvWithFirstPay.visibility = VISIBLE
+                        val initialPrice = product.types.flatMap { it.counts }.firstOrNull()?.price ?: 0.0
+                        val remainingAmount = initialPrice.toDouble() - userInput.toDouble()
+                        tvWithFirstPay.text = formatNumber(remainingAmount)
+                        printPercent(binding, percentInstallment, remainingAmount)
+                    } else {
+                        installmentPrice.text.clear()
+                        installmentPrice.error = "Введите число не больше ${tvPriceFirst.text}"
+
+                    }
+                }
+            }
+
+        })
         btnAddToCart.setOnClickListener {
-            showProductCharacteristicDialog(product)
-//            val addedProduct = Cart.getProductById(product.id)
-//            if (addedProduct != null) {
-//                Toast.makeText(requireContext(), "Количество товара увеличено на +1", Toast.LENGTH_SHORT).show()
-//            } else {
-//                Toast.makeText(requireContext(), "Товар добавлен в корзину", Toast.LENGTH_SHORT).show()
-//            }
-            sharedViewModel.onProductAddedToCart(product, requireContext())
+            //showProductCharacteristicDialog(product)
+            val addedProduct = Cart.getProductById(product.id)
+            if (addedProduct != null) {
+                Toast.makeText(requireContext(), "Количество товара увеличено на +1", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(requireContext(), "Товар добавлен в корзину", Toast.LENGTH_SHORT).show()
+            }
+            //sharedViewModel.onProductAddedToCart(product, requireContext())
         }
     }
 }
@@ -312,8 +348,7 @@ fun DataProductFragment.fetchCoefficientPlanFromPrefs() {
 
 fun DataProductFragment.fetchCoefficientPlanFromApi() {
     try {
-        val call =
-            apiService.getApiService().getPercentAndMonth("Bearer ${sessionManager.fetchToken()}")
+        val call = apiService.getApiService().getPercentAndMonth("Bearer ${sessionManager.fetchToken()}")
         call.enqueue(object : Callback<PercentInstallment?> {
             override fun onResponse(
                 call: Call<PercentInstallment?>,
@@ -325,8 +360,7 @@ fun DataProductFragment.fetchCoefficientPlanFromApi() {
                         val coefficientPlanJson = Gson().toJson(coefficientPlanList)
                         preferences.edit().putString("coefficientPlan", coefficientPlanJson).apply()
                         percentInstallment = coefficientPlanList
-                        val price =
-                            product.price.toDouble() - ((product.price.toDouble() * percentInstallment.first_pay.toDouble()) / 100)
+                        val price = product.price.toDouble() - ((product.price.toDouble() * percentInstallment.first_pay.toDouble()) / 100)
                         printPercent(
                             binding, percentInstallment, price
                         )

@@ -1,6 +1,7 @@
 package com.fin_group.aslzar.ui.fragments.dataProduct
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -11,12 +12,15 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.ListView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.Glide
@@ -33,6 +37,7 @@ import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.response.SimilarProduct
 import com.fin_group.aslzar.response.Type
 import com.fin_group.aslzar.ui.dialogs.AlikeProductBottomSheetDialogFragment
+import com.fin_group.aslzar.ui.dialogs.PickCharacterProductDialogFragment
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.callSetInProduct
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.fetchCoefficientPlanFromApi
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.fetchCoefficientPlanFromPrefs
@@ -40,6 +45,7 @@ import com.fin_group.aslzar.ui.fragments.dataProduct.functions.getProductByID
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.getSimilarProducts
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.likeProducts
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.onBackPressed
+import com.fin_group.aslzar.ui.fragments.dataProduct.functions.printPercent
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.productCharacteristic
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.retrieveCoefficientPlan
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.setDataProduct
@@ -58,9 +64,10 @@ import com.fin_group.aslzar.util.hideBottomNav
 import com.fin_group.aslzar.util.showBottomNav
 import com.fin_group.aslzar.viewmodel.SharedViewModel
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION", "UNUSED_EXPRESSION")
 class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClickListener,
     AddingProduct, FilialListener, OnProductCharacteristicClickListener {
 
@@ -232,10 +239,42 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
 
     override fun clickCharacteristic(characteristic: Type) {
         selectedCharacteristic = characteristic
-        updateTvPriceFirst()
+        //updateTvPriceFirst()
         nextCharacteristic = characteristicList.indexOfFirst { it == characteristic }
         productCharacteristicAdapter.setSelectedPosition(nextCharacteristic)
         //adapterPaymentPercent.updateData(percentInstallment, cha)
+    }
+
+    override fun showProductDialog(product: Type) {
+        val alertDialogBuilder = MaterialAlertDialogBuilder(requireContext())
+
+        val countsList = product.counts.map {
+            "Вес:${product.weight}" +
+                    "\nРазмер:${product.size}" +
+                    "\nЦена: ${it.price}" +
+                    "\nФиллиал: ${it.filial}" +
+                    "\nВитрина: ${it.sclad}\n\n"
+        }.toTypedArray()
+        if (countsList.size > 1) {
+            alertDialogBuilder.setTitle("Выберите филиал")
+            alertDialogBuilder.setItems(countsList) { _, which ->
+                val selectedCount = product.counts[which]
+                binding.tvPriceFirst.text = formatNumber(selectedCount.price)
+                val tvPriceFirstSecond = selectedCount.price
+                printPercent(binding, percentInstallment, tvPriceFirstSecond)
+
+            }
+            alertDialogBuilder.setPositiveButton("OK") { dialog, _ ->
+                dialog.dismiss()
+            }
+            val alertDialog = alertDialogBuilder.create()
+            alertDialog.show()
+        }else {
+            val count = product.counts[0]
+            binding.tvPriceFirst.text = formatNumber(count.price)
+            val tvPriceFirstSecond = count.price
+            printPercent(binding, percentInstallment, tvPriceFirstSecond)
+        }
     }
 
 }
