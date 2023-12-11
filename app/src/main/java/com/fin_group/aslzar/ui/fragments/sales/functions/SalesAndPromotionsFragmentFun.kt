@@ -12,6 +12,7 @@ import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.SalesProductsV2Adapter
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentSalesAndPromotionsBinding
+import com.fin_group.aslzar.models.FilterModel
 import com.fin_group.aslzar.response.Count
 import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.response.SaleProductsResponse
@@ -19,7 +20,6 @@ import com.fin_group.aslzar.ui.dialogs.CheckCategoryFragmentDialog
 import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.PickCharacterProductDialogFragment
 import com.fin_group.aslzar.ui.dialogs.WarningNoHaveProductFragmentDialog
-import com.fin_group.aslzar.ui.fragments.new_products.NewProductsFragment
 import com.fin_group.aslzar.ui.fragments.sales.SalesAndPromotionsFragment
 import com.fin_group.aslzar.util.CategoryClickListener
 import com.google.gson.Gson
@@ -94,8 +94,8 @@ fun SalesAndPromotionsFragment.addProductToCart(product: ResultX) {
     updateBadge()
 }
 
-fun SalesAndPromotionsFragment.showAddingToCartDialog(product: ResultX){
-    val filterDialog = PickCharacterProductDialogFragment.newInstance(product)
+fun SalesAndPromotionsFragment.showAddingToCartDialog(product: ResultX, filterModel: FilterModel){
+    val filterDialog = PickCharacterProductDialogFragment.newInstance(product, filterModel)
     filterDialog.setListeners(this, this)
     filterDialog.show(activity?.supportFragmentManager!!, "types dialog")
 }

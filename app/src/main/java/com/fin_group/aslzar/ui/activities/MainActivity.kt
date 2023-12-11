@@ -103,7 +103,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun clearSavedPreferences() {
         with(prefs.edit()) {
-            remove("productList")
             remove("newProductList")
             remove("productListSales")
             remove("clientList")

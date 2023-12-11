@@ -25,6 +25,7 @@ import com.fin_group.aslzar.adapter.SalesProductsV2Adapter
 import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentSalesAndPromotionsBinding
+import com.fin_group.aslzar.models.FilterModel
 import com.fin_group.aslzar.response.Category
 import com.fin_group.aslzar.response.Count
 import com.fin_group.aslzar.response.ResultX
@@ -198,7 +199,21 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener, AddingPro
     }
 
     override fun addToCart(product: ResultX) {
-        showAddingToCartDialog(product)
+        val newFilterModel = FilterModel(
+            0,
+            100000000,
+            0,
+            1000,
+            0,
+            1000,
+            Category("all", "Все")
+        )
+//        if (filterModel != null){
+//            showAddingToCartDialog(product, filterModel!!)
+//        } else {
+//        }
+        showAddingToCartDialog(product, newFilterModel)
+
     }
 
     override fun inStock(product: ResultX) {

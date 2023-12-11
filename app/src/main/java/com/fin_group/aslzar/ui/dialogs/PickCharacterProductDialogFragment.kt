@@ -1,6 +1,5 @@
 package com.fin_group.aslzar.ui.dialogs
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.preference.PreferenceManager
@@ -14,9 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fin_group.aslzar.adapter.ProductsInAddAdapter
 import com.fin_group.aslzar.api.ApiClient
-import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentPickCharacterProductDialogBinding
-import com.fin_group.aslzar.models.ProductInCart
+import com.fin_group.aslzar.models.FilterModel
 import com.fin_group.aslzar.response.Count
 import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.response.Type
@@ -40,11 +38,9 @@ class PickCharacterProductDialogFragment : BaseDialogFullFragment(), FilialListe
     val sharedViewModel: SharedViewModel by activityViewModels()
 
     private lateinit var typeList: List<Type>
-    private lateinit var product: ResultX
     private var sortedTypeList: MutableList<Type> = mutableListOf()
     private lateinit var myAdapter: ProductsInAddAdapter
     private lateinit var recyclerView: RecyclerView
-
     lateinit var sharedPreferences: SharedPreferences
 
     private lateinit var listener: AddingProduct
@@ -53,17 +49,21 @@ class PickCharacterProductDialogFragment : BaseDialogFullFragment(), FilialListe
     private lateinit var sessionManager: SessionManager
     private lateinit var apiClient: ApiClient
 
+    private lateinit var product: ResultX
+    private lateinit var filterModel: FilterModel
 
     companion object {
-        fun newInstance(product: ResultX): PickCharacterProductDialogFragment {
+        fun newInstance(product: ResultX, filterModel: FilterModel): PickCharacterProductDialogFragment {
             val dialog = PickCharacterProductDialogFragment()
             val args = Bundle()
             args.putSerializable(ARG_PRODUCT, product)
+            args.putSerializable(ARG_FILTERED_TYPE, filterModel)
             dialog.arguments = args
             return dialog
         }
 
         private const val ARG_PRODUCT = "addingProduct"
+        private const val ARG_FILTERED_TYPE = "filteredTypes"
     }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -75,6 +75,7 @@ class PickCharacterProductDialogFragment : BaseDialogFullFragment(), FilialListe
 
         arguments?.let {
             product = it.getParcelable(ARG_PRODUCT)!!
+            filterModel = it.getParcelable(ARG_FILTERED_TYPE)!!
         }
 
         sessionManager = SessionManager(requireContext())
@@ -97,6 +98,7 @@ class PickCharacterProductDialogFragment : BaseDialogFullFragment(), FilialListe
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = myAdapter
         setData(product)
+        filterCounts(product, filterModel)
     }
 
     fun setListeners(
@@ -112,15 +114,55 @@ class PickCharacterProductDialogFragment : BaseDialogFullFragment(), FilialListe
         _binding = null
     }
 
-    private fun setData(product: ResultX){
+    private fun setData(product: ResultX) {
         typeList = product.types
-        for (type in typeList){
-            if (type.counts.isNotEmpty()){
-                sortedTypeList.add(type)
+        sortedTypeList.clear()
+
+        for (type in typeList) {
+            if (type.counts.isNotEmpty()) {
+                val filteredCounts = filterFilials(type.counts, filterModel)
+                if (filteredCounts.isNotEmpty()) {
+                    val sortedCounts = filteredCounts.sortedWith(compareByDescending<Count> { it.is_filial }.thenBy { count ->
+                        count.price.toDouble()
+                    })
+                    sortedTypeList.add(type.copy(counts = sortedCounts))
+                }
             }
         }
+
+        sortedTypeList = sortedTypeList.sortedBy { type ->
+            type.counts.minByOrNull { count -> count.price.toDouble() }?.price?.toDouble() ?: 0.0
+        }.toMutableList()
+
         myAdapter.upgradeList(sortedTypeList)
         binding.productFullName.text = product.full_name
+    }
+
+
+    private fun filterFilials(filials: List<Count>, filterModel: FilterModel): List<Count> {
+        return filials.filter { filial ->
+            filial.price.toDouble() >= filterModel.priceFrom.toDouble() &&
+                    filial.price.toDouble() <= filterModel.priceTo.toDouble()
+        }
+    }
+
+    private fun filterCounts(product: ResultX, filterModel: FilterModel) {
+        val filteredList = sortedTypeList.filter {
+            product.types.any { type ->
+                (type.filter || type.size.toDouble() > 0.0) &&
+                type.counts.any { count ->
+                    count.price.toDouble() >= filterModel.priceFrom.toDouble() &&
+                    count.price.toDouble() <= filterModel.priceTo.toDouble()
+                }
+            } &&
+            product.types.any { type ->
+                (type.filter || type.size.toDouble() >= filterModel.sizeFrom.toDouble()) &&
+                (type.filter || type.size.toDouble() <= filterModel.sizeTo.toDouble()) &&
+                type.weight.toDouble() >= filterModel.weightFrom.toDouble() &&
+                type.weight.toDouble() <= filterModel.weightTo.toDouble()
+            }
+        }
+        myAdapter.upgradeList(filteredList)
     }
 
     override fun addProduct(product: ResultX, type: Type, count: Count) {

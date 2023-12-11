@@ -32,6 +32,8 @@ import com.fin_group.aslzar.util.FilterViewModel
 import com.fin_group.aslzar.util.SessionManager
 import com.fin_group.aslzar.util.returnNumber
 import com.fin_group.aslzar.util.setMaxValueET
+import com.fin_group.aslzar.util.setMinMaxValueET
+import com.fin_group.aslzar.util.setupEditTextBehavior
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import retrofit2.Call
@@ -188,18 +190,19 @@ class FilterDialogFragment : BaseBottomSheetDialogFragment() {
             filterModel.apply {
                 rangePriceFrom.hint = priceFrom.toString()
                 rangePriceTo.hint = priceTo.toString()
-                setMaxValueET(rangePriceFrom, priceTo)
-                setMaxValueET(rangePriceTo, priceTo)
+                setMinMaxValueET(rangePriceFrom, priceFrom, priceTo)
+                setMinMaxValueET(rangePriceTo, priceFrom, priceTo)
 
                 rangeSizeFrom.hint = sizeFrom.toString()
                 rangeSizeTo.hint = sizeTo.toString()
-                setMaxValueET(rangeSizeFrom, sizeTo)
-                setMaxValueET(rangeSizeTo, sizeTo)
+                setMinMaxValueET(rangeSizeFrom, sizeFrom, sizeTo)
+                setMinMaxValueET(rangeSizeTo, sizeFrom, sizeTo)
 
                 rangeWeightFrom.hint = weightFrom.toString()
                 rangeWeightTo.hint = weightTo.toString()
-                setMaxValueET(rangeWeightFrom, weightTo)
-                setMaxValueET(rangeWeightTo, weightTo)
+                setMinMaxValueET(rangeWeightFrom, weightFrom, weightTo)
+                setMinMaxValueET(rangeWeightTo, weightFrom, weightTo)
+                setupEditTextBehavior(rangePriceFrom, rangePriceTo, rangeSizeFrom, rangeSizeTo, rangeWeightFrom, rangeWeightTo)
 
                 filterPriceRange.text = "от $priceFrom / до $priceTo"
                 filterSizeRange.text = "от $sizeFrom / до $sizeTo"

@@ -3,6 +3,7 @@ package com.fin_group.aslzar.api
 object Constants {
     const val BASE_URL = "http://192.168.1.10:8080/AslZar/hs/Data/"
 //    const val BASE_URL = "http://95.142.94.22:8080/AslZar/hs/Data/"
+//    const val BASE_URL = "http://192.168.1.10:8080/AslzarSRV/hs/Data/"
 
     //profile
     const val LOGIN = "Auth"

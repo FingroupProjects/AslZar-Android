@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -31,6 +32,7 @@ import com.fin_group.aslzar.adapter.ProductSomeImagesAdapter
 import com.fin_group.aslzar.adapter.TableInstallmentAdapter
 import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.databinding.FragmentDataProductBinding
+import com.fin_group.aslzar.models.FilterModel
 import com.fin_group.aslzar.response.Count
 import com.fin_group.aslzar.response.PercentInstallment
 import com.fin_group.aslzar.response.ResultX
@@ -55,6 +57,7 @@ import com.fin_group.aslzar.ui.fragments.dataProduct.functions.updateTvPriceFirs
 import com.fin_group.aslzar.util.AddingProduct
 import com.fin_group.aslzar.util.BadgeManager
 import com.fin_group.aslzar.util.FilialListener
+import com.fin_group.aslzar.util.FilterViewModel
 import com.fin_group.aslzar.util.OnAlikeProductClickListener
 import com.fin_group.aslzar.util.OnImageClickListener
 import com.fin_group.aslzar.util.OnProductCharacteristicClickListener
@@ -67,7 +70,7 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 
-@Suppress("DEPRECATION", "UNUSED_EXPRESSION")
+@Suppress("DEPRECATION")
 class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClickListener,
     AddingProduct, FilialListener, OnProductCharacteristicClickListener {
 
@@ -102,12 +105,17 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
 
     lateinit var selectedCharacteristic: Type
 
+    lateinit var filterViewModel: FilterViewModel
+    var filterModel: FilterModel? = null
+
 
     @SuppressLint("UnsafeOptInUsageError")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentDataProductBinding.inflate(inflater, container, false)
+        filterViewModel = ViewModelProvider(requireActivity())[FilterViewModel::class.java]
+
         sessionManager = SessionManager(requireContext())
         apiService = ApiClient()
         apiService.init(sessionManager)

@@ -6,6 +6,7 @@ import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Rect
+import android.os.Handler
 import android.text.Editable
 import android.text.InputType
 import android.text.TextWatcher
@@ -291,11 +292,13 @@ fun setMaxValueET(inputET: EditText, maxValue: Number) {
         override fun afterTextChanged(s: Editable?) {
             val newText = s.toString().trim()
             if (!newText.isNullOrEmpty()) {
-                val currentValue = newText.replace(',', '.').toDouble()
-                if (currentValue > maxValue.toDouble()) {
-                    inputET.setText(maxValue.toString())
-                    inputET.requestFocus()
-                    inputET.setSelection(maxValue.toString().length)
+                val currentValue = newText.replace(',', '.').toDoubleOrNull()
+                if (currentValue != null){
+                    if (currentValue > maxValue.toDouble()) {
+                        inputET.setText(maxValue.toString())
+                        inputET.requestFocus()
+                        inputET.setSelection(maxValue.toString().length)
+                    }
                 }
             }
         }
@@ -303,3 +306,52 @@ fun setMaxValueET(inputET: EditText, maxValue: Number) {
     inputET.addTextChangedListener(hello)
 }
 
+fun setMinMaxValueET(inputET: EditText, minValue: Number, maxValue: Number, delayMillis: Long = 1500L) {
+    val handler = Handler()
+
+    val textWatcher = object : TextWatcher {
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+        override fun afterTextChanged(s: Editable?) {
+            handler.removeCallbacksAndMessages(null)
+            handler.postDelayed({
+                val newText = s.toString().trim()
+                if (!newText.isNullOrEmpty()) {
+                    val currentValue = newText.replace(',', '.').toDoubleOrNull()
+                    if (currentValue != null) {
+                        if (currentValue < minValue.toDouble()) {
+                            inputET.setText(minValue.toString())
+                            inputET.setSelection(minValue.toString().length)
+                        }
+                        else if (currentValue > maxValue.toDouble()) {
+                            inputET.setText(maxValue.toString())
+                            inputET.setSelection(maxValue.toString().length)
+                        }
+                    }
+                }
+            }, delayMillis)
+        }
+    }
+
+    inputET.addTextChangedListener(textWatcher)
+}
+
+fun Fragment.setupEditTextBehavior(vararg editTexts: EditText) {
+    for (editText in editTexts) {
+        editText.setOnClickListener {
+            editText.selectAll()
+        }
+
+        editText.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                val inputMethodManager =
+                    requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                inputMethodManager.hideSoftInputFromWindow(editText.windowToken, 0)
+                return@setOnEditorActionListener true
+            }
+            return@setOnEditorActionListener false
+        }
+    }
+}

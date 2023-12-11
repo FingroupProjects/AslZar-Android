@@ -44,5 +44,6 @@ data class Count(
     val count: Int,
     val filial: String,
     val price: Number,
-    val sclad: String
+    val sclad: String,
+    val is_filial: Boolean
 ): Parcelable, Serializable

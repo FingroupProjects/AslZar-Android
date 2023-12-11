@@ -10,7 +10,7 @@ import com.fin_group.aslzar.response.Type
 import com.fin_group.aslzar.util.FilialListener
 import com.fin_group.aslzar.util.formatNumber
 
-class FilialAdapter(private val product: ResultX, private val type: Type, private val filialList: List<Count>, private val listener: FilialListener): RecyclerView.Adapter<FilialAdapter.ViewHolder>() {
+class FilialAdapter(private val product: ResultX, private val type: Type, private var filialList: List<Count>, private val listener: FilialListener): RecyclerView.Adapter<FilialAdapter.ViewHolder>() {
     inner class ViewHolder(binding: RowItemFilialCharacterBinding): RecyclerView.ViewHolder(binding.root) {
         val filialName = binding.branchName
         val showCase = binding.branchShowcase
@@ -22,6 +22,11 @@ class FilialAdapter(private val product: ResultX, private val type: Type, privat
             showCase.text = filial.sclad
             price.text = formatNumber(filial.price)
         }
+    }
+
+    fun updateFilial(newFilialList: List<Count>){
+        filialList = newFilialList
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
