@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.databinding.RowItemCharacterProductBinding
+import com.fin_group.aslzar.response.Count
 import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.response.Type
 import com.fin_group.aslzar.util.AddingProduct
@@ -46,7 +47,12 @@ class ProductsInAddAdapter(
             weight.text = type.weight.toString()
             provider.text = type.provider
             madeIn.text = type.country_of_origin
-            price.text = formatNumber(type.counts.minOf { it.price.toDouble() })
+            val minFilial = type.counts
+                .filter { it.is_filial }
+                .minByOrNull { it.price.toDouble() }
+                ?: type.counts.minByOrNull { it.price.toDouble() }
+
+            price.text = formatNumber(minFilial?.price?.toDouble() ?: 0.0)
 
             val isExpandable = type.isExpandable
             secondLayout.visibility = if (isExpandable) VISIBLE else GONE
@@ -60,6 +66,11 @@ class ProductsInAddAdapter(
 
     fun upgradeList(newTypeList: List<Type>){
         typeProductList = newTypeList
+        notifyDataSetChanged()
+    }
+
+    fun updateFilial(newCountList: List<Count>){
+        secondAdapter.updateFilial(newCountList)
         notifyDataSetChanged()
     }
 

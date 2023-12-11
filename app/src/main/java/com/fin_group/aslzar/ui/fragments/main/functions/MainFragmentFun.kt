@@ -13,7 +13,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.ProductsAdapter
 import com.fin_group.aslzar.cart.Cart
@@ -31,15 +30,13 @@ import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.PickCharacterProductDialogFragment
 import com.fin_group.aslzar.ui.dialogs.WarningNoHaveProductFragmentDialog
 import com.fin_group.aslzar.ui.fragments.main.MainFragment
+import com.fin_group.aslzar.ui.fragments.new_products.functions.getAllCategoriesFromApi
 import com.fin_group.aslzar.util.FilterDialogListener
 import com.fin_group.aslzar.util.UnauthorizedDialogFragment
 import com.fin_group.aslzar.util.returnNumber
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import okhttp3.Dispatcher
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -73,7 +70,7 @@ fun MainFragment.callOutStock(id: String) {
     }
 }
 
-fun MainFragment.viewChecked(view: ConstraintLayout): Boolean {
+fun viewChecked(view: ConstraintLayout): Boolean {
     return view.visibility != VISIBLE
 }
 
@@ -90,13 +87,14 @@ fun MainFragment.searchViewFun() {
     viewSearch.visibility = if (viewChecked(viewSearch)) VISIBLE else GONE
 }
 
+
 fun MainFragment.addProductToCart(product: ResultX) {
     sharedViewModel.onProductAddedToCart(product, requireContext())
     updateCartBadge()
 }
 
-fun MainFragment.showAddingToCartDialog(product: ResultX){
-    val filterDialog = PickCharacterProductDialogFragment.newInstance(product)
+fun MainFragment.showAddingToCartDialog(product: ResultX, filterModel: FilterModel){
+    val filterDialog = PickCharacterProductDialogFragment.newInstance(product, filterModel)
     filterDialog.setListeners(this, this)
     filterDialog.show(activity?.supportFragmentManager!!, "types dialog")
 }
@@ -260,7 +258,8 @@ fun MainFragment.getAllProductsWeightMinMaxValues(): Pair<Double, Double> {
     val nonZeroWeights = getNonZeroValues(retrieveProducts()) { type -> returnNumber(type.weight.toString())?.toDouble() ?: 0.0 }
     val minWeight = nonZeroWeights.minOrNull() ?: 0.0
     val maxWeight = nonZeroWeights.maxOrNull() ?: 0.0
-    return minWeight to maxWeight}
+    return minWeight to maxWeight
+}
 
 
 fun MainFragment.savingAndFetchSearch(binding: FragmentMainBinding) {
@@ -408,64 +407,57 @@ fun MainFragment.hideButton() {
 
 fun MainFragment.getAllProductsFromApi() {
     swipeRefreshLayout.isRefreshing = true
-    viewLifecycleOwner.lifecycleScope.launch {
-        try {
-            swipeRefreshLayout.isRefreshing = false
+    try {
+        swipeRefreshLayout.isRefreshing = false
 
-            val call = apiService.getApiService().getAllProducts("Bearer ${sessionManager.fetchToken()}")
-            call.enqueue(object : Callback<GetAllProductV2> {
-                override fun onResponse(call: Call<GetAllProductV2>, response: Response<GetAllProductV2>) {
-                    swipeRefreshLayout.isRefreshing = false
-                    if (response.isSuccessful) {
-                        val getAllProducts = response.body()
-                        if (getAllProducts?.result != null) {
-                            allProducts = getAllProducts.result
-                            val productListJson = Gson().toJson(allProducts)
-                            preferences.edit().putString("productList", productListJson).apply()
-                            setFilterViewModelData()
-                            filterProducts()
-                        } else {
-                            showError("Произошла ошибка: ответ сервера не содержит данных.")
-                        }
+        val call = apiService.getApiService().getAllProducts("Bearer ${sessionManager.fetchToken()}")
+        call.enqueue(object : Callback<GetAllProductV2> {
+            override fun onResponse(call: Call<GetAllProductV2>, response: Response<GetAllProductV2>) {
+                swipeRefreshLayout.isRefreshing = false
+                if (response.isSuccessful) {
+                    val getAllProducts = response.body()
+                    if (getAllProducts?.result != null) {
+                        allProducts = getAllProducts.result
+                        val productListJson = Gson().toJson(allProducts)
+                        preferences.edit().putString("productList", productListJson).apply()
+                        setFilterViewModelData()
+                        filterProducts()
                     } else {
-                        when (response.code()){
-                            401 -> {
-                                UnauthorizedDialogFragment.showUnauthorizedError(
-                                    requireContext(),
-                                    preferences,
-                                    this@getAllProductsFromApi
-                                )
-                            }
-                            500 -> {
-                                showError("Сервер временно не работает, повторите попытку позже")
-                            }
-                            else -> {
-                                showError("Произошла ошибка: ${response.message()}")
-                                Log.d("TAG", "onResponse if un success: ${response.raw()}")
-                            }
+                        showError("Произошла ошибка: ответ сервера не содержит данных.")
+                    }
+                } else {
+                    when (response.code()){
+                        401 -> {
+                            UnauthorizedDialogFragment.showUnauthorizedError(
+                                requireContext(),
+                                preferences,
+                                this@getAllProductsFromApi
+                            )
+                        }
+                        500 -> {
+                            showError("Сервер временно не работает, повторите попытку позже")
+                        }
+                        else -> {
+                            showError("Произошла ошибка: ${response.message()}")
                         }
                     }
                 }
+            }
 
-                override fun onFailure(call: Call<GetAllProductV2>, t: Throwable) {
-                    showError("Ошибка при выполнении запроса: ${t.message}")
-                    Log.d("TAG", "onFailure: ${t.message}")
-                    swipeRefreshLayout.isRefreshing = false
-                }
-            })
-        } catch (e: Exception) {
-            showError("Произошла ошибка: ${e.message}")
-            Log.d("TAG", "getAllProducts: ${e.message}")
-            swipeRefreshLayout.isRefreshing = false
-        }
+            override fun onFailure(call: Call<GetAllProductV2>, t: Throwable) {
+                showError("Ошибка при выполнении запроса: ${t.message}")
+                swipeRefreshLayout.isRefreshing = false
+            }
+        })
+    } catch (e: Exception) {
+        showError("Произошла ошибка: ${e.message}")
+        swipeRefreshLayout.isRefreshing = false
     }
 }
 
 private fun MainFragment.showError(message: String) {
     Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
 }
-
-
 
 fun MainFragment.getAllCategoriesPrefs() {
     try {
@@ -501,26 +493,40 @@ fun MainFragment.getAllCategoriesFromApi() {
                         val firstCategory = Category("all", "Все")
                         allCategories = categoryList
                         allCategories = mutableListOf(firstCategory).plus(allCategories)
+                        recyclerView.visibility = VISIBLE
+                        errorTv.visibility = GONE
                     } else {
-                        Toast.makeText(requireContext(), "Категории не найдены", Toast.LENGTH_SHORT)
-                            .show()
+                        showError("Произошла ошибка: ответ сервера не содержит данных.")
+                        recyclerView.visibility = GONE
+                        errorTv.visibility = VISIBLE
+
                     }
                 } else {
-                    Toast.makeText(
-                        requireContext(),
-                        "Ошибка, повторите попытку",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    when (response.code()){
+                        401 -> {
+                            UnauthorizedDialogFragment.showUnauthorizedError(
+                                requireContext(),
+                                preferences,
+                                this@getAllCategoriesFromApi
+                            )
+                        }
+                        500 -> {
+                            showError("Сервер временно не работает, повторите попытку позже")
+                        }
+                        else -> {
+                            showError("Произошла ошибка: ${response.message()}")
+                        }
+                    }
                 }
             }
 
             override fun onFailure(call: Call<GetAllCategoriesResponse?>, t: Throwable) {
-                Log.d("TAG", "onFailure: ${t.message}")
+                showError("Ошибка при выполнении запроса: ${t.message}")
                 swipeRefreshLayout.isRefreshing = false
             }
         })
     } catch (e: Exception) {
-        Log.d("TAG", "getAllCategories: ${e.message}")
+        showError("Произошла ошибка: ${e.message}")
         swipeRefreshLayout.isRefreshing = false
     }
 }

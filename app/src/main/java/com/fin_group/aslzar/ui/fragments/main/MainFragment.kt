@@ -64,6 +64,7 @@ import com.fin_group.aslzar.util.SessionManager
 import com.fin_group.aslzar.viewmodel.SharedViewModel
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import org.w3c.dom.Text
 
 
 @Suppress("DEPRECATION")
@@ -101,6 +102,7 @@ class MainFragment : Fragment(), ProductOnClickListener,
     lateinit var apiService: ApiClient
 
     lateinit var recyclerView: RecyclerView
+    lateinit var errorTv: TextView
 
     lateinit var btnGoTo: ImageButton
 
@@ -120,6 +122,7 @@ class MainFragment : Fragment(), ProductOnClickListener,
         _binding = FragmentMainBinding.inflate(inflater, container, false)
         filterViewModel = ViewModelProvider(requireActivity())[FilterViewModel::class.java]
         checkedFiltersTv = binding.checkedFiltersTv
+        errorTv = binding.textView9
 //        filterModel = filterViewModel.filterModel
 
         preferences = context?.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)!!
@@ -205,10 +208,10 @@ class MainFragment : Fragment(), ProductOnClickListener,
             }
 
             R.id.filter_item -> {
-                if (hasInternet) {
+                if (allProducts.isNotEmpty()){
                     setFilterViewModel()
                 } else {
-                    NoInternetDialogFragment.showIfNoInternet(requireContext())
+                    Toast.makeText(requireContext(), "Невозможно отфильтровать пустой список", Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -233,9 +236,20 @@ class MainFragment : Fragment(), ProductOnClickListener,
         return super.onOptionsItemSelected(item)
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        badgeManager = BadgeManager(requireContext(), "badge_cart_prefs")
+    }
+
     override fun onPause() {
         super.onPause()
         Cart.saveCartToPrefs(requireContext())
+    }
+
+    override fun onResume() {
+        super.onResume()
+        bottomNavigationView = mainActivity.findViewById(R.id.bottomNavigationView)
+        updateCartBadge()
     }
 
     override fun onDestroyView() {
@@ -247,40 +261,22 @@ class MainFragment : Fragment(), ProductOnClickListener,
 
     override fun onStart() {
         super.onStart()
-        val firstRun = preferences.getBoolean("first_run", true)
-//        if (firstRun) {
-//            viewCheckedCategory.visibility = GONE
-//        } else {
-//            savingAndFetchingCategory(binding, filterViewModel.filterModel!!)
-//        }
         savingAndFetchSearch(binding)
         Cart.loadCartFromPrefs(requireContext())
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        badgeManager = BadgeManager(requireContext(), "badge_cart_prefs")
-    }
-
-    override fun onResume() {
-        super.onResume()
-        bottomNavigationView = mainActivity.findViewById(R.id.bottomNavigationView)
-        updateCartBadge()
-    }
-
-
     private fun fetchDataAndFilterProducts() {
         getAllProductsFromApi()
         getAllCategoriesFromApi()
-        filterProducts()
-//        filterProducts2(filterViewModel.filterModel!!)
+        filterModel?.let {
+            filterProducts()
+        }
     }
 
     @SuppressLint("CommitPrefEdits")
     override fun onCategorySelected(selectedCategory: Category) {
         selectCategory = selectedCategory
         preferences.edit()?.putString("selectedCategory", selectedCategory.id)?.apply()
-//        savingAndFetchingCategory(binding)
     }
 
     override fun onFilterApplied(updatedFilterModel: FilterModel) {
@@ -289,8 +285,20 @@ class MainFragment : Fragment(), ProductOnClickListener,
     }
 
     override fun addToCart(product: ResultX) {
-//        addProductToCart(product)
-        showAddingToCartDialog(product)
+        val newFilterModel = FilterModel(
+            0,
+            100000000,
+            0,
+            1000,
+            0,
+            1000,
+            Category("all", "Все")
+        )
+        if (filterModel != null){
+            showAddingToCartDialog(product, filterModel!!)
+        } else {
+            showAddingToCartDialog(product, newFilterModel)
+        }
     }
 
     override fun inStock(product: ResultX) {

@@ -25,6 +25,8 @@ import com.fin_group.aslzar.adapter.ProductCharacteristicAdapter
 import com.fin_group.aslzar.adapter.TableInstallmentAdapter
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.FragmentDataProductBinding
+import com.fin_group.aslzar.models.FilterModel
+import com.fin_group.aslzar.response.Category
 import com.fin_group.aslzar.response.Count
 import com.fin_group.aslzar.response.GetSimilarProductsResponse
 import com.fin_group.aslzar.response.Percent
@@ -83,7 +85,16 @@ fun DataProductFragment.callSetInProduct(id: String) {
 }
 
 fun DataProductFragment.showProductCharacteristicDialog(product: ResultX){
-    val filterDialog = PickCharacterProductDialogFragment.newInstance(product)
+    val newFilterModel = FilterModel(
+        0,
+        10000000000,
+        0,
+        100000,
+        0,
+        100000,
+        Category("all", "Все")
+    )
+    val filterDialog = PickCharacterProductDialogFragment.newInstance(product, newFilterModel)
     filterDialog.setListeners(this, this)
     filterDialog.show(activity?.supportFragmentManager!!, "types dialog")
 }
