@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.widget.LinearLayoutCompat
 import com.fin_group.aslzar.adapter.TableInstallmentAdapter
@@ -76,6 +77,8 @@ class CalculatorFragmentV2 : Fragment(), CalculatorResetListener {
 
     lateinit var limitClient: TextView
 
+    lateinit var progressBar: ProgressBar
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -83,6 +86,7 @@ class CalculatorFragmentV2 : Fragment(), CalculatorResetListener {
         _binding = FragmentCalculatorV2Binding.inflate(inflater, container, false)
         prefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
         sessionManager = SessionManager(requireContext())
+        progressBar = binding.progressLinearDeterminate3
         api = ApiClient()
         api.init(sessionManager)
         averageBillTv = binding.averageBill
@@ -105,7 +109,6 @@ class CalculatorFragmentV2 : Fragment(), CalculatorResetListener {
         binding.btnRefresh.setOnClickListener {
             getAllClientsFromApi()
         }
-
 
         clientList = retrieveClientList()
         fetchClientsAndTypePay(binding)
