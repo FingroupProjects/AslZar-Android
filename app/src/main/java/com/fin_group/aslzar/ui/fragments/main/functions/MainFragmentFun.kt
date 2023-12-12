@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import com.fin_group.aslzar.R
@@ -379,10 +380,17 @@ fun MainFragment.fetchRV(productList: List<ResultX>) {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
 
-            if (dy > 0 && isButtonVisible) {
-                hideButton()
-            } else if (dy < 0 && !isButtonVisible) {
-                showButton()
+            val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+            val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+
+            if (firstVisibleItemPosition == 0) {
+                if (isButtonVisible) {
+                    hideButton()
+                }
+            } else {
+                if (!isButtonVisible) {
+                    showButton()
+                }
             }
         }
         })

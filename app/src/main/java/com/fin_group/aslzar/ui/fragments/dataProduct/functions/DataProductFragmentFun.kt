@@ -165,15 +165,13 @@ fun DataProductFragment.setDataProduct(product: ResultX, binding: FragmentDataPr
         tvCode.text = product.name
         val price = product.types.flatMap { it.counts }.firstOrNull()?.price ?: 0
         tvPriceFirst.text = formatNumber(price)
-        val tvPriceFirstSecond = price.toString()
         tvStoneType.text = product.stone_type.ifEmpty { "Без камня" }
         tvContent.text = product.proba
         tvMetal.text = product.metal
-
+        sharedViewModel.selectedPrice.postValue(price.toDouble())
 
         val installmentPrice = binding.installmentPrice
         val tvWithFirstPay = binding.tvWithFirstPay
-
         installmentPrice.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
@@ -181,35 +179,37 @@ fun DataProductFragment.setDataProduct(product: ResultX, binding: FragmentDataPr
 
             override fun afterTextChanged(s: Editable?) {
 
+                val initialPrice = sharedViewModel.selectedPrice.value ?:0.0
+
                 if (!s.isNullOrEmpty()) {
 
                     val userInput = s.toString().toDoubleOrNull()
 
-                    if (userInput != null && userInput <= tvPriceFirstSecond.toDouble()) {
+                    if (userInput != null && userInput <= sharedViewModel.selectedPrice.value!!) {
                         binding.withFirstPay.visibility = VISIBLE
                         tvWithFirstPay.visibility = VISIBLE
-                        val initialPrice = product.types.flatMap { it.counts }.firstOrNull()?.price ?: 0.0
-                        val remainingAmount = initialPrice.toDouble() - userInput.toDouble()
+                        val remainingAmount = initialPrice - userInput.toDouble()
                         tvWithFirstPay.text = formatNumber(remainingAmount)
                         printPercent(binding, percentInstallment, remainingAmount)
                     } else {
                         installmentPrice.text.clear()
-                        installmentPrice.error = "Введите число не больше ${tvPriceFirst.text}"
+                        installmentPrice.error = "Введите число не больше $initialPrice"
 
                     }
+                }else{
+                    tvWithFirstPay.text = formatNumber(initialPrice)
+                    printPercent(binding, percentInstallment, initialPrice)
                 }
             }
 
         })
         btnAddToCart.setOnClickListener {
-            //showProductCharacteristicDialog(product)
             val addedProduct = Cart.getProductById(product.id)
             if (addedProduct != null) {
                 Toast.makeText(requireContext(), "Количество товара увеличено на +1", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(requireContext(), "Товар добавлен в корзину", Toast.LENGTH_SHORT).show()
             }
-            //sharedViewModel.onProductAddedToCart(product, requireContext())
         }
     }
 }
@@ -335,8 +335,16 @@ fun DataProductFragment.fetchCoefficientPlanFromPrefs() {
             val coefficientPlanType = object : TypeToken<PercentInstallment>() {}.type
             val coefficientPlan = Gson().fromJson<PercentInstallment>(coefficientPlanJson, coefficientPlanType)
             percentInstallment = coefficientPlan
-            val price = product.price.toDouble() - ((product.price.toDouble() * percentInstallment.first_pay.toDouble()) / 100)
-            printPercent(binding, percentInstallment, price)
+
+            val firstTypePrice = if (product.types.isNotEmpty() && product.types.firstOrNull()?.counts?.isNotEmpty() == true) {
+                product.types.first().counts.first().price.toDouble()
+            } else {
+                0.0
+            }
+            Log.d("TAG","First Price 1: $firstTypePrice")
+            val price = firstTypePrice - ((firstTypePrice * percentInstallment.first_pay.toDouble()) / 100)
+            Log.d("TAG","Total Price 1: $price")
+            printPercent(binding, percentInstallment, firstTypePrice)
         } else {
             fetchCoefficientPlanFromApi()
         }
@@ -360,10 +368,14 @@ fun DataProductFragment.fetchCoefficientPlanFromApi() {
                         val coefficientPlanJson = Gson().toJson(coefficientPlanList)
                         preferences.edit().putString("coefficientPlan", coefficientPlanJson).apply()
                         percentInstallment = coefficientPlanList
-                        val price = product.price.toDouble() - ((product.price.toDouble() * percentInstallment.first_pay.toDouble()) / 100)
-                        printPercent(
-                            binding, percentInstallment, price
-                        )
+                        
+                        val firstTypePrice = if (product.types.isNotEmpty() && product.types.firstOrNull()?.counts?.isNotEmpty() == true) {
+                            product.types.first().counts.first().price.toDouble()
+                        } else {
+                            0.0
+                        }
+                        //val price = firstTypePrice - ((firstTypePrice * percentInstallment.first_pay.toDouble()) / 100)
+                        printPercent(binding, percentInstallment, firstTypePrice)
                     }
                 }
             }
@@ -489,4 +501,42 @@ fun DataProductFragment.updateTvPriceFirst() {
         val minPrice = characteristic.counts.minByOrNull { it.price.toDouble() }?.price ?: 0
         binding.tvPriceFirst.text = formatNumber(minPrice)
     }
+}
+
+fun DataProductFragment.onPriceTextChangeListener() {
+
+//    val installmentPrice = binding.installmentPrice
+//    val tvWithFirstPay = binding.tvWithFirstPay
+//    installmentPrice.addTextChangedListener(object : TextWatcher {
+//        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+//
+//        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+//
+//        override fun afterTextChanged(s: Editable?) {
+//
+//            sharedViewModel.selectedPrice?.let { price ->
+//
+//                if (!s.isNullOrEmpty()) {
+//
+//                    val userInput = s.toString().toDoubleOrNull()
+//                    if (userInput != null && userInput <= price) {
+//                        binding.withFirstPay.visibility = VISIBLE
+//                        tvWithFirstPay.visibility = VISIBLE
+//                        val initialPrice = price
+//                        val remainingAmount = initialPrice - userInput.toDouble()
+//                        tvWithFirstPay.text = formatNumber(remainingAmount)
+//                        printPercent(binding, percentInstallment, remainingAmount)
+//                    } else {
+//                        installmentPrice.text.clear()
+//                        installmentPrice.error = "Введите число не больше $price"
+//                    }
+//
+//                } else {
+//                    val initialPrice = price
+//                    tvWithFirstPay.text = formatNumber(initialPrice)
+//                    printPercent(binding, percentInstallment, initialPrice)
+//                }
+//            }
+//        }
+//    })
 }

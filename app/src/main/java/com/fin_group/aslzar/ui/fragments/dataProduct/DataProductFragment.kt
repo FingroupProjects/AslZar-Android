@@ -5,6 +5,8 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
@@ -45,6 +47,7 @@ import com.fin_group.aslzar.ui.fragments.dataProduct.functions.getProductByID
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.getSimilarProducts
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.likeProducts
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.onBackPressed
+import com.fin_group.aslzar.ui.fragments.dataProduct.functions.onPriceTextChangeListener
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.printPercent
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.productCharacteristic
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.retrieveCoefficientPlan
@@ -67,7 +70,7 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 
-@Suppress("DEPRECATION", "UNUSED_EXPRESSION")
+@Suppress("DEPRECATION")
 class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClickListener,
     AddingProduct, FilialListener, OnProductCharacteristicClickListener {
 
@@ -116,7 +119,6 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         preferences = context?.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)!!
         monthLinearLayout = binding.monthTable
         percentLinearLayout = binding.percentTable
-
         percentInstallment = try {
             retrieveCoefficientPlan()
         } catch (e: Exception) {
@@ -165,10 +167,10 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         super.onViewCreated(view, savedInstanceState)
         setDataProduct(product, binding)
         getSimilarProducts()
-
         swipeRefreshLayout.setOnRefreshListener {
             getProductByID()
             fetchCoefficientPlanFromApi()
+            //binding.installmentPrice.text = null
         }
     }
     @Deprecated("Deprecated in Java")
@@ -226,7 +228,6 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         super.onDestroy()
         showBottomNav()
     }
-
     override fun addProduct(product: ResultX, type: Type, count: Count) {
         Toast.makeText(requireContext(), "Товар добавлен в корзину: ${product.full_name}", Toast.LENGTH_SHORT).show()
         sharedViewModel.onProductAddedToCartV2(product, requireContext(), type, count)
@@ -239,10 +240,9 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
 
     override fun clickCharacteristic(characteristic: Type) {
         selectedCharacteristic = characteristic
-        //updateTvPriceFirst()
         nextCharacteristic = characteristicList.indexOfFirst { it == characteristic }
         productCharacteristicAdapter.setSelectedPosition(nextCharacteristic)
-        //adapterPaymentPercent.updateData(percentInstallment, cha)
+        //binding.installmentPrice.text = null
     }
 
     override fun showProductDialog(product: Type) {
@@ -260,19 +260,22 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
             alertDialogBuilder.setItems(countsList) { _, which ->
                 val selectedCount = product.counts[which]
                 binding.tvPriceFirst.text = formatNumber(selectedCount.price)
+                sharedViewModel.selectedPrice.postValue(selectedCount.price.toDouble())
                 val tvPriceFirstSecond = selectedCount.price
+                binding.installmentPrice.text = null
+                binding.withFirstPay.visibility = View.GONE
+                binding.tvWithFirstPay.visibility = View.GONE
+                binding.installmentPrice.error = null
                 printPercent(binding, percentInstallment, tvPriceFirstSecond)
-
-            }
-            alertDialogBuilder.setPositiveButton("OK") { dialog, _ ->
-                dialog.dismiss()
             }
             val alertDialog = alertDialogBuilder.create()
             alertDialog.show()
         }else {
             val count = product.counts[0]
+            sharedViewModel.selectedPrice.postValue(count.price.toDouble())
             binding.tvPriceFirst.text = formatNumber(count.price)
             val tvPriceFirstSecond = count.price
+            //binding.installmentPrice.text = null
             printPercent(binding, percentInstallment, tvPriceFirstSecond)
         }
     }
