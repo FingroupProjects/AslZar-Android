@@ -18,6 +18,8 @@ class SharedViewModel: ViewModel() {
     private val _hideCategory = MutableLiveData<Boolean>()
     val hideCategory: LiveData<Boolean> = _hideCategory
 
+    var selectedPrice = MutableLiveData<Double>()
+
     fun onProductAddedToCart(product: ResultX, context: Context) {
         val cartProduct = ProductInCart (
             product.id,
