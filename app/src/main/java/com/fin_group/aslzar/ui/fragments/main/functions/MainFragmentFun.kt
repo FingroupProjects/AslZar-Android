@@ -35,12 +35,14 @@ import com.fin_group.aslzar.ui.fragments.new_products.functions.getAllCategories
 import com.fin_group.aslzar.util.FilterDialogListener
 import com.fin_group.aslzar.util.UnauthorizedDialogFragment
 import com.fin_group.aslzar.util.returnNumber
+import com.fin_group.aslzar.util.viewChecked
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import kotlin.math.log
 
 
 fun MainFragment.callFilterDialog(listener: FilterDialogListener) {
@@ -70,11 +72,6 @@ fun MainFragment.callOutStock(id: String) {
         bottomSheetFragment.show(fragmentManager, tag)
     }
 }
-
-fun viewChecked(view: ConstraintLayout): Boolean {
-    return view.visibility != VISIBLE
-}
-
 
 fun MainFragment.searchViewFun() {
     setDefaultFilterViewModelData()
@@ -293,10 +290,10 @@ fun MainFragment.categoryDialog() {
 fun MainFragment.filterProducts() {
     filteredProducts = if (searchText.isNotEmpty()) {
         allProducts.filter { product ->
-            product.name.contains(searchText, ignoreCase = true) ||
+            product.name.replace(".", "").contains(searchText, ignoreCase = true) ||
             product.id.contains(searchText, ignoreCase = true) ||
             product.full_name.contains(searchText, ignoreCase = true) ||
-            product.types.any { type -> type.name.contains(searchText, ignoreCase = true) }||
+            product.types.any { type -> type.name.replace(".", " ").contains(searchText, ignoreCase = true) }||
             product.types.any { type -> type.counts.any{filial -> filial.filial.contains(searchText, ignoreCase = true)} }
         }
     } else {
@@ -428,8 +425,15 @@ fun MainFragment.getAllProductsFromApi() {
                         allProducts = getAllProducts.result
                         val productListJson = Gson().toJson(allProducts)
                         preferences.edit().putString("productList", productListJson).apply()
-                        setFilterViewModelData()
-                        filterProducts()
+
+                        if (filterModel == null){
+                            setFilterViewModelData()
+                            filterProducts()
+                        }
+                        if (filterModel == defaultFilterModel){
+                            setFilterViewModelData()
+                            filterProducts()
+                        }
                     } else {
                         showError("Произошла ошибка: ответ сервера не содержит данных.")
                     }

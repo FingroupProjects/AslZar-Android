@@ -110,6 +110,7 @@ class MainFragment : Fragment(), ProductOnClickListener,
 
     lateinit var filterViewModel: FilterViewModel
     var filterModel: FilterModel? = null
+    var defaultFilterModel: FilterModel? = null
 
     lateinit var checkedFiltersTv: TextView
     var isButtonVisible = false
@@ -121,9 +122,9 @@ class MainFragment : Fragment(), ProductOnClickListener,
     ): View {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
         filterViewModel = ViewModelProvider(requireActivity())[FilterViewModel::class.java]
+        defaultFilterModel = filterViewModel.defaultFilterModel
         checkedFiltersTv = binding.checkedFiltersTv
         errorTv = binding.textView9
-//        filterModel = filterViewModel.filterModel
 
         preferences = context?.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)!!
         sessionManager = SessionManager(requireContext())
@@ -153,8 +154,7 @@ class MainFragment : Fragment(), ProductOnClickListener,
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         searchView = binding.searchViewMain
-        mainActivity =
-            activity as? MainActivity ?: throw IllegalStateException("Activity is not MainActivity")
+        mainActivity = activity as? MainActivity ?: throw IllegalStateException("Activity is not MainActivity")
 
         NoInternetDialogFragment.showIfNoInternet(requireContext())
 
@@ -174,23 +174,18 @@ class MainFragment : Fragment(), ProductOnClickListener,
         })
         savingAndFetchSearch(binding)
         fetchRV(allProducts)
+
         val selectedCategoryId = preferences.getString("selectedCategory", "all")
         selectCategory = allCategories.find { it.id == selectedCategoryId }
 
-
         filterViewModel.filterChangeListener.observe(viewLifecycleOwner) { newFilterModel ->
             newFilterModel?.let { updatedFilterModel ->
-                Log.d("TAG", "onFilterChanged: $updatedFilterModel")
-
                 filterModel = updatedFilterModel
                 selectCategory = updatedFilterModel.category
                 savingAndFetchingFilter(binding)
+                defaultFilterModel = filterViewModel.defaultFilterModel
             }
         }
-    }
-
-    fun hideCategoryView() {
-        viewCheckedCategory.visibility = GONE
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -204,9 +199,12 @@ class MainFragment : Fragment(), ProductOnClickListener,
 
         when (item.itemId) {
             R.id.search_item -> {
-                searchViewFun()
+                if (allProducts.isNotEmpty()){
+                    searchViewFun()
+                } else {
+                    Toast.makeText(requireContext(), "Невозможно искать из пустого списка", Toast.LENGTH_SHORT).show()
+                }
             }
-
             R.id.filter_item -> {
                 if (allProducts.isNotEmpty()){
                     setFilterViewModel()
@@ -214,11 +212,9 @@ class MainFragment : Fragment(), ProductOnClickListener,
                     Toast.makeText(requireContext(), "Невозможно отфильтровать пустой список", Toast.LENGTH_SHORT).show()
                 }
             }
-
             R.id.barcode_item -> {
                 if (hasInternet) {
-                    val action =
-                        MainFragmentDirections.actionMainFragmentToBarCodeScannerFragment("MainBarcode")
+                    val action = MainFragmentDirections.actionMainFragmentToBarCodeScannerFragment("MainBarcode")
                     findNavController().navigate(action)
                 } else {
                     NoInternetDialogFragment.showIfNoInternet(requireContext())
@@ -226,11 +222,7 @@ class MainFragment : Fragment(), ProductOnClickListener,
             }
 
             R.id.profile_item -> {
-                if (hasInternet) {
-                    findNavController().navigate(R.id.action_mainFragment_to_profileFragment)
-                } else {
-                    NoInternetDialogFragment.showIfNoInternet(requireContext())
-                }
+                findNavController().navigate(R.id.action_mainFragment_to_profileFragment)
             }
         }
         return super.onOptionsItemSelected(item)
@@ -268,9 +260,6 @@ class MainFragment : Fragment(), ProductOnClickListener,
     private fun fetchDataAndFilterProducts() {
         getAllProductsFromApi()
         getAllCategoriesFromApi()
-        filterModel?.let {
-            filterProducts()
-        }
     }
 
     @SuppressLint("CommitPrefEdits")

@@ -49,7 +49,6 @@ import com.fin_group.aslzar.ui.fragments.new_products.functions.searchViewFun
 import com.fin_group.aslzar.ui.fragments.new_products.functions.setFilterViewModel
 import com.fin_group.aslzar.ui.fragments.new_products.functions.showAddingToCartDialog
 import com.fin_group.aslzar.ui.fragments.new_products.functions.updateBadge
-import com.fin_group.aslzar.ui.fragments.sales.functions.updateBadge
 import com.fin_group.aslzar.util.AddingProduct
 import com.fin_group.aslzar.util.BadgeManager
 import com.fin_group.aslzar.util.FilialListener
@@ -99,6 +98,7 @@ class NewProductsFragment : Fragment(), ProductOnClickListener, AddingProduct, F
 
     lateinit var filterViewModel: FilterViewModel
     var filterModel: FilterModel? = null
+    var defaultFilterModel: FilterModel? = null
 
     lateinit var checkedFiltersTv: TextView
     lateinit var errorTv: TextView
@@ -110,6 +110,7 @@ class NewProductsFragment : Fragment(), ProductOnClickListener, AddingProduct, F
     ): View {
         _binding = FragmentNewProductsBinding.inflate(inflater, container, false)
         filterViewModel = ViewModelProvider(requireActivity())[FilterViewModel::class.java]
+        defaultFilterModel = filterViewModel.defaultFilterModel
         checkedFiltersTv = binding.checkedFiltersTv
         errorTv = binding.textView47
 
@@ -140,10 +141,11 @@ class NewProductsFragment : Fragment(), ProductOnClickListener, AddingProduct, F
         searchView = binding.searchViewMain
         mainActivity = activity as? MainActivity ?: throw IllegalStateException("Activity is not MainActivity")
 
+        NoInternetDialogFragment.showIfNoInternet(requireContext())
+
         getAllCategoriesPrefs()
         getAllProductFromPrefs()
 
-        NoInternetDialogFragment.showIfNoInternet(requireContext())
         onBackPressed()
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -152,7 +154,6 @@ class NewProductsFragment : Fragment(), ProductOnClickListener, AddingProduct, F
             }
             override fun onQueryTextChange(newText: String?): Boolean {
                 searchText = newText.toString()
-                Log.d("TAG", "onQueryTextChange: $searchText")
                 filterProducts()
                 return true
             }
@@ -160,13 +161,16 @@ class NewProductsFragment : Fragment(), ProductOnClickListener, AddingProduct, F
         savingAndFetchSearch(binding)
         fetchRV(allProducts)
 
+        val selectedCategoryId = preferences.getString("selectedCategory", "all")
+        selectCategory = allCategories.find { it.id == selectedCategoryId }
+
         filterViewModel.filterChangeListener.observe(viewLifecycleOwner) { newFilterModel ->
             newFilterModel?.let { updatedFilterModel ->
-                Log.d("TAG", "onFilterChanged: $updatedFilterModel")
-
                 filterModel = updatedFilterModel
                 selectCategory = updatedFilterModel.category
                 savingAndFetchingFilter(binding)
+                defaultFilterModel = filterViewModel.defaultFilterModel
+
             }
         }
     }
@@ -182,8 +186,13 @@ class NewProductsFragment : Fragment(), ProductOnClickListener, AddingProduct, F
 
         when (item.itemId) {
             R.id.search_item -> {
-                searchViewFun()
+                if (allProducts.isNotEmpty()){
+                    searchViewFun()
+                } else {
+                    Toast.makeText(requireContext(), "Невозможно искать из пустого списка", Toast.LENGTH_SHORT).show()
+                }
             }
+
             R.id.filter_item -> {
                 if (allProducts.isNotEmpty()){
                     setFilterViewModel()
@@ -200,11 +209,7 @@ class NewProductsFragment : Fragment(), ProductOnClickListener, AddingProduct, F
                 }
             }
             R.id.profile_item -> {
-                if (hasInternet){
-                    findNavController().navigate(R.id.action_newProductsFragment_to_profileFragment)
-                } else {
-                    NoInternetDialogFragment.showIfNoInternet(requireContext())
-                }
+                findNavController().navigate(R.id.action_newProductsFragment_to_profileFragment)
             }
         }
         return super.onOptionsItemSelected(item)
@@ -220,16 +225,16 @@ class NewProductsFragment : Fragment(), ProductOnClickListener, AddingProduct, F
         Cart.saveCartToPrefs(requireContext())
     }
 
-    override fun onResume() {
-        super.onResume()
-        bottomNavigationView = mainActivity.findViewById(R.id.bottomNavigationView)
-        updateBadge()
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         Cart.saveCartToPrefs(requireContext())
         _binding = null
+    }
+
+    override fun onResume() {
+        super.onResume()
+        bottomNavigationView = mainActivity.findViewById(R.id.bottomNavigationView)
+        updateBadge()
     }
 
     override fun onDestroy() {
@@ -239,7 +244,6 @@ class NewProductsFragment : Fragment(), ProductOnClickListener, AddingProduct, F
     private fun fetchDataAndFilterProducts() {
         getAllProductsFromApi()
         getAllCategoriesFromApi()
-        filterProducts()
     }
 
     private fun onBackPressed() {
@@ -262,9 +266,9 @@ class NewProductsFragment : Fragment(), ProductOnClickListener, AddingProduct, F
             0,
             100000000,
             0,
-            1000,
+            10000,
             0,
-            1000,
+            10000,
             Category("all", "Все")
         )
         if (filterModel != null){

@@ -22,6 +22,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavDirections
@@ -354,4 +355,8 @@ fun Fragment.setupEditTextBehavior(vararg editTexts: EditText) {
             return@setOnEditorActionListener false
         }
     }
+}
+
+fun viewChecked(view: ConstraintLayout): Boolean {
+    return view.visibility != View.VISIBLE
 }

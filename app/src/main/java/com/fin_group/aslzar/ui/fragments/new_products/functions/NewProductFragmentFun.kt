@@ -27,10 +27,13 @@ import com.fin_group.aslzar.ui.dialogs.FilterDialogFragment
 import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.PickCharacterProductDialogFragment
 import com.fin_group.aslzar.ui.dialogs.WarningNoHaveProductFragmentDialog
+import com.fin_group.aslzar.ui.fragments.main.functions.filterProducts
+import com.fin_group.aslzar.ui.fragments.main.functions.setFilterViewModelData
 import com.fin_group.aslzar.ui.fragments.new_products.NewProductsFragment
 import com.fin_group.aslzar.util.CategoryClickListener
 import com.fin_group.aslzar.util.UnauthorizedDialogFragment
 import com.fin_group.aslzar.util.returnNumber
+import com.fin_group.aslzar.util.viewChecked
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import retrofit2.Call
@@ -71,23 +74,20 @@ fun NewProductsFragment.showAddingToCartDialog(product: ResultX, filterModel: Fi
     filterDialog.show(activity?.supportFragmentManager!!, "types dialog")
 }
 
-fun viewChecked(view: ConstraintLayout): Boolean {
-    return view.visibility != View.VISIBLE
-}
 
 fun NewProductsFragment.searchViewFun() {
     setDefaultFilterViewModelData()
 
     filterViewModel.filterModel = filterViewModel.defaultFilterModel
 
-    viewCheckedCategory.visibility = View.GONE
+    viewCheckedCategory.visibility = GONE
     selectCategory = null
     filterProducts()
 
-    viewSearch.visibility = if (com.fin_group.aslzar.ui.fragments.main.functions.viewChecked(
+    viewSearch.visibility = if (viewChecked(
             viewSearch
         )
-    ) View.VISIBLE else View.GONE
+    ) VISIBLE else GONE
 }
 
 fun NewProductsFragment.addProductToCart(product: ResultX) {
@@ -132,7 +132,7 @@ fun NewProductsFragment.savingAndFetchingFilter(binding: FragmentNewProductsBind
 
 
         binding.apply {
-            if (!com.fin_group.aslzar.ui.fragments.main.functions.viewChecked(viewSearch)) {
+            if (viewChecked(viewSearch)) {
                 if (searchText != "") {
                     searchView.setQuery("", false)
                 }
@@ -281,11 +281,11 @@ fun NewProductsFragment.getAllProductsWeightMinMaxValues(): Pair<Double, Double>
 fun NewProductsFragment.filterProducts() {
     filteredProducts = if (searchText.isNotEmpty()) {
         allProducts.filter { product ->
-            product.name.contains(searchText, ignoreCase = true) ||
-                    product.id.contains(searchText, ignoreCase = true) ||
-                    product.full_name.contains(searchText, ignoreCase = true) ||
-                    product.types.any { type -> type.name.contains(searchText, ignoreCase = true) }||
-                    product.types.any { type -> type.counts.any{filial -> filial.filial.contains(searchText, ignoreCase = true)} }
+            product.name.replace(".", "").contains(searchText, ignoreCase = true) ||
+            product.id.contains(searchText, ignoreCase = true) ||
+            product.full_name.contains(searchText, ignoreCase = true) ||
+            product.types.any { type -> type.name.replace(".", " ").contains(searchText, ignoreCase = true) }||
+            product.types.any { type -> type.counts.any{filial -> filial.filial.contains(searchText, ignoreCase = true)} }
         }
     } else {
         if (selectCategory?.id == "all" || selectCategory == null) {
@@ -364,7 +364,13 @@ fun NewProductsFragment.fetchRV(productList: List<ResultX>) {
     myAdapter.notifyDataSetChanged()
 
     recyclerView.startLayoutAnimation()
-
+    if (allProducts.isEmpty()){
+        recyclerView.visibility = GONE
+        errorTv.visibility = VISIBLE
+    } else {
+        recyclerView.visibility = VISIBLE
+        errorTv.visibility = GONE
+    }
 }
 
 fun NewProductsFragment.getAllProductsFromApi() {
@@ -385,10 +391,23 @@ fun NewProductsFragment.getAllProductsFromApi() {
 
                         val productListJson = Gson().toJson(allProducts)
                         preferences.edit().putString("newProductList", productListJson).apply()
-                        setFilterViewModelData()
-                        filterProducts()
-                        recyclerView.visibility = VISIBLE
-                        errorTv.visibility = GONE
+
+                        if (filterModel == null){
+                            setFilterViewModelData()
+                            filterProducts()
+                        }
+                        if (filterModel == defaultFilterModel){
+                            setFilterViewModelData()
+                            filterProducts()
+                        }
+
+                        if (allProducts.isEmpty()){
+                            recyclerView.visibility = GONE
+                            errorTv.visibility = VISIBLE
+                        } else {
+                            recyclerView.visibility = VISIBLE
+                            errorTv.visibility = GONE
+                        }
                     } else {
                         showError("Произошла ошибка: ответ сервера не содержит данных.")
                         recyclerView.visibility = GONE

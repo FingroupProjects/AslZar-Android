@@ -77,7 +77,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
                 android:layout_marginTop="12dp"
-                android:text="Цена от:"
+                android:text="Цена:"
                 android:textStyle="bold"
                 app:layout_constraintStart_toEndOf="@+id/characterCode"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -179,6 +179,7 @@
                 android:layout_height="wrap_content"
                 android:text="Поставщик:"
                 android:textStyle="bold"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@+id/characterProvider"
                 app:layout_constraintStart_toStartOf="@+id/guideline9"
                 app:layout_constraintTop_toTopOf="@+id/characterProvider" />
@@ -188,9 +189,8 @@
                 style="@style/forTextView2.12"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="3dp"
                 android:layout_marginEnd="3dp"
-                android:text="Made in:"
+                android:text="Страна производства: "
                 android:textAlignment="textEnd"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/characterMadeIn"
@@ -207,6 +207,7 @@
                 android:layout_marginEnd="5dp"
                 android:text="Поставщик 2"
                 android:textStyle="bold"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@+id/characterMadeIn"
                 app:layout_constraintEnd_toStartOf="@+id/textView61"
                 app:layout_constraintStart_toEndOf="@+id/textView60"
@@ -217,10 +218,11 @@
                 style="@style/forTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="3dp"
                 android:layout_marginTop="6dp"
                 android:text="Россия"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toStartOf="@+id/guideline8"
+                app:layout_constraintStart_toEndOf="@+id/textView61"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.constraintlayout.widget.Guideline
@@ -249,7 +251,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.56" />
+                app:layout_constraintGuide_percent="0.59" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline15"
