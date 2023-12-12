@@ -11,11 +11,13 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
@@ -31,20 +33,25 @@ import com.fin_group.aslzar.response.Count
 import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.response.Type
 import com.fin_group.aslzar.ui.activities.MainActivity
+import com.fin_group.aslzar.ui.fragments.new_products.NewProductsFragmentDirections
 import com.fin_group.aslzar.ui.fragments.sales.functions.addProductToCart
 import com.fin_group.aslzar.ui.fragments.sales.functions.callInStockDialog
 import com.fin_group.aslzar.ui.fragments.sales.functions.callOutStock
 import com.fin_group.aslzar.ui.fragments.sales.functions.fetchRV
 import com.fin_group.aslzar.ui.fragments.sales.functions.filterProducts
+import com.fin_group.aslzar.ui.fragments.sales.functions.getAllCategoriesFromApi
 import com.fin_group.aslzar.ui.fragments.sales.functions.getAllProductFromPrefs
 import com.fin_group.aslzar.ui.fragments.sales.functions.getAllProductsFromApi
 import com.fin_group.aslzar.ui.fragments.sales.functions.savingAndFetchSearch
+import com.fin_group.aslzar.ui.fragments.sales.functions.savingAndFetchingFilter
 import com.fin_group.aslzar.ui.fragments.sales.functions.searchViewFun
+import com.fin_group.aslzar.ui.fragments.sales.functions.setFilterViewModel
 import com.fin_group.aslzar.ui.fragments.sales.functions.showAddingToCartDialog
 import com.fin_group.aslzar.ui.fragments.sales.functions.updateBadge
 import com.fin_group.aslzar.util.AddingProduct
 import com.fin_group.aslzar.util.BadgeManager
 import com.fin_group.aslzar.util.FilialListener
+import com.fin_group.aslzar.util.FilterViewModel
 import com.fin_group.aslzar.util.NoInternetDialogFragment
 import com.fin_group.aslzar.util.ProductOnClickListener
 import com.fin_group.aslzar.util.SessionManager
@@ -62,7 +69,6 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener, AddingPro
     val sharedViewModel: SharedViewModel by activityViewModels()
 
     lateinit var toolbar: MaterialToolbar
-
     lateinit var preferences: SharedPreferences
 
     lateinit var viewSearch: ConstraintLayout
@@ -88,20 +94,32 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener, AddingPro
 
     lateinit var recyclerView: RecyclerView
 
+    lateinit var filterViewModel: FilterViewModel
+    var filterModel: FilterModel? = null
+    var defaultFilterModel: FilterModel? = null
+
+    lateinit var checkedFiltersTv: TextView
+    lateinit var errorTv: TextView
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentSalesAndPromotionsBinding.inflate(inflater, container, false)
+        filterViewModel = ViewModelProvider(requireActivity())[FilterViewModel::class.java]
+        defaultFilterModel = filterViewModel.defaultFilterModel
+        checkedFiltersTv = binding.checkedFiltersTv
+        errorTv = binding.textView47
 
         NoInternetDialogFragment.showIfNoInternet(requireContext())
 
         preferences = context?.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)!!
+        setHasOptionsMenu(true)
+
         sessionManager = SessionManager(requireContext())
         apiService = ApiClient()
         apiService.init(sessionManager)
         swipeRefreshLayout = binding.swipeRefreshLayout
-        setHasOptionsMenu(true)
         viewSearch = binding.viewSearch
         viewCheckedCategory = binding.viewCheckedCategory
         recyclerView = binding.mainRecyclerView
@@ -120,7 +138,6 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener, AddingPro
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         searchView = binding.searchViewMain
         mainActivity = activity as? MainActivity ?: throw IllegalStateException("Activity is not MainActivity")
 
@@ -132,13 +149,25 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener, AddingPro
             }
             override fun onQueryTextChange(newText: String?): Boolean {
                 searchText = newText.toString()
-                Log.d("TAG", "onQueryTextChange: $searchText")
                 filterProducts()
                 return true
             }
         })
         savingAndFetchSearch(binding)
         fetchRV(allProducts)
+
+        val selectedCategoryId = preferences.getString("selectedCategory", "all")
+        selectCategory = allCategories.find { it.id == selectedCategoryId }
+
+        filterViewModel.filterChangeListener.observe(viewLifecycleOwner) { newFilterModel ->
+            newFilterModel?.let { updatedFilterModel ->
+                filterModel = updatedFilterModel
+                selectCategory = updatedFilterModel.category
+                savingAndFetchingFilter(binding)
+                defaultFilterModel = filterViewModel.defaultFilterModel
+
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -149,26 +178,39 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener, AddingPro
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val hasInternet = NoInternetDialogFragment.hasInternetConnection(requireContext())
-
         when (item.itemId) {
-            R.id.search_item -> {searchViewFun()}
+            R.id.search_item -> {
+                if (allProducts.isNotEmpty()){
+                    searchViewFun()
+                } else {
+                    Toast.makeText(requireContext(), "Невозможно искать из пустого списка", Toast.LENGTH_SHORT).show()
+                }
+            }
+            R.id.filter_item -> {
+                if (allProducts.isNotEmpty()){
+                    setFilterViewModel()
+                } else {
+                    Toast.makeText(requireContext(), "Невозможно отфильтровать пустой список", Toast.LENGTH_SHORT).show()
+                }
+            }
             R.id.barcode_item -> {
                 if (hasInternet){
-                    val action = SalesAndPromotionsFragmentDirections.actionSalesAndPromotionsFragmentToBarCodeScannerFragment("SalesProductsBarcode")
+                    val action = NewProductsFragmentDirections.actionNewProductsFragmentToBarCodeScannerFragment("NewProductsBarcode")
                     findNavController().navigate(action)
                 } else {
                     NoInternetDialogFragment.showIfNoInternet(requireContext())
                 }
             }
             R.id.profile_item -> {
-                if (hasInternet){
-                    findNavController().navigate(R.id.action_salesAndPromotionsFragment_to_profileFragment)
-                } else {
-                    NoInternetDialogFragment.showIfNoInternet(requireContext())
-                }
+                findNavController().navigate(R.id.action_newProductsFragment_to_profileFragment)
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        badgeManager = BadgeManager(requireContext(), "badge_cart_prefs")
     }
 
     override fun onPause() {
@@ -182,11 +224,6 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener, AddingPro
         _binding = null
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        badgeManager = BadgeManager(requireContext(), "badge_cart_prefs")
-    }
-
     override fun onResume() {
         super.onResume()
         bottomNavigationView = mainActivity.findViewById(R.id.bottomNavigationView)
@@ -195,7 +232,7 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener, AddingPro
 
     private fun fetchDataAndFilterProducts() {
         getAllProductsFromApi()
-        filterProducts()
+        getAllCategoriesFromApi()
     }
 
     override fun addToCart(product: ResultX) {
@@ -203,17 +240,16 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener, AddingPro
             0,
             100000000,
             0,
-            1000,
+            10000,
             0,
-            1000,
+            10000,
             Category("all", "Все")
         )
-//        if (filterModel != null){
-//            showAddingToCartDialog(product, filterModel!!)
-//        } else {
-//        }
-        showAddingToCartDialog(product, newFilterModel)
-
+        if (filterModel != null){
+            showAddingToCartDialog(product, filterModel!!)
+        } else {
+            showAddingToCartDialog(product, newFilterModel)
+        }
     }
 
     override fun inStock(product: ResultX) {
@@ -229,25 +265,29 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener, AddingPro
     }
 
     override fun getData(product: ResultX) {
-        val product2 =  ResultX(
-            "",
-            "",
-            "",
-            "",
+        val product2 = ResultX(
+            product.barcode,
+            product.category_id,
+            product.color,
+            product.description,
             product.full_name,
             product.id,
             product.img,
             product.is_set,
-            "",
+            product.metal,
             product.name,
             product.price,
             product.proba,
-            0,
-            "",
-            product.types
+            product.sale,
+            product.stone_type,
+            product.types,
         )
 
-        val action = SalesAndPromotionsFragmentDirections.actionSalesAndPromotionsFragmentToDataProductFragment(product2.id, product2, "SalesProducts")
+        val action = NewProductsFragmentDirections.actionNewProductsFragmentToDataProductFragment(
+            product2.id,
+            product2,
+            "NewProducts"
+        )
         Navigation.findNavController(binding.root).navigate(action)
     }
 
