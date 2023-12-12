@@ -195,14 +195,14 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener, AddingPro
             }
             R.id.barcode_item -> {
                 if (hasInternet){
-                    val action = NewProductsFragmentDirections.actionNewProductsFragmentToBarCodeScannerFragment("NewProductsBarcode")
+                    val action = SalesAndPromotionsFragmentDirections.actionSalesAndPromotionsFragmentToBarCodeScannerFragment("SalesProductsBarcode")
                     findNavController().navigate(action)
                 } else {
                     NoInternetDialogFragment.showIfNoInternet(requireContext())
                 }
             }
             R.id.profile_item -> {
-                findNavController().navigate(R.id.action_newProductsFragment_to_profileFragment)
+                findNavController().navigate(R.id.action_salesAndPromotionsFragment_to_profileFragment)
             }
         }
         return super.onOptionsItemSelected(item)
@@ -283,11 +283,7 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener, AddingPro
             product.types,
         )
 
-        val action = NewProductsFragmentDirections.actionNewProductsFragmentToDataProductFragment(
-            product2.id,
-            product2,
-            "NewProducts"
-        )
+        val action = SalesAndPromotionsFragmentDirections.actionSalesAndPromotionsFragmentToDataProductFragment(product2.id, product2, "SalesProducts")
         Navigation.findNavController(binding.root).navigate(action)
     }
 

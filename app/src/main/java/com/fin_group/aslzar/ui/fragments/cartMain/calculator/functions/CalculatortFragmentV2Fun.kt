@@ -72,6 +72,7 @@ fun CalculatorFragmentV2.updateClientsData(clients: List<Client>){
 }
 
 fun CalculatorFragmentV2.getAllClientsFromApi(){
+    progressBar.visibility = VISIBLE
     try {
         val call =
             api.getApiService().getAllClients("Bearer ${sessionManager.fetchToken()}")
@@ -86,17 +87,19 @@ fun CalculatorFragmentV2.getAllClientsFromApi(){
                         val clientListJson = Gson().toJson(clientList.result)
                         prefs.edit().putString("clientList", clientListJson).apply()
                         updateClientsData(clientList.result)
-                        Log.d("TAG", "onResponse: ${clientList.result}")
                     }
                 }
+                progressBar.visibility = GONE
             }
 
             override fun onFailure(call: Call<GetAllClientsResponse?>, t: Throwable) {
                 Log.d("TAG", "onViewCreated fetchClientsFromApi: ${t.message}")
+                progressBar.visibility = GONE
             }
         })
     } catch (e: Exception) {
         Log.d("TAG", "fetchClientsFromApi: ${e.message}")
+        progressBar.visibility = GONE
     }
 }
 
@@ -253,6 +256,41 @@ fun CalculatorFragmentV2.createTable(binding: FragmentCalculatorV2Binding, total
     }
 }
 
+//fun CalculatorFragmentV2.textWatchers(
+//    binding: FragmentCalculatorV2Binding,
+//    percent: PercentInstallment,
+//    totalPrice: Number
+//) {
+//    val bonusCheckBox = binding.cbBonus
+//    val bonusEditText = binding.bonus
+//    val firstPayEditText = binding.firstPay
+//    val payWithFirstPayTextView = binding.payWithFirstPay
+//    val payWithBonusTextView = binding.payWithBonus
+//    val totalPriceTextView = binding.totalPrice
+//
+//    if (totalPrice == 0.0) {
+//        // код для обработки случая, когда totalPrice равен 0
+//        bonusCheckBox.visibility = GONE
+//        bonusCheckBox.isChecked = false
+//    } else {
+//        // код для случая, когда totalPrice больше 0
+//        val maxValueBonus: Double = (totalPrice.toDouble() * percent.payment_bonus.toDouble()) / 100
+//
+//        val countTextBonus = bonusEditText.text.toString().toDoubleOrNull() ?: 0.0
+//
+//        val newTotalPrice = totalPrice.toDouble() - countTextBonus
+//
+//        totalPriceTextView.text = "${formatNumber(newTotalPrice)} UZS"
+//        payWithBonusTextView.text = "${formatNumber(countTextBonus)} UZS"
+//        payWithFirstPayTextView.text = "0.00 UZS"
+//
+//        // Обновление данных в адаптере, если это необходимо
+//         adapterPaymentPercent.updateData(percent, newTotalPrice)
+//
+//    }
+//}
+
+
 @SuppressLint("SetTextI18n")
 fun CalculatorFragmentV2.textWatchers(
     binding: FragmentCalculatorV2Binding,
@@ -266,19 +304,12 @@ fun CalculatorFragmentV2.textWatchers(
     val payWithBonusTextView = binding.payWithBonus
     val totalPriceTextView = binding.totalPrice
 
-//    val isFirstPayEnabled = totalPrice.toDouble() > 0
-//    firstPayEditText.isEnabled = isFirstPayEnabled
-
     if (totalPrice == 0.0) {
         firstPayEditText.setText("0")
         bonusEditText.setText("0")
         payWithFirstPayTextView.text = "0.00 UZS"
         payWithBonusTextView.text = "0.00 UZS"
         totalPriceTextView.text = "0.00 UZS"
-
-        bonusCheckBox.visibility = GONE
-        bonusCheckBox.isChecked = false
-//        firstPayEditText.error = null
     } else {
         val maxValueBonus: Double = (totalPrice.toDouble() * percent.payment_bonus.toDouble()) / 100
         val minValueFirstPay: Double = (totalPrice.toDouble() * percent.first_pay.toDouble()) / 100
@@ -314,7 +345,6 @@ fun CalculatorFragmentV2.textWatchers(
 
             totalPriceTextView.text = "${formatNumber(newTotalPrice)} UZS"
             payWithBonusTextView.text = "${formatNumber(countTextBonus)} UZS"
-            payWithFirstPayTextView.text = "${formatNumber(enteredFirstPay)} UZS"
 
             adapterPaymentPercent.updateData(percent, newTotalPrice)
         }
@@ -349,15 +379,15 @@ fun CalculatorFragmentV2.textWatchers(
                 val newText = s.toString().trim()
                 if (!newText.isNullOrEmpty()) {
                     val currentValue = newText.replace(',', '.').toDouble()
-                    if (currentValue < minValueFirstPay) {
-                        firstPayEditText.error = "Минимальное значение первоначального взноса ${percent.first_pay}% ($minValueFirstPay) от итоговой суммы"
-                    } else {
-                        firstPayEditText.error = null
-                    }
-
-                    if (currentValue > totalPrice.toDouble()) {
-                        firstPayEditText.setText(totalPrice.toString())
-                    }
+//                    if (currentValue < minValueFirstPay) {
+//                        firstPayEditText.error = "Минимальное значение первоначального взноса ${percent.first_pay}% ($minValueFirstPay) от итоговой суммы"
+//                    } else {
+//                        firstPayEditText.error = null
+//                    }
+//
+//                    if (currentValue > totalPrice.toDouble()) {
+//                        firstPayEditText.setText(totalPrice.toString())
+//                    }
                 }
                 updateDisplayedValues()
             }
