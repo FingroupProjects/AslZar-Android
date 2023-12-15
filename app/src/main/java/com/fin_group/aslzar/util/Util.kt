@@ -111,8 +111,13 @@ fun Fragment.redirectToChangeServerFragment(fragmentDirections: NavDirections) {
     findNavController().navigate(fragmentDirections, navOptions)
 }
 
-fun doubleFormat(double: Number): String {
+fun doubleFormat2(double: Number): String {
     val decimalFormat = DecimalFormat("#.00")
+    return decimalFormat.format(double)
+}
+
+fun doubleFormat(double: Number): String {
+    val decimalFormat = DecimalFormat("#.0")
     return decimalFormat.format(double)
 }
 
@@ -335,7 +340,6 @@ fun setMinMaxValueET(inputET: EditText, minValue: Number, maxValue: Number, dela
             }, delayMillis)
         }
     }
-
     inputET.addTextChangedListener(textWatcher)
 }
 

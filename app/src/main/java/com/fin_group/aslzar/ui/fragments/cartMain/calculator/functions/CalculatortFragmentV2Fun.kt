@@ -1,19 +1,14 @@
 package com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions
 
 import android.annotation.SuppressLint
-import android.graphics.Typeface
+import android.content.DialogInterface
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.Gravity
-import android.view.View
 import android.view.View.GONE
-import android.view.View.TEXT_ALIGNMENT_CENTER
 import android.view.View.VISIBLE
 import android.view.animation.AnimationUtils
 import android.widget.ArrayAdapter
-import android.widget.LinearLayout
-import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -26,12 +21,15 @@ import com.fin_group.aslzar.response.GetAllClientsResponse
 import com.fin_group.aslzar.response.PercentInstallment
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.CalculatorFragmentV2
 import com.fin_group.aslzar.util.CartObserver
+import com.fin_group.aslzar.util.doubleFormat2
 import com.fin_group.aslzar.util.formatNumber
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import kotlin.math.abs
 
 
 fun CalculatorFragmentV2.cartObserver(binding: FragmentCalculatorV2Binding) {
@@ -60,48 +58,100 @@ fun CalculatorFragmentV2.cartObserver(binding: FragmentCalculatorV2Binding) {
                 averageBillTv.text = "Средний чек достигнут"
             }
 
-            textWatchers(binding, percentInstallment, totalPrice)
+            textWatchers(binding, percentInstallment, totalPrice.toDouble())
             printPercent(binding, percentInstallment, totalPrice)
         }
     }
 }
 
-fun CalculatorFragmentV2.updateClientsData(clients: List<Client>){
-    arrayAdapterTypeClient =
-        ArrayAdapter(requireContext(), R.layout.spinner_item, clients.map { it.client_name })
-}
 
-fun CalculatorFragmentV2.getAllClientsFromApi(){
-    progressBar.visibility = VISIBLE
-    try {
-        val call =
-            api.getApiService().getAllClients("Bearer ${sessionManager.fetchToken()}")
-        call.enqueue(object : Callback<GetAllClientsResponse?> {
-            override fun onResponse(
-                call: Call<GetAllClientsResponse?>,
-                response: Response<GetAllClientsResponse?>
-            ) {
-                if (response.isSuccessful) {
-                    val clientList = response.body()
-                    if (clientList != null) {
-                        val clientListJson = Gson().toJson(clientList.result)
-                        prefs.edit().putString("clientList", clientListJson).apply()
-                        updateClientsData(clientList.result)
-                    }
-                }
-                progressBar.visibility = GONE
-            }
+fun CalculatorFragmentV2.setupDiscountButtons(binding: FragmentCalculatorV2Binding, installment: PercentInstallment) {
+    binding.handSaleCount.text = manualDiscount.toString()
+    maxManualDiscount = installment.sale_limit ?: 0.0
 
-            override fun onFailure(call: Call<GetAllClientsResponse?>, t: Throwable) {
-                Log.d("TAG", "onViewCreated fetchClientsFromApi: ${t.message}")
-                progressBar.visibility = GONE
-            }
-        })
-    } catch (e: Exception) {
-        Log.d("TAG", "fetchClientsFromApi: ${e.message}")
-        progressBar.visibility = GONE
+    Log.d("TAG", "setupDiscountButtons: ${installment.sale_limit}")
+
+    binding.apply {
+        handSalePlus.setOnClickListener {
+            increaseManualDiscount()
+            updateDisplayedValues(binding)
+        }
+
+        handSaleMinus.setOnClickListener {
+            decreaseManualDiscount()
+            updateDisplayedValues(binding)
+        }
     }
 }
+
+@SuppressLint("SetTextI18n")
+fun CalculatorFragmentV2.increaseManualDiscount() {
+    if (manualDiscount + 0.5 <= maxManualDiscount.toDouble()) {
+        manualDiscount += 0.5
+
+    }
+    if (manualDiscount > 0){
+        binding.cbBonus.visibility = GONE
+        binding.cbBonus.isChecked = false
+        binding.bonus.setText("")
+
+        val client = selectedClient
+        if (client != null){
+            if (client.bonus.toDouble() > 0){
+                binding.bonusClient.text = "${formatNumber(client.bonus)} UZS"
+                binding.tvBonusClient.setTextColor(ContextCompat.getColor(requireContext(), R.color.background_7))
+                binding.tvBonusClient.setOnClickListener {
+                    val dialog = MaterialAlertDialogBuilder(requireContext())
+                    dialog.setTitle("Предуприждение")
+                    dialog.setMessage("Задействована ручная скидка, поэтому не удастся использовать бонус клиента")
+                    val positiveButton = dialog.setPositiveButton("ок", null).show().getButton(
+                        DialogInterface.BUTTON_POSITIVE)
+                    positiveButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.background_2))
+                }
+            } else {
+                binding.tvBonusClient.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_color_2))
+            }
+        }
+    }
+}
+
+fun CalculatorFragmentV2.decreaseManualDiscount() {
+    if (manualDiscount - 0.5 >= 0.0) {
+        manualDiscount -= 0.5
+    }
+
+    if (manualDiscount == 0.0){
+        binding.tvBonusClient.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_color_2))
+
+        val client = selectedClient
+        if (client != null){
+            if (client.bonus.toDouble() > 0) binding.cbBonus.visibility = VISIBLE
+
+        }
+    }
+}
+
+fun CalculatorFragmentV2.updateDisplayedValues(binding: FragmentCalculatorV2Binding){
+    binding.handSaleCount.text = manualDiscount.toString()
+    val clientLimit = if (selectedClient != null){
+        selectedClient!!.limit
+    } else {
+        0
+    }
+    val firstPay = if (binding.firstPay.text.toString().isNotEmpty()){
+        binding.firstPay.text.toString().trim().toDouble()
+    } else {
+        0.0
+    }
+
+    printPercent(binding, percentInstallment, Cart.getTotalPrice(), clientLimit, firstPay, manualDiscount)
+}
+
+fun CalculatorFragmentV2.updateClientsData(clients: List<Client>) {
+    arrayAdapterTypeClient = ArrayAdapter(requireContext(), R.layout.spinner_item, clients.map { it.client_name })
+}
+
+
 
 @SuppressLint("SetTextI18n")
 fun CalculatorFragmentV2.fetchClientsAndTypePay(binding: FragmentCalculatorV2Binding) {
@@ -123,15 +173,13 @@ fun CalculatorFragmentV2.fetchClientsAndTypePay(binding: FragmentCalculatorV2Bin
 
             val cons = "розничный"
             val containsSubstring = selectedClient?.client_name.toString().contains(cons, true)
-            Log.d("TAG", "FFFFFFFFFFFFF: $containsSubstring")
-            if (containsSubstring){
+            if (containsSubstring) {
                 binding.limit.visibility = GONE
-            }else{
-                if (selectedClient?.limit == 0){
+            } else {
+                if (selectedClient?.limit == 0) {
                     binding.limit.visibility = VISIBLE
                     binding.limit.text = "У данного клиента нет лимита!"
-                }
-                else{
+                } else {
                     binding.limit.visibility = VISIBLE
                     binding.limit.text = "Лимит: ${selectedClient?.limit}"
                 }
@@ -139,11 +187,14 @@ fun CalculatorFragmentV2.fetchClientsAndTypePay(binding: FragmentCalculatorV2Bin
 
             bonusClient.text = "${formatNumber(selectedClient!!.bonus)} UZS"
             paymentClient(selectedClient!!, binding, percentInstallment)
-            textWatchers(binding, percentInstallment, vlTotalPrice)
-            printPercent(binding, percentInstallment, vlTotalPrice, selectedClient!!.limit)
+            textWatchers(binding, percentInstallment, vlTotalPrice.toDouble())
+            val firstPayment = binding.firstPay.text.toString().trim().toDouble()
+
+            printPercent(binding, percentInstallment, vlTotalPrice, selectedClient!!.limit, firstPayment)
         }
     }
 }
+
 fun CalculatorFragmentV2.paymentClient(
     client: Client,
     binding: FragmentCalculatorV2Binding,
@@ -159,14 +210,14 @@ fun CalculatorFragmentV2.paymentClient(
     } else {
         if (client.bonus.toDouble() > 0) {
             installmentPayReferralClient(client, binding, percent, vlTotalPrice)
-            textWatchers(binding, percent, Cart.getTotalPrice())
+            textWatchers(binding, percent, Cart.getTotalPrice().toDouble())
         } else {
             binding.cbBonus.visibility = GONE
             binding.cbBonus.isChecked = false
             binding.bonus.setText("")
         }
     }
-    textWatchers(binding, percentInstallment, vlTotalPrice)
+    textWatchers(binding, percentInstallment, vlTotalPrice.toDouble())
 }
 
 @SuppressLint("SetTextI18n")
@@ -194,108 +245,25 @@ fun CalculatorFragmentV2.printPercent(
     binding: FragmentCalculatorV2Binding,
     installment: PercentInstallment,
     totalPrice: Number,
-    clientLimit: Number = 0.0
-) {
+    clientLimit: Number = 0.0,
+    initialPayment: Number = 0.0,
+    handSale: Number = 0.0
+    ) {
     binding.apply {
+        var priceTotal = totalPrice.toDouble() - initialPayment.toDouble()
+        priceTotal = (priceTotal - ((priceTotal * handSale.toDouble()) / 100))
+
         rvPayments.layoutManager = LinearLayoutManager(requireContext())
-        adapterPaymentPercent = TableInstallmentAdapter(installment, totalPrice, clientLimit)
+        adapterPaymentPercent = TableInstallmentAdapter(installment, priceTotal, clientLimit)
         rvPayments.adapter = adapterPaymentPercent
     }
 }
 
 @SuppressLint("SetTextI18n")
-fun CalculatorFragmentV2.createTable(binding: FragmentCalculatorV2Binding, totalPrice: Number) {
-    monthLinearLayout.removeAllViews()
-    percentLinearLayout.removeAllViews()
-
-    binding.apply {
-        val monthLinearLayout = monthTable
-        val percentLinearLayout = percentTable
-
-        for (percent in percentInstallment.result) {
-            val indexPercent = percentInstallment.result.indexOf(percent)
-
-            val textViewMonth = TextView(requireContext())
-            textViewMonth.apply {
-                text = "${percent.mounth} платежей (${percent.coefficient}%)"
-                layoutParams = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                )
-                setPadding(15, 15, 15, 15)
-                setTextColor(ContextCompat.getColor(requireContext(), R.color.text_color_1))
-                TEXT_ALIGNMENT_CENTER
-                gravity = Gravity.CENTER
-                typeface = Typeface.defaultFromStyle(Typeface.BOLD)
-                if (indexPercent < percentInstallment.result.size - 1) {
-                    setBackgroundResource(R.drawable.bg_text_view_in_table)
-                }
-            }
-            monthLinearLayout.addView(textViewMonth)
-
-            val textViewPercent = TextView(requireContext())
-            val monthPayment =
-                (((totalPrice.toDouble() * percent.coefficient.toDouble()) / 100) + totalPrice.toDouble()) / percent.mounth.toDouble()
-            textViewPercent.apply {
-                text = "${formatNumber(monthPayment)} UZS"
-                layoutParams = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                )
-                setPadding(15, 15, 15, 15)
-                setTextColor(ContextCompat.getColor(requireContext(), R.color.text_color_1))
-                TEXT_ALIGNMENT_CENTER
-                gravity = Gravity.CENTER
-                typeface = Typeface.defaultFromStyle(Typeface.BOLD)
-                if (indexPercent < percentInstallment.result.size - 1) {
-                    setBackgroundResource(R.drawable.bg_text_view_in_table)
-                }
-            }
-            percentLinearLayout.addView(textViewPercent)
-        }
-    }
-}
-
-//fun CalculatorFragmentV2.textWatchers(
-//    binding: FragmentCalculatorV2Binding,
-//    percent: PercentInstallment,
-//    totalPrice: Number
-//) {
-//    val bonusCheckBox = binding.cbBonus
-//    val bonusEditText = binding.bonus
-//    val firstPayEditText = binding.firstPay
-//    val payWithFirstPayTextView = binding.payWithFirstPay
-//    val payWithBonusTextView = binding.payWithBonus
-//    val totalPriceTextView = binding.totalPrice
-//
-//    if (totalPrice == 0.0) {
-//        // код для обработки случая, когда totalPrice равен 0
-//        bonusCheckBox.visibility = GONE
-//        bonusCheckBox.isChecked = false
-//    } else {
-//        // код для случая, когда totalPrice больше 0
-//        val maxValueBonus: Double = (totalPrice.toDouble() * percent.payment_bonus.toDouble()) / 100
-//
-//        val countTextBonus = bonusEditText.text.toString().toDoubleOrNull() ?: 0.0
-//
-//        val newTotalPrice = totalPrice.toDouble() - countTextBonus
-//
-//        totalPriceTextView.text = "${formatNumber(newTotalPrice)} UZS"
-//        payWithBonusTextView.text = "${formatNumber(countTextBonus)} UZS"
-//        payWithFirstPayTextView.text = "0.00 UZS"
-//
-//        // Обновление данных в адаптере, если это необходимо
-//         adapterPaymentPercent.updateData(percent, newTotalPrice)
-//
-//    }
-//}
-
-
-@SuppressLint("SetTextI18n")
 fun CalculatorFragmentV2.textWatchers(
     binding: FragmentCalculatorV2Binding,
     percent: PercentInstallment,
-    totalPrice: Number
+    totalPrice: Double
 ) {
     val bonusCheckBox = binding.cbBonus
     val bonusEditText = binding.bonus
@@ -311,92 +279,140 @@ fun CalculatorFragmentV2.textWatchers(
         payWithBonusTextView.text = "0.00 UZS"
         totalPriceTextView.text = "0.00 UZS"
     } else {
-        val maxValueBonus: Double = (totalPrice.toDouble() * percent.payment_bonus.toDouble()) / 100
-        val minValueFirstPay: Double = (totalPrice.toDouble() * percent.first_pay.toDouble()) / 100
-        firstPayEditText.setText(minValueFirstPay.toString())
+        processNonZeroTotalPrice(binding, percent, totalPrice)
+        updateDisplayedValues(binding)
+    }
+}
+@SuppressLint("SetTextI18n")
+private fun CalculatorFragmentV2.processNonZeroTotalPrice(
+    binding: FragmentCalculatorV2Binding,
+    percent: PercentInstallment,
+    totalPrice: Double
+) {
+    val maxValueBonus: Double = (totalPrice * percent.payment_bonus.toDouble()) / 100
+    val minValueFirstPay: Double = (totalPrice * percent.first_pay.toDouble()) / 100
 
-        var finalTotalPrice = totalPrice.toDouble()
-        var countTextBonus = 0.0
-        var countTextFirstPay = 0.0
+    var finalTotalPrice = totalPrice
+    var handSalePayment = 0.0
+    var bonusPayment = 0.0
+    var firstPayment = 0.0
 
-        fun updateDisplayedValues() {
-            val bonusAmount = (finalTotalPrice * percent.payment_bonus.toDouble()) / 100
-            val firstPayAmount = (finalTotalPrice * percent.first_pay.toDouble()) / 100
+    var newTotalPrice = 0.0
 
-            val enteredBonus = if ((selectedClient?.bonus?.toDouble() ?: 0.0) > 0.0) {
-                bonusEditText.text.toString().toDoubleOrNull() ?: 0.0
-            } else {
-                0.0
-            }
-            val enteredFirstPay = firstPayEditText.text.toString().toDoubleOrNull() ?: 0.0
-
-            val remainingTotal = finalTotalPrice - enteredFirstPay
-            val bonusPercentOfRemaining = (remainingTotal * percent.payment_bonus.toDouble()) / 100
-
-            if (enteredBonus > bonusPercentOfRemaining) {
-                bonusEditText.setText(bonusPercentOfRemaining.toString())
-                bonusEditText.setSelection(bonusEditText.length())
-                countTextBonus = bonusPercentOfRemaining
-            } else {
-                countTextBonus = enteredBonus
-            }
-
-            val newTotalPrice = remainingTotal - countTextBonus
-
-            totalPriceTextView.text = "${formatNumber(newTotalPrice)} UZS"
-            payWithBonusTextView.text = "${formatNumber(countTextBonus)} UZS"
-
-            adapterPaymentPercent.updateData(percent, newTotalPrice)
+    fun updateDisplayedValues() {
+        val enteredBonus = if ((selectedClient?.bonus?.toDouble() ?: 0.0) > 0.0) {
+            binding.bonus.text.toString().toDoubleOrNull() ?: 0.0
+        } else {
+            0.0
+        }
+        val enteredFirstPay = try {
+            binding.firstPay.text.toString().replace(',', '.').toDoubleOrNull() ?: 0.0
+        } catch (e: NumberFormatException) {
+            0.0
         }
 
-        textWatcherForBonus = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+        val enteredHandSale = if (manualDiscount > 0){
+            (finalTotalPrice * manualDiscount) / 100
+        } else {
+            0.0
+        }
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        firstPayment = finalTotalPrice - enteredFirstPay
+        val bonusPercentOfRemaining = (firstPayment * percent.payment_bonus.toDouble()) / 100
 
-            override fun afterTextChanged(s: Editable?) {
-                val newText = s.toString().trim()
-                if (!newText.isNullOrEmpty()) {
-                    val currentValue = newText.replace(',', '.').toDouble()
-                    if (currentValue > (selectedClient?.bonus?.toDouble() ?: 0.0)) {
-                        binding.bonus.setText(selectedClient?.bonus?.toString() ?: "")
-                        binding.bonus.setSelection(binding.bonus.length())
-                    } else if (currentValue > maxValueBonus) {
-                        binding.bonus.setText(maxValueBonus.toString())
-                        binding.bonus.setSelection(binding.bonus.length())
-                    }
+        if (enteredBonus > bonusPercentOfRemaining) {
+            binding.bonus.setText(bonusPercentOfRemaining.toString())
+            binding.bonus.setSelection(binding.bonus.length())
+            bonusPayment = bonusPercentOfRemaining
+        } else {
+            bonusPayment = enteredBonus
+        }
+
+        if (manualDiscount > 0){
+            val saleBonus = abs(enteredHandSale - firstPayment)
+            newTotalPrice = abs(saleBonus)
+
+            try {
+                binding.cbBonus.visibility = GONE
+                binding.cbBonus.isChecked = false
+            } catch (e: Exception){
+                Log.d("TAG", "updateDisplayedValues: ${e.message}")
+            }
+
+        } else if (enteredBonus > 0) {
+            newTotalPrice = abs(bonusPayment - firstPayment)
+        } else {
+            newTotalPrice = abs (firstPayment - enteredHandSale)
+        }
+
+
+        binding.totalPrice.text = "${formatNumber(newTotalPrice)} UZS"
+        binding.payWithBonus.text = "${formatNumber(bonusPayment)} UZS"
+        binding.payWithFirstPay.text = "${formatNumber(enteredFirstPay)} UZS"
+        binding.payWithHandSale.text = "${formatNumber(enteredHandSale)} UZS"
+
+        adapterPaymentPercent.updateData(percent, newTotalPrice)
+    }
+
+    val textWatcherForBonus = createTextWatcherForBonus(binding, percent, maxValueBonus) { updateDisplayedValues() }
+    val textWatcherForFirstPay = createTextWatcherForFirstPay(binding, totalPrice) { updateDisplayedValues() }
+
+    binding.bonus.addTextChangedListener(textWatcherForBonus)
+    binding.firstPay.addTextChangedListener(textWatcherForFirstPay)
+
+    updateDisplayedValues()
+}
+
+fun CalculatorFragmentV2.createTextWatcherForBonus(
+    binding: FragmentCalculatorV2Binding,
+    percent: PercentInstallment,
+    maxValueBonus: Double,
+    updateDisplayedValues: () -> Unit
+): TextWatcher {
+    return object : TextWatcher {
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+        override fun afterTextChanged(s: Editable?) {
+            val newText = s.toString().trim()
+            if (!newText.isNullOrEmpty()) {
+                val currentValue = newText.replace(',', '.').toDouble()
+                if (currentValue > (selectedClient?.bonus?.toDouble() ?: 0.0)) {
+                    binding.bonus.setText(selectedClient?.bonus?.toString() ?: "")
+                    binding.bonus.setSelection(binding.bonus.length())
+                } else if (currentValue > maxValueBonus) {
+                    binding.bonus.setText(maxValueBonus.toString())
+                    binding.bonus.setSelection(binding.bonus.length())
                 }
-                updateDisplayedValues()
             }
+            updateDisplayedValues()
         }
+    }
+}
 
-        textWatcherForFirstPay = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+fun CalculatorFragmentV2.createTextWatcherForFirstPay(
+    binding: FragmentCalculatorV2Binding,
+    totalPrice: Double,
+    updateDisplayedValues: () -> Unit
+): TextWatcher {
+    return object : TextWatcher {
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 
-            override fun afterTextChanged(s: Editable?) {
-                val newText = s.toString().trim()
-                if (!newText.isNullOrEmpty()) {
-                    val currentValue = newText.replace(',', '.').toDouble()
-//                    if (currentValue < minValueFirstPay) {
-//                        firstPayEditText.error = "Минимальное значение первоначального взноса ${percent.first_pay}% ($minValueFirstPay) от итоговой суммы"
-//                    } else {
-//                        firstPayEditText.error = null
-//                    }
-//
-//                    if (currentValue > totalPrice.toDouble()) {
-//                        firstPayEditText.setText(totalPrice.toString())
-//                    }
+        override fun afterTextChanged(s: Editable?) {
+            val newText = s.toString().trim()
+            if (!newText.isNullOrEmpty()) {
+                val currentValue = newText.replace(',', '.').toDouble()
+                if (currentValue > totalPrice) {
+                    binding.firstPay.setText(doubleFormat2(totalPrice))
                 }
-                updateDisplayedValues()
+            } else {
+                binding.firstPay.setText("0")
             }
+            updateDisplayedValues()
         }
-
-        bonusEditText.addTextChangedListener(textWatcherForBonus)
-        firstPayEditText.addTextChangedListener(textWatcherForFirstPay)
-
-        updateDisplayedValues()
     }
 }
 
@@ -433,6 +449,7 @@ fun CalculatorFragmentV2.fetchCoefficientPlanFromPrefs(binding: FragmentCalculat
                 Gson().fromJson<PercentInstallment>(coefficientPlanJson, coefficientPlanType)
             percentInstallment = coefficientPlan
             printPercent(binding, percentInstallment, Cart.getTotalPrice())
+            setupDiscountButtons(binding, percentInstallment)
         } else {
             fetchCoefficientPlanFromApi(binding)
         }
@@ -467,7 +484,7 @@ fun CalculatorFragmentV2.fetchCoefficientPlanFromApi(binding: FragmentCalculator
                         val coefficientPlanJson = Gson().toJson(coefficientPlanList)
                         prefs.edit().putString("coefficientPlan", coefficientPlanJson).apply()
                         percentInstallment = coefficientPlanList
-                        printPercent(binding, percentInstallment, Cart.getTotalPrice())
+                        setupDiscountButtons(binding, percentInstallment)
                     }
                 }
             }
@@ -508,14 +525,14 @@ fun CalculatorFragmentV2.fetchClientsFromPrefs() {
                 R.layout.spinner_item,
                 clientList.map { it.client_name })
         } else {
-            fetchClientsFromApi()
+            getAllClientsFromApi()
         }
     } catch (e: Exception) {
         Log.d("TAG", "coefficientPlan: ${e.message}")
     }
 }
-
-fun CalculatorFragmentV2.fetchClientsFromApi() {
+fun CalculatorFragmentV2.getAllClientsFromApi() {
+    progressBar.visibility = VISIBLE
     try {
         val call = api.getApiService().getAllClients("Bearer ${sessionManager.fetchToken()}")
         call.enqueue(object : Callback<GetAllClientsResponse?> {
@@ -524,27 +541,31 @@ fun CalculatorFragmentV2.fetchClientsFromApi() {
                 response: Response<GetAllClientsResponse?>
             ) {
                 if (response.isSuccessful) {
-                    val clientListResponse = response.body()
-                    if (clientListResponse?.result!!.isNotEmpty()) {
-                        val clientListJson = Gson().toJson(clientListResponse.result)
+                    val clientList = response.body()
+                    if (clientList != null) {
+                        val clientListJson = Gson().toJson(clientList.result)
                         prefs.edit().putString("clientList", clientListJson).apply()
-                        clientList = clientListResponse.result
+                        updateClientsData(clientList.result)
                     }
                 }
+                progressBar.visibility = GONE
             }
 
             override fun onFailure(call: Call<GetAllClientsResponse?>, t: Throwable) {
-                Log.d("TAG", "onFailure: ")
+                Log.d("TAG", "onViewCreated fetchClientsFromApi: ${t.message}")
+                progressBar.visibility = GONE
             }
         })
     } catch (e: Exception) {
         Log.d("TAG", "fetchClientsFromApi: ${e.message}")
+        progressBar.visibility = GONE
     }
 }
 
-fun CalculatorFragmentV2.animation(){
+fun CalculatorFragmentV2.animation() {
     val constraintLayout = binding.constraintLayout
-    val animationController = AnimationUtils.loadLayoutAnimation(requireContext(), R.anim.rv_layout_anim)
+    val animationController =
+        AnimationUtils.loadLayoutAnimation(requireContext(), R.anim.rv_layout_anim)
     constraintLayout.layoutAnimation = animationController
     constraintLayout.scheduleLayoutAnimation()
 }

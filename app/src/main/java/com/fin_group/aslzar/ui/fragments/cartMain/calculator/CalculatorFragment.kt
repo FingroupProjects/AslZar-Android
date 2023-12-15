@@ -84,7 +84,6 @@ class CalculatorFragment : Fragment() {
         fetViews(binding)
         all(binding)
         createTable()
-        //getForPercentAndMonth()
         fetchClientFromApi()
         fetchClientNameFromPrefs()
         super.onViewCreated(view, savedInstanceState)

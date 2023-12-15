@@ -91,6 +91,10 @@ class FilterDialogFragment : BaseBottomSheetDialogFragment() {
         val filterModel2 = filterViewModel.defaultFilterModel
         if (filterModel != null) {
             setDataFilter(filterModel)
+        } else {
+            if (filterModel2 != null) {
+                setDataFilter(filterModel2)
+            }
         }
         if (filterModel2 != null){
             setDataFilter2(filterModel2)
@@ -135,29 +139,6 @@ class FilterDialogFragment : BaseBottomSheetDialogFragment() {
         categoriesRV.adapter = CategoryAdapter(categoryList) { selectCategory ->
             selectedCategory = categories.find { it.name == selectCategory.name }!!
             binding.filterCategory.text = "Выбранная категория: ${selectCategory.name}"
-        }
-    }
-
-    fun fetchSpinner(categoryList: List<Category>, spinner: Spinner){
-        val categoryNames = categoryList.map { it.name }.toTypedArray()
-        arrayAdapterCategories = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_spinner_dropdown_item,
-            categoryNames)
-
-        spinner.adapter = arrayAdapterCategories
-        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                selectedCategory = categoryList[position]
-            }
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                // Ничего не выбрано
-            }
         }
     }
 
@@ -263,7 +244,6 @@ class FilterDialogFragment : BaseBottomSheetDialogFragment() {
                             val firstCategory = Category("all", "Все")
                             categories = categoryList
                             categories = mutableListOf(firstCategory).plus(categories)
-//                            fetchSpinner(categories, categoriesSpinner)
                             fetchRv(categories)
 
                             val categoryListJson = Gson().toJson(categories)

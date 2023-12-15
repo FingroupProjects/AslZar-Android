@@ -24,14 +24,15 @@ import com.fin_group.aslzar.response.PercentInstallment
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.animation
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.cartObserver
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.fetchClientsAndTypePay
-import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.fetchClientsFromApi
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.fetchClientsFromPrefs
+import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.fetchCoefficientPlanFromApi
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.fetchCoefficientPlanFromPrefs
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.getAllClientsFromApi
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.printPercent
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.resetCalculator
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.retrieveClientList
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.retrieveCoefficientPlan
+import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.setupDiscountButtons
 import com.fin_group.aslzar.util.CalculatorResetListener
 import com.fin_group.aslzar.util.CartObserver
 import com.fin_group.aslzar.util.CustomPopupView
@@ -65,6 +66,9 @@ class CalculatorFragmentV2 : Fragment(), CalculatorResetListener {
     var vlTotalPriceWithSale: Number = 0
     var vlTotalPriceWithoutSale: Number = 0
     var vlTotalPriceSale: Number = 0
+
+    var manualDiscount = 0.0
+    var maxManualDiscount: Number = 0.0
 
     lateinit var monthLinearLayout: LinearLayoutCompat
     lateinit var percentLinearLayout: LinearLayoutCompat
@@ -108,11 +112,16 @@ class CalculatorFragmentV2 : Fragment(), CalculatorResetListener {
 
         binding.btnRefresh.setOnClickListener {
             getAllClientsFromApi()
+            fetchCoefficientPlanFromApi(binding)
+
         }
 
         clientList = retrieveClientList()
         fetchClientsAndTypePay(binding)
         fetchClientsFromPrefs()
+        binding.firstPay.setText("0")
+
+        setupDiscountButtons(binding, percentInstallment)
     }
 
     override fun onStart() {
