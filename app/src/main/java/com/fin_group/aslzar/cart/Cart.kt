@@ -89,6 +89,7 @@ object Cart {
         if (productInCart != null) {
             updateProductCount(product, productInCart.countInCart + 1, context)
             saveCartToPrefs(context)
+            notifyObservers()
         }
     }
 
@@ -97,6 +98,7 @@ object Cart {
         if (productInCart != null) {
             updateProductCount(product, productInCart.countInCart - 1, context)
             saveCartToPrefs(context)
+            notifyObservers()
         }
     }
 
@@ -106,6 +108,7 @@ object Cart {
             productToUpdate.countInCart = newCount
             if (productToUpdate.countInCart + newCount <= 0) {
                 removeProduct(product, context)
+                notifyObservers()
             }
             true
         } else {

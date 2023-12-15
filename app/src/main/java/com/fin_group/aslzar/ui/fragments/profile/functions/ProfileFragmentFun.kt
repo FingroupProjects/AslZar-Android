@@ -35,12 +35,16 @@ fun ProfileFragment.speedometerView(speed: Float) {
     speedometer.ticks = arrayListOf(0f, .25f, .5f, .75f, 1f)
 }
 fun ProfileFragment.goToDialogShow(login: String, password: String) {
-    val changeDataPassword = ChangePasswordProfileFragmentDialog.newInstancePass(login, password, "change")
-    val fragmentManager: FragmentManager? = activity?.supportFragmentManager
-    fragmentManager?.let {
-        val transaction: FragmentTransaction = it.beginTransaction()
-        transaction.addToBackStack(null)
-        changeDataPassword.show(transaction, "ChangePasswordProfileDialogFragment")
+    if (sessionManager.fetchEmail() != null){
+        val changeDataPassword = ChangePasswordProfileFragmentDialog.newInstancePass(login, password, "change")
+        val fragmentManager: FragmentManager? = activity?.supportFragmentManager
+        fragmentManager?.let {
+            val transaction: FragmentTransaction = it.beginTransaction()
+            transaction.addToBackStack(null)
+            changeDataPassword.show(transaction, "ChangePasswordProfileDialogFragment")
+        }
+    } else {
+        Toast.makeText(requireContext(), "Не указана почта.", Toast.LENGTH_SHORT).show()
     }
 }
 

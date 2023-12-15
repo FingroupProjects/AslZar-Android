@@ -34,6 +34,9 @@ import com.fin_group.aslzar.util.OnProductAddedToCartListener
 import com.fin_group.aslzar.viewmodel.SharedViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 
 class CartFragment : Fragment(), EditProductInCart, OnProductAddedToCartListener {
@@ -64,7 +67,6 @@ class CartFragment : Fragment(), EditProductInCart, OnProductAddedToCartListener
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         mainActivity =
             activity as? MainActivity ?: throw IllegalStateException("Activity is not MainActivity")
 
@@ -75,6 +77,7 @@ class CartFragment : Fragment(), EditProductInCart, OnProductAddedToCartListener
         }
         cartObserver(binding)
         Cart.registerObserver(cartObserver)
+
 
         fetchItemTouchHelper()
         val itemTouchHelper = ItemTouchHelper(itemTouchCallback)

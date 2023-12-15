@@ -17,14 +17,28 @@
         <TextView
             android:id="@+id/productFullName"
             style="@style/forTextView"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:text="@string/select_catalog"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/btnClose"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/btnClose" />
+
+        <TextView
+            android:id="@+id/productName"
+            style="@style/forTextView2.12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
             android:text="@string/select_catalog"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/btnClose"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/btnClose" />
+            app:layout_constraintStart_toStartOf="@+id/productFullName"
+            app:layout_constraintTop_toBottomOf="@+id/productFullName" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/btnClose"
@@ -51,6 +65,7 @@
             android:layout_marginEnd="5dp"
             android:clickable="true"
             android:src="@drawable/ic_refresh"
+            android:visibility="gone"
             app:backgroundTint="@color/white"
             app:elevation="0dp"
             app:layout_constraintEnd_toStartOf="@+id/btnClose"

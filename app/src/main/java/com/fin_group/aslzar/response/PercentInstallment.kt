@@ -3,7 +3,7 @@ package com.fin_group.aslzar.response
 data class PercentInstallment(
     val payment_bonus: Number,
     val first_pay: Number,
-    val max_bonus: Number,
+    val sale_limit: Number,
     val result: List<Percent>
 )
 

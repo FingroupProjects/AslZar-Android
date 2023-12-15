@@ -136,6 +136,7 @@ class PickCharacterProductDialogFragment : BaseDialogFullFragment(), FilialListe
 
         myAdapter.upgradeList(sortedTypeList)
         binding.productFullName.text = product.full_name
+        binding.productName.text = product.name
     }
 
 
