@@ -44,7 +44,7 @@ import org.w3c.dom.Text
 class CalculatorFragmentV2 : Fragment(), CalculatorResetListener {
 
     private var _binding: FragmentCalculatorV2Binding? = null
-    val binding get() = _binding!!
+    private val binding get() = _binding!!
 
     lateinit var api: ApiClient
     lateinit var sessionManager: SessionManager
@@ -73,8 +73,8 @@ class CalculatorFragmentV2 : Fragment(), CalculatorResetListener {
     lateinit var monthLinearLayout: LinearLayoutCompat
     lateinit var percentLinearLayout: LinearLayoutCompat
 
-    lateinit var textWatcherForFirstPay: TextWatcher
-    lateinit var textWatcherForBonus: TextWatcher
+    var textWatcherForFirstPay: TextWatcher? = null
+    var textWatcherForBonus: TextWatcher? = null
 
     lateinit var averageBillTv: TextView
     lateinit var averageBill: Number
@@ -98,7 +98,7 @@ class CalculatorFragmentV2 : Fragment(), CalculatorResetListener {
         monthLinearLayout = binding.monthTable
         percentLinearLayout = binding.percentTable
         NoInternetDialogFragment.showIfNoInternet(requireContext())
-        animation()
+        animation(binding)
         return binding.root
     }
 
@@ -113,7 +113,6 @@ class CalculatorFragmentV2 : Fragment(), CalculatorResetListener {
         binding.btnRefresh.setOnClickListener {
             getAllClientsFromApi()
             fetchCoefficientPlanFromApi(binding)
-
         }
 
         clientList = retrieveClientList()

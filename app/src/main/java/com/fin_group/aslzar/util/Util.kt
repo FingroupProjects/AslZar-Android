@@ -202,14 +202,11 @@ fun Fragment.setupKeyboardScrolling() {
         if (event.action == KeyEvent.ACTION_DOWN) {
             when (keyCode) {
                 KeyEvent.KEYCODE_DPAD_UP -> {
-                    // Scroll up
-                    view?.scrollBy(0, -10) // Adjust the scroll amount as needed
+                    view?.scrollBy(0, -10)
                     return@setOnKeyListener true
                 }
-
                 KeyEvent.KEYCODE_DPAD_DOWN -> {
-                    // Scroll down
-                    view?.scrollBy(0, 10) // Adjust the scroll amount as needed
+                    view?.scrollBy(0, 10)
                     return@setOnKeyListener true
                 }
             }
@@ -235,7 +232,6 @@ fun Fragment.backPressed(backPressedTime: Long, TIME_INTERVAL: Long, view: View,
                         Snackbar.LENGTH_SHORT
                     )
                     snack.setAction("Отмена", View.OnClickListener {
-                        // executed when DISMISS is clicked
                         backPressedTimeVar = 0
                     })
                     snack.show()

@@ -57,25 +57,27 @@
 
                 <ImageView
                     android:id="@+id/handSalePlus"
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    android:layout_marginStart="4dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
                     android:src="@drawable/ic_add_1"
-                    app:layout_constraintBottom_toBottomOf="@+id/handSaleMinus"
-                    app:layout_constraintStart_toEndOf="@+id/handSaleCount"
-                    app:layout_constraintTop_toTopOf="@+id/handSaleMinus" />
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/average_bill"
+                    app:layout_constraintEnd_toStartOf="@+id/btnRefresh"
+                    app:layout_constraintTop_toBottomOf="@+id/totalPrice" />
 
                 <TextView
                     android:id="@+id/handSaleCount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
+                    android:layout_marginStart="12dp"
                     android:text="0,5"
                     android:textColor="@color/primary_color_2"
-                    android:textSize="14sp"
-                    app:layout_constraintBottom_toBottomOf="@+id/handSaleMinus"
-                    app:layout_constraintStart_toEndOf="@+id/handSaleMinus"
-                    app:layout_constraintTop_toTopOf="@+id/handSaleMinus" />
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/tvHandSale"
+                    app:layout_constraintStart_toEndOf="@+id/tvHandSale"
+                    app:layout_constraintTop_toTopOf="@+id/tvHandSale" />
 
                 <com.google.android.material.progressindicator.LinearProgressIndicator
                     android:id="@+id/progressLinearDeterminate3"
@@ -156,13 +158,14 @@
 
                 <ImageView
                     android:id="@+id/handSaleMinus"
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    android:layout_marginStart="16dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="2dp"
+                    android:padding="8dp"
                     android:src="@drawable/ic_minus_1"
-                    app:layout_constraintBottom_toBottomOf="@+id/tvHandSale"
-                    app:layout_constraintStart_toEndOf="@+id/tvHandSale"
-                    app:layout_constraintTop_toTopOf="@+id/tvHandSale" />
+                    app:layout_constraintBottom_toBottomOf="@+id/handSalePlus"
+                    app:layout_constraintEnd_toStartOf="@+id/handSalePlus"
+                    app:layout_constraintTop_toTopOf="@+id/handSalePlus" />
 
                 <TextView
                     android:id="@+id/payWithFirstPay"
@@ -321,9 +324,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="10dp"
+                    android:layout_marginEnd="8dp"
                     android:layout_marginBottom="15dp"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/btnRefresh"
+                    app:layout_constraintEnd_toStartOf="@+id/handSaleMinus"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textView25" />
 
@@ -343,6 +347,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textView25"
+                    app:layout_constraintVertical_bias="1.0"
                     app:tint="@color/background_2"
                     tools:ignore="ContentDescription,SpeakableTextPresentCheck" />
 
