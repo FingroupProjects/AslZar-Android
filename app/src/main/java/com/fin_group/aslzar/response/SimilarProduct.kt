@@ -6,7 +6,7 @@ import java.io.Serializable
 
 @Parcelize
 data class GetSimilarProductsResponse(
-    val result: List<SimilarProduct>
+    val result: List<ResultX>
 ): Parcelable, Serializable
 
 

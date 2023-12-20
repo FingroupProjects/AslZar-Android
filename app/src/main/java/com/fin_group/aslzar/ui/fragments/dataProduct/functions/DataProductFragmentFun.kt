@@ -78,14 +78,6 @@ fun DataProductFragment.addProduct(product: ResultX) {
 }
 
 fun DataProductFragment.callSetInProduct(id: String) {
-//    val fragmentManager = requireFragmentManager()
-//    val tag = "Set product in bottom sheet"
-//    val existingFragment = fragmentManager.findFragmentByTag(tag)
-//
-//    if (existingFragment == null) {
-//        val bottomSheetFragment = SetInProductBottomSheetDialogFragment.newInstance(id)
-//        bottomSheetFragment.show(fragmentManager, tag)
-//    }
     val action = DataProductFragmentDirections.actionDataProductFragmentToSetInProductFragment(id)
     findNavController().navigate(action)
 }
@@ -138,7 +130,7 @@ fun DataProductFragment.productCharacteristic(){
 fun DataProductFragment.likeProducts() {
     recyclerViewLikeProducts.layoutManager = LinearLayoutManager(requireContext(), HORIZONTAL, false)
     recyclerViewLikeProducts.adapter = productAlikeAdapter
-    productAlikeAdapter.updateList(alikeProductsList)
+    productAlikeAdapter.updateList(getSimilarProduct)
 }
 
 @SuppressLint("SetTextI18n", "UnsafeOptInUsageError")
@@ -268,7 +260,12 @@ fun DataProductFragment.getSimilarProducts() {
                     val result = response.body()
                     if (result != null) {
                         val similarProduct = result.result
-                        getSimilarProduct = similarProduct
+                        getSimilarProduct = similarProduct.filter { product ->
+                            product.types.any { type ->
+                                type.counts.isNotEmpty() && type.counts.any { count -> count.count > 0 }
+                            }
+                        }
+                        Log.d("TAG", "onResponse: $getSimilarProduct")
                         productAlikeAdapter.updateList(getSimilarProduct)
                         if (similarProduct.isEmpty()) {
                             binding.similarProducts.visibility = GONE
@@ -347,6 +344,7 @@ fun DataProductFragment.retrieveCoefficientPlan(): PercentInstallment {
         val percent = Gson().fromJson<PercentInstallment>(coefficientPlanJson, coefficientPlanType)
         percent
     } else {
+        fetchCoefficientPlanFromApi()
         PercentInstallment(
             5, 5, 7, listOf(
                 Percent(1.79, 3)
@@ -424,75 +422,6 @@ fun DataProductFragment.printPercent(
         printPercent.layoutManager = LinearLayoutManager(requireContext())
         adapterPaymentPercent = TableInstallmentAdapter(installment, totalPrice, 0)
         printPercent.adapter = adapterPaymentPercent
-    }
-}
-
-@SuppressLint("SetTextI18n")
-fun DataProductFragment.createTable(
-    binding: FragmentDataProductBinding,
-    totalPrice: Number,
-    percentInstallment: PercentInstallment
-) {
-    monthLinearLayout.removeAllViews()
-    percentLinearLayout.removeAllViews()
-    val monthTextViews = mutableListOf<TextView>()
-    val percentTextViews = mutableListOf<TextView>()
-
-    binding.apply {
-        val monthLinearLayout = monthTable
-        val percentLinearLayout = percentTable
-
-        for (percent in percentInstallment.result) {
-            val indexPercent = percentInstallment.result.indexOf(percent)
-
-            val textViewMonth = TextView(requireContext())
-            textViewMonth.apply {
-                text = "${percent.mounth} платежей"
-                layoutParams = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                )
-                setPadding(15, 15, 15, 15)
-                setTextColor(ContextCompat.getColor(requireContext(), R.color.text_color_1))
-                View.TEXT_ALIGNMENT_CENTER
-                gravity = Gravity.CENTER
-                typeface = Typeface.defaultFromStyle(Typeface.BOLD)
-                if (indexPercent < percentInstallment.result.size - 1) {
-                    setBackgroundResource(R.drawable.bg_text_view_in_table)
-                }
-            }
-            monthTextViews.add(textViewMonth)
-
-            val textViewPercent = TextView(requireContext())
-            val monthPayment =
-                (((totalPrice.toDouble() * percent.coefficient.toDouble()) / 100) + totalPrice.toDouble()) / percent.mounth.toDouble()
-            textViewPercent.apply {
-                text = formatNumber(monthPayment)
-                layoutParams = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                )
-                setPadding(15, 15, 15, 15)
-                setTextColor(ContextCompat.getColor(requireContext(), R.color.text_color_1))
-                View.TEXT_ALIGNMENT_CENTER
-                gravity = Gravity.CENTER
-                typeface = Typeface.defaultFromStyle(Typeface.BOLD)
-                if (indexPercent < percentInstallment.result.size - 1) {
-                    setBackgroundResource(R.drawable.bg_text_view_in_table)
-                }
-            }
-            percentTextViews.add(textViewPercent)
-        }
-
-        for (i in 0 until percentInstallment.result.size) {
-            val percent = percentInstallment.result[i]
-            val monthPayment =
-                (((totalPrice.toDouble() * percent.coefficient.toDouble()) / 100) + totalPrice.toDouble()) / percent.mounth.toDouble()
-
-            monthTextViews[i].text = "${percent.mounth} платежей"
-            percentTextViews[i].text = formatNumber(monthPayment)
-        }
-
     }
 }
 

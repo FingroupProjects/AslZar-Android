@@ -36,7 +36,6 @@ import com.fin_group.aslzar.models.FilterModel
 import com.fin_group.aslzar.models.ProductInCart
 import com.fin_group.aslzar.response.Count
 import com.fin_group.aslzar.response.ResultX
-import com.fin_group.aslzar.response.SimilarProduct
 import com.fin_group.aslzar.response.Type
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -96,7 +95,7 @@ interface OnProductAddedToCartListener {
 
 
 interface OnAlikeProductClickListener {
-    fun callBottomDialog(product: SimilarProduct)
+    fun callBottomDialog(product: ResultX)
 }
 
 interface FilterDialogListener {
