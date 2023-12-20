@@ -210,8 +210,8 @@ fun DataProductFragment.setDataProduct(product: ResultX, binding: FragmentDataPr
                         tvWithFirstPay.text = formatNumber(remainingAmount)
                         printPercent(binding, percentInstallment, remainingAmount)
                     } else {
-                        installmentPrice.text.clear()
-                        installmentPrice.error = "Введите число не больше $initialPrice"
+                        installmentPrice.setText(initialPrice.toString())
+                        installmentPrice.setSelection(installmentPrice.text.length)
                     }
                 }else{
                     tvWithFirstPay.text = formatNumber(initialPrice)
