@@ -6,7 +6,7 @@ import com.fin_group.aslzar.response.ResultX
 interface ProductOnClickListener {
 
     fun addToCart(product: ResultX)
-    fun inStock(product: ResultX)
+
     fun getData(product: ResultX)
 }
 

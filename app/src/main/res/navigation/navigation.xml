@@ -98,10 +98,18 @@
             app:popUpToInclusive="true"/>
         <action
             android:id="@+id/action_dataProductFragment_to_setInProductFragment"
-            app:destination="@id/setInProductFragment" />
+            app:destination="@id/setInProductFragment"
+            app:enterAnim="@anim/from_right"
+            app:exitAnim="@anim/to_left"
+            app:popEnterAnim="@anim/from_left"
+            app:popExitAnim="@anim/to_right"/>
         <action
             android:id="@+id/action_dataProductFragment_to_dataProductElseFragment2"
-            app:destination="@id/dataProductElseFragment2" />
+            app:destination="@id/dataProductElseFragment2"
+            app:enterAnim="@anim/from_right"
+            app:exitAnim="@anim/to_left"
+            app:popEnterAnim="@anim/from_left"
+            app:popExitAnim="@anim/to_right"/>
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
@@ -178,14 +186,18 @@
     <fragment
         android:id="@+id/setInProductFragment"
         android:name="com.fin_group.aslzar.ui.fragments.dataProduct.SetInProductFragment"
-        android:label="fragment_set_in_product"
+        android:label="Продукты в комплекте"
         tools:layout="@layout/fragment_set_in_product" >
         <argument
             android:name="productId"
             app:argType="string" />
         <action
             android:id="@+id/action_setInProductFragment_to_dataProductElseFragment2"
-            app:destination="@id/dataProductElseFragment2" />
+            app:destination="@id/dataProductElseFragment2"
+            app:enterAnim="@anim/from_right"
+            app:exitAnim="@anim/to_left"
+            app:popEnterAnim="@anim/from_left"
+            app:popExitAnim="@anim/to_right"/>
     </fragment>
     <fragment
         android:id="@+id/dataProductElseFragment2"

@@ -6,13 +6,27 @@
     android:layout_height="match_parent"
     tools:context=".ui.fragments.dataProduct.SetInProductFragment">
 
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/progressLinearDeterminate4"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:max="100"
+        android:progress="0"
+        android:visibility="gone"
+        app:indicatorColor="@color/background_2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:trackColor="@color/background_3" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvSetProduct"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        tools:listitem="@layout/row_item_product"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/progressLinearDeterminate4"
+        tools:listitem="@layout/row_item_product" />
 </androidx.constraintlayout.widget.ConstraintLayout>

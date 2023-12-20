@@ -289,17 +289,17 @@ class MainFragment : Fragment(), ProductOnClickListener,
         }
     }
 
-    override fun inStock(product: ResultX) {
-        if (product.types.isNotEmpty()) {
-            for (type in product.types) {
-                if (type.counts.isNotEmpty()) {
-                    callInStockDialog(product.full_name, type.counts)
-                    return
-                }
-            }
-        }
-        callOutStock(product.id)
-    }
+//    override fun inStock(product: ResultX) {
+//        if (product.types.isNotEmpty()) {
+//            for (type in product.types) {
+//                if (type.counts.isNotEmpty()) {
+//                    callInStockDialog(product.full_name, type.counts)
+//                    return
+//                }
+//            }
+//        }
+//        callOutStock(product.id)
+//    }
 
 
     override fun getData(product: ResultX) {

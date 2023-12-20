@@ -2,6 +2,7 @@ package com.fin_group.aslzar.util
 
 import android.app.Activity
 import android.content.Context
+import android.content.SharedPreferences
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -11,6 +12,7 @@ import android.text.Editable
 import android.text.InputType
 import android.text.TextWatcher
 import android.util.Base64
+import android.util.Log
 import android.view.Gravity
 import android.view.KeyEvent
 import android.view.View
@@ -20,6 +22,7 @@ import android.view.animation.AnimationUtils
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -359,4 +362,37 @@ fun Fragment.setupEditTextBehavior(vararg editTexts: EditText) {
 
 fun viewChecked(view: ConstraintLayout): Boolean {
     return view.visibility != View.VISIBLE
+}
+
+fun Fragment.handleErrorResponse(errorCode: Int, context: Context, sharedPreferences: SharedPreferences) {
+    val error = ErrorCode.fromCode(errorCode)
+
+    when (error) {
+        ErrorCode.BAD_REQUEST -> {
+            Toast.makeText(context, "Error: Bad Request.", Toast.LENGTH_SHORT).show()
+        }
+        ErrorCode.UNAUTHORIZED -> {
+            UnauthorizedDialogFragment.showUnauthorizedError(context, sharedPreferences, this)
+        }
+        ErrorCode.PAYMENT_REQUIRED -> {
+            UnauthorizedDialogFragment.showUnauthorizedError(context, sharedPreferences, this)
+        }
+        ErrorCode.FORBIDDEN -> {
+            Toast.makeText(context, "Error: Forbidden. У вас нет доступа к этому ресурсу.", Toast.LENGTH_SHORT).show()
+        }
+        ErrorCode.NOT_FOUND -> {
+            Toast.makeText(context, "Error:  Not Found. Запрошенный ресурс не найден на сервере.", Toast.LENGTH_SHORT).show()
+        }
+        ErrorCode.INTERNAL_SERVER_ERROR -> {
+            Toast.makeText(context, "Error:  Internal Server Error. Ошибка со стороны сервера, повторите попытку позже.", Toast.LENGTH_SHORT).show()
+
+        }
+        ErrorCode.SERVICE_UNAVAILABLE -> {
+            Toast.makeText(context, "Error:  Service Unavailable. Сервер не работает, повторите попытку позже.", Toast.LENGTH_SHORT).show()
+
+        }
+        else -> {
+            Log.e("TAG", "Unhandled error code: $errorCode")
+        }
+    }
 }

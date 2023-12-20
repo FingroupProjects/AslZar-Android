@@ -38,6 +38,7 @@ import com.fin_group.aslzar.ui.dialogs.PickCharacterProductDialogFragment
 import com.fin_group.aslzar.ui.dialogs.SetInProductBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.WarningNoHaveProductFragmentDialog
 import com.fin_group.aslzar.ui.fragments.dataProduct.DataProductFragment
+import com.fin_group.aslzar.ui.fragments.dataProduct.DataProductFragmentDirections
 import retrofit2.Callback
 import com.fin_group.aslzar.util.formatNumber
 import com.fin_group.aslzar.util.showBottomNav
@@ -74,14 +75,16 @@ fun DataProductFragment.addProduct(product: ResultX) {
 }
 
 fun DataProductFragment.callSetInProduct(id: String) {
-    val fragmentManager = requireFragmentManager()
-    val tag = "Set product in bottom sheet"
-    val existingFragment = fragmentManager.findFragmentByTag(tag)
-
-    if (existingFragment == null) {
-        val bottomSheetFragment = SetInProductBottomSheetDialogFragment.newInstance(id)
-        bottomSheetFragment.show(fragmentManager, tag)
-    }
+//    val fragmentManager = requireFragmentManager()
+//    val tag = "Set product in bottom sheet"
+//    val existingFragment = fragmentManager.findFragmentByTag(tag)
+//
+//    if (existingFragment == null) {
+//        val bottomSheetFragment = SetInProductBottomSheetDialogFragment.newInstance(id)
+//        bottomSheetFragment.show(fragmentManager, tag)
+//    }
+    val action = DataProductFragmentDirections.actionDataProductFragmentToSetInProductFragment(id)
+    findNavController().navigate(action)
 }
 
 fun DataProductFragment.showProductCharacteristicDialog(product: ResultX){

@@ -146,10 +146,10 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
             getProductByID()
         }
 
-        binding.tvCode.setOnClickListener {
-            val action = DataProductFragmentDirections.actionDataProductFragmentToDataProductElseFragment2(product.id, product)
-            findNavController().navigate(action)
-        }
+//        binding.tvCode.setOnClickListener {
+//            val action = DataProductFragmentDirections.actionDataProductFragmentToDataProductElseFragment2(product.id, product)
+//            findNavController().navigate(action)
+//        }
         if (product.category_id == "") {
             getProductByID()
         }
