@@ -59,18 +59,24 @@ class ProductCharacteristicAdapter(
         private val tvPrice: TextView = itemView.findViewById(R.id.tv_price)
         private val tvOtherFilial: TextView = itemView.findViewById(R.id.tv_other_filial)
 
+        @SuppressLint("SetTextI18n")
         fun bind(product: Type, isSelected: Boolean) {
             if (product.counts.isNotEmpty()) {
                 itemView.visibility = View.VISIBLE
-                tvSize.text = product.size.toString()
-                tvWeight.text = product.weight.toString()
+                tvSize.text = formatNumber(product.size)
+                tvWeight.text = "${formatNumber(product.weight)} гр"
 
+                val countsList = product.counts
+                if (countsList.size == 1){
+                    val price = itemView.findViewById<TextView>(R.id.price)
+                    price.text = "Цена:"
+                }
                 val priceValue = if (product.counts.firstOrNull()?.is_filial == true) {
                     product.counts.filter { it.is_filial }.minByOrNull { it.price.toDouble() }?.price?.toDouble() ?: 0.0
                 } else {
                     product.counts.first().price.toDouble()
                 }
-                tvPrice.text = formatNumber(priceValue)
+                tvPrice.text = "${formatNumber(priceValue)} UZS"
 
                 if (isSelected) {
                     itemView.setBackgroundResource(R.drawable.selected_item_background_2)

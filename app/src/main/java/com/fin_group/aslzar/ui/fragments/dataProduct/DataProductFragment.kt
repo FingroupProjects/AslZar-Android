@@ -125,8 +125,6 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         preferences = context?.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)!!
         monthLinearLayout = binding.monthTable
 
-
-
         percentLinearLayout = binding.percentTable
         percentInstallment = try {
             retrieveCoefficientPlan()
@@ -264,9 +262,7 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         val alertDialogBuilder = MaterialAlertDialogBuilder(requireContext())
 
         val countsList = product.counts.map {
-            "Вес:${product.weight}" +
-                    "\nРазмер:${product.size}" +
-                    "\nЦена: ${it.price}" +
+                    "\nЦена: ${formatNumber(it.price)}" +
                     "\nФиллиал: ${it.filial}" +
                     "\nВитрина: ${it.sclad}\n\n"
         }.toTypedArray()
