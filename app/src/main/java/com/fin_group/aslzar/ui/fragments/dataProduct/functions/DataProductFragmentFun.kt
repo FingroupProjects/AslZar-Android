@@ -2,6 +2,7 @@
 
 package com.fin_group.aslzar.ui.fragments.dataProduct.functions
 
+import EqualSpacingItemDecoration
 import android.annotation.SuppressLint
 import android.graphics.Typeface
 import android.text.Editable
@@ -11,6 +12,7 @@ import android.view.Gravity
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -42,6 +44,7 @@ import com.fin_group.aslzar.ui.fragments.dataProduct.DataProductFragmentDirectio
 import retrofit2.Callback
 import com.fin_group.aslzar.util.formatNumber
 import com.fin_group.aslzar.util.showBottomNav
+import com.google.android.material.internal.ViewUtils.hideKeyboard
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import retrofit2.Call
@@ -118,6 +121,10 @@ fun DataProductFragment.productCharacteristic(){
     characteristicRv.adapter = productCharacteristicAdapter
     productCharacteristicAdapter.updateData(characteristicList)
     productCharacteristicAdapter.setSelectedPosition(0)
+
+    val spacingInPixels = resources.getDimensionPixelSize(R.dimen.spacing)
+    val itemDecoration = EqualSpacingItemDecoration(requireContext(), spacingInPixels)
+    characteristicRv.addItemDecoration(itemDecoration)
 
 }
 
@@ -206,9 +213,8 @@ fun DataProductFragment.setDataProduct(product: ResultX, binding: FragmentDataPr
                         tvWithFirstPay.text = formatNumber(remainingAmount)
                         printPercent(binding, percentInstallment, remainingAmount)
                     } else {
-                        installmentPrice.text.clear()
-                        installmentPrice.error = "Введите число не больше $initialPrice"
-
+                        installmentPrice.setText(initialPrice.toString())
+                        installmentPrice.setSelection(installmentPrice.text.length)
                     }
                 }else{
                     tvWithFirstPay.text = formatNumber(initialPrice)
@@ -515,42 +521,4 @@ fun DataProductFragment.updateTvPriceFirst() {
         val minPrice = characteristic.counts.minByOrNull { it.price.toDouble() }?.price ?: 0
         binding.tvPriceFirst.text = formatNumber(minPrice)
     }
-}
-
-fun DataProductFragment.onPriceTextChangeListener() {
-
-//    val installmentPrice = binding.installmentPrice
-//    val tvWithFirstPay = binding.tvWithFirstPay
-//    installmentPrice.addTextChangedListener(object : TextWatcher {
-//        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-//
-//        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-//
-//        override fun afterTextChanged(s: Editable?) {
-//
-//            sharedViewModel.selectedPrice?.let { price ->
-//
-//                if (!s.isNullOrEmpty()) {
-//
-//                    val userInput = s.toString().toDoubleOrNull()
-//                    if (userInput != null && userInput <= price) {
-//                        binding.withFirstPay.visibility = VISIBLE
-//                        tvWithFirstPay.visibility = VISIBLE
-//                        val initialPrice = price
-//                        val remainingAmount = initialPrice - userInput.toDouble()
-//                        tvWithFirstPay.text = formatNumber(remainingAmount)
-//                        printPercent(binding, percentInstallment, remainingAmount)
-//                    } else {
-//                        installmentPrice.text.clear()
-//                        installmentPrice.error = "Введите число не больше $price"
-//                    }
-//
-//                } else {
-//                    val initialPrice = price
-//                    tvWithFirstPay.text = formatNumber(initialPrice)
-//                    printPercent(binding, percentInstallment, initialPrice)
-//                }
-//            }
-//        }
-//    })
 }

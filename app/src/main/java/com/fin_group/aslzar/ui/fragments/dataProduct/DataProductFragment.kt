@@ -42,7 +42,6 @@ import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.response.SimilarProduct
 import com.fin_group.aslzar.response.Type
 import com.fin_group.aslzar.ui.dialogs.AlikeProductBottomSheetDialogFragment
-import com.fin_group.aslzar.ui.dialogs.PickCharacterProductDialogFragment
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.callSetInProduct
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.fetchCoefficientPlanFromApi
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.fetchCoefficientPlanFromPrefs
@@ -50,14 +49,12 @@ import com.fin_group.aslzar.ui.fragments.dataProduct.functions.getProductByID
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.getSimilarProducts
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.likeProducts
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.onBackPressed
-import com.fin_group.aslzar.ui.fragments.dataProduct.functions.onPriceTextChangeListener
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.printPercent
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.productCharacteristic
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.retrieveCoefficientPlan
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.setDataProduct
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.showProductCharacteristicDialog
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.someImagesProduct
-import com.fin_group.aslzar.ui.fragments.dataProduct.functions.updateTvPriceFirst
 import com.fin_group.aslzar.util.AddingProduct
 import com.fin_group.aslzar.util.BadgeManager
 import com.fin_group.aslzar.util.FilialListener
@@ -127,8 +124,6 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         badgeManager = BadgeManager(requireContext(), "data_product_badge_prefs")
         preferences = context?.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)!!
         monthLinearLayout = binding.monthTable
-
-
 
         percentLinearLayout = binding.percentTable
         percentInstallment = try {
@@ -267,9 +262,7 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         val alertDialogBuilder = MaterialAlertDialogBuilder(requireContext())
 
         val countsList = product.counts.map {
-            "Вес:${product.weight}" +
-                    "\nРазмер:${product.size}" +
-                    "\nЦена: ${it.price}" +
+                    "\nЦена: ${formatNumber(it.price)}" +
                     "\nФиллиал: ${it.filial}" +
                     "\nВитрина: ${it.sclad}\n\n"
         }.toTypedArray()
@@ -293,7 +286,6 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
             sharedViewModel.selectedPrice.postValue(count.price.toDouble())
             binding.tvPriceFirst.text = formatNumber(count.price)
             val tvPriceFirstSecond = count.price
-            //binding.installmentPrice.text = null
             printPercent(binding, percentInstallment, tvPriceFirstSecond)
         }
     }

@@ -1,25 +1,20 @@
 package com.fin_group.aslzar.adapter
 
-import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AccelerateInterpolator
-import android.view.animation.AnimationUtils
-import android.view.animation.DecelerateInterpolator
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.fin_group.aslzar.R
-import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.response.Type
 import com.fin_group.aslzar.util.OnProductCharacteristicClickListener
 import com.fin_group.aslzar.util.formatNumber
 
 class ProductCharacteristicAdapter(
     var productList: List<Type>,
-    private val listener: OnProductCharacteristicClickListener)
-    : RecyclerView.Adapter<ProductCharacteristicAdapter.ViewHolder>() {
+    private val listener: OnProductCharacteristicClickListener
+) : RecyclerView.Adapter<ProductCharacteristicAdapter.ViewHolder>() {
 
     var selectedItemPosition = 0
 
@@ -57,7 +52,6 @@ class ProductCharacteristicAdapter(
         notifyDataSetChanged()
     }
 
-
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         private val tvSize: TextView = itemView.findViewById(R.id.tv_size)
@@ -65,27 +59,33 @@ class ProductCharacteristicAdapter(
         private val tvPrice: TextView = itemView.findViewById(R.id.tv_price)
         private val tvOtherFilial: TextView = itemView.findViewById(R.id.tv_other_filial)
 
+        @SuppressLint("SetTextI18n")
         fun bind(product: Type, isSelected: Boolean) {
             if (product.counts.isNotEmpty()) {
                 itemView.visibility = View.VISIBLE
-                tvSize.text = product.size.toString()
-                tvWeight.text = product.weight.toString()
-                val priceValue = product.counts.firstOrNull()?.price ?: 0
-                tvPrice.text = formatNumber(priceValue)
+                tvSize.text = formatNumber(product.size)
+                tvWeight.text = "${formatNumber(product.weight)} гр"
+
+                val countsList = product.counts
+                if (countsList.size == 1){
+                    val price = itemView.findViewById<TextView>(R.id.price)
+                    price.text = "Цена:"
+                }
+                val priceValue = if (product.counts.firstOrNull()?.is_filial == true) {
+                    product.counts.filter { it.is_filial }.minByOrNull { it.price.toDouble() }?.price?.toDouble() ?: 0.0
+                } else {
+                    product.counts.first().price.toDouble()
+                }
+                tvPrice.text = "${formatNumber(priceValue)} UZS"
+
                 if (isSelected) {
                     itemView.setBackgroundResource(R.drawable.selected_item_background_2)
-
-//                    val rotationAnimator = ObjectAnimator.ofFloat(itemView, "rotationY", 0f, -90f, -180f, -270f, -360f)
-//                    rotationAnimator.interpolator = DecelerateInterpolator()
-//                    rotationAnimator.duration = 2000
-//                    rotationAnimator.start()
                 } else {
                     itemView.setBackgroundResource(R.drawable.selected_item_background_3)
-                    //itemView.clearAnimation()
                 }
                 tvOtherFilial.text = product.counts.size.toString()
             } else {
-                itemView.visibility = View.GONE
+                itemView.visibility = View.VISIBLE
                 itemView.layoutParams = RecyclerView.LayoutParams(0, 0)
             }
         }
