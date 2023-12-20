@@ -166,8 +166,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:text="(289300 UZS/мес)"
-                android:textStyle="bold"
                 android:visibility="gone"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_price_first"
                 app:layout_constraintStart_toEndOf="@+id/tv_price_first"
                 app:layout_constraintTop_toTopOf="@+id/tv_price_first" />
@@ -176,15 +176,20 @@
                 android:id="@+id/installment_price"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="100dp"
-                android:layout_marginEnd="8dp"
-                android:background="@drawable/bg_constraint"
-                android:hint="    Введите первоначалльный взнос"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/bg_edit"
+                android:drawableStart="@drawable/ic_first_pay"
+                android:drawablePadding="10dp"
+                android:hint="Первоначальный взнос"
                 android:inputType="numberDecimal"
-                app:layout_constraintBottom_toBottomOf="@+id/dp_installment_price"
+                android:minHeight="48dp"
+                android:paddingStart="10dp"
+                android:textColorHint="@color/border_color_2"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/tv_price_first"
-                app:layout_constraintTop_toTopOf="@+id/dp_installment_price" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/characteristic_rv" />
 
             <TextView
                 android:id="@+id/stone_type"
@@ -277,7 +282,7 @@
                 android:orientation="horizontal"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/characteristic"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/characteristic"
                 tools:ignore="SpeakableTextPresentCheck"
                 tools:listitem="@layout/row_characteristic_item" />
@@ -315,11 +320,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
+                android:layout_marginTop="12dp"
                 android:text="Таблица рассрочки"
                 android:textStyle="bold"
                 android:visibility="visible"
                 app:layout_constraintStart_toStartOf="parent"
-                tools:layout_editor_absoluteY="725dp" />
+                app:layout_constraintTop_toBottomOf="@+id/installment_price" />
 
             <TextView
                 android:id="@+id/with_first_pay"
@@ -341,8 +347,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="1000"
-                android:textStyle="bold"
                 android:visibility="gone"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/table"
                 app:layout_constraintEnd_toEndOf="@+id/printPercent"
                 app:layout_constraintTop_toTopOf="@+id/table" />
@@ -437,7 +443,6 @@
                 app:layout_constraintStart_toStartOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
 
     </androidx.core.widget.NestedScrollView>
 

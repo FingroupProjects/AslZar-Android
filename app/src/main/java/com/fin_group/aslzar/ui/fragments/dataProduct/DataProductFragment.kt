@@ -1,12 +1,9 @@
 package com.fin_group.aslzar.ui.fragments.dataProduct
 
 import android.annotation.SuppressLint
-import android.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
@@ -14,8 +11,6 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.ListView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.LinearLayoutCompat
@@ -24,7 +19,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.Glide
@@ -88,10 +82,10 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
     private var currentSelectedPosition = RecyclerView.NO_POSITION
     private lateinit var toolbar: MaterialToolbar
     var imageList: List<String> = emptyList()
-    var alikeProductsList: List<SimilarProduct> = emptyList()
+    var alikeProductsList: List<ResultX> = emptyList()
     lateinit var productSomeImagesAdapter: ProductSomeImagesAdapter
     lateinit var productAlikeAdapter: AlikeProductsAdapter
-    var getSimilarProduct: List<SimilarProduct> = emptyList()
+    var getSimilarProduct: List<ResultX> = emptyList()
     lateinit var sessionManager: SessionManager
     lateinit var apiService: ApiClient
     lateinit var percentInstallment: PercentInstallment
@@ -145,10 +139,11 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
 //            val action = DataProductFragmentDirections.actionDataProductFragmentToDataProductElseFragment2(product.id, product)
 //            findNavController().navigate(action)
 //        }
+        fetchCoefficientPlanFromPrefs()
+
         if (product.category_id == "") {
             getProductByID()
         }
-        fetchCoefficientPlanFromPrefs()
         try {
             percentInstallment = retrieveCoefficientPlan()
         } catch (e: Exception) {
@@ -182,7 +177,6 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         swipeRefreshLayout.setOnRefreshListener {
             getProductByID()
             fetchCoefficientPlanFromApi()
-            //binding.installmentPrice.text = null
         }
     }
     @Deprecated("Deprecated in Java")
@@ -227,14 +221,17 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         Glide.with(requireContext()).load(image).into(binding.imageView2)
     }
 
-    override fun callBottomDialog(product: SimilarProduct) {
-        val fragmentManager = requireFragmentManager()
-        val tag = "alike_product_dialog"
-        val existingFragment = fragmentManager.findFragmentByTag(tag)
-        if (existingFragment == null) {
-            val bottomSheetFragment = AlikeProductBottomSheetDialogFragment.newInstance(product)
-            bottomSheetFragment.show(fragmentManager, tag)
-        }
+    override fun callBottomDialog(product: ResultX) {
+//        val fragmentManager = requireFragmentManager()
+//        val tag = "alike_product_dialog"
+//        val existingFragment = fragmentManager.findFragmentByTag(tag)
+//        if (existingFragment == null) {
+//            val bottomSheetFragment = AlikeProductBottomSheetDialogFragment.newInstance(product)
+//            bottomSheetFragment.show(fragmentManager, tag)
+//        }
+
+        val action = DataProductFragmentDirections.actionDataProductFragmentToDataProductElseFragment2(product.id, product)
+        findNavController().navigate(action)
     }
 
     override fun onDestroy() {

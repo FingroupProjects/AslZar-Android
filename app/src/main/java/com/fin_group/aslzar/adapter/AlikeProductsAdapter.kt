@@ -4,14 +4,14 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.databinding.RowSliderItem2Binding
+import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.response.SimilarProduct
 import com.fin_group.aslzar.util.OnAlikeProductClickListener
 
 class AlikeProductsAdapter(
-    var alikeProductsList: List<SimilarProduct>,
+    var alikeProductsList: List<ResultX>,
     val listener: OnAlikeProductClickListener
 ) : RecyclerView.Adapter<AlikeProductsAdapter.ViewHolder>() {
 
@@ -41,17 +41,16 @@ class AlikeProductsAdapter(
     inner class ViewHolder(binding: RowSliderItem2Binding) : RecyclerView.ViewHolder(binding.root) {
         val imageView = binding.imageView
         @SuppressLint("CheckResult")
-        fun bindItems(likeProduct: SimilarProduct, isSelected: Boolean) {
+        fun bindItems(likeProduct: ResultX, isSelected: Boolean) {
             if (isSelected) {
                 itemView.setBackgroundResource(R.drawable.selected_item_background)
             } else {
                 itemView.background = null
             }
-//            Glide.with(itemView.context).load(likeProduct.img[0]).override(180, 180).into(imageView)
         }
     }
     @SuppressLint("NotifyDataSetChanged")
-    fun updateList(newList: List<SimilarProduct>) {
+    fun updateList(newList: List<ResultX>) {
         alikeProductsList = newList
         notifyDataSetChanged()
     }
