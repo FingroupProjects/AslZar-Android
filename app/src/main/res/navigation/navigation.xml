@@ -96,6 +96,12 @@
             app:destination="@id/mainCartFragment"
             app:popUpTo="@id/mainCartFragment"
             app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_dataProductFragment_to_setInProductFragment"
+            app:destination="@id/setInProductFragment" />
+        <action
+            android:id="@+id/action_dataProductFragment_to_dataProductElseFragment2"
+            app:destination="@id/dataProductElseFragment2" />
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
@@ -169,4 +175,28 @@
         android:name="com.fin_group.aslzar.ui.fragments.CodeFragment"
         android:label="Проверка эл. почты"
         tools:layout="@layout/fragment_code" />
+    <fragment
+        android:id="@+id/setInProductFragment"
+        android:name="com.fin_group.aslzar.ui.fragments.dataProduct.SetInProductFragment"
+        android:label="fragment_set_in_product"
+        tools:layout="@layout/fragment_set_in_product" >
+        <argument
+            android:name="productId"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_setInProductFragment_to_dataProductElseFragment2"
+            app:destination="@id/dataProductElseFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/dataProductElseFragment2"
+        android:name="com.fin_group.aslzar.ui.fragments.dataProduct.DataProductElseFragment"
+        android:label="fragment_data_product_else"
+        tools:layout="@layout/fragment_data_product_else" >
+        <argument
+            android:name="productId"
+            app:argType="string" />
+        <argument
+            android:name="product"
+            app:argType="com.fin_group.aslzar.response.ResultX" />
+    </fragment>
 </navigation>

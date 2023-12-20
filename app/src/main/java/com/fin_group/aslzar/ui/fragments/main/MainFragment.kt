@@ -94,7 +94,6 @@ class MainFragment : Fragment(), ProductOnClickListener,
 
     private lateinit var mainActivity: MainActivity
     lateinit var bottomNavigationView: BottomNavigationView
-
     lateinit var badgeManager: BadgeManager
     lateinit var swipeRefreshLayout: SwipeRefreshLayout
 

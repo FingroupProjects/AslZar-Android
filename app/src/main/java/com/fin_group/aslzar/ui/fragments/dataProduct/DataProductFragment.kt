@@ -22,6 +22,7 @@ import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -126,6 +127,9 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         badgeManager = BadgeManager(requireContext(), "data_product_badge_prefs")
         preferences = context?.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)!!
         monthLinearLayout = binding.monthTable
+
+
+
         percentLinearLayout = binding.percentTable
         percentInstallment = try {
             retrieveCoefficientPlan()
@@ -140,6 +144,11 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
             product = args.product!!
         } else {
             getProductByID()
+        }
+
+        binding.tvCode.setOnClickListener {
+            val action = DataProductFragmentDirections.actionDataProductFragmentToDataProductElseFragment2(product.id, product)
+            findNavController().navigate(action)
         }
         if (product.category_id == "") {
             getProductByID()
@@ -203,7 +212,8 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
             if (product.is_set) {
                 callSetInProduct(args.productId)
             } else {
-                Toast.makeText(requireContext(), "У данного продукта нет комплекта", Toast.LENGTH_SHORT).show() }
+                Toast.makeText(requireContext(), "У данного продукта нет комплекта", Toast.LENGTH_SHORT).show()
+            }
         }
         if (item.itemId == R.id.product_in_stock_item) {
             showProductCharacteristicDialog(product)
