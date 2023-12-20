@@ -54,10 +54,7 @@ class CodeFragment : Fragment() {
 
         forgotPassword(binding, object : FunCallback {
             override fun onSuccess(success: Boolean) {
-                if (success) {
-                    Toast.makeText(requireContext(), "Все хорошо", Toast.LENGTH_SHORT).show()
-
-                }
+                if (success) {}
             }
 
             override fun onError(errorMessage: String) {
