@@ -113,16 +113,23 @@ fun DataProductFragment.productCharacteristic(){
     characteristicRv = binding.characteristicRv
     productCharacteristicAdapter = ProductCharacteristicAdapter(characteristicList, this)
     productCharacteristicAdapter.setSelectedPosition(0)
-    characteristicList = product.types
+    characteristicList = product.types.filter { it.counts.isNotEmpty() }
     characteristicRv.layoutManager = LinearLayoutManager(requireContext(), HORIZONTAL, false)
     characteristicRv.adapter = productCharacteristicAdapter
     productCharacteristicAdapter.updateData(characteristicList)
     productCharacteristicAdapter.setSelectedPosition(0)
 
+
+    val a = product.types.any { type ->
+        type.counts.isNotEmpty() && type.counts.any { count -> count.count > 0 }
+    }
+
+    val b = product.types.filter { type ->
+        type.counts.isNotEmpty()
+    }
     val spacingInPixels = resources.getDimensionPixelSize(R.dimen.spacing)
     val itemDecoration = EqualSpacingItemDecoration(requireContext(), spacingInPixels)
     characteristicRv.addItemDecoration(itemDecoration)
-
 }
 
 fun DataProductFragment.likeProducts() {
