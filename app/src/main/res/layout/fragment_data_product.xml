@@ -176,15 +176,26 @@
                 android:id="@+id/installment_price"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="100dp"
-                android:layout_marginEnd="8dp"
-                android:background="@drawable/bg_constraint"
-                android:hint="    Введите первоначалльный взнос"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/bg_edit"
+                android:hint="Введите П.В"
                 android:inputType="numberDecimal"
+                android:minHeight="48dp"
+                android:paddingStart="10dp"
                 app:layout_constraintBottom_toBottomOf="@+id/dp_installment_price"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/tv_price_first"
+                app:layout_constraintStart_toEndOf="@+id/view9"
                 app:layout_constraintTop_toTopOf="@+id/dp_installment_price" />
+
+            <View
+                android:id="@+id/view9"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="100dp"
+                app:layout_constraintBottom_toBottomOf="@+id/installment_price"
+                app:layout_constraintStart_toEndOf="@+id/price"
+                app:layout_constraintTop_toTopOf="@+id/installment_price" />
 
             <TextView
                 android:id="@+id/stone_type"
@@ -277,7 +288,7 @@
                 android:orientation="horizontal"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/characteristic"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/characteristic"
                 tools:ignore="SpeakableTextPresentCheck"
                 tools:listitem="@layout/row_characteristic_item" />
