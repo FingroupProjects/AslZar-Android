@@ -147,18 +147,16 @@ fun ProfileFragment.getInformation(){
         } else {
             tvMail.text = sessionManager.fetchEmail()
         }
-        if (sessionManager.fetchNumberPhone()
-                ?.isEmpty() == true || sessionManager.fetchNumberPhone()?.toInt() == 0
-        ) {
+        if (sessionManager.fetchNumberPhone()?.isEmpty() == true || sessionManager.fetchNumberPhone()?.toInt() == 0) {
             tvNumberPhone.text = "Номер телефона не указан!"
         } else {
             tvNumberPhone.text = sessionManager.fetchNumberPhone()
         }
-        key = sessionManager.fetchKey()!!
+        key = sessionManager.fetchKey().toString()
         keyBase64 = Base64.decode(key, Base64.DEFAULT)
         encryptionKey = SecretKeySpec(keyBase64, "AES")
         encryptionManager = EncryptionManager(encryptionKey)
-        tvUserLogin.text = encryptionManager.decryptData(sessionManager.fetchLogin()!!)
+        tvUserLogin.text = sessionManager.fetchLogin()?.let { encryptionManager.decryptData(it) }
     }
     speedometerView(salesPlan!!.toFloat())
 }

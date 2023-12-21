@@ -188,7 +188,7 @@ class SetInProductFragment : Fragment(), ProductOnClickListener, AddingProduct, 
                             Log.d("TAG", "onResponse: $allProducts")
                         }
                     } else {
-                        handleErrorResponse(response.code(), requireContext(), preferences)
+                        handleErrorResponse(response.code(), requireContext(), preferences, sessionManager)
                     }
                 }
                 override fun onFailure(call: Call<GetAllProductV2?>, t: Throwable) {

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.databinding.RowSliderItem2Binding
 import com.fin_group.aslzar.response.ResultX
@@ -46,6 +47,15 @@ class AlikeProductsAdapter(
                 itemView.setBackgroundResource(R.drawable.selected_item_background)
             } else {
                 itemView.background = null
+            }
+            if (likeProduct.img.isNotEmpty()) {
+                Glide.with(itemView.context)
+                    .load(likeProduct.img[0])
+                    .override(200, 200)
+                    .centerCrop()
+                    .into(imageView)
+            } else {
+                imageView.setImageResource(R.drawable.ic_no_image)
             }
         }
     }

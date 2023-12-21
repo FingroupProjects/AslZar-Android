@@ -1,5 +1,7 @@
 package com.fin_group.aslzar.ui.fragments.profile
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Base64
 import androidx.fragment.app.Fragment
@@ -22,6 +24,7 @@ import com.fin_group.aslzar.ui.fragments.profile.functions.getSalesPlan
 import com.fin_group.aslzar.ui.fragments.profile.functions.speedometerView
 import com.fin_group.aslzar.util.NoInternetDialogFragment
 import com.fin_group.aslzar.util.SessionManager
+import com.fin_group.aslzar.util.UnauthorizedDialogFragment
 import com.fin_group.aslzar.util.hideBottomNav
 import com.fin_group.aslzar.util.showBottomNav
 import javax.crypto.spec.SecretKeySpec
@@ -39,6 +42,9 @@ class ProfileFragment : Fragment() {
     lateinit var encryptionKey: SecretKeySpec
     lateinit var encryptionManager: EncryptionManager
     lateinit var swipeRefreshLayout: SwipeRefreshLayout
+
+    lateinit var preferences: SharedPreferences
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
         setHasOptionsMenu(true)
@@ -46,6 +52,8 @@ class ProfileFragment : Fragment() {
         apiService = ApiClient()
         apiService.init(sessionManager)
         swipeRefreshLayout = binding.swipeRefreshLayout
+        preferences = context?.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)!!
+
         animation(binding)
         return binding.root
     }
@@ -60,6 +68,10 @@ class ProfileFragment : Fragment() {
 
         binding.btnChangePassword.setOnClickListener {
             findNavController().navigate(R.id.action_profileFragment_to_codeFragment)
+        }
+
+        binding.tvUserLogin.setOnClickListener {
+            UnauthorizedDialogFragment.showUnauthorizedError(requireContext(), preferences, this, sessionManager)
         }
 
         getInformation()

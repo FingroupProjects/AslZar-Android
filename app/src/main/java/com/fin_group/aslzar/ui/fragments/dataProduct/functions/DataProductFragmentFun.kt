@@ -113,18 +113,6 @@ fun DataProductFragment.productCharacteristic(){
     characteristicRv.adapter = productCharacteristicAdapter
     productCharacteristicAdapter.updateData(characteristicList)
     productCharacteristicAdapter.setSelectedPosition(0)
-
-
-    val a = product.types.any { type ->
-        type.counts.isNotEmpty() && type.counts.any { count -> count.count > 0 }
-    }
-
-    val b = product.types.filter { type ->
-        type.counts.isNotEmpty()
-    }
-    val spacingInPixels = resources.getDimensionPixelSize(R.dimen.spacing)
-    val itemDecoration = EqualSpacingItemDecoration(requireContext(), spacingInPixels)
-    characteristicRv.addItemDecoration(itemDecoration)
 }
 
 fun DataProductFragment.likeProducts() {
@@ -309,9 +297,9 @@ fun DataProductFragment.getProductByID() {
                     val productResponse = response.body()
                     if (productResponse != null) {
                         product = productResponse
-                        setDataProduct(product, binding)
                         productSomeImagesAdapter.updateList(product.img)
                         productCharacteristicAdapter.updateData(product.types)
+                        setDataProduct(product, binding)
                     }
                 }
             }

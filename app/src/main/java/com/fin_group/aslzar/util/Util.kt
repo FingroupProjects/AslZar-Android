@@ -363,7 +363,7 @@ fun viewChecked(view: ConstraintLayout): Boolean {
     return view.visibility != View.VISIBLE
 }
 
-fun Fragment.handleErrorResponse(errorCode: Int, context: Context, sharedPreferences: SharedPreferences) {
+fun Fragment.handleErrorResponse(errorCode: Int, context: Context, sharedPreferences: SharedPreferences, sessionManager: SessionManager) {
     val error = ErrorCode.fromCode(errorCode)
 
     when (error) {
@@ -371,10 +371,10 @@ fun Fragment.handleErrorResponse(errorCode: Int, context: Context, sharedPrefere
             Toast.makeText(context, "Error: Bad Request.", Toast.LENGTH_SHORT).show()
         }
         ErrorCode.UNAUTHORIZED -> {
-            UnauthorizedDialogFragment.showUnauthorizedError(context, sharedPreferences, this)
+            UnauthorizedDialogFragment.showUnauthorizedError(context, sharedPreferences, this, sessionManager)
         }
         ErrorCode.PAYMENT_REQUIRED -> {
-            UnauthorizedDialogFragment.showUnauthorizedError(context, sharedPreferences, this)
+            UnauthorizedDialogFragment.showUnauthorizedError(context, sharedPreferences, this, sessionManager)
         }
         ErrorCode.FORBIDDEN -> {
             Toast.makeText(context, "Error: Forbidden. У вас нет доступа к этому ресурсу.", Toast.LENGTH_SHORT).show()

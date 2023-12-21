@@ -18,7 +18,8 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class UnauthorizedDialogFragment(
     private val sharedPreferences: SharedPreferences,
-    private val fragment: Fragment
+    private val fragment: Fragment,
+    private val sessionManager: SessionManager
 ): DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -40,15 +41,15 @@ class UnauthorizedDialogFragment(
     }
 
     private fun redirectToLogin() {
-        val sessionManager = SessionManager(requireContext())
         sessionManager.clearSession()
         val editor: SharedPreferences.Editor = sharedPreferences.edit()
         editor.putBoolean(IS_LOGGED_IN_KEY, false)
         editor.clear()
+        editor.remove("productList")
         editor.apply()
         val i = Intent(context, LoginActivity::class.java)
         startActivity(i)
-        activity?.finish()
+        requireActivity().finish()
         dismiss()
     }
 
@@ -56,9 +57,10 @@ class UnauthorizedDialogFragment(
         fun showUnauthorizedError(
             context: Context,
             sharedPreferences: SharedPreferences,
-            fragment: Fragment
+            fragment: Fragment,
+            sessionManager: SessionManager
         ) {
-            val dialog = UnauthorizedDialogFragment(sharedPreferences, fragment)
+            val dialog = UnauthorizedDialogFragment(sharedPreferences, fragment, sessionManager)
             dialog.isCancelable = false
             dialog.show((context as AppCompatActivity).supportFragmentManager, "UnauthorizedErrorDialog")
         }

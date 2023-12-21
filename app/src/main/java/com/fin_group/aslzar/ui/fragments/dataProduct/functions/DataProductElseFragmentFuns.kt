@@ -295,15 +295,9 @@ fun DataProductElseFragment.productCharacteristic(binding: FragmentDataProductEl
     characteristicRv = binding.characteristicRv
     productCharacteristicAdapter = ProductCharacteristicAdapter(characteristicList, this)
     productCharacteristicAdapter.setSelectedPosition(0)
-    characteristicList = product.types
-    characteristicRv.layoutManager = LinearLayoutManager(requireContext(),
-        LinearLayoutManager.HORIZONTAL, false)
+    characteristicList = product.types.filter { it.counts.isNotEmpty() }
+    characteristicRv.layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL, false)
     characteristicRv.adapter = productCharacteristicAdapter
     productCharacteristicAdapter.updateData(characteristicList)
     productCharacteristicAdapter.setSelectedPosition(0)
-
-    val spacingInPixels = resources.getDimensionPixelSize(R.dimen.spacing)
-    val itemDecoration = EqualSpacingItemDecoration(requireContext(), spacingInPixels)
-    characteristicRv.addItemDecoration(itemDecoration)
-
 }

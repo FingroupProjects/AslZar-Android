@@ -191,7 +191,8 @@ class PickCharacterProductDialogFragment : BaseDialogFullFragment(), FilialListe
                             UnauthorizedDialogFragment.showUnauthorizedError(
                                 requireContext(),
                                 sharedPreferences,
-                                this@PickCharacterProductDialogFragment
+                                this@PickCharacterProductDialogFragment,
+                                sessionManager
                             )
                         }
                         500 -> {

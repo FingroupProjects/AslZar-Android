@@ -421,7 +421,8 @@ fun SalesAndPromotionsFragment.getAllProductsFromApi() {
                             UnauthorizedDialogFragment.showUnauthorizedError(
                                 requireContext(),
                                 preferences,
-                                this@getAllProductsFromApi
+                                this@getAllProductsFromApi,
+                                sessionManager
                             )
                         }
                         500 -> {
@@ -495,7 +496,8 @@ fun SalesAndPromotionsFragment.getAllCategoriesFromApi() {
                             UnauthorizedDialogFragment.showUnauthorizedError(
                                 requireContext(),
                                 preferences,
-                                this@getAllCategoriesFromApi
+                                this@getAllCategoriesFromApi,
+                                sessionManager
                             )
                         }
                         500 -> {
