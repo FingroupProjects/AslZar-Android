@@ -35,12 +35,15 @@ import com.fin_group.aslzar.response.Percent
 import com.fin_group.aslzar.response.PercentInstallment
 import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.response.ResultX
+import com.fin_group.aslzar.response.Type
 import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.PickCharacterProductDialogFragment
 import com.fin_group.aslzar.ui.dialogs.SetInProductBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.WarningNoHaveProductFragmentDialog
 import com.fin_group.aslzar.ui.fragments.dataProduct.DataProductFragment
 import com.fin_group.aslzar.ui.fragments.dataProduct.DataProductFragmentDirections
+import com.fin_group.aslzar.ui.fragments.main.MainFragment
+import com.fin_group.aslzar.util.ProductOnClickListener
 import retrofit2.Callback
 import com.fin_group.aslzar.util.formatNumber
 import com.fin_group.aslzar.util.showBottomNav
@@ -216,9 +219,27 @@ fun DataProductFragment.setDataProduct(product: ResultX, binding: FragmentDataPr
             } else {
                 Toast.makeText(requireContext(), "Товар добавлен в корзину", Toast.LENGTH_SHORT).show()
             }
+
+            selectedCharacteristic = productCharacteristicAdapter.getSelectedProduct()
+
+            if (selectedCharacteristic.counts.size <= 1){
+                selectedCount = selectedCharacteristic.counts[0]
+                listener1.addProduct(product, selectedCharacteristic, selectedCount)
+            } else if (selectedCharacteristic.counts.size > 1){
+                selectedCount = if(selectedCharacteristic.counts.any{ it.is_filial }){
+                    selectedCharacteristic.counts.find { it.is_filial }!!
+                } else {
+                    selectedCharacteristic.counts.minBy { it.price.toDouble() }
+                }
+                listener1.addProduct(product, selectedCharacteristic, selectedCount)
+            }
+            else {
+                listener1.addProduct(product, selectedCharacteristic, selectedCount)
+            }
         }
     }
 }
+
 
 @SuppressLint("SetTextI18n")
 private fun DataProductFragment.updatePrice(binding: FragmentDataProductBinding, product: ResultX, selectedSize: String?, selectedWeight: String?) {
@@ -438,10 +459,7 @@ fun DataProductFragment.onBackPressed() {
             }
         })
 }
-
-fun DataProductFragment.updateTvPriceFirst() {
-    selectedCharacteristic.let { characteristic ->
-        val minPrice = characteristic.counts.minByOrNull { it.price.toDouble() }?.price ?: 0
-        binding.tvPriceFirst.text = formatNumber(minPrice)
-    }
+fun DataProductFragment.updateCartBadge() {
+    val uniqueProductTypes = Cart.getUniqueProductTypesCount()
+    badgeManager.saveBadgeCount(uniqueProductTypes)
 }
