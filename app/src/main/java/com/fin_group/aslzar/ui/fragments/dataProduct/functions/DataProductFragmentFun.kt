@@ -107,7 +107,6 @@ fun DataProductFragment.someImagesProduct() {
 fun DataProductFragment.productCharacteristic(){
     characteristicRv = binding.characteristicRv
     productCharacteristicAdapter = ProductCharacteristicAdapter(characteristicList, this)
-    productCharacteristicAdapter.setSelectedPosition(0)
     characteristicList = product.types.filter { it.counts.isNotEmpty() }
     characteristicRv.layoutManager = LinearLayoutManager(requireContext(), HORIZONTAL, false)
     characteristicRv.adapter = productCharacteristicAdapter
@@ -300,10 +299,10 @@ fun DataProductFragment.getProductByID() {
                         productSomeImagesAdapter.updateList(product.img)
                         productCharacteristicAdapter.updateData(product.types)
                         setDataProduct(product, binding)
+                        productCharacteristic()
                     }
                 }
             }
-
             override fun onFailure(call: Call<ResultX?>, t: Throwable) {
                 swipeRefreshLayout.isRefreshing = false
                 Log.d("TAG", "onFailure: ${t.message}")

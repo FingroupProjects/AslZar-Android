@@ -31,6 +31,7 @@ import com.fin_group.aslzar.ui.fragments.new_products.functions.getNonZeroValues
 import com.fin_group.aslzar.ui.fragments.sales.SalesAndPromotionsFragment
 import com.fin_group.aslzar.util.CategoryClickListener
 import com.fin_group.aslzar.util.UnauthorizedDialogFragment
+import com.fin_group.aslzar.util.handleErrorResponse
 import com.fin_group.aslzar.util.returnNumber
 import com.fin_group.aslzar.util.viewChecked
 import com.google.gson.Gson
@@ -365,13 +366,6 @@ fun SalesAndPromotionsFragment.fetchRV(productList: List<ResultX>) {
     myAdapter.updateProducts(productList)
 
     recyclerView.startLayoutAnimation()
-    if (allProducts.isEmpty()){
-        recyclerView.visibility = GONE
-        errorTv.visibility = VISIBLE
-    } else {
-        recyclerView.visibility = VISIBLE
-        errorTv.visibility = GONE
-    }
 }
 
 fun SalesAndPromotionsFragment.getAllProductsFromApi() {
@@ -416,22 +410,7 @@ fun SalesAndPromotionsFragment.getAllProductsFromApi() {
                         errorTv.visibility = VISIBLE
                     }
                 } else {
-                    when (response.code()){
-                        401 -> {
-                            UnauthorizedDialogFragment.showUnauthorizedError(
-                                requireContext(),
-                                preferences,
-                                this@getAllProductsFromApi,
-                                sessionManager
-                            )
-                        }
-                        500 -> {
-                            showError("Сервер временно не работает, повторите попытку позже")
-                        }
-                        else -> {
-                            showError("Произошла ошибка: ${response.message()}")
-                        }
-                    }
+                    handleErrorResponse(response.code(), requireContext(), preferences, sessionManager)
                 }
             }
 
@@ -491,23 +470,7 @@ fun SalesAndPromotionsFragment.getAllCategoriesFromApi() {
                         showError("Произошла ошибка: ответ сервера не содержит данных.")
                     }
                 } else {
-                    when (response.code()){
-                        401 -> {
-                            UnauthorizedDialogFragment.showUnauthorizedError(
-                                requireContext(),
-                                preferences,
-                                this@getAllCategoriesFromApi,
-                                sessionManager
-                            )
-                        }
-                        500 -> {
-                            showError("Сервер временно не работает, повторите попытку позже")
-                        }
-                        else -> {
-                            showError("Произошла ошибка: ${response.message()}")
-                            Log.d("TAG", "onResponse if un success: ${response.raw()}")
-                        }
-                    }
+                    handleErrorResponse(response.code(), requireContext(), preferences, sessionManager)
                 }
             }
 
