@@ -70,10 +70,6 @@ class ProfileFragment : Fragment() {
             findNavController().navigate(R.id.action_profileFragment_to_codeFragment)
         }
 
-        binding.tvUserLogin.setOnClickListener {
-            UnauthorizedDialogFragment.showUnauthorizedError(requireContext(), preferences, this, sessionManager)
-        }
-
         getInformation()
     }
 

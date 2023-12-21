@@ -214,11 +214,11 @@ fun DataProductFragment.setDataProduct(product: ResultX, binding: FragmentDataPr
         })
         btnAddToCart.setOnClickListener {
             val addedProduct = Cart.getProductById(product.id)
-            if (addedProduct != null) {
-                Toast.makeText(requireContext(), "Количество товара увеличено на +1", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(requireContext(), "Товар добавлен в корзину", Toast.LENGTH_SHORT).show()
-            }
+//            if (addedProduct != null) {
+//                Toast.makeText(requireContext(), "Количество товара увеличено на +1", Toast.LENGTH_SHORT).show()
+//            } else {
+//                Toast.makeText(requireContext(), "Товар добавлен в корзину", Toast.LENGTH_SHORT).show()
+//            }
 
             selectedCharacteristic = productCharacteristicAdapter.getSelectedProduct()
 
