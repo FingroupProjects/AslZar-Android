@@ -222,14 +222,6 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
     }
 
     override fun callBottomDialog(product: ResultX) {
-//        val fragmentManager = requireFragmentManager()
-//        val tag = "alike_product_dialog"
-//        val existingFragment = fragmentManager.findFragmentByTag(tag)
-//        if (existingFragment == null) {
-//            val bottomSheetFragment = AlikeProductBottomSheetDialogFragment.newInstance(product)
-//            bottomSheetFragment.show(fragmentManager, tag)
-//        }
-
         val action = DataProductFragmentDirections.actionDataProductFragmentToDataProductElseFragment2(product.id, product)
         findNavController().navigate(action)
     }
@@ -252,7 +244,6 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         selectedCharacteristic = characteristic
         nextCharacteristic = characteristicList.indexOfFirst { it == characteristic }
         productCharacteristicAdapter.setSelectedPosition(nextCharacteristic)
-        //binding.installmentPrice.text = null
     }
 
     override fun showProductDialog(product: Type) {

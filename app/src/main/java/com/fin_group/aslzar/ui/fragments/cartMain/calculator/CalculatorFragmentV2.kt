@@ -111,8 +111,8 @@ class CalculatorFragmentV2 : Fragment(), CalculatorResetListener {
         Cart.registerObserver(cartObserver)
 
         binding.btnRefresh.setOnClickListener {
-            getAllClientsFromApi()
             fetchCoefficientPlanFromApi(binding)
+            getAllClientsFromApi()
         }
 
         clientList = retrieveClientList()
