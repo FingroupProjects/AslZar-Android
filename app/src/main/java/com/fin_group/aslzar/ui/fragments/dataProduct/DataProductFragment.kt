@@ -30,6 +30,7 @@ import com.fin_group.aslzar.adapter.TableInstallmentAdapter
 import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.databinding.FragmentDataProductBinding
 import com.fin_group.aslzar.models.FilterModel
+import com.fin_group.aslzar.response.Category
 import com.fin_group.aslzar.response.Count
 import com.fin_group.aslzar.response.PercentInstallment
 import com.fin_group.aslzar.response.ResultX
@@ -49,6 +50,7 @@ import com.fin_group.aslzar.ui.fragments.dataProduct.functions.retrieveCoefficie
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.setDataProduct
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.showProductCharacteristicDialog
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.someImagesProduct
+import com.fin_group.aslzar.ui.fragments.dataProduct.functions.updateCartBadge
 import com.fin_group.aslzar.util.AddingProduct
 import com.fin_group.aslzar.util.BadgeManager
 import com.fin_group.aslzar.util.FilialListener
@@ -56,6 +58,7 @@ import com.fin_group.aslzar.util.FilterViewModel
 import com.fin_group.aslzar.util.OnAlikeProductClickListener
 import com.fin_group.aslzar.util.OnImageClickListener
 import com.fin_group.aslzar.util.OnProductCharacteristicClickListener
+import com.fin_group.aslzar.util.ProductOnClickListener
 import com.fin_group.aslzar.util.SessionManager
 import com.fin_group.aslzar.util.formatNumber
 import com.fin_group.aslzar.util.hideBottomNav
@@ -99,9 +102,12 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
     private var nextCharacteristic = RecyclerView.NO_POSITION
 
     lateinit var selectedCharacteristic: Type
+    lateinit var selectedCount: Count
 
     lateinit var filterViewModel: FilterViewModel
     var filterModel: FilterModel? = null
+    lateinit var listener1: AddingProduct
+    lateinit var listener2: FilialListener
 
 
     @SuppressLint("UnsafeOptInUsageError")
@@ -118,6 +124,9 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         badgeManager = BadgeManager(requireContext(), "data_product_badge_prefs")
         preferences = context?.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)!!
         monthLinearLayout = binding.monthTable
+
+        listener1 = this
+        listener2 = this
 
         percentLinearLayout = binding.percentTable
         percentInstallment = try {
@@ -233,19 +242,24 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
     override fun addProduct(product: ResultX, type: Type, count: Count) {
         Toast.makeText(requireContext(), "Товар добавлен в корзину: ${product.full_name}", Toast.LENGTH_SHORT).show()
         sharedViewModel.onProductAddedToCartV2(product, requireContext(), type, count)
+        updateCartBadge()
     }
 
     override fun addFilial(product: ResultX, type: Type, filial: Count) {
         Toast.makeText(requireContext(), "Товар добавлен в корзину: ${product.full_name}", Toast.LENGTH_SHORT).show()
         sharedViewModel.onProductAddedToCartV2(product, requireContext(), type, filial)
+        updateCartBadge()
     }
 
     override fun clickCharacteristic(characteristic: Type) {
         selectedCharacteristic = characteristic
+        if (selectedCharacteristic != null){
+            selectedCount = selectedCharacteristic.counts[0]
+        }
         nextCharacteristic = characteristicList.indexOfFirst { it == characteristic }
         productCharacteristicAdapter.setSelectedPosition(nextCharacteristic)
     }
-
+    
     override fun showProductDialog(product: Type) {
         val alertDialogBuilder = MaterialAlertDialogBuilder(requireContext())
 
@@ -257,7 +271,7 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         if (countsList.size > 1) {
             alertDialogBuilder.setTitle("Выберите филиал")
             alertDialogBuilder.setItems(countsList) { _, which ->
-                val selectedCount = product.counts[which]
+                selectedCount = product.counts[which]
                 binding.tvPriceFirst.text = formatNumber(selectedCount.price)
                 sharedViewModel.selectedPrice.postValue(selectedCount.price.toDouble())
                 val tvPriceFirstSecond = selectedCount.price

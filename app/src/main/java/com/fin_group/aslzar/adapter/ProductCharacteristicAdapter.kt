@@ -40,6 +40,11 @@ class ProductCharacteristicAdapter(
         return productList.size
     }
 
+    fun getSelectedProduct(): Type {
+        return productList[selectedItemPosition]
+    }
+
+
     @SuppressLint("NotifyDataSetChanged")
     fun updateData(newList: List<Type>) {
         productList = newList
@@ -50,6 +55,10 @@ class ProductCharacteristicAdapter(
     fun setSelectedPosition(position: Int) {
         selectedItemPosition = position
         notifyDataSetChanged()
+    }
+
+    fun getPosition(type: Type): Type{
+        return productList.find { it == type }!!
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -71,19 +80,12 @@ class ProductCharacteristicAdapter(
                     val price = itemView.findViewById<TextView>(R.id.price)
                     price.text = "Цена:"
                 }
-//                val priceValue = if (product.counts.firstOrNull()?.is_filial == true) {
-//                    product.counts.filter { it.is_filial }.minByOrNull { it.price.toDouble() }?.price?.toDouble() ?: 0.0
-//                } else {
-//                    product.counts.first().price.toDouble()
-//                }
-
                 val priceValue = if (product.counts.any { it.is_filial }){
                     product.counts.find { it.is_filial }
                 } else {
                     product.counts.minBy { it.price.toDouble() }
                 }
                 tvPrice.text = "${formatNumber(priceValue!!.price)} UZS"
-
                 if (isSelected) {
                     itemView.setBackgroundResource(R.drawable.selected_item_background_2)
                 } else {
