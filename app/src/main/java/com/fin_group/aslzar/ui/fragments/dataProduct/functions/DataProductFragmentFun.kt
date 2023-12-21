@@ -273,7 +273,6 @@ fun DataProductFragment.getSimilarProducts() {
                                 type.counts.isNotEmpty() && type.counts.any { count -> count.count > 0 }
                             }
                         }
-                        Log.d("TAG", "onResponse: $getSimilarProduct")
                         productAlikeAdapter.updateList(getSimilarProduct)
                         if (similarProduct.isEmpty()) {
                             binding.similarProducts.visibility = GONE
@@ -382,7 +381,6 @@ fun DataProductFragment.fetchCoefficientPlanFromPrefs() {
             fetchCoefficientPlanFromApi()
         }
     } catch (e: Exception) {
-        Toast.makeText(requireContext(), "${e.message}", Toast.LENGTH_SHORT).show()
         Log.d("TAG", "getAllCategoriesPrefs: ${e.message}")
     }
 }

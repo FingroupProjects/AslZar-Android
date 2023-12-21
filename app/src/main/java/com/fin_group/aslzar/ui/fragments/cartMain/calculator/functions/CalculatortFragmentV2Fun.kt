@@ -69,9 +69,7 @@ fun CalculatorFragmentV2.cartObserver(binding: FragmentCalculatorV2Binding) {
 fun CalculatorFragmentV2.setupDiscountButtons(binding: FragmentCalculatorV2Binding, installment: PercentInstallment) {
     binding.handSaleCount.text = manualDiscount.toString()
     maxManualDiscount = installment.sale_limit ?: 0.0
-    binding.tvHandSale.text = "Ручная скидки (Макс: $maxManualDiscount)"
-
-    Log.d("TAG", "setupDiscountButtons: ${installment.sale_limit}")
+    binding.tvHandSale.text = "Ручная скидка (Макс: $maxManualDiscount)"
 
     binding.apply {
         handSalePlus.setOnClickListener {
@@ -160,13 +158,13 @@ fun CalculatorFragmentV2.updateDisplayedValues(binding: FragmentCalculatorV2Bind
 
 fun CalculatorFragmentV2.updateClientsData(clients: List<Client>) {
     arrayAdapterTypeClient = ArrayAdapter(requireContext(), R.layout.spinner_item, clients.map { it.client_name })
+    Log.d("TAG", "updateClientsData: $clients")
 }
 
 @SuppressLint("SetTextI18n")
 fun CalculatorFragmentV2.fetchClientsAndTypePay(binding: FragmentCalculatorV2Binding) {
 
-    arrayAdapterTypeClient =
-        ArrayAdapter(requireContext(), R.layout.spinner_item, clientList.map { it.client_name })
+    arrayAdapterTypeClient = ArrayAdapter(requireContext(), R.layout.spinner_item, clientList.map { it.client_name })
 
     binding.apply {
         clientType.setAdapter(arrayAdapterTypeClient)
@@ -395,7 +393,7 @@ fun CalculatorFragmentV2.createTextWatcherForFirstPay(
 
         override fun afterTextChanged(s: Editable?) {
             val newText = s.toString().trim()
-            val currentMax = totalPrice * (1 - manualDiscount / 100)
+            val currentMax = Cart.getTotalPrice().toDouble() * (1 - manualDiscount / 100)
 
             if (!newText.isNullOrEmpty()) {
                 val currentValue = newText.replace(',', '.').toDouble()
@@ -503,6 +501,7 @@ fun CalculatorFragmentV2.retrieveClientList(): List<Client> {
         val clientListType = object : TypeToken<List<Client>>() {}.type
         Gson().fromJson(clientListJson, clientListType)
     } else {
+        getAllClientsFromApi()
         emptyList()
     }
 }

@@ -80,11 +80,6 @@ class ProductCharacteristicAdapter(
                     val price = itemView.findViewById<TextView>(R.id.price)
                     price.text = "Цена:"
                 }
-//                val priceValue = if (product.counts.firstOrNull()?.is_filial == true) {
-//                    product.counts.filter { it.is_filial }.minByOrNull { it.price.toDouble() }?.price?.toDouble() ?: 0.0
-//                } else {
-//                    product.counts.first().price.toDouble()
-//                }
                 val priceValue = if (product.counts.any { it.is_filial }){
                     product.counts.find { it.is_filial }
                 } else {
