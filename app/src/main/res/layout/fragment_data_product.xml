@@ -264,16 +264,65 @@
                 app:layout_constraintTop_toTopOf="@+id/metal" />
 
             <TextView
-                android:id="@+id/characteristic"
+                android:id="@+id/filial"
                 style="@style/forTextView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="3dp"
-                android:text="Характеристика:"
+                android:text="Филиал:"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/metal" />
+
+            <TextView
+                android:id="@+id/tv_filial"
+                style="@style/forTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:text=""
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/filial"
+                app:layout_constraintStart_toEndOf="@+id/filial"
+                app:layout_constraintTop_toTopOf="@+id/filial" />
+
+            <TextView
+                android:id="@+id/vitrina"
+                style="@style/forTextView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="3dp"
+                android:text="Витрина:"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/filial" />
+
+            <TextView
+                android:id="@+id/tv_vitrina"
+                style="@style/forTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:text=""
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/vitrina"
+                app:layout_constraintStart_toEndOf="@+id/vitrina"
+                app:layout_constraintTop_toTopOf="@+id/vitrina" />
+
+
+            <TextView
+                android:id="@+id/characteristic"
+                style="@style/forTextView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="5dp"
+                android:text="Характеристика:"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/vitrina" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/characteristic_rv"

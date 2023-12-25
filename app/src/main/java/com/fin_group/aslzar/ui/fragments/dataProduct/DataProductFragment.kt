@@ -64,6 +64,7 @@ import com.fin_group.aslzar.util.formatNumber
 import com.fin_group.aslzar.util.hideBottomNav
 import com.fin_group.aslzar.util.showBottomNav
 import com.fin_group.aslzar.viewmodel.SharedViewModel
+import com.google.android.gms.common.api.GoogleApi
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
@@ -95,15 +96,12 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
     lateinit var monthLinearLayout: LinearLayoutCompat
     lateinit var percentLinearLayout: LinearLayoutCompat
     lateinit var adapterPaymentPercent: TableInstallmentAdapter
-
     lateinit var characteristicRv: RecyclerView
     lateinit var productCharacteristicAdapter: ProductCharacteristicAdapter
     var characteristicList: List<Type> = emptyList()
     private var nextCharacteristic = RecyclerView.NO_POSITION
-
     lateinit var selectedCharacteristic: Type
     lateinit var selectedCount: Count
-
     lateinit var filterViewModel: FilterViewModel
     var filterModel: FilterModel? = null
     lateinit var listener1: AddingProduct
@@ -143,11 +141,6 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         } else {
             getProductByID()
         }
-
-//        binding.tvCode.setOnClickListener {
-//            val action = DataProductFragmentDirections.actionDataProductFragmentToDataProductElseFragment2(product.id, product)
-//            findNavController().navigate(action)
-//        }
         fetchCoefficientPlanFromPrefs()
 
         if (product.category_id == "") {
@@ -167,11 +160,9 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         setHasOptionsMenu(true)
         recyclerViewSomeImages = binding.otherImgRv
         recyclerViewLikeProducts = binding.likeProductsRv
-
         productSomeImagesAdapter = ProductSomeImagesAdapter(imageList, this)
         productSomeImagesAdapter.setSelectedPosition(0)
         productAlikeAdapter = AlikeProductsAdapter(alikeProductsList, this)
-
         someImagesProduct()
         productCharacteristic()
         likeProducts()
@@ -186,6 +177,7 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         swipeRefreshLayout.setOnRefreshListener {
             getProductByID()
             fetchCoefficientPlanFromApi()
+
         }
     }
     @Deprecated("Deprecated in Java")
@@ -221,6 +213,7 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
 
     override fun onStart() {
         super.onStart()
+        setDataProduct(product, binding)
         hideBottomNav()
     }
 
@@ -279,6 +272,8 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
                 binding.withFirstPay.visibility = View.GONE
                 binding.tvWithFirstPay.visibility = View.GONE
                 binding.installmentPrice.error = null
+                binding.tvFilial.text = selectedCount.filial
+                binding.tvVitrina.text = selectedCount.sclad
                 printPercent(binding, percentInstallment, tvPriceFirstSecond)
             }
             val alertDialog = alertDialogBuilder.create()
@@ -288,6 +283,11 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
             sharedViewModel.selectedPrice.postValue(count.price.toDouble())
             binding.tvPriceFirst.text = formatNumber(count.price)
             val tvPriceFirstSecond = count.price
+            binding.tvFilial.text = count.filial
+            binding.tvVitrina.text = count.sclad
+            binding.installmentPrice.text = null
+            binding.withFirstPay.visibility = View.GONE
+            binding.tvWithFirstPay.visibility = View.GONE
             printPercent(binding, percentInstallment, tvPriceFirstSecond)
         }
     }

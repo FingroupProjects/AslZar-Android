@@ -23,6 +23,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.fin_group.aslzar.R
@@ -48,6 +49,7 @@ import com.fin_group.aslzar.ui.fragments.main.functions.getAllCategoriesFromApi
 import com.fin_group.aslzar.ui.fragments.main.functions.getAllCategoriesPrefs
 import com.fin_group.aslzar.ui.fragments.main.functions.getAllProductFromPrefs
 import com.fin_group.aslzar.ui.fragments.main.functions.getAllProductsFromApi
+import com.fin_group.aslzar.ui.fragments.main.functions.goToTop
 import com.fin_group.aslzar.ui.fragments.main.functions.savingAndFetchSearch
 import com.fin_group.aslzar.ui.fragments.main.functions.savingAndFetchingFilter
 import com.fin_group.aslzar.ui.fragments.main.functions.searchViewFun
@@ -103,7 +105,6 @@ class MainFragment : Fragment(), ProductOnClickListener,
     lateinit var recyclerView: RecyclerView
     lateinit var errorTv: TextView
 
-    lateinit var btnGoTo: ImageButton
 
     lateinit var encryptionManager: EncryptionManager
 
@@ -113,6 +114,10 @@ class MainFragment : Fragment(), ProductOnClickListener,
 
     lateinit var checkedFiltersTv: TextView
     var isButtonVisible = false
+    lateinit var btnGoTo: ImageButton
+
+    lateinit var layoutManager: LinearLayoutManager
+
 
 
     override fun onCreateView(
@@ -156,10 +161,9 @@ class MainFragment : Fragment(), ProductOnClickListener,
         mainActivity = activity as? MainActivity ?: throw IllegalStateException("Activity is not MainActivity")
 
         NoInternetDialogFragment.showIfNoInternet(requireContext())
-
+        goToTop()
         getAllCategoriesPrefs()
         getAllProductFromPrefs()
-
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return true

@@ -2,22 +2,15 @@
 
 package com.fin_group.aslzar.ui.fragments.dataProduct.functions
 
-import EqualSpacingItemDecoration
 import android.annotation.SuppressLint
-import android.graphics.Typeface
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.Gravity
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.view.inputmethod.InputMethodManager
-import android.widget.LinearLayout
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL
@@ -33,21 +26,15 @@ import com.fin_group.aslzar.response.Count
 import com.fin_group.aslzar.response.GetSimilarProductsResponse
 import com.fin_group.aslzar.response.Percent
 import com.fin_group.aslzar.response.PercentInstallment
-import com.fin_group.aslzar.response.Product
 import com.fin_group.aslzar.response.ResultX
-import com.fin_group.aslzar.response.Type
 import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.PickCharacterProductDialogFragment
-import com.fin_group.aslzar.ui.dialogs.SetInProductBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.WarningNoHaveProductFragmentDialog
 import com.fin_group.aslzar.ui.fragments.dataProduct.DataProductFragment
 import com.fin_group.aslzar.ui.fragments.dataProduct.DataProductFragmentDirections
-import com.fin_group.aslzar.ui.fragments.main.MainFragment
-import com.fin_group.aslzar.util.ProductOnClickListener
 import retrofit2.Callback
 import com.fin_group.aslzar.util.formatNumber
 import com.fin_group.aslzar.util.showBottomNav
-import com.google.android.material.internal.ViewUtils.hideKeyboard
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import retrofit2.Call
@@ -166,6 +153,10 @@ fun DataProductFragment.setDataProduct(product: ResultX, binding: FragmentDataPr
         binding.metal.visibility = GONE
     }
 
+    binding.installmentPrice.text = null
+    binding.withFirstPay.visibility = GONE
+    binding.tvWithFirstPay.visibility = GONE
+
     binding.apply {
         if (product.img.isNotEmpty()) {
             Glide.with(requireContext()).load(product.img[0]).into(binding.imageView2)
@@ -173,12 +164,42 @@ fun DataProductFragment.setDataProduct(product: ResultX, binding: FragmentDataPr
             imageView2.setImageResource(R.drawable.ic_no_image)
         }
         tvCode.text = product.name
-        val price = product.types.flatMap { it.counts }.firstOrNull()?.price ?: 0
-        tvPriceFirst.text = formatNumber(price)
+
+        selectedCharacteristic = productCharacteristicAdapter.getSelectedProduct()
+        if (selectedCharacteristic.counts.size <= 1){
+            selectedCount = selectedCharacteristic.counts[0]
+            tvPriceFirst.text = formatNumber(selectedCount.price)
+            binding.tvFilial.text = selectedCount.filial
+            binding.tvVitrina.text = selectedCount.sclad
+            printPercent(binding, percentInstallment, selectedCount.price)
+            Log.d("TAG","Set Data Product 1: ${selectedCount.price}")
+
+        } else if (selectedCharacteristic.counts.size > 1){
+            selectedCount = if(selectedCharacteristic.counts.any{ it.is_filial }){
+                selectedCharacteristic.counts.find { it.is_filial }!!
+            } else {
+                selectedCharacteristic.counts.minBy { it.price.toDouble() }
+            }
+            tvPriceFirst.text = formatNumber(selectedCount.price)
+            binding.tvFilial.text = selectedCount.filial
+            binding.tvVitrina.text = selectedCount.sclad
+            printPercent(binding, percentInstallment, selectedCount.price)
+            Log.d("TAG","Set Data Product 2: ${selectedCount.price}")
+
+
+        }
+        else {
+            tvPriceFirst.text = formatNumber(selectedCount.price)
+            binding.tvFilial.text = selectedCount.filial
+            binding.tvVitrina.text = selectedCount.sclad
+            printPercent(binding, percentInstallment, selectedCount.price)
+            Log.d("TAG","Set Data Product 2: ${selectedCount.price}")
+
+        }
         tvStoneType.text = product.stone_type.ifEmpty { "Без камня" }
         tvContent.text = product.proba
         tvMetal.text = product.metal
-        sharedViewModel.selectedPrice.postValue(price.toDouble())
+        sharedViewModel.selectedPrice.postValue(selectedCount.price.toDouble())
 
         val installmentPrice = binding.installmentPrice
         val tvWithFirstPay = binding.tvWithFirstPay
@@ -192,15 +213,15 @@ fun DataProductFragment.setDataProduct(product: ResultX, binding: FragmentDataPr
                 val initialPrice = sharedViewModel.selectedPrice.value ?:0.0
 
                 if (!s.isNullOrEmpty()) {
-
                     val userInput = s.toString().toDoubleOrNull()
-
                     if (userInput != null && userInput <= sharedViewModel.selectedPrice.value!!) {
                         binding.withFirstPay.visibility = VISIBLE
                         tvWithFirstPay.visibility = VISIBLE
                         val remainingAmount = initialPrice - userInput.toDouble()
                         tvWithFirstPay.text = formatNumber(remainingAmount)
                         printPercent(binding, percentInstallment, remainingAmount)
+                        Log.d("TAG","With First Pay: $remainingAmount")
+
                     } else {
                         installmentPrice.setText(initialPrice.toString())
                         installmentPrice.setSelection(installmentPrice.text.length)
@@ -208,6 +229,7 @@ fun DataProductFragment.setDataProduct(product: ResultX, binding: FragmentDataPr
                 }else{
                     tvWithFirstPay.text = formatNumber(initialPrice)
                     printPercent(binding, percentInstallment, initialPrice)
+                    Log.d("TAG","No First Pay: $initialPrice")
                 }
             }
 
@@ -239,19 +261,6 @@ fun DataProductFragment.setDataProduct(product: ResultX, binding: FragmentDataPr
         }
     }
 }
-
-
-@SuppressLint("SetTextI18n")
-private fun DataProductFragment.updatePrice(binding: FragmentDataProductBinding, product: ResultX, selectedSize: String?, selectedWeight: String?) {
-    val matchingType = product.types.find { it.size.toString() == selectedSize && it.weight.toString() == selectedWeight }
-
-    if (matchingType != null) {
-        val price = matchingType.counts.firstOrNull()?.price ?: 0
-        binding.tvPriceFirst.text = "$price UZS"
-        binding.dpInstallmentPrice.text = "(${((price.toDouble() * percentInstallment.first_pay.toDouble()) / 100)} UZS п.в.)"
-    }
-}
-
 fun DataProductFragment.getSimilarProducts() {
     swipeRefreshLayout.isRefreshing = true
 
@@ -282,11 +291,7 @@ fun DataProductFragment.getSimilarProducts() {
                             binding.likeProductsRv.visibility = VISIBLE
                         }
                     } else {
-                        Toast.makeText(
-                            requireContext(),
-                            "Не удалось, повторите попытку еще раз!",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Toast.makeText(requireContext(), "Не удалось, повторите попытку еще раз!", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -317,9 +322,9 @@ fun DataProductFragment.getProductByID() {
                     if (productResponse != null) {
                         product = productResponse
                         productSomeImagesAdapter.updateList(product.img)
-                        productCharacteristicAdapter.updateData(product.types)
+                        //productCharacteristicAdapter.updateData(product.types)
                         setDataProduct(product, binding)
-                        productCharacteristic()
+//                        productCharacteristic()
                     }
                 }
             }
@@ -333,17 +338,6 @@ fun DataProductFragment.getProductByID() {
         Log.d("TAG", "getProductByID: ${e.message}")
     }
 }
-
-fun DataProductFragment.retrieveFilteredProducts(): List<ResultX> {
-    val productJson = preferences.getString("filteredProducts", null)
-    return if (productJson != null) {
-        val productListType = object : TypeToken<List<Product>>() {}.type
-        Gson().fromJson(productJson, productListType)
-    } else {
-        emptyList()
-    }
-}
-
 fun DataProductFragment.retrieveCoefficientPlan(): PercentInstallment {
     val coefficientPlanJson = preferences.getString("coefficientPlan", null)
     return if (coefficientPlanJson != null) {
@@ -352,11 +346,7 @@ fun DataProductFragment.retrieveCoefficientPlan(): PercentInstallment {
         percent
     } else {
         fetchCoefficientPlanFromApi()
-        PercentInstallment(
-            5, 5, 7, listOf(
-                Percent(1.79, 3)
-            )
-        )
+        PercentInstallment(5, 5, 7, listOf(Percent(1.79, 3)))
     }
 }
 
@@ -368,15 +358,21 @@ fun DataProductFragment.fetchCoefficientPlanFromPrefs() {
             val coefficientPlan = Gson().fromJson<PercentInstallment>(coefficientPlanJson, coefficientPlanType)
             percentInstallment = coefficientPlan
 
-            val firstTypePrice = if (product.types.isNotEmpty() && product.types.firstOrNull()?.counts?.isNotEmpty() == true) {
-                product.types.first().counts.first().price.toDouble()
-            } else {
-                0.0
+            selectedCharacteristic = productCharacteristicAdapter.getSelectedProduct()
+            if (selectedCharacteristic.counts.size <= 1){
+                selectedCount = selectedCharacteristic.counts[0]
+                printPercent(binding, percentInstallment, selectedCount.price)
+            } else if (selectedCharacteristic.counts.size > 1){
+                selectedCount = if(selectedCharacteristic.counts.any{ it.is_filial }){
+                    selectedCharacteristic.counts.find { it.is_filial }!!
+                } else {
+                    selectedCharacteristic.counts.minBy { it.price.toDouble() }
+                }
+                printPercent(binding, percentInstallment, selectedCount.price)
             }
-            Log.d("TAG","First Price 1: $firstTypePrice")
-            val price = firstTypePrice - ((firstTypePrice * percentInstallment.first_pay.toDouble()) / 100)
-            Log.d("TAG","Total Price 1: $price")
-            printPercent(binding, percentInstallment, firstTypePrice)
+            else {
+                printPercent(binding, percentInstallment, selectedCount.price)
+            }
         } else {
             fetchCoefficientPlanFromApi()
         }
@@ -399,14 +395,23 @@ fun DataProductFragment.fetchCoefficientPlanFromApi() {
                         val coefficientPlanJson = Gson().toJson(coefficientPlanList)
                         preferences.edit().putString("coefficientPlan", coefficientPlanJson).apply()
                         percentInstallment = coefficientPlanList
-                        
-                        val firstTypePrice = if (product.types.isNotEmpty() && product.types.firstOrNull()?.counts?.isNotEmpty() == true) {
-                            product.types.first().counts.first().price.toDouble()
-                        } else {
-                            0.0
+
+                        selectedCharacteristic = productCharacteristicAdapter.getSelectedProduct()
+                        if (selectedCharacteristic.counts.size <= 1){
+                            selectedCount = selectedCharacteristic.counts[0]
+                            printPercent(binding, percentInstallment, selectedCount.price)
+                            Log.d("TAG","fetchCoefficientPlanFromApi 1: ${selectedCount.price}")
+                        } else if (selectedCharacteristic.counts.size > 1){
+                            selectedCount = if(selectedCharacteristic.counts.any{ it.is_filial }){
+                                selectedCharacteristic.counts.find { it.is_filial }!!
+                            } else {
+                                selectedCharacteristic.counts.minBy { it.price.toDouble() }
+                            }
+                            printPercent(binding, percentInstallment, selectedCount.price)
                         }
-                        //val price = firstTypePrice - ((firstTypePrice * percentInstallment.first_pay.toDouble()) / 100)
-                        printPercent(binding, percentInstallment, firstTypePrice)
+                        else {
+                            printPercent(binding, percentInstallment, selectedCount.price)
+                        }
                     }
                 }
             }
