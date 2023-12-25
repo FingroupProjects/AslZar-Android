@@ -66,7 +66,10 @@ fun CalculatorFragmentV2.cartObserver(binding: FragmentCalculatorV2Binding) {
 
 
 @SuppressLint("SetTextI18n")
-fun CalculatorFragmentV2.setupDiscountButtons(binding: FragmentCalculatorV2Binding, installment: PercentInstallment) {
+fun CalculatorFragmentV2.setupDiscountButtons(
+    binding: FragmentCalculatorV2Binding,
+    installment: PercentInstallment
+) {
     binding.handSaleCount.text = manualDiscount.toString()
     maxManualDiscount = installment.sale_limit ?: 0.0
     binding.tvHandSale.text = "Ручная скидка (Макс: $maxManualDiscount)"
@@ -85,86 +88,133 @@ fun CalculatorFragmentV2.setupDiscountButtons(binding: FragmentCalculatorV2Bindi
 }
 
 fun CalculatorFragmentV2.increaseManualDiscount(binding: FragmentCalculatorV2Binding) {
-    if (manualDiscount + 0.5 <= maxManualDiscount.toDouble()) {
+    if (Cart.getTotalPrice()
+            .toDouble() > 0 && manualDiscount + 0.5 <= maxManualDiscount.toDouble()
+    ) {
         manualDiscount += 0.5
     }
     checkManualDiscount(binding)
-
 }
 
 fun CalculatorFragmentV2.decreaseManualDiscount(binding: FragmentCalculatorV2Binding) {
-    if (manualDiscount - 0.5 >= 0.0) {
+    if (Cart.getTotalPrice().toDouble() > 0 && manualDiscount - 0.5 >= 0.0) {
         manualDiscount -= 0.5
     }
     checkManualDiscount(binding)
 }
 
+fun CalculatorFragmentV2.resetManualDiscount(binding: FragmentCalculatorV2Binding) {
+    manualDiscount = 0.0
+
+    checkManualDiscount(binding)
+    updateDisplayedValues(binding)
+}
+
+
 fun CalculatorFragmentV2.updateFirstPayTextWatcher(binding: FragmentCalculatorV2Binding) {
-    val textWatcher = createTextWatcherForFirstPay(binding, Cart.getTotalPrice().toDouble()) {updateDisplayedValues(binding)}
+    val textWatcher = createTextWatcherForFirstPay(
+        binding,
+        Cart.getTotalPrice().toDouble()
+    ) { updateDisplayedValues(binding) }
     binding.firstPay.removeTextChangedListener(textWatcher)
     binding.firstPay.addTextChangedListener(textWatcher)
 }
 
 @SuppressLint("SetTextI18n")
-fun CalculatorFragmentV2.checkManualDiscount(binding: FragmentCalculatorV2Binding){
-    if (manualDiscount == 0.0){
-        binding.tvBonusClient.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_color_2))
+fun CalculatorFragmentV2.checkManualDiscount(binding: FragmentCalculatorV2Binding) {
+    if (Cart.getTotalPrice() == 0) {
+        manualDiscount = 0.0
+        binding.payWithHandSale.text = "0.00 UZS"
+        binding.handSaleCount.text = "0.0"
+    }
+    if (manualDiscount == 0.0) {
+        binding.tvBonusClient.setTextColor(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.text_color_2
+            )
+        )
+        binding.payWithHandSale.text = "0.00 UZS"
 
         val client = selectedClient
-        if (client != null){
+        if (client != null) {
             if (client.bonus.toDouble() > 0) binding.cbBonus.visibility = VISIBLE
         }
     }
-    if (manualDiscount > 0){
+    if (manualDiscount > 0) {
         binding.cbBonus.visibility = GONE
         binding.cbBonus.isChecked = false
         binding.bonus.setText("")
 
         val client = selectedClient
-        if (client != null){
-            if (client.bonus.toDouble() > 0){
+        if (client != null) {
+            if (client.bonus.toDouble() > 0) {
                 binding.bonusClient.text = "${formatNumber(client.bonus)} UZS"
-                binding.tvBonusClient.setTextColor(ContextCompat.getColor(requireContext(), R.color.background_7))
+                binding.tvBonusClient.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.background_7
+                    )
+                )
                 binding.tvBonusClient.setOnClickListener {
                     val dialog = MaterialAlertDialogBuilder(requireContext())
                     dialog.setTitle("Предуприждение")
                     dialog.setMessage("Задействована ручная скидка, поэтому не удастся использовать бонус клиента")
                     val positiveButton = dialog.setPositiveButton("OK", null).show().getButton(
-                        DialogInterface.BUTTON_POSITIVE)
-                    positiveButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.background_2))
+                        DialogInterface.BUTTON_POSITIVE
+                    )
+                    positiveButton.setTextColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.background_2
+                        )
+                    )
                 }
             } else {
-                binding.tvBonusClient.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_color_2))
+                binding.tvBonusClient.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.text_color_2
+                    )
+                )
             }
         }
     }
 }
 
-fun CalculatorFragmentV2.updateDisplayedValues(binding: FragmentCalculatorV2Binding){
-    binding.handSaleCount.text = manualDiscount.toString()
-    val clientLimit = if (selectedClient != null){
+fun CalculatorFragmentV2.updateDisplayedValues(binding: FragmentCalculatorV2Binding) {
+    val manual = if (Cart.getTotalPrice() == 0) {
+        0.0
+    } else {
+        manualDiscount
+    }
+
+    binding.handSaleCount.text = manual.toString()
+    val clientLimit = if (selectedClient != null) {
         selectedClient!!.limit
     } else {
         0
     }
-    val firstPay = if (binding.firstPay.text.toString().isNotEmpty()){
+    val firstPay = if (binding.firstPay.text.toString().isNotEmpty()) {
         binding.firstPay.text.toString().trim().replace(",", ".").toDouble()
     } else {
         0.0
     }
 
-    printPercent(binding, percentInstallment, Cart.getTotalPrice(), clientLimit, firstPay, manualDiscount)
+    printPercent(binding, percentInstallment, Cart.getTotalPrice(), clientLimit, firstPay, manual)
 }
 
 fun CalculatorFragmentV2.updateClientsData(clients: List<Client>) {
-    arrayAdapterTypeClient = ArrayAdapter(requireContext(), R.layout.spinner_item, clients.map { it.client_name })
+    arrayAdapterTypeClient =
+        ArrayAdapter(requireContext(), R.layout.spinner_item, clients.map { it.client_name })
     Log.d("TAG", "updateClientsData: $clients")
 }
 
 @SuppressLint("SetTextI18n")
 fun CalculatorFragmentV2.fetchClientsAndTypePay(binding: FragmentCalculatorV2Binding) {
 
-    arrayAdapterTypeClient = ArrayAdapter(requireContext(), R.layout.spinner_item, clientList.map { it.client_name })
+    arrayAdapterTypeClient =
+        ArrayAdapter(requireContext(), R.layout.spinner_item, clientList.map { it.client_name })
 
     binding.apply {
         clientType.setAdapter(arrayAdapterTypeClient)
@@ -191,7 +241,14 @@ fun CalculatorFragmentV2.fetchClientsAndTypePay(binding: FragmentCalculatorV2Bin
             textWatchers(binding, percentInstallment, vlTotalPrice.toDouble())
             val firstPayment = binding.firstPay.text.toString().trim().toDouble()
 
-            printPercent(binding, percentInstallment, vlTotalPrice, selectedClient!!.limit, firstPayment, manualDiscount)
+            printPercent(
+                binding,
+                percentInstallment,
+                vlTotalPrice,
+                selectedClient!!.limit,
+                firstPayment,
+                manualDiscount
+            )
         }
     }
 }
@@ -231,7 +288,7 @@ fun CalculatorFragmentV2.installmentPayReferralClient(
 
     binding.apply {
 
-        if (manualDiscount <= 0){
+        if (manualDiscount <= 0) {
             cbBonus.visibility = VISIBLE
         } else {
             cbBonus.visibility = GONE
@@ -255,7 +312,7 @@ fun CalculatorFragmentV2.printPercent(
     clientLimit: Number = 0.0,
     initialPayment: Number = 0.0,
     handSale: Number = 0.0
-    ) {
+) {
     binding.apply {
         var priceTotal = totalPrice.toDouble() - initialPayment.toDouble()
         priceTotal = (priceTotal - ((priceTotal * handSale.toDouble()) / 100))
@@ -277,7 +334,9 @@ fun CalculatorFragmentV2.textWatchers(
     val firstPayEditText = binding.firstPay
     val payWithFirstPayTextView = binding.payWithFirstPay
     val payWithBonusTextView = binding.payWithBonus
+    val payWithHandSale = binding.payWithHandSale
     val totalPriceTextView = binding.totalPrice
+    val handSale = binding.handSaleCount
 
     if (totalPrice == 0.0) {
         firstPayEditText.setText("0")
@@ -285,6 +344,9 @@ fun CalculatorFragmentV2.textWatchers(
         payWithFirstPayTextView.text = "0.00 UZS"
         payWithBonusTextView.text = "0.00 UZS"
         totalPriceTextView.text = "0.00 UZS"
+        payWithHandSale.text = "0.00 UZS"
+        handSale.text = "0.0"
+        manualDiscount = 0.0
     } else {
         processNonZeroTotalPrice(binding, percent, totalPrice)
         updateDisplayedValues(binding)
@@ -304,9 +366,10 @@ private fun CalculatorFragmentV2.processNonZeroTotalPrice(
 
     fun updateDisplayedValues() {
         val enteredBonus = binding.bonus.text.toString().toDoubleOrNull() ?: 0.0
-        val enteredFirstPay = binding.firstPay.text.toString().replace(',', '.').toDoubleOrNull() ?: 0.0
+        val enteredFirstPay =
+            binding.firstPay.text.toString().replace(',', '.').toDoubleOrNull() ?: 0.0
 
-        val enteredHandSale = if (manualDiscount > 0){
+        val enteredHandSale = if (manualDiscount > 0) {
             (finalTotalPrice * manualDiscount) / 100
         } else {
             0.0
@@ -328,13 +391,14 @@ private fun CalculatorFragmentV2.processNonZeroTotalPrice(
             else -> abs(firstPayment - enteredHandSale)
         }
 
-        binding.totalPrice.text = "${formatNumber(calculatedNewTotalPrice )} UZS"
+        binding.totalPrice.text = "${formatNumber(calculatedNewTotalPrice)} UZS"
         binding.payWithBonus.text = "${formatNumber(calculatedBonusPayment)} UZS"
         binding.payWithFirstPay.text = "${formatNumber(enteredFirstPay)} UZS"
         binding.payWithHandSale.text = "${formatNumber(enteredHandSale)} UZS"
 
         adapterPaymentPercent.updateData(percent, calculatedNewTotalPrice)
     }
+
     val bonus = binding.bonus.text.toString().toDoubleOrNull() ?: 0.0
 
     val newTotalPrice = when {
@@ -343,8 +407,10 @@ private fun CalculatorFragmentV2.processNonZeroTotalPrice(
         else -> totalPrice
     }
 
-    val textWatcherForBonus = createTextWatcherForBonus(binding, percent, maxValueBonus) { updateDisplayedValues() }
-    val textWatcherForFirstPay = createTextWatcherForFirstPay(binding, newTotalPrice) { updateDisplayedValues() }
+    val textWatcherForBonus =
+        createTextWatcherForBonus(binding, percent, maxValueBonus) { updateDisplayedValues() }
+    val textWatcherForFirstPay =
+        createTextWatcherForFirstPay(binding, newTotalPrice) { updateDisplayedValues() }
 
     binding.bonus.addTextChangedListener(textWatcherForBonus)
     binding.firstPay.addTextChangedListener(textWatcherForFirstPay)
@@ -417,11 +483,13 @@ fun CalculatorFragmentV2.resetCalculator(binding: FragmentCalculatorV2Binding) {
 
             bonus.setText("")
             firstPay.setText("")
+            manualDiscount = 0.0
 
             val initialTotalPrice = Cart.getTotalPrice()
             totalPrice.text = "${formatNumber(initialTotalPrice)} UZS"
             payWithBonus.text = "0.00 UZS"
             payWithFirstPay.text = "0.00 UZS"
+            payWithHandSale.text = "0.00 UZS"
 
             printPercent(binding, percentInstallment, initialTotalPrice)
         } catch (e: Exception) {
@@ -524,6 +592,7 @@ fun CalculatorFragmentV2.fetchClientsFromPrefs() {
         Log.d("TAG", "coefficientPlan: ${e.message}")
     }
 }
+
 fun CalculatorFragmentV2.getAllClientsFromApi() {
     progressBar.visibility = VISIBLE
     try {
