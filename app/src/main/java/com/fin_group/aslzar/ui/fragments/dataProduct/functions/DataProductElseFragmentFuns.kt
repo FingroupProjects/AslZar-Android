@@ -1,6 +1,5 @@
 package com.fin_group.aslzar.ui.fragments.dataProduct.functions
 
-import EqualSpacingItemDecoration
 import android.annotation.SuppressLint
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,12 +8,12 @@ import android.view.View
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL
 import com.bumptech.glide.Glide
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.ProductCharacteristicAdapter
 import com.fin_group.aslzar.adapter.TableInstallmentAdapter
 import com.fin_group.aslzar.cart.Cart
-import com.fin_group.aslzar.databinding.FragmentDataProductBinding
 import com.fin_group.aslzar.databinding.FragmentDataProductElseBinding
 import com.fin_group.aslzar.models.FilterModel
 import com.fin_group.aslzar.response.Category
@@ -23,7 +22,6 @@ import com.fin_group.aslzar.response.PercentInstallment
 import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.ui.dialogs.PickCharacterProductDialogFragment
 import com.fin_group.aslzar.ui.fragments.dataProduct.DataProductElseFragment
-import com.fin_group.aslzar.ui.fragments.dataProduct.DataProductFragment
 import com.fin_group.aslzar.ui.fragments.dataProduct.DataProductFragmentDirections
 import com.fin_group.aslzar.ui.fragments.dataProduct.SetInProductFragment
 import com.fin_group.aslzar.util.formatNumber
@@ -81,7 +79,19 @@ fun DataProductElseFragment.retrieveCoefficientPlan(binding: FragmentDataProduct
     }
 }
 
-fun DataProductElseFragment.getProductByID(binding: FragmentDataProductElseBinding) {
+
+fun DataProductElseFragment.productCharacteristicElse(binding: FragmentDataProductElseBinding){
+    characteristicRv = binding.characteristicRv
+    productCharacteristicAdapter = ProductCharacteristicAdapter(characteristicList, this)
+    characteristicList = product.types.filter { it.counts.isNotEmpty() }
+    characteristicRv.layoutManager = LinearLayoutManager(requireContext(), HORIZONTAL, false)
+    characteristicRv.adapter = productCharacteristicAdapter
+    productCharacteristicAdapter.updateData(characteristicList)
+    productCharacteristicAdapter.setSelectedPosition(0)
+}
+
+
+fun DataProductElseFragment.getProductByIDElse(binding: FragmentDataProductElseBinding) {
     swipeRefreshLayout.isRefreshing = true
 
     try {
@@ -95,9 +105,10 @@ fun DataProductElseFragment.getProductByID(binding: FragmentDataProductElseBindi
                     val productResponse = response.body()
                     if (productResponse != null) {
                         product = productResponse
-                        setDataProduct(product, binding)
                         productSomeImagesAdapter.updateList(product.img)
                         productCharacteristicAdapter.updateData(product.types)
+                        productCharacteristicElse(binding)
+                        setDataProduct(product, binding)
                     }
                 }
             }
@@ -189,6 +200,13 @@ fun DataProductElseFragment.setDataProduct(product: ResultX, binding: FragmentDa
         binding.metal.visibility = View.GONE
     }
 
+
+    val filial = product.types.flatMap { it.counts }.firstOrNull()?.filial
+    binding.tvFilial.text = filial
+    val vitrina = product.types.flatMap { it.counts }.firstOrNull()?.sclad
+    binding.tvVitrina.text = vitrina
+
+
     binding.apply {
         if (product.img.isNotEmpty()) {
             Glide.with(requireContext()).load(product.img[0]).into(binding.imageView2)
@@ -201,6 +219,8 @@ fun DataProductElseFragment.setDataProduct(product: ResultX, binding: FragmentDa
         tvStoneType.text = product.stone_type.ifEmpty { "Без камня" }
         tvContent.text = product.proba
         tvMetal.text = product.metal
+
+        printPercent(binding,percentInstallment, price)
         sharedViewModel.selectedPrice.postValue(price.toDouble())
 
         val installmentPrice = binding.installmentPrice
@@ -215,9 +235,7 @@ fun DataProductElseFragment.setDataProduct(product: ResultX, binding: FragmentDa
                 val initialPrice = sharedViewModel.selectedPrice.value ?:0.0
 
                 if (!s.isNullOrEmpty()) {
-
                     val userInput = s.toString().toDoubleOrNull()
-
                     if (userInput != null && userInput <= sharedViewModel.selectedPrice.value!!) {
                         binding.withFirstPay.visibility = View.VISIBLE
                         tvWithFirstPay.visibility = View.VISIBLE
@@ -241,6 +259,23 @@ fun DataProductElseFragment.setDataProduct(product: ResultX, binding: FragmentDa
                 Toast.makeText(requireContext(), "Количество товара увеличено на +1", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(requireContext(), "Товар добавлен в корзину", Toast.LENGTH_SHORT).show()
+            }
+
+            selectedCharacteristic = productCharacteristicAdapter.getSelectedProduct()
+
+            if (selectedCharacteristic.counts.size <= 1){
+                selectedCount = selectedCharacteristic.counts[0]
+                listener1.addProduct(product, selectedCharacteristic, selectedCount)
+            } else if (selectedCharacteristic.counts.size > 1){
+                selectedCount = if(selectedCharacteristic.counts.any{ it.is_filial }){
+                    selectedCharacteristic.counts.find { it.is_filial }!!
+                } else {
+                    selectedCharacteristic.counts.minBy { it.price.toDouble() }
+                }
+                listener1.addProduct(product, selectedCharacteristic, selectedCount)
+            }
+            else {
+                listener1.addProduct(product, selectedCharacteristic, selectedCount)
             }
         }
     }
@@ -285,19 +320,7 @@ fun DataProductElseFragment.showProductCharacteristicDialog(product: ResultX){
 
 fun DataProductElseFragment.someImagesProduct() {
     imageList = product.img
-    recyclerViewSomeImages.layoutManager = LinearLayoutManager(requireContext(),
-        LinearLayoutManager.HORIZONTAL, false)
+    recyclerViewSomeImages.layoutManager = LinearLayoutManager(requireContext(), HORIZONTAL, false)
     recyclerViewSomeImages.adapter = productSomeImagesAdapter
     productSomeImagesAdapter.updateList(imageList)
-}
-
-fun DataProductElseFragment.productCharacteristic(binding: FragmentDataProductElseBinding){
-    characteristicRv = binding.characteristicRv
-    productCharacteristicAdapter = ProductCharacteristicAdapter(characteristicList, this)
-    productCharacteristicAdapter.setSelectedPosition(0)
-    characteristicList = product.types.filter { it.counts.isNotEmpty() }
-    characteristicRv.layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL, false)
-    characteristicRv.adapter = productCharacteristicAdapter
-    productCharacteristicAdapter.updateData(characteristicList)
-    productCharacteristicAdapter.setSelectedPosition(0)
 }

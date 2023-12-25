@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.response.Type
@@ -92,9 +93,12 @@ class ProductCharacteristicAdapter(
                     itemView.setBackgroundResource(R.drawable.selected_item_background_3)
                 }
                 tvOtherFilial.text = product.counts.size.toString()
-            } else {
-                itemView.visibility = View.VISIBLE
-                itemView.layoutParams = RecyclerView.LayoutParams(0, 0)
+
+                if (product.counts.any { it.is_filial }){
+                    tvOtherFilial.setBackgroundResource(R.drawable.bg_circle2)
+                }else{
+                    tvOtherFilial.setBackgroundResource(R.drawable.bg_circle1)
+                }
             }
         }
     }

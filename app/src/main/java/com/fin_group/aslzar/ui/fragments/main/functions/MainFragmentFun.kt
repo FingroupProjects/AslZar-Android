@@ -10,9 +10,11 @@ import android.view.View.VISIBLE
 import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.graphics.component2
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.ProductsAdapter
@@ -42,7 +44,9 @@ import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.logging.Handler
 import kotlin.math.log
+import kotlin.math.min
 
 
 fun MainFragment.callFilterDialog(listener: FilterDialogListener) {
@@ -372,14 +376,34 @@ fun MainFragment.fetchRV(productList: List<ResultX>) {
     recyclerView.adapter = myAdapter
     myAdapter.notifyDataSetChanged()
     recyclerView.startLayoutAnimation()
-    recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener(){
+
+
+}
+
+
+fun MainFragment.goToTop(){
+    recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
 
-            val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+            layoutManager = recyclerView.layoutManager as LinearLayoutManager
             val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+            Log.d("TAG", "POSITION: $firstVisibleItemPosition")
+
+            btnGoTo.setOnClickListener {
+                if (firstVisibleItemPosition <= 40){
+                    recyclerView.smoothScrollToPosition(0)
+                }else{
+                    recyclerView.smoothScrollToPosition(40)
+
+                    android.os.Handler().postDelayed({ recyclerView.scrollToPosition(0) }, 1000)
+                    //recyclerView.scrollToPosition(0)
+                }
+            }
+
 
             if (firstVisibleItemPosition == 0) {
+                btnGoTo.visibility = GONE
                 if (isButtonVisible) {
                     hideButton()
                 }
@@ -388,12 +412,9 @@ fun MainFragment.fetchRV(productList: List<ResultX>) {
                     showButton()
                 }
             }
+
         }
-        })
-        btnGoTo.setOnClickListener {
-        recyclerView.scrollToPosition(0)
-            hideButton()
-    }
+    })
 }
 
 fun MainFragment.showButton() {

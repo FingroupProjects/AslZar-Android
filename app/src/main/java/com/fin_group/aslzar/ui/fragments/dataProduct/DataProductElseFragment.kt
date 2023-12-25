@@ -32,13 +32,12 @@ import com.fin_group.aslzar.models.FilterModel
 import com.fin_group.aslzar.response.Count
 import com.fin_group.aslzar.response.PercentInstallment
 import com.fin_group.aslzar.response.ResultX
-import com.fin_group.aslzar.response.SimilarProduct
 import com.fin_group.aslzar.response.Type
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.fetchCoefficientPlanFromApi
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.fetchCoefficientPlanFromPrefs
-import com.fin_group.aslzar.ui.fragments.dataProduct.functions.getProductByID
+import com.fin_group.aslzar.ui.fragments.dataProduct.functions.getProductByIDElse
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.printPercent
-import com.fin_group.aslzar.ui.fragments.dataProduct.functions.productCharacteristic
+import com.fin_group.aslzar.ui.fragments.dataProduct.functions.productCharacteristicElse
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.retrieveCoefficientPlan
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.setDataProduct
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.someImagesProduct
@@ -97,6 +96,12 @@ class DataProductElseFragment : Fragment(), AddingProduct, OnImageClickListener,
     lateinit var filterViewModel: FilterViewModel
     var filterModel: FilterModel? = null
 
+    lateinit var selectedCount: Count
+
+    lateinit var listener1: AddingProduct
+    lateinit var listener2: FilialListener
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -110,6 +115,9 @@ class DataProductElseFragment : Fragment(), AddingProduct, OnImageClickListener,
         swipeRefreshLayout = binding.swipeRefreshLayout
         badgeManager = BadgeManager(requireContext(), "data_product_else_badge_prefs")
         preferences = context?.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)!!
+
+        listener1 = this
+        listener2 = this
 
         percentInstallment = try {
             retrieveCoefficientPlan(binding)
@@ -136,7 +144,7 @@ class DataProductElseFragment : Fragment(), AddingProduct, OnImageClickListener,
         productSomeImagesAdapter.setSelectedPosition(0)
 
         someImagesProduct()
-        productCharacteristic(binding)
+        productCharacteristicElse(binding)
 
         return binding.root
     }
@@ -145,7 +153,7 @@ class DataProductElseFragment : Fragment(), AddingProduct, OnImageClickListener,
         super.onViewCreated(view, savedInstanceState)
         setDataProduct(product, binding)
         swipeRefreshLayout.setOnRefreshListener {
-            getProductByID(binding)
+            getProductByIDElse(binding)
             fetchCoefficientPlanFromApi(binding)
         }
     }
@@ -173,6 +181,9 @@ class DataProductElseFragment : Fragment(), AddingProduct, OnImageClickListener,
 
     override fun clickCharacteristic(characteristic: Type) {
         selectedCharacteristic = characteristic
+        if (selectedCharacteristic != null){
+            selectedCount = selectedCharacteristic.counts[0]
+        }
         nextCharacteristic = characteristicList.indexOfFirst { it == characteristic }
         productCharacteristicAdapter.setSelectedPosition(nextCharacteristic)
     }
@@ -196,6 +207,8 @@ class DataProductElseFragment : Fragment(), AddingProduct, OnImageClickListener,
                 binding.withFirstPay.visibility = View.GONE
                 binding.tvWithFirstPay.visibility = View.GONE
                 binding.installmentPrice.error = null
+                binding.tvFilial.text = selectedCount.filial
+                binding.tvVitrina.text = selectedCount.sclad
                 printPercent(binding, percentInstallment, tvPriceFirstSecond)
             }
             val alertDialog = alertDialogBuilder.create()
@@ -205,10 +218,12 @@ class DataProductElseFragment : Fragment(), AddingProduct, OnImageClickListener,
             sharedViewModel.selectedPrice.postValue(count.price.toDouble())
             binding.tvPriceFirst.text = formatNumber(count.price)
             val tvPriceFirstSecond = count.price
+            binding.tvFilial.text = count.filial
+            binding.tvVitrina.text = count.sclad
+            binding.installmentPrice.text = null
+            binding.withFirstPay.visibility = View.GONE
+            binding.tvWithFirstPay.visibility = View.GONE
             printPercent(binding, percentInstallment, tvPriceFirstSecond)
         }
     }
-
-
-
 }

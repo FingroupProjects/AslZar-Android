@@ -121,14 +121,8 @@ class FragmentLogin : Fragment() {
                                     val encryptedLogin = encryptionManager.encryptData(login)
                                     val encryptedPassword = encryptionManager.encryptData(password)
                                     sessionManager.saveKey(savingKey)
-
-//                                    val editor: SharedPreferences.Editor = sharedPreferences.edit()
-//                                    editor.putBoolean(IS_LOGGED_IN_KEY, true)
-//                                    editor.apply()
-
                                     sessionManager.saveLogin(encryptedLogin)
                                     sessionManager.savePassword(encryptedPassword)
-
                                     sessionManager.saveToken(loginResponse.access_token)
                                     sessionManager.saveUserLocation(loginResponse.location)
                                     sessionManager.saveName(loginResponse.fio)
@@ -152,21 +146,22 @@ class FragmentLogin : Fragment() {
                                     api.clearPassLogin()
                                     loginEt.setText("")
                                     passwordEt.setText("")
+                                    loginEt.requestFocus()
                                 } else if (response.code() == 500){
-                                    binding.progressBar2.visibility = View.GONE
+                                    binding.progressBar2.visibility = GONE
                                     Toast.makeText(requireContext(),"Повторите попытку позже, сервер временно не работает",Toast.LENGTH_SHORT).show()
                                     api.clearPassLogin()
                                     loginEt.setText("")
                                     passwordEt.setText("")
                                 }else {
-                                    progressBar.visibility = View.GONE
+                                    progressBar.visibility = GONE
                                     Toast.makeText(requireContext(), "Ошибка при входе", Toast.LENGTH_SHORT).show()
                                     api.clearPassLogin()
                                 }
-                                progressBar.visibility = View.GONE
+                                progressBar.visibility = GONE
                             }
                         }catch (e: Exception){
-                            progressBar.visibility = View.GONE
+                            progressBar.visibility = GONE
                             e.printStackTrace()
                             Log.d("TAG", "onResponse: ${e.message}")
                         }
