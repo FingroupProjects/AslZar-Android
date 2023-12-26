@@ -311,8 +311,7 @@ fun DataProductFragment.getProductByID() {
     swipeRefreshLayout.isRefreshing = true
 
     try {
-        val call = apiService.getApiService()
-            .getProductByID("Bearer ${sessionManager.fetchToken()}", args.productId)
+        val call = apiService.getApiService().getProductByID("Bearer ${sessionManager.fetchToken()}", args.productId)
         call.enqueue(object : Callback<ResultX?> {
             @SuppressLint("UnsafeOptInUsageError")
             override fun onResponse(call: Call<ResultX?>, response: Response<ResultX?>) {
@@ -324,7 +323,7 @@ fun DataProductFragment.getProductByID() {
                         productSomeImagesAdapter.updateList(product.img)
                         //productCharacteristicAdapter.updateData(product.types)
                         setDataProduct(product, binding)
-//                        productCharacteristic()
+                        //productCharacteristic()
                     }
                 }
             }
