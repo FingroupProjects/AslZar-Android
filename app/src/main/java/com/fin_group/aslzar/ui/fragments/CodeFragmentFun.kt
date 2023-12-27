@@ -123,6 +123,8 @@ fun CodeFragment.checkNumber(binding: FragmentCodeBinding){
 
 fun CodeFragment.forgotPassword(binding: FragmentCodeBinding, callback: FunCallback) {
 
+    val context = requireContext() // Сохранение контекста
+
     val call  = apiService.getApiService().forgotPassword("Bearer ${sessionManager.fetchToken()}")
 
     try {
@@ -131,6 +133,7 @@ fun CodeFragment.forgotPassword(binding: FragmentCodeBinding, callback: FunCallb
                 call: Call<ResponseForgotPassword?>,
                 response: Response<ResponseForgotPassword?>
             ) {
+                // Использование сохраненного контекста вместо requireContext()
                 if (response.code() == 200){
                     if (response.isSuccessful){
                         val password = response.body()
@@ -143,19 +146,18 @@ fun CodeFragment.forgotPassword(binding: FragmentCodeBinding, callback: FunCallb
                                 binding.btnPass.setOnClickListener {
                                     checkCode(password.code.toString(), binding)
                                 }
-
-                            }else{
+                            } else {
                                 callback.onSuccess(false)
 
                                 Log.d("TAG", "onResponse: ${response.code()}")
                                 Log.d("TAG", "onResponse: ${response.body()}")
                             }
-                        }else{
+                        } else {
                             callback.onSuccess(false)
                         }
                     }
-                }else if (response.code() == 500){
-                    Toast.makeText(requireContext(), "Повторите попитку позже", Toast.LENGTH_SHORT).show()
+                } else if (response.code() == 500){
+                    Toast.makeText(context, "Повторите попытку позже", Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -164,10 +166,11 @@ fun CodeFragment.forgotPassword(binding: FragmentCodeBinding, callback: FunCallb
             }
         })
 
-    }catch (e: Exception){
+    } catch (e: Exception){
         Log.d("TAG", "createLead: ${e.message}")
     }
 }
+
 private fun textWatcher(binding: FragmentCodeBinding){
 
     val editTexts = arrayOf(binding.addOne, binding.addTwo, binding.addThird, binding.addFour, binding.addFive)
