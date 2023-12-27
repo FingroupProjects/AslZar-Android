@@ -16,6 +16,7 @@ import com.fin_group.aslzar.R
 import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.ActivityMainBinding
+import com.fin_group.aslzar.response.Client
 import com.fin_group.aslzar.response.GetAllCategoriesResponse
 import com.fin_group.aslzar.response.GetAllClientsResponse
 import com.fin_group.aslzar.response.GetAllProductV2
@@ -178,7 +179,8 @@ class MainActivity : AppCompatActivity() {
                     if (response.isSuccessful) {
                         val clientList = response.body()
                         if (clientList != null) {
-                            val clientListJson = Gson().toJson(clientList.result)
+                            val clients = clientList.result
+                            val clientListJson = Gson().toJson(clients)
                             prefs.edit().putString("clientList", clientListJson).apply()
                         }
                     }

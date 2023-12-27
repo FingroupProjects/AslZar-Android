@@ -116,6 +116,7 @@ class CalculatorFragmentV2 : Fragment(), CalculatorResetListener {
         }
 
         clientList = retrieveClientList()
+
         fetchClientsAndTypePay(binding)
         fetchClientsFromPrefs()
         binding.firstPay.setText("0")

@@ -3,6 +3,7 @@ package com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions
 import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.text.Editable
+import android.text.InputFilter
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View.GONE
@@ -205,9 +206,7 @@ fun CalculatorFragmentV2.updateDisplayedValues(binding: FragmentCalculatorV2Bind
 }
 
 fun CalculatorFragmentV2.updateClientsData(clients: List<Client>) {
-    arrayAdapterTypeClient =
-        ArrayAdapter(requireContext(), R.layout.spinner_item, clients.map { it.client_name })
-    Log.d("TAG", "updateClientsData: $clients")
+    arrayAdapterTypeClient = ArrayAdapter(requireContext(), R.layout.spinner_item, clients.map { it.client_name })
 }
 
 @SuppressLint("SetTextI18n")
@@ -359,15 +358,14 @@ private fun CalculatorFragmentV2.processNonZeroTotalPrice(
     percent: PercentInstallment,
     totalPrice: Double
 ) {
-    val maxValueBonus: Double = (totalPrice * percent.payment_bonus.toDouble()) / 100
+    val maxValueBonus: Double = (Cart.getTotalPrice().toDouble() * percent.payment_bonus.toDouble()) / 100
     val minValueFirstPay: Double = (totalPrice * percent.first_pay.toDouble()) / 100
 
     var finalTotalPrice = totalPrice
 
     fun updateDisplayedValues() {
         val enteredBonus = binding.bonus.text.toString().toDoubleOrNull() ?: 0.0
-        val enteredFirstPay =
-            binding.firstPay.text.toString().replace(',', '.').toDoubleOrNull() ?: 0.0
+        val enteredFirstPay = binding.firstPay.text.toString().replace(',', '.').toDoubleOrNull() ?: 0.0
 
         val enteredHandSale = if (manualDiscount > 0) {
             (finalTotalPrice * manualDiscount) / 100
@@ -376,7 +374,7 @@ private fun CalculatorFragmentV2.processNonZeroTotalPrice(
         }
 
         val firstPayment = finalTotalPrice - enteredFirstPay
-        val bonusPercentOfRemaining = (firstPayment * percent.payment_bonus.toDouble()) / 100
+        val bonusPercentOfRemaining = (totalPrice * percent.payment_bonus.toDouble()) / 100
 
         val saleBonus = abs(enteredHandSale - firstPayment)
         val calculatedBonusPayment = if (enteredBonus > bonusPercentOfRemaining) {
@@ -428,12 +426,33 @@ fun CalculatorFragmentV2.createTextWatcherForBonus(
     return object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
-        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            val newText = s.toString().trim()
+            val firstPay = binding.firstPay.text.toString().trim().toDouble()
+
+            if (!newText.isNullOrEmpty()){
+                val currentValue=  if (newText == "."){
+                    0.0
+                } else {
+                    newText.replace(",",".").toDouble()
+                }
+                if (currentValue == maxValueBonus && firstPay > Cart.getTotalPrice().toDouble() - maxValueBonus){
+                    binding.firstPay.setText((Cart.getTotalPrice().toDouble() - maxValueBonus).toString())
+                } else if (firstPay == Cart.getTotalPrice() && currentValue < maxValueBonus){
+                    binding.firstPay.setText((Cart.getTotalPrice().toDouble() - currentValue).toString())
+                }
+            }
+        }
 
         override fun afterTextChanged(s: Editable?) {
             val newText = s.toString().trim()
+            val firstPay = binding.firstPay.text.toString().trim().toDouble()
             if (!newText.isNullOrEmpty()) {
-                val currentValue = newText.replace(',', '.').toDouble()
+                val currentValue=  if (newText == "."){
+                    0.0
+                } else {
+                    newText.replace(",",".").toDouble()
+                }
                 if (currentValue > (selectedClient?.bonus?.toDouble() ?: 0.0)) {
                     binding.bonus.setText(selectedClient?.bonus?.toString() ?: "")
                     binding.bonus.setSelection(binding.bonus.length())
@@ -445,6 +464,16 @@ fun CalculatorFragmentV2.createTextWatcherForBonus(
             updateDisplayedValues()
         }
     }
+}
+
+fun CalculatorFragmentV2.updateMaxFirstPay(binding: FragmentCalculatorV2Binding) {
+    val bonusValue = binding.bonus.text.toString().toDoubleOrNull() ?: 0.0
+    val maxFirstPay = Cart.getTotalPrice().toDouble() - bonusValue
+
+    val maxFirstPayString = doubleFormat2(maxFirstPay.coerceAtLeast(0.0))
+    binding.firstPay.filters = arrayOf(InputFilter.LengthFilter(maxFirstPayString.length))
+    binding.firstPay.setText(maxFirstPayString)
+    binding.firstPay.setSelection(maxFirstPayString.length)
 }
 
 fun CalculatorFragmentV2.createTextWatcherForFirstPay(
@@ -459,15 +488,23 @@ fun CalculatorFragmentV2.createTextWatcherForFirstPay(
 
         override fun afterTextChanged(s: Editable?) {
             val newText = s.toString().trim()
-            val currentMax = Cart.getTotalPrice().toDouble() * (1 - manualDiscount / 100)
+            val bonusValue = binding.bonus.text.toString().toDoubleOrNull() ?: 0.0
+            val currentMax = if (manualDiscount > 0){
+                Cart.getTotalPrice().toDouble() * (1 - manualDiscount / 100)
+            } else {
+                Cart.getTotalPrice().toDouble() - bonusValue
+            }
 
             if (!newText.isNullOrEmpty()) {
-                val currentValue = newText.replace(',', '.').toDouble()
+                val currentValue=  if (newText == "."){
+                    0.0
+                } else {
+                    newText.replace(",",".").toDouble()
+                }
                 if (currentValue > currentMax) {
                     binding.firstPay.setText(doubleFormat2(currentMax))
                 }
-            } else {
-                binding.firstPay.setText("0")
+
             }
             updateDisplayedValues()
         }
