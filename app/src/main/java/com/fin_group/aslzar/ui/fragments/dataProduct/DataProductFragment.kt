@@ -101,7 +101,7 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
     var characteristicList: List<Type> = emptyList()
     private var nextCharacteristic = RecyclerView.NO_POSITION
     lateinit var selectedCharacteristic: Type
-    lateinit var selectedCount: Count
+    var selectedCount: Count? = null
     lateinit var filterViewModel: FilterViewModel
     var filterModel: FilterModel? = null
     lateinit var listener1: AddingProduct
@@ -177,7 +177,6 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         swipeRefreshLayout.setOnRefreshListener {
             getProductByID()
             fetchCoefficientPlanFromApi()
-
         }
     }
     @Deprecated("Deprecated in Java")
@@ -264,17 +263,20 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         if (countsList.size > 1) {
             alertDialogBuilder.setTitle("Выберите филиал")
             alertDialogBuilder.setItems(countsList) { _, which ->
-                selectedCount = product.counts[which]
-                binding.tvPriceFirst.text = formatNumber(selectedCount.price)
-                sharedViewModel.selectedPrice.postValue(selectedCount.price.toDouble())
-                val tvPriceFirstSecond = selectedCount.price
-                binding.installmentPrice.text = null
-                binding.withFirstPay.visibility = View.GONE
-                binding.tvWithFirstPay.visibility = View.GONE
-                binding.installmentPrice.error = null
-                binding.tvFilial.text = selectedCount.filial
-                binding.tvVitrina.text = selectedCount.sclad
-                printPercent(binding, percentInstallment, tvPriceFirstSecond)
+                if (selectedCount != null){
+                    selectedCount = product.counts[which]
+                    binding.tvPriceFirst.text = formatNumber(selectedCount!!.price)
+                    sharedViewModel.selectedPrice.postValue(selectedCount!!.price.toDouble())
+                    val tvPriceFirstSecond = selectedCount!!.price
+                    binding.installmentPrice.text = null
+                    binding.withFirstPay.visibility = View.GONE
+                    binding.tvWithFirstPay.visibility = View.GONE
+                    binding.installmentPrice.error = null
+                    binding.tvFilial.text = selectedCount!!.filial
+                    binding.tvVitrina.text = selectedCount!!.sclad
+                    printPercent(binding, percentInstallment, tvPriceFirstSecond)
+                }
+
             }
             val alertDialog = alertDialogBuilder.create()
             alertDialog.show()

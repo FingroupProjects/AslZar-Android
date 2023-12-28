@@ -161,45 +161,66 @@ fun DataProductFragment.setDataProduct(product: ResultX, binding: FragmentDataPr
         if (product.img.isNotEmpty()) {
             Glide.with(requireContext()).load(product.img[0]).into(binding.imageView2)
         } else {
-            imageView2.setImageResource(R.drawable.ic_no_image)
+            imageView2.setImageResource(R.drawable.logo2)
         }
         tvCode.text = product.name
 
-        selectedCharacteristic = productCharacteristicAdapter.getSelectedProduct()
-        if (selectedCharacteristic.counts.size <= 1){
-            selectedCount = selectedCharacteristic.counts[0]
-            tvPriceFirst.text = formatNumber(selectedCount.price)
-            binding.tvFilial.text = selectedCount.filial
-            binding.tvVitrina.text = selectedCount.sclad
-            printPercent(binding, percentInstallment, selectedCount.price)
-            Log.d("TAG","Set Data Product 1: ${selectedCount.price}")
+        if (product.types.any{ it.counts.isNotEmpty() }){
+            selectedCharacteristic = productCharacteristicAdapter.getSelectedProduct()!!
+            if (selectedCharacteristic.counts.size == 1){
+                selectedCount = selectedCharacteristic.counts[0]
+                tvPriceFirst.text = formatNumber(selectedCount!!.price)
 
-        } else if (selectedCharacteristic.counts.size > 1){
-            selectedCount = if(selectedCharacteristic.counts.any{ it.is_filial }){
-                selectedCharacteristic.counts.find { it.is_filial }!!
-            } else {
-                selectedCharacteristic.counts.minBy { it.price.toDouble() }
+                if (selectedCount != null){
+                    binding.tvFilial.text = selectedCount!!.filial
+                    binding.tvVitrina.text = selectedCount!!.sclad
+                    printPercent(binding, percentInstallment, selectedCount!!.price)
+                }
+
+            } else if (selectedCharacteristic.counts.size > 1){
+                selectedCount = if(selectedCharacteristic.counts.any{ it.is_filial }){
+                    selectedCharacteristic.counts.find { it.is_filial }!!
+                } else {
+                    selectedCharacteristic.counts.minBy { it.price.toDouble() }
+                }
+
+                if (selectedCount != null){
+                    tvPriceFirst.text = formatNumber(selectedCount!!.price)
+                    binding.tvFilial.text = selectedCount!!.filial
+                    binding.tvVitrina.text = selectedCount!!.sclad
+                    printPercent(binding, percentInstallment, selectedCount!!.price)
+                }
             }
-            tvPriceFirst.text = formatNumber(selectedCount.price)
-            binding.tvFilial.text = selectedCount.filial
-            binding.tvVitrina.text = selectedCount.sclad
-            printPercent(binding, percentInstallment, selectedCount.price)
-            Log.d("TAG","Set Data Product 2: ${selectedCount.price}")
-
-
+            else {
+                if (selectedCount != null){
+                    tvPriceFirst.text = formatNumber(selectedCount!!.price)
+                    binding.tvFilial.text = selectedCount!!.filial
+                    binding.tvVitrina.text = selectedCount!!.sclad
+                    printPercent(binding, percentInstallment, selectedCount!!.price)
+                }
+            }
+        } else {
+            swipeRefreshLayout.isEnabled = false
+            Log.d("TAG", "setDataProduct: hello")
+            binding.price.visibility = GONE
+            binding.filial.visibility = GONE
+            binding.vitrina.visibility = GONE
+            binding.characteristic.visibility = GONE
+            binding.installmentPrice.visibility = GONE
+            binding.table.visibility = GONE
+            binding.tvTable.visibility = GONE
+            binding.printPercent.visibility = GONE
+            binding.btnAddToCart.visibility = GONE
         }
-        else {
-            tvPriceFirst.text = formatNumber(selectedCount.price)
-            binding.tvFilial.text = selectedCount.filial
-            binding.tvVitrina.text = selectedCount.sclad
-            printPercent(binding, percentInstallment, selectedCount.price)
-            Log.d("TAG","Set Data Product 2: ${selectedCount.price}")
 
-        }
         tvStoneType.text = product.stone_type.ifEmpty { "Без камня" }
         tvContent.text = product.proba
         tvMetal.text = product.metal
-        sharedViewModel.selectedPrice.postValue(selectedCount.price.toDouble())
+
+        if (selectedCount != null){
+            sharedViewModel.selectedPrice.postValue(selectedCount!!.price.toDouble())
+        }
+
 
         val installmentPrice = binding.installmentPrice
         val tvWithFirstPay = binding.tvWithFirstPay
@@ -242,22 +263,25 @@ fun DataProductFragment.setDataProduct(product: ResultX, binding: FragmentDataPr
 //                Toast.makeText(requireContext(), "Товар добавлен в корзину", Toast.LENGTH_SHORT).show()
 //            }
 
-            selectedCharacteristic = productCharacteristicAdapter.getSelectedProduct()
+            selectedCharacteristic = productCharacteristicAdapter.getSelectedProduct()!!
 
-            if (selectedCharacteristic.counts.size <= 1){
-                selectedCount = selectedCharacteristic.counts[0]
-                listener1.addProduct(product, selectedCharacteristic, selectedCount)
-            } else if (selectedCharacteristic.counts.size > 1){
-                selectedCount = if(selectedCharacteristic.counts.any{ it.is_filial }){
-                    selectedCharacteristic.counts.find { it.is_filial }!!
-                } else {
-                    selectedCharacteristic.counts.minBy { it.price.toDouble() }
+            if (selectedCount != null){
+                if (selectedCharacteristic.counts.size == 1){
+                    selectedCount = selectedCharacteristic.counts[0]
+                    listener1.addProduct(product, selectedCharacteristic, selectedCount!!)
+                } else if (selectedCharacteristic.counts.size > 1){
+                    selectedCount = if(selectedCharacteristic.counts.any{ it.is_filial }){
+                        selectedCharacteristic.counts.find { it.is_filial }!!
+                    } else {
+                        selectedCharacteristic.counts.minBy { it.price.toDouble() }
+                    }
+                    listener1.addProduct(product, selectedCharacteristic, selectedCount!!)
                 }
-                listener1.addProduct(product, selectedCharacteristic, selectedCount)
+                else {
+                    listener1.addProduct(product, selectedCharacteristic, selectedCount!!)
+                }
             }
-            else {
-                listener1.addProduct(product, selectedCharacteristic, selectedCount)
-            }
+
         }
     }
 }
@@ -312,6 +336,8 @@ fun DataProductFragment.getProductByID() {
 
     try {
         val call = apiService.getApiService().getProductByID("Bearer ${sessionManager.fetchToken()}", args.productId)
+        Log.d("TAG", "getProductByID: Loading product with ID ${args.productId}")
+
         call.enqueue(object : Callback<ResultX?> {
             @SuppressLint("UnsafeOptInUsageError")
             override fun onResponse(call: Call<ResultX?>, response: Response<ResultX?>) {
@@ -357,20 +383,29 @@ fun DataProductFragment.fetchCoefficientPlanFromPrefs() {
             val coefficientPlan = Gson().fromJson<PercentInstallment>(coefficientPlanJson, coefficientPlanType)
             percentInstallment = coefficientPlan
 
-            selectedCharacteristic = productCharacteristicAdapter.getSelectedProduct()
-            if (selectedCharacteristic.counts.size <= 1){
-                selectedCount = selectedCharacteristic.counts[0]
-                printPercent(binding, percentInstallment, selectedCount.price)
+            selectedCharacteristic = productCharacteristicAdapter.getSelectedProduct()!!
+            if (selectedCharacteristic.counts.size == 1){
+
+                if (selectedCount != null){
+                    selectedCount = selectedCharacteristic.counts[0]
+                    printPercent(binding, percentInstallment, selectedCount!!.price)
+                }
+
             } else if (selectedCharacteristic.counts.size > 1){
                 selectedCount = if(selectedCharacteristic.counts.any{ it.is_filial }){
                     selectedCharacteristic.counts.find { it.is_filial }!!
                 } else {
                     selectedCharacteristic.counts.minBy { it.price.toDouble() }
                 }
-                printPercent(binding, percentInstallment, selectedCount.price)
+                if (selectedCount != null){
+                    printPercent(binding, percentInstallment, selectedCount!!.price)
+                }
             }
             else {
-                printPercent(binding, percentInstallment, selectedCount.price)
+
+                if (selectedCount != null){
+                    printPercent(binding, percentInstallment, selectedCount!!.price)
+                }
             }
         } else {
             fetchCoefficientPlanFromApi()
@@ -395,21 +430,30 @@ fun DataProductFragment.fetchCoefficientPlanFromApi() {
                         preferences.edit().putString("coefficientPlan", coefficientPlanJson).apply()
                         percentInstallment = coefficientPlanList
 
-                        selectedCharacteristic = productCharacteristicAdapter.getSelectedProduct()
-                        if (selectedCharacteristic.counts.size <= 1){
-                            selectedCount = selectedCharacteristic.counts[0]
-                            printPercent(binding, percentInstallment, selectedCount.price)
-                            Log.d("TAG","fetchCoefficientPlanFromApi 1: ${selectedCount.price}")
+                        selectedCharacteristic = productCharacteristicAdapter.getSelectedProduct()!!
+                        if (selectedCharacteristic.counts.size == 1){
+
+                            if (selectedCount != null){
+                                selectedCount = selectedCharacteristic.counts[0]
+                                printPercent(binding, percentInstallment, selectedCount!!.price)
+                            }
+
+
                         } else if (selectedCharacteristic.counts.size > 1){
                             selectedCount = if(selectedCharacteristic.counts.any{ it.is_filial }){
                                 selectedCharacteristic.counts.find { it.is_filial }!!
                             } else {
                                 selectedCharacteristic.counts.minBy { it.price.toDouble() }
                             }
-                            printPercent(binding, percentInstallment, selectedCount.price)
+                            if (selectedCount != null){
+                                printPercent(binding, percentInstallment, selectedCount!!.price)
+                            }
                         }
                         else {
-                            printPercent(binding, percentInstallment, selectedCount.price)
+                            if (selectedCount != null){
+                                printPercent(binding, percentInstallment, selectedCount!!.price)
+
+                            }
                         }
                     }
                 }
