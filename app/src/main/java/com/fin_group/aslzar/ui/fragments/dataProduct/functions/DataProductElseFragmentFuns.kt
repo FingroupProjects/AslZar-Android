@@ -261,7 +261,7 @@ fun DataProductElseFragment.setDataProduct(product: ResultX, binding: FragmentDa
                 Toast.makeText(requireContext(), "Товар добавлен в корзину", Toast.LENGTH_SHORT).show()
             }
 
-            selectedCharacteristic = productCharacteristicAdapter.getSelectedProduct()
+            selectedCharacteristic = productCharacteristicAdapter.getSelectedProduct()!!
 
             if (selectedCharacteristic.counts.size <= 1){
                 selectedCount = selectedCharacteristic.counts[0]
