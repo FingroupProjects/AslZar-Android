@@ -22,6 +22,7 @@ import com.fin_group.aslzar.response.GetAllClientsResponse
 import com.fin_group.aslzar.response.PercentInstallment
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.CalculatorFragmentV2
 import com.fin_group.aslzar.util.CartObserver
+import com.fin_group.aslzar.util.doubleFormat
 import com.fin_group.aslzar.util.doubleFormat2
 import com.fin_group.aslzar.util.formatNumber
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -123,6 +124,8 @@ fun CalculatorFragmentV2.updateFirstPayTextWatcher(binding: FragmentCalculatorV2
 
 @SuppressLint("SetTextI18n")
 fun CalculatorFragmentV2.checkManualDiscount(binding: FragmentCalculatorV2Binding) {
+    val totalPrice = Cart.getTotalPrice().toDouble()
+
     if (Cart.getTotalPrice() == 0) {
         manualDiscount = 0.0
         binding.payWithHandSale.text = "0.00 UZS"
@@ -143,6 +146,8 @@ fun CalculatorFragmentV2.checkManualDiscount(binding: FragmentCalculatorV2Bindin
         }
     }
     if (manualDiscount > 0) {
+        val firstPay = binding.firstPay.text.toString().replace(",",".").trim().toDouble()
+        val handSale = (totalPrice - (totalPrice * manualDiscount) / 100)
         binding.cbBonus.visibility = GONE
         binding.cbBonus.isChecked = false
         binding.bonus.setText("")
@@ -180,6 +185,9 @@ fun CalculatorFragmentV2.checkManualDiscount(binding: FragmentCalculatorV2Bindin
                 )
             }
         }
+        if (firstPay > (totalPrice - (totalPrice - handSale))){
+            binding.firstPay.setText(doubleFormat2(totalPrice - (totalPrice - handSale)))
+        }
     }
 }
 
@@ -207,6 +215,8 @@ fun CalculatorFragmentV2.updateDisplayedValues(binding: FragmentCalculatorV2Bind
 
 fun CalculatorFragmentV2.updateClientsData(clients: List<Client>) {
     arrayAdapterTypeClient = ArrayAdapter(requireContext(), R.layout.spinner_item, clients.map { it.client_name })
+    arrayAdapterTypeClient.notifyDataSetChanged()
+    clientType.setAdapter(arrayAdapterTypeClient)
 }
 
 @SuppressLint("SetTextI18n")
@@ -487,6 +497,13 @@ fun CalculatorFragmentV2.createTextWatcherForFirstPay(
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 
         override fun afterTextChanged(s: Editable?) {
+            if (isUpdating) {
+                isUpdating = false
+                return
+            }
+
+            isUpdating = true
+
             val newText = s.toString().trim()
             val bonusValue = binding.bonus.text.toString().toDoubleOrNull() ?: 0.0
             val currentMax = if (manualDiscount > 0){
@@ -502,11 +519,12 @@ fun CalculatorFragmentV2.createTextWatcherForFirstPay(
                     newText.replace(",",".").toDouble()
                 }
                 if (currentValue > currentMax) {
-                    binding.firstPay.setText(doubleFormat2(currentMax))
+                    s!!.replace(0, s.length, doubleFormat2(currentMax))
                 }
-
             }
             updateDisplayedValues()
+
+            isUpdating = false
         }
     }
 }
@@ -618,10 +636,7 @@ fun CalculatorFragmentV2.fetchClientsFromPrefs() {
             val clientListType = object : TypeToken<List<Client>>() {}.type
             val clientListPrefs = Gson().fromJson<List<Client>>(clientListJson, clientListType)
             clientList = clientListPrefs
-            arrayAdapterTypeClient = ArrayAdapter(
-                requireContext(),
-                R.layout.spinner_item,
-                clientList.map { it.client_name })
+            updateClientsData(clientList)
         } else {
             getAllClientsFromApi()
         }
@@ -640,11 +655,12 @@ fun CalculatorFragmentV2.getAllClientsFromApi() {
                 response: Response<GetAllClientsResponse?>
             ) {
                 if (response.isSuccessful) {
-                    val clientList = response.body()
-                    if (clientList != null) {
-                        val clientListJson = Gson().toJson(clientList.result)
+                    val clientListResponse = response.body()
+                    if (clientListResponse != null) {
+                        val clientListJson = Gson().toJson(clientListResponse.result)
                         prefs.edit().putString("clientList", clientListJson).apply()
-                        updateClientsData(clientList.result)
+                        clientList = clientListResponse.result
+                        updateClientsData(clientList)
                     }
                 }
                 progressBar.visibility = GONE

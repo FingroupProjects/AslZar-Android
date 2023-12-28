@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.widget.LinearLayoutCompat
@@ -38,6 +39,7 @@ import com.fin_group.aslzar.util.CartObserver
 import com.fin_group.aslzar.util.CustomPopupView
 import com.fin_group.aslzar.util.NoInternetDialogFragment
 import com.fin_group.aslzar.util.SessionManager
+import com.google.android.material.textfield.TextInputEditText
 import org.w3c.dom.Text
 
 @Suppress("DEPRECATION")
@@ -59,6 +61,7 @@ class CalculatorFragmentV2 : Fragment(), CalculatorResetListener {
     lateinit var percentInstallment: PercentInstallment
 
     lateinit var arrayAdapterTypeClient: ArrayAdapter<String>
+    lateinit var clientType: AutoCompleteTextView
 
     lateinit var adapterPaymentPercent: TableInstallmentAdapter
 
@@ -75,6 +78,8 @@ class CalculatorFragmentV2 : Fragment(), CalculatorResetListener {
 
     var textWatcherForFirstPay: TextWatcher? = null
     var textWatcherForBonus: TextWatcher? = null
+
+    var isUpdating = false
 
     lateinit var averageBillTv: TextView
     lateinit var averageBill: Number
@@ -97,6 +102,7 @@ class CalculatorFragmentV2 : Fragment(), CalculatorResetListener {
         averageBill = sessionManager.fetchCheck()
         monthLinearLayout = binding.monthTable
         percentLinearLayout = binding.percentTable
+        clientType = binding.clientType
         NoInternetDialogFragment.showIfNoInternet(requireContext())
         animation(binding)
         return binding.root
