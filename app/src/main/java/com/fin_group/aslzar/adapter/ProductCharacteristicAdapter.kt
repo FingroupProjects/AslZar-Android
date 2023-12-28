@@ -41,9 +41,14 @@ class ProductCharacteristicAdapter(
         return productList.size
     }
 
-    fun getSelectedProduct(): Type {
-        return productList[selectedItemPosition]
+    fun getSelectedProduct(): Type? {
+        return if (selectedItemPosition >= 0 && selectedItemPosition < productList.size) {
+            productList[selectedItemPosition]
+        } else {
+            null
+        }
     }
+
 
 
     @SuppressLint("NotifyDataSetChanged")

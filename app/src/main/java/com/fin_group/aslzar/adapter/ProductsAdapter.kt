@@ -57,7 +57,7 @@ class ProductsAdapter(
                     .centerCrop()
                     .into(image)
             } else {
-                image.setImageResource(R.drawable.ic_no_image)
+                image.setImageResource(R.drawable.logo2)
             }
 
             if (product.sale.toDouble() <= 0.0) {
