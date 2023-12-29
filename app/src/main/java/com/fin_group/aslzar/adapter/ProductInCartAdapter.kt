@@ -28,10 +28,6 @@ class ProductInCartAdapter(private var listProductInCart: List<ProductInCart>, p
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val product = listProductInCart[position]
         holder.bind(product)
-
-        binding.root.setOnClickListener {
-            listener.openDialogDataProduct(product)
-        }
     }
     fun updateList(newList: List<ProductInCart>) {
         listProductInCart = newList

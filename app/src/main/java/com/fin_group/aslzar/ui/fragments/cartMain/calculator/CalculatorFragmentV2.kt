@@ -34,6 +34,7 @@ import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.resetCalc
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.retrieveClientList
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.retrieveCoefficientPlan
 import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.setupDiscountButtons
+import com.fin_group.aslzar.ui.fragments.cartMain.calculator.functions.updateDisplayedValues
 import com.fin_group.aslzar.util.CalculatorResetListener
 import com.fin_group.aslzar.util.CartObserver
 import com.fin_group.aslzar.util.CustomPopupView
@@ -128,6 +129,7 @@ class CalculatorFragmentV2 : Fragment(), CalculatorResetListener {
         binding.firstPay.setText("0")
 
         setupDiscountButtons(binding, percentInstallment)
+        updateDisplayedValues(binding)
     }
 
     override fun onStart() {

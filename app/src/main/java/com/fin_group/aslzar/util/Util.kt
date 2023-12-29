@@ -43,6 +43,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -114,14 +115,26 @@ fun Fragment.redirectToChangeServerFragment(fragmentDirections: NavDirections) {
 }
 
 fun doubleFormat2(double: Number): String {
-    val decimalFormat = DecimalFormat("#.00")
+    val decimalFormat = DecimalFormat("#.00", DecimalFormatSymbols(Locale.US))
     return decimalFormat.format(double)
 }
 
 fun doubleFormat(double: Number): String {
-    val decimalFormat = DecimalFormat("#.0")
+    val decimalFormat = DecimalFormat("#.0", DecimalFormatSymbols(Locale.US))
     return decimalFormat.format(double)
 }
+
+fun formatNumber(number: Number): String {
+    val numberFormat = NumberFormat.getNumberInstance(Locale.US)
+    if (numberFormat is DecimalFormat) {
+        val symbols = numberFormat.decimalFormatSymbols
+        symbols.groupingSeparator = ' '
+        numberFormat.decimalFormatSymbols = symbols
+        numberFormat.applyPattern("#,##0.00")
+    }
+    return numberFormat.format(number)
+}
+
 
 interface CartObserver {
     fun onCartChanged(
@@ -185,17 +198,6 @@ fun Fragment.showBottomNav() {
     val showAnim: Animation = AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in)
     bottomNavBar.startAnimation(showAnim)
     bottomNavBar.visibility = View.VISIBLE
-}
-
-fun formatNumber(number: Number): String {
-    val numberFormat = NumberFormat.getNumberInstance(Locale.getDefault())
-    if (numberFormat is DecimalFormat) {
-        val symbols = numberFormat.decimalFormatSymbols
-        symbols.groupingSeparator = ' ' // Установите пробел в качестве разделителя разрядов
-        numberFormat.decimalFormatSymbols = symbols
-        numberFormat.applyPattern("#,##0.00")
-    }
-    return numberFormat.format(number)
 }
 
 
