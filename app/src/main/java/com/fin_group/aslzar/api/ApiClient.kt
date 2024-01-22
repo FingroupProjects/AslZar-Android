@@ -9,6 +9,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
 
 @SuppressLint("StaticFieldLeak")
@@ -59,7 +60,9 @@ class ApiClient {
         logging.level = (HttpLoggingInterceptor.Level.BODY)
 
         val client = OkHttpClient.Builder()
-        client.addInterceptor(logging)
+            .addInterceptor(logging)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .build()
 
         val gson = GsonBuilder()
             .setLenient()
@@ -69,7 +72,7 @@ class ApiClient {
             val retrofit = Retrofit.Builder()
                 .baseUrl(Constants.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create(gson))
-                .client(client.build())
+                .client(client)
                 .build()
             apiService = retrofit.create(ApiService::class.java)
         }
@@ -77,7 +80,7 @@ class ApiClient {
     }
 
     fun getApiServiceForgotPassword(): ApiService {
-        val credentials = Credentials.basic("Admin1", "1999")
+        val credentials = Credentials.basic("Admin M.P", "Qwerty2024")
         okHttpClient = OkHttpClient.Builder().addInterceptor { chain ->
             val originalRequest = chain.request()
             val authenticatedRequest =

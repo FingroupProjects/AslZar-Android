@@ -15,6 +15,7 @@ import com.fin_group.aslzar.response.SalesPlanResponse
 import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Path
@@ -26,7 +27,8 @@ interface ApiService {
     fun userLogin(): Call<Auth>
 
     @GET(Constants.GET_ALL_PRODUCTS)
-    fun getAllProducts(@Header("Authorization") token: String): Call<GetAllProductV2>
+    @Headers("Accept:application/json", "Content-Type:application/json")
+    suspend fun getAllProducts(@Header("Authorization") token: String): Response<GetAllProductV2>
 
     @GET(Constants.SALES_PRODUCTS)
     @Headers("Accept:application/json", "Content-Type:application/json")

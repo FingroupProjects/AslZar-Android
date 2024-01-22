@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.Menu
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -16,10 +17,8 @@ import com.fin_group.aslzar.R
 import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.cart.Cart
 import com.fin_group.aslzar.databinding.ActivityMainBinding
-import com.fin_group.aslzar.response.Client
 import com.fin_group.aslzar.response.GetAllCategoriesResponse
 import com.fin_group.aslzar.response.GetAllClientsResponse
-import com.fin_group.aslzar.response.GetAllProductV2
 import com.fin_group.aslzar.response.PercentInstallment
 import com.fin_group.aslzar.util.BadgeManager
 import com.fin_group.aslzar.util.SessionManager
@@ -28,6 +27,9 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.gson.Gson
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -58,8 +60,6 @@ class MainActivity : AppCompatActivity() {
         apiClient = ApiClient()
         sessionManager = SessionManager(this)
         apiClient.init(sessionManager)
-
-
 
         prefs = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)!!
 
@@ -122,9 +122,12 @@ class MainActivity : AppCompatActivity() {
 
         val fetchDataList = mutableListOf<Pair<String, () -> Unit>>()
 
-        if (productListJson == null) {
-            fetchDataList.add("productList" to ::fetchProductsFromApi)
-        }
+//        lifecycleScope.launch {
+//            if (productListJson == null) {
+//                fetchDataList.add("productList" to ::fetchProductsFromApi)
+//            }
+//        }
+
         if (categoriesJson == null) {
             fetchDataList.add("categoryList" to ::fetchCategoriesFromApi)
         }
@@ -140,28 +143,18 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun fetchProductsFromApi() {
+    private suspend fun fetchProductsFromApi() {
         try {
-            val call =
+            val call = withContext(Dispatchers.IO){
                 apiClient.getApiService().getAllProducts("Bearer ${sessionManager.fetchToken()}")
-            call.enqueue(object : Callback<GetAllProductV2?> {
-                override fun onResponse(
-                    call: Call<GetAllProductV2?>,
-                    response: Response<GetAllProductV2?>
-                ) {
-                    if (response.isSuccessful) {
-                        val productList = response.body()
-                        if (productList != null) {
-                            val productListJson = Gson().toJson(productList.result)
-                            prefs.edit().putString("productList", productListJson).apply()
-                        }
-                    }
+            }
+            if (call.isSuccessful) {
+                val getAllProducts = call.body()
+                if (getAllProducts?.result != null) {
+                    val productListJson = Gson().toJson(getAllProducts.result)
+                    prefs.edit().putString("productList", productListJson).apply()
                 }
-
-                override fun onFailure(call: Call<GetAllProductV2?>, t: Throwable) {
-                    Log.d("TAG", "onViewCreated fetchProductsFromApi: ${t.message}")
-                }
-            })
+            }
         } catch (e: Exception) {
             Log.d("TAG", "fetchProductsFromApi: ${e.message}")
         }

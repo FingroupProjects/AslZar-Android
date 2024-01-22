@@ -40,7 +40,9 @@ import com.fin_group.aslzar.util.returnNumber
 import com.fin_group.aslzar.util.viewChecked
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -388,7 +390,6 @@ fun MainFragment.goToTop(){
 
             layoutManager = recyclerView.layoutManager as LinearLayoutManager
             val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
-            Log.d("TAG", "POSITION: $firstVisibleItemPosition")
 
             btnGoTo.setOnClickListener {
                 if (firstVisibleItemPosition <= 40){
@@ -397,7 +398,6 @@ fun MainFragment.goToTop(){
                     recyclerView.smoothScrollToPosition(40)
 
                     android.os.Handler().postDelayed({ recyclerView.scrollToPosition(0) }, 1000)
-                    //recyclerView.scrollToPosition(0)
                 }
             }
 
@@ -433,64 +433,130 @@ fun MainFragment.hideButton() {
 
 fun MainFragment.getAllProductsFromApi() {
     swipeRefreshLayout.isRefreshing = true
+
     try {
-        swipeRefreshLayout.isRefreshing = false
-
-        val call = apiService.getApiService().getAllProducts("Bearer ${sessionManager.fetchToken()}")
-        call.enqueue(object : Callback<GetAllProductV2> {
-            override fun onResponse(call: Call<GetAllProductV2>, response: Response<GetAllProductV2>) {
-                swipeRefreshLayout.isRefreshing = false
-                if (response.isSuccessful) {
-                    val getAllProducts = response.body()
-                    if (getAllProducts?.result != null) {
-                        allProducts = getAllProducts.result
-                        val productListJson = Gson().toJson(allProducts)
-                        preferences.edit().putString("productList", productListJson).apply()
-
-                        if (filterModel == null){
-                            setFilterViewModelData()
-                            filterProducts()
-                        }
-                        if (filterModel == defaultFilterModel){
-                            setFilterViewModelData()
-                            filterProducts()
-                        }
-                    } else {
-                        showError("Произошла ошибка: ответ сервера не содержит данных.")
-                    }
-                } else {
-                    when (response.code()){
-                        401 -> {
-                            UnauthorizedDialogFragment.showUnauthorizedError(
-                                requireContext(),
-                                preferences,
-                                this@getAllProductsFromApi,
-                                sessionManager
-                            )
-                        }
-                        500 -> {
-                            showError("Сервер временно не работает, повторите попытку позже")
-                        }
-                        else -> {
-                            showError("Произошла ошибка: ${response.message()}")
-                        }
-                    }
+        // Запускаем корутину для выполнения асинхронного кода
+        lifecycleScope.launch {
+            try {
+                // Получаем данные из API внутри корутины
+                val call = withContext(Dispatchers.IO) {
+                    apiService.getApiService().getAllProducts("Bearer ${sessionManager.fetchToken()}")
                 }
-            }
 
-            override fun onFailure(call: Call<GetAllProductV2>, t: Throwable) {
-                showError("Ошибка при выполнении запроса: ${t.message}")
+                handleApiResponse(call)
+            } catch (e: Exception) {
                 swipeRefreshLayout.isRefreshing = false
             }
-        })
+        }
     } catch (e: Exception) {
-        showError("Произошла ошибка: ${e.message}")
         swipeRefreshLayout.isRefreshing = false
     }
 }
 
+private fun MainFragment.handleApiResponse(call: Response<GetAllProductV2>) {
+    errorTv.visibility = GONE
+
+    if (call.isSuccessful) {
+        val getAllProducts = call.body()
+        if (getAllProducts?.result != null) {
+            allProducts = getAllProducts.result
+            val productListJson = Gson().toJson(allProducts)
+            preferences.edit().putString("productList", productListJson).apply()
+
+            if (filterModel == null || filterModel == defaultFilterModel) {
+                setFilterViewModelData()
+                filterProducts()
+            }
+        } else {
+            showError("Произошла ошибка: ответ сервера не содержит данных.")
+            Log.d("TAG", "handleApiResponse: Произошла ошибка: ответ сервера не содержит данных.")
+        }
+    } else {
+
+        when (call.code()) {
+            401 -> {
+                UnauthorizedDialogFragment.showUnauthorizedError(
+                    requireContext(),
+                    preferences,
+                    this,
+                    sessionManager
+                )
+            }
+            500 -> {
+                showError("Сервер временно не работает, повторите попытку позже")
+                Log.d("TAG", "handleApiResponse: Сервер временно не работает, повторите попытку позже")
+
+            }
+            else -> {
+                showError("Произошла ошибка: ${call.message()}")
+                Log.d("TAG", "handleApiResponse: Произошла ошибка: ${call.message()}")
+            }
+        }
+    }
+}
+
+
+//fun MainFragment.getAllProductsFromApi() {
+//    swipeRefreshLayout.isRefreshing = true
+//    try {
+//        swipeRefreshLayout.isRefreshing = false
+//
+//        val call = apiService.getApiService().getAllProducts("Bearer ${sessionManager.fetchToken()}")
+//        call.enqueue(object : Callback<GetAllProductV2> {
+//            override fun onResponse(call: Call<GetAllProductV2>, response: Response<GetAllProductV2>) {
+//                swipeRefreshLayout.isRefreshing = false
+//                if (response.isSuccessful) {
+//                    val getAllProducts = response.body()
+//                    if (getAllProducts?.result != null) {
+//                        allProducts = getAllProducts.result
+//                        val productListJson = Gson().toJson(allProducts)
+//                        preferences.edit().putString("productList", productListJson).apply()
+//
+//                        if (filterModel == null){
+//                            setFilterViewModelData()
+//                            filterProducts()
+//                        }
+//                        if (filterModel == defaultFilterModel){
+//                            setFilterViewModelData()
+//                            filterProducts()
+//                        }
+//                    } else {
+//                        showError("Произошла ошибка: ответ сервера не содержит данных.")
+//                    }
+//                } else {
+//                    when (response.code()){
+//                        401 -> {
+//                            UnauthorizedDialogFragment.showUnauthorizedError(
+//                                requireContext(),
+//                                preferences,
+//                                this@getAllProductsFromApi,
+//                                sessionManager
+//                            )
+//                        }
+//                        500 -> {
+//                            showError("Сервер временно не работает, повторите попытку позже")
+//                        }
+//                        else -> {
+//                            showError("Произошла ошибка: ${response.message()}")
+//                        }
+//                    }
+//                }
+//            }
+//
+//            override fun onFailure(call: Call<GetAllProductV2>, t: Throwable) {
+//                showError("Ошибка при выполнении запроса: ${t.message}")
+//                swipeRefreshLayout.isRefreshing = false
+//            }
+//        })
+//    } catch (e: Exception) {
+//        showError("Произошла ошибка: ${e.message}")
+//        swipeRefreshLayout.isRefreshing = false
+//    }
+//}
+
 private fun MainFragment.showError(message: String) {
-    Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    errorTv.text = message
+    errorTv.visibility = VISIBLE
 }
 
 fun MainFragment.getAllCategoriesPrefs() {
