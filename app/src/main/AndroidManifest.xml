@@ -23,13 +23,16 @@
         <activity
             android:name=".ui.activities.MainActivity"
             android:exported="false"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.activities.LoginActivity"
             android:exported="false"
+            android:screenOrientation="locked"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.activities.SplashScreenActivity"
+            android:screenOrientation="portrait"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

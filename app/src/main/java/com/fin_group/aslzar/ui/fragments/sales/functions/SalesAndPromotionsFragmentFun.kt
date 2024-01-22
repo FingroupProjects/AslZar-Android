@@ -379,6 +379,9 @@ fun SalesAndPromotionsFragment.getAllProductsFromApi() {
                 response: Response<SaleProductsResponse?>
             ) {
                 swipeRefreshLayout.isRefreshing = false
+                Log.d("TAG", "onResponse: ${response.code()}")
+                Log.d("TAG", "onResponse: ${response.body()}")
+                Log.d("TAG", "onResponse: ${response.raw()}")
                 if (response.isSuccessful) {
                     val getAllProducts = response.body()
                     if (getAllProducts?.result != null) {

@@ -115,6 +115,8 @@ class FragmentLogin : Fragment() {
                     override fun onResponse(call: Call<Auth?>, response: Response<Auth?>) {
                         try {
                             progressBar.visibility = GONE
+                            Log.d("TAG", "onResponse: ${response.code()}")
+                            Log.d("TAG", "onResponse: ${response.body()}")
                             if (response.isSuccessful){
                                 val loginResponse = response.body()
                                 if (loginResponse != null){
