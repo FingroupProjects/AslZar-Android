@@ -50,6 +50,19 @@
                 app:srcCompat="@drawable/ring_2" />
 
             <TextView
+                android:id="@+id/product_sale"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/sale_bg2"
+                android:text="-5%"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/imageProductInCart"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
                 android:id="@+id/nameProductInCart"
                 style="@style/forTextView"
                 android:layout_width="0dp"

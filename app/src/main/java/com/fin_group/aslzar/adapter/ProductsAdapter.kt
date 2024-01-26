@@ -63,7 +63,7 @@ class ProductsAdapter(
             if (product.sale.toDouble() <= 0.0) {
                 saleTv.visibility = GONE
             } else {
-                saleTv.text = "-${formatNumber(product.sale)}%"
+                saleTv.text = "-${product.sale}%"
                 saleTv.visibility = VISIBLE
             }
 

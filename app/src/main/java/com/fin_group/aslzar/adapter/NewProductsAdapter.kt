@@ -41,13 +41,13 @@ class NewProductsAdapter(
                     .centerCrop()
                     .into(image)
             } else {
-                image.setImageResource(R.drawable.ic_no_image)
+                image.setImageResource(R.drawable.logo2)
             }
 
             if (product.sale.toDouble() <= 0) {
                 saleTv.visibility = View.GONE
             } else {
-                saleTv.text = "-${formatNumber(product.sale)}%"
+                saleTv.text = "-${product.sale}%"
                 saleTv.visibility = View.VISIBLE
             }
 
