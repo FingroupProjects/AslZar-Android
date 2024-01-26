@@ -1,6 +1,7 @@
 package com.fin_group.aslzar.adapter
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -49,8 +50,6 @@ class ProductCharacteristicAdapter(
         }
     }
 
-
-
     @SuppressLint("NotifyDataSetChanged")
     fun updateData(newList: List<Type>) {
         productList = newList
@@ -78,8 +77,9 @@ class ProductCharacteristicAdapter(
         fun bind(product: Type, isSelected: Boolean) {
             if (product.counts.isNotEmpty()) {
                 itemView.visibility = View.VISIBLE
-                tvSize.text = formatNumber(product.size)
-                tvWeight.text = "${formatNumber(product.weight)} гр"
+                Log.d("TAG", "bind size: ${product.size}; weight: ${product.weight}")
+                tvSize.text = product.size.toString()
+                tvWeight.text = "${product.weight} гр"
 
                 val countsList = product.counts
                 if (countsList.size == 1){

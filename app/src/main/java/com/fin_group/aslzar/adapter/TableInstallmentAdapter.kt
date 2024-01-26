@@ -3,6 +3,7 @@ package com.fin_group.aslzar.adapter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -25,7 +26,11 @@ class TableInstallmentAdapter(var installment: PercentInstallment, var totalPric
         @SuppressLint("SetTextI18n", "ResourceAsColor")
         fun bind(percent: Percent){
             tvMonth.text = "${percent.mounth} платежей"
-            val monthPayment = (((totalPrice.toDouble() * percent.coefficient.toDouble()) / 100) + totalPrice.toDouble()) / percent.mounth.toDouble()
+            val monthPayment = if (percent.coefficient.toDouble() <= 1.0) {
+                totalPrice.toDouble()
+            } else {
+                (((totalPrice.toDouble() * percent.coefficient.toDouble()) / 100) + totalPrice.toDouble()) / percent.mounth.toDouble()
+            }
 
             if (limit.toDouble() >= monthPayment || limit.toDouble() == 0.0) {
                 tvPercent.setTextColor(ContextCompat.getColor(tvPercent.context, R.color.text_color_1))

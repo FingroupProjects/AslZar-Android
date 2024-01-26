@@ -402,7 +402,6 @@ fun DataProductFragment.fetchCoefficientPlanFromPrefs() {
                 }
             }
             else {
-
                 if (selectedCount != null){
                     printPercent(binding, percentInstallment, selectedCount!!.price)
                 }
@@ -429,36 +428,36 @@ fun DataProductFragment.fetchCoefficientPlanFromApi() {
                         val coefficientPlanJson = Gson().toJson(coefficientPlanList)
                         preferences.edit().putString("coefficientPlan", coefficientPlanJson).apply()
                         percentInstallment = coefficientPlanList
+//                        printPercent(binding, percentInstallment, selectedCount!!.price)
 
-//                        if (productCharacteristicAdapter.getSelectedProduct() != null){
-//                            Log.d("TAG", "onResponse: hello")
-//                            selectedCharacteristic = productCharacteristicAdapter.getSelectedProduct()!!
-//                            if (selectedCharacteristic.counts.size == 1){
-//
-//                                if (selectedCount != null){
-//                                    selectedCount = selectedCharacteristic.counts[0]
-//                                    printPercent(binding, percentInstallment, selectedCount!!.price)
-//                                }
-//
-//
-//                            } else if (selectedCharacteristic.counts.size > 1){
-//                                selectedCount = if(selectedCharacteristic.counts.any{ it.is_filial }){
-//                                    selectedCharacteristic.counts.find { it.is_filial }!!
-//                                } else {
-//                                    selectedCharacteristic.counts.minBy { it.price.toDouble() }
-//                                }
-//                                if (selectedCount != null){
-//                                    printPercent(binding, percentInstallment, selectedCount!!.price)
-//                                }
-//                            }
-//                            else {
-//                                if (selectedCount != null){
-//                                    printPercent(binding, percentInstallment, selectedCount!!.price)
-//
-//                                }
-//                            }
-//                        }
+                        if (productCharacteristicAdapter.getSelectedProduct() != null){
+                            Log.d("TAG", "onResponse: hello")
+                            selectedCharacteristic = productCharacteristicAdapter.getSelectedProduct()!!
+                            if (selectedCharacteristic.counts.size == 1){
 
+                                if (selectedCount != null){
+                                    selectedCount = selectedCharacteristic.counts[0]
+                                    printPercent(binding, percentInstallment, selectedCount!!.price)
+                                }
+
+
+                            } else if (selectedCharacteristic.counts.size > 1){
+                                selectedCount = if(selectedCharacteristic.counts.any{ it.is_filial }){
+                                    selectedCharacteristic.counts.find { it.is_filial }!!
+                                } else {
+                                    selectedCharacteristic.counts.minBy { it.price.toDouble() }
+                                }
+                                if (selectedCount != null){
+                                    printPercent(binding, percentInstallment, selectedCount!!.price)
+                                }
+                            }
+                            else {
+                                if (selectedCount != null){
+                                    printPercent(binding, percentInstallment, selectedCount!!.price)
+
+                                }
+                            }
+                        }
                     }
                 }
             }

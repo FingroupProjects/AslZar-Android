@@ -11,6 +11,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.fin_group.aslzar.R
@@ -67,7 +68,11 @@ class ProfileFragment : Fragment() {
         }
 
         binding.btnChangePassword.setOnClickListener {
-            findNavController().navigate(R.id.action_profileFragment_to_codeFragment)
+            if (sessionManager.fetchEmail()?.isEmpty() == true){
+                Toast.makeText(requireContext(), "У вас не указана почта для изменения пароля", Toast.LENGTH_SHORT).show()
+            } else {
+                findNavController().navigate(R.id.action_profileFragment_to_codeFragment)
+            }
         }
 
         getInformation()

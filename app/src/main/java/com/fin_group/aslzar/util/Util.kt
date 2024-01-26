@@ -125,16 +125,17 @@ fun doubleFormat(double: Number): String {
 }
 
 fun formatNumber(number: Number): String {
+    val roundedNumber = ((number.toDouble() + 500) / 1000).toLong() * 1000
+
     val numberFormat = NumberFormat.getNumberInstance(Locale.US)
     if (numberFormat is DecimalFormat) {
         val symbols = numberFormat.decimalFormatSymbols
         symbols.groupingSeparator = ' '
         numberFormat.decimalFormatSymbols = symbols
-        numberFormat.applyPattern("#,##0.00")
+        numberFormat.applyPattern("#,##0")
     }
-    return numberFormat.format(number)
+    return numberFormat.format(roundedNumber)
 }
-
 
 interface CartObserver {
     fun onCartChanged(
@@ -144,7 +145,6 @@ interface CartObserver {
         totalPrice: Number
     )
 }
-
 
 fun nextEt(editText: TextInputEditText) {
     editText.imeOptions = EditorInfo.IME_ACTION_DONE
@@ -312,8 +312,12 @@ fun setMaxValueET(inputET: EditText, maxValue: Number) {
     inputET.addTextChangedListener(hello)
 }
 
-fun setMinMaxValueET(inputET: EditText, minValue: Number, maxValue: Number, delayMillis: Long = 1500L) {
+fun setMinMaxValueET(inputET: EditText, minValue: Double, maxValue: Double, delayMillis: Long = 1500L) {
+
     val handler = Handler()
+    val symbols = DecimalFormatSymbols(Locale.getDefault())
+    symbols.decimalSeparator = '.'
+    val decimalFormat = DecimalFormat("#.##", symbols)
 
     val textWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -324,14 +328,50 @@ fun setMinMaxValueET(inputET: EditText, minValue: Number, maxValue: Number, dela
             handler.removeCallbacksAndMessages(null)
             handler.postDelayed({
                 val newText = s.toString().trim()
+
                 if (!newText.isNullOrEmpty()) {
-                    val currentValue = newText.replace(',', '.').toDoubleOrNull()
-                    if (currentValue != null) {
-                        if (currentValue < minValue.toDouble()) {
+                    val currentValue = newText.replace(',', '.')
+                    val formattedValue = decimalFormat.parse(currentValue)?.toLong()
+                    if (formattedValue != null) {
+                        if (formattedValue < minValue.toDouble()) {
                             inputET.setText(minValue.toString())
                             inputET.setSelection(minValue.toString().length)
                         }
-                        else if (currentValue > maxValue.toDouble()) {
+                        else if (formattedValue > maxValue.toDouble()) {
+                            inputET.setText(maxValue.toString())
+                            inputET.setSelection(maxValue.toString().length)
+                        }
+                    }
+                }
+            }, delayMillis)
+        }
+    }
+    inputET.addTextChangedListener(textWatcher)
+}
+
+fun setMinMaxValueET2(inputET: EditText, minValue: Long, maxValue: Long, max: Boolean, delayMillis: Long = 1500L) {
+    val handler = Handler()
+
+    inputET.setText(if (max) maxValue.toString() else minValue.toString())
+
+    val textWatcher = object : TextWatcher {
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+        override fun afterTextChanged(s: Editable?) {
+            handler.removeCallbacksAndMessages(null)
+            handler.postDelayed({
+                val newText = s.toString().trim()
+
+                if (!newText.isNullOrEmpty()) {
+                    val currentValue = newText.replace(',', '.').toLongOrNull()
+                    if (currentValue != null) {
+                        if (currentValue < minValue) {
+                            inputET.setText(minValue.toString())
+                            inputET.setSelection(minValue.toString().length)
+                        }
+                        else if (currentValue > maxValue) {
                             inputET.setText(maxValue.toString())
                             inputET.setSelection(maxValue.toString().length)
                         }

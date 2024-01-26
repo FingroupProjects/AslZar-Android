@@ -73,6 +73,7 @@ class CalculatorFragmentV2 : Fragment(), CalculatorResetListener {
 
     var manualDiscount = 0.0
     var maxManualDiscount: Number = 0.0
+    var maxManualDiscount2: Number = 0.0
 
     lateinit var monthLinearLayout: LinearLayoutCompat
     lateinit var percentLinearLayout: LinearLayoutCompat

@@ -8,12 +8,10 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Toast
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.adapter.SalesProductsV2Adapter
 import com.fin_group.aslzar.cart.Cart
-import com.fin_group.aslzar.databinding.FragmentNewProductsBinding
 import com.fin_group.aslzar.databinding.FragmentSalesAndPromotionsBinding
 import com.fin_group.aslzar.models.FilterModel
 import com.fin_group.aslzar.response.Category
@@ -23,14 +21,13 @@ import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.response.SaleProductsResponse
 import com.fin_group.aslzar.response.Type
 import com.fin_group.aslzar.ui.dialogs.CheckCategoryFragmentDialog
-import com.fin_group.aslzar.ui.dialogs.FilterDialogFragment
+import com.fin_group.aslzar.ui.dialogs.FilterDialogSalesProductsFragment
 import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.PickCharacterProductDialogFragment
 import com.fin_group.aslzar.ui.dialogs.WarningNoHaveProductFragmentDialog
 import com.fin_group.aslzar.ui.fragments.new_products.functions.getNonZeroValues
 import com.fin_group.aslzar.ui.fragments.sales.SalesAndPromotionsFragment
 import com.fin_group.aslzar.util.CategoryClickListener
-import com.fin_group.aslzar.util.UnauthorizedDialogFragment
 import com.fin_group.aslzar.util.handleErrorResponse
 import com.fin_group.aslzar.util.returnNumber
 import com.fin_group.aslzar.util.viewChecked
@@ -88,7 +85,7 @@ fun SalesAndPromotionsFragment.searchViewFun() {
     viewSearch.visibility = if (viewChecked(
             viewSearch
         )
-    ) View.VISIBLE else View.GONE
+    ) VISIBLE else GONE
 }
 
 fun SalesAndPromotionsFragment.addProductToCart(product: ResultX) {
@@ -489,7 +486,7 @@ fun SalesAndPromotionsFragment.getAllCategoriesFromApi() {
 }
 
 fun SalesAndPromotionsFragment.setFilterViewModel() {
-    val filterDialogFragment = FilterDialogFragment()
+    val filterDialogFragment = FilterDialogSalesProductsFragment()
     allProducts = retrieveProducts()
 
     val availableProducts = allProducts.filter { product ->

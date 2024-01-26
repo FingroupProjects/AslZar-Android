@@ -11,8 +11,10 @@ import android.view.View.GONE
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ProgressBar
+import android.widget.Spinner
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,8 +29,10 @@ import com.fin_group.aslzar.util.BaseBottomSheetDialogFragment
 import com.fin_group.aslzar.util.CategoryClickListener
 import com.fin_group.aslzar.util.FilterDialogListener
 import com.fin_group.aslzar.util.FilterViewModel
+import com.fin_group.aslzar.util.FilterViewModelNewProducts
 import com.fin_group.aslzar.util.SessionManager
 import com.fin_group.aslzar.util.returnNumber
+import com.fin_group.aslzar.util.setMaxValueET
 import com.fin_group.aslzar.util.setMinMaxValueET
 import com.fin_group.aslzar.util.setMinMaxValueET2
 import com.fin_group.aslzar.util.setupEditTextBehavior
@@ -40,8 +44,8 @@ import retrofit2.Response
 
 
 @Suppress("DEPRECATION")
-class FilterDialogFragment : BaseBottomSheetDialogFragment() {
-    private lateinit var filterViewModel: FilterViewModel
+class FilterDialogNewProductsFragment : BaseBottomSheetDialogFragment() {
+    private lateinit var filterViewModel: FilterViewModelNewProducts
 
     private var _binding: FragmentFilterDialogBinding? = null
     private val binding get() = _binding!!
@@ -76,7 +80,7 @@ class FilterDialogFragment : BaseBottomSheetDialogFragment() {
         progressBar = binding.progressLinearDeterminate
         preferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
         categoriesRV = binding.categoriesRv
-        filterViewModel = ViewModelProvider(requireActivity())[FilterViewModel::class.java]
+        filterViewModel = ViewModelProvider(requireActivity())[FilterViewModelNewProducts::class.java]
 
         return binding.root
     }

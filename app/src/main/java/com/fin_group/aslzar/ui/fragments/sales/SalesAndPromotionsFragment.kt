@@ -52,6 +52,7 @@ import com.fin_group.aslzar.util.AddingProduct
 import com.fin_group.aslzar.util.BadgeManager
 import com.fin_group.aslzar.util.FilialListener
 import com.fin_group.aslzar.util.FilterViewModel
+import com.fin_group.aslzar.util.FilterViewModelSalesProducts
 import com.fin_group.aslzar.util.NoInternetDialogFragment
 import com.fin_group.aslzar.util.ProductOnClickListener
 import com.fin_group.aslzar.util.SessionManager
@@ -94,7 +95,7 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener, AddingPro
 
     lateinit var recyclerView: RecyclerView
 
-    lateinit var filterViewModel: FilterViewModel
+    lateinit var filterViewModel: FilterViewModelSalesProducts
     var filterModel: FilterModel? = null
     var defaultFilterModel: FilterModel? = null
 
@@ -106,7 +107,7 @@ class SalesAndPromotionsFragment : Fragment(), ProductOnClickListener, AddingPro
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentSalesAndPromotionsBinding.inflate(inflater, container, false)
-        filterViewModel = ViewModelProvider(requireActivity())[FilterViewModel::class.java]
+        filterViewModel = ViewModelProvider(requireActivity())[FilterViewModelSalesProducts::class.java]
         defaultFilterModel = filterViewModel.defaultFilterModel
         checkedFiltersTv = binding.checkedFiltersTv
         errorTv = binding.textView47

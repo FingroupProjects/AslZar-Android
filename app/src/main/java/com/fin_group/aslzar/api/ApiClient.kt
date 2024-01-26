@@ -61,7 +61,7 @@ class ApiClient {
 
         val client = OkHttpClient.Builder()
             .addInterceptor(logging)
-            .readTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(260, TimeUnit.SECONDS)
             .build()
 
         val gson = GsonBuilder()

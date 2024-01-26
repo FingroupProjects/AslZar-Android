@@ -54,6 +54,7 @@ import com.fin_group.aslzar.util.AddingProduct
 import com.fin_group.aslzar.util.BadgeManager
 import com.fin_group.aslzar.util.FilialListener
 import com.fin_group.aslzar.util.FilterViewModel
+import com.fin_group.aslzar.util.FilterViewModelNewProducts
 import com.fin_group.aslzar.util.NoInternetDialogFragment
 import com.fin_group.aslzar.util.ProductOnClickListener
 import com.fin_group.aslzar.util.SessionManager
@@ -97,7 +98,7 @@ class NewProductsFragment : Fragment(), ProductOnClickListener, AddingProduct, F
     lateinit var recyclerView: RecyclerView
     var backPressedTime: Long = 0
 
-    lateinit var filterViewModel: FilterViewModel
+    lateinit var filterViewModel: FilterViewModelNewProducts
     var filterModel: FilterModel? = null
     var defaultFilterModel: FilterModel? = null
 
@@ -110,7 +111,7 @@ class NewProductsFragment : Fragment(), ProductOnClickListener, AddingProduct, F
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentNewProductsBinding.inflate(inflater, container, false)
-        filterViewModel = ViewModelProvider(requireActivity())[FilterViewModel::class.java]
+        filterViewModel = ViewModelProvider(requireActivity())[FilterViewModelNewProducts::class.java]
         defaultFilterModel = filterViewModel.defaultFilterModel
         checkedFiltersTv = binding.checkedFiltersTv
         errorTv = binding.textView47

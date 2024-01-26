@@ -30,13 +30,10 @@ import com.fin_group.aslzar.adapter.TableInstallmentAdapter
 import com.fin_group.aslzar.api.ApiClient
 import com.fin_group.aslzar.databinding.FragmentDataProductBinding
 import com.fin_group.aslzar.models.FilterModel
-import com.fin_group.aslzar.response.Category
 import com.fin_group.aslzar.response.Count
 import com.fin_group.aslzar.response.PercentInstallment
 import com.fin_group.aslzar.response.ResultX
-import com.fin_group.aslzar.response.SimilarProduct
 import com.fin_group.aslzar.response.Type
-import com.fin_group.aslzar.ui.dialogs.AlikeProductBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.callSetInProduct
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.fetchCoefficientPlanFromApi
 import com.fin_group.aslzar.ui.fragments.dataProduct.functions.fetchCoefficientPlanFromPrefs
@@ -58,13 +55,11 @@ import com.fin_group.aslzar.util.FilterViewModel
 import com.fin_group.aslzar.util.OnAlikeProductClickListener
 import com.fin_group.aslzar.util.OnImageClickListener
 import com.fin_group.aslzar.util.OnProductCharacteristicClickListener
-import com.fin_group.aslzar.util.ProductOnClickListener
 import com.fin_group.aslzar.util.SessionManager
 import com.fin_group.aslzar.util.formatNumber
 import com.fin_group.aslzar.util.hideBottomNav
 import com.fin_group.aslzar.util.showBottomNav
 import com.fin_group.aslzar.viewmodel.SharedViewModel
-import com.google.android.gms.common.api.GoogleApi
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
@@ -151,6 +146,7 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
         } catch (e: Exception) {
             Log.d("TAG", "onCreateView: ${e.message}")
         }
+        Log.d("TAG", "onCreateView percent: $percentInstallment")
         adapterPaymentPercent = TableInstallmentAdapter(percentInstallment, product.price, 0.0)
         toolbar = requireActivity().findViewById(R.id.toolbar)
         toolbar.title = product.full_name
@@ -257,7 +253,7 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
 
         val countsList = product.counts.map {
                     "\nЦена: ${formatNumber(it.price)}" +
-                    "\nФиллиал: ${it.filial}" +
+                    "\nФилиал: ${it.filial}" +
                     "\nВитрина: ${it.sclad}\n\n"
         }.toTypedArray()
         if (countsList.size > 1) {
@@ -276,7 +272,6 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
                     binding.tvVitrina.text = selectedCount!!.sclad
                     printPercent(binding, percentInstallment, tvPriceFirstSecond)
                 }
-
             }
             val alertDialog = alertDialogBuilder.create()
             alertDialog.show()

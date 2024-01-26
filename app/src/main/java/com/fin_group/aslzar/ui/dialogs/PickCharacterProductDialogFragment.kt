@@ -78,6 +78,8 @@ class PickCharacterProductDialogFragment : BaseDialogFullFragment(), FilialListe
             filterModel = it.getParcelable(ARG_FILTERED_TYPE)!!
         }
 
+        Log.d("TAG", "onCreateView: $filterModel")
+
         sessionManager = SessionManager(requireContext())
         apiClient = ApiClient()
         apiClient.init(sessionManager)
@@ -148,23 +150,22 @@ class PickCharacterProductDialogFragment : BaseDialogFullFragment(), FilialListe
     }
 
     private fun filterCounts(product: ResultX, filterModel: FilterModel) {
-        val filteredList = sortedTypeList.filter {
-            product.types.any { type ->
-                (type.filter || type.size.toDouble() > 0.0) &&
-                type.counts.any { count ->
-                    count.price.toDouble() >= filterModel.priceFrom.toDouble() &&
-                    count.price.toDouble() <= filterModel.priceTo.toDouble()
-                }
+        val filteredList = sortedTypeList.filter { type ->
+            product.types.any { innerType ->
+                (innerType.filter || innerType.size.toDouble() > 0.0) &&
+                        innerType.counts.any { count ->
+                            count.price.toDouble() >= filterModel.priceFrom.toDouble() &&
+                                    count.price.toDouble() <= filterModel.priceTo.toDouble()
+                        }
             } &&
-            product.types.any { type ->
-                (type.filter || type.size.toDouble() >= filterModel.sizeFrom.toDouble()) &&
-                (type.filter || type.size.toDouble() <= filterModel.sizeTo.toDouble()) &&
-                type.weight.toDouble() >= filterModel.weightFrom.toDouble() &&
-                type.weight.toDouble() <= filterModel.weightTo.toDouble()
-            }
+                    type.size.toDouble() >= filterModel.sizeFrom.toDouble() &&
+                    type.size.toDouble() <= filterModel.sizeTo.toDouble() &&
+                    type.weight.toDouble() >= filterModel.weightFrom.toDouble() &&
+                    type.weight.toDouble() <= filterModel.weightTo.toDouble()
         }
         myAdapter.upgradeList(filteredList)
     }
+
 
     override fun addProduct(product: ResultX, type: Type, count: Count) {
         listener.addProduct(product, type, count)

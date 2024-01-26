@@ -321,17 +321,17 @@ fun MainFragment.filterProducts2() {
         val tempList = filteredProducts.filter { product ->
             product.types.any { type ->
                 (type.filter || type.size.toDouble() > 0.0) &&
-                        type.counts.any { count ->
-                            count.price.toDouble() >= modelToUse.priceFrom.toDouble() &&
-                                    count.price.toDouble() <= modelToUse.priceTo.toDouble()
-                        }
+                type.counts.any { count ->
+                count.price.toDouble() >= modelToUse.priceFrom.toDouble() &&
+                count.price.toDouble() <= modelToUse.priceTo.toDouble()
+            }
             } &&
-                    product.types.any { type ->
-                        (type.filter || type.size.toDouble() >= modelToUse.sizeFrom.toDouble()) &&
-                                (type.filter || type.size.toDouble() <= modelToUse.sizeTo.toDouble()) &&
-                                type.weight.toDouble() >= modelToUse.weightFrom.toDouble() &&
-                                type.weight.toDouble() <= modelToUse.weightTo.toDouble()
-                    }
+                product.types.any { type ->
+                    type.size.toDouble() >= modelToUse.sizeFrom.toDouble() &&
+                    type.size.toDouble() <= modelToUse.sizeTo.toDouble() &&
+                    type.weight.toDouble() >= modelToUse.weightFrom.toDouble() &&
+                    type.weight.toDouble() <= modelToUse.weightTo.toDouble()
+                }
         }
         myAdapter.updateProducts(tempList)
     }
@@ -593,6 +593,9 @@ fun MainFragment.getAllCategoriesFromApi() {
                         val firstCategory = Category("all", "Все")
                         allCategories = categoryList
                         allCategories = mutableListOf(firstCategory).plus(allCategories)
+
+                        val categoryListJson = Gson().toJson(allCategories)
+                        preferences.edit().putString("categoryList", categoryListJson).apply()
                         recyclerView.visibility = VISIBLE
                         errorTv.visibility = GONE
                     } else {
@@ -647,24 +650,25 @@ fun MainFragment.setFilterViewModel() {
         .flatMap { type -> type.counts.mapNotNull { count -> returnNumber(count.price.toString())?.toDouble()} }
         .filter { it > 0.0 }
 
-    val minPrice = nonZeroPrices.minOrNull() ?: 0.0
-    val maxPrice = nonZeroPrices.maxOrNull() ?: 0.0
-
     val nonZeroSizes = availableProducts
         .flatMap { it.types.filter { type -> type.counts.any { count -> count.count > 0 } } }
         .flatMap { type -> type.counts.mapNotNull { count -> returnNumber(type.size.toString())?.toDouble() } }
-        .filter { it > 0.0 }
-
-    val minSize = nonZeroSizes.minOrNull() ?: 0.0
-    val maxSize = nonZeroSizes.maxOrNull() ?: 0.0
 
     val nonZeroWeights = availableProducts
         .flatMap { it.types.filter { type -> type.counts.any { count -> count.count > 0 } } }
         .flatMap { type -> type.counts.mapNotNull { count -> returnNumber(type.weight.toString())?.toDouble() } }
         .filter { it > 0.0 }
 
+    val minPrice = nonZeroPrices.minOrNull() ?: 0.0
+    val maxPrice = nonZeroPrices.maxOrNull() ?: 0.0
+    val minSize = nonZeroSizes.minOrNull() ?: 0.0
+    val maxSize = nonZeroSizes.maxOrNull() ?: 0.0
     val minWeight = nonZeroWeights.minOrNull() ?: 0.0
     val maxWeight = nonZeroWeights.maxOrNull() ?: 0.0
+
+    Log.d("TAG", "setFilterViewModel: minPrice= $minPrice, maxPrice=$maxPrice")
+    Log.d("TAG", "setFilterViewModel: minSize= $minSize, maxSize=$maxSize")
+    Log.d("TAG", "setFilterViewModel: minWeight= $minWeight, maxWeight=$maxWeight")
 
     val selectedCategoryId = preferences.getString("selectedCategory", "all")
     selectCategory = allCategories.find { it.id == selectedCategoryId }
@@ -713,6 +717,9 @@ fun MainFragment.setFilterViewModelData() {
         maxWeight,
         selectCategory ?: Category("all", "Все")
     )
+    Log.d("TAG", "setFilterViewModelData: minPrice= $minPrice, maxPrice=$maxPrice")
+    Log.d("TAG", "setFilterViewModelData: minSize= $minSize, maxSize=$maxSize")
+    Log.d("TAG", "setFilterViewModelData: minWeight= $minWeight, maxWeight=$maxWeight")
     filterViewModel.defaultFilterModel = updatedFilterModel
     if (filterModel == null) {
         filterViewModel.filterModel = updatedFilterModel
@@ -738,7 +745,7 @@ fun MainFragment.setDefaultFilterViewModelData() {
     val nonZeroSizes = availableProducts
         .flatMap { it.types.filter { type -> type.counts.any { count -> count.count > 0 } } }
         .flatMap { type -> type.counts.mapNotNull { count -> returnNumber(type.size.toString())?.toDouble() } }
-        .filter { it > 0.0 }
+
 
     val nonZeroWeights = availableProducts
         .flatMap { it.types.filter { type -> type.counts.any { count -> count.count > 0 } } }
@@ -751,6 +758,10 @@ fun MainFragment.setDefaultFilterViewModelData() {
     val maxSize = nonZeroSizes.maxOrNull() ?: 0.0
     val minWeight = nonZeroWeights.minOrNull() ?: 0.0
     val maxWeight = nonZeroWeights.maxOrNull() ?: 0.0
+
+    Log.d("TAG", "setDefaultFilterViewModelData: minPrice= $minPrice, maxPrice=$maxPrice")
+    Log.d("TAG", "setDefaultFilterViewModelData: minSize= $minSize, maxSize=$maxSize")
+    Log.d("TAG", "setDefaultFilterViewModelData: minWeight= $minWeight, maxWeight=$maxWeight")
 
     val selectedCategoryId = preferences.getString("selectedCategory", "all")
     selectCategory = allCategories.find { it.id == selectedCategoryId }

@@ -24,6 +24,7 @@ import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.response.Type
 import com.fin_group.aslzar.ui.dialogs.CheckCategoryFragmentDialog
 import com.fin_group.aslzar.ui.dialogs.FilterDialogFragment
+import com.fin_group.aslzar.ui.dialogs.FilterDialogNewProductsFragment
 import com.fin_group.aslzar.ui.dialogs.InStockBottomSheetDialogFragment
 import com.fin_group.aslzar.ui.dialogs.PickCharacterProductDialogFragment
 import com.fin_group.aslzar.ui.dialogs.WarningNoHaveProductFragmentDialog
@@ -521,7 +522,7 @@ fun NewProductsFragment.getAllCategoriesFromApi() {
 }
 
 fun NewProductsFragment.setFilterViewModel() {
-    val filterDialogFragment = FilterDialogFragment()
+    val filterDialogFragment = FilterDialogNewProductsFragment()
     allProducts = retrieveProducts()
 
     val availableProducts = allProducts.filter { product ->
