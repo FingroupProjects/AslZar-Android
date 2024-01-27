@@ -130,7 +130,7 @@ class DataProductFragment : Fragment(), OnImageClickListener, OnAlikeProductClic
             PercentInstallment(0, 0, 7, emptyList())
         }
 
-        onBackPressed()
+//        onBackPressed()
         if (args.product != null) {
             product = args.product!!
         } else {

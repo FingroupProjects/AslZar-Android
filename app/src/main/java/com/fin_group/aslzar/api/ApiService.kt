@@ -1,5 +1,6 @@
 package com.fin_group.aslzar.api
 
+import com.fin_group.aslzar.models.GetScannerQR
 import com.fin_group.aslzar.response.Auth
 import com.fin_group.aslzar.response.ForgotPasswordResponse
 import com.fin_group.aslzar.response.GetAllCategoriesResponse
@@ -81,5 +82,9 @@ interface ApiService {
     @POST(Constants.FORGOT_PASSWORD)
     @Headers("Accept:application/json", "Content-Type:application/json")
     fun forgotPassword(@Header("Authorization") token: String): Call<ResponseForgotPassword>
+
+    @GET(Constants.SCANNER)
+    @Headers("Accept:application/json", "Content-Type:application/json")
+    fun getProductInScanner(@Header("Authorization") token: String, @Path("id") id: String): Call<ResultX>
 
 }

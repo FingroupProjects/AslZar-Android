@@ -39,10 +39,9 @@ import com.fin_group.aslzar.response.Count
 import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.response.Type
 import com.fin_group.aslzar.ui.activities.MainActivity
+import com.fin_group.aslzar.ui.dialogs.ScannerFragment
 import com.fin_group.aslzar.util.CategoryClickListener
 import com.fin_group.aslzar.util.ProductOnClickListener
-import com.fin_group.aslzar.ui.fragments.main.functions.callInStockDialog
-import com.fin_group.aslzar.ui.fragments.main.functions.callOutStock
 import com.fin_group.aslzar.ui.fragments.main.functions.fetchRV
 import com.fin_group.aslzar.ui.fragments.main.functions.filterProducts
 import com.fin_group.aslzar.ui.fragments.main.functions.getAllCategoriesFromApi
@@ -62,16 +61,17 @@ import com.fin_group.aslzar.util.FilialListener
 import com.fin_group.aslzar.util.FilterDialogListener
 import com.fin_group.aslzar.util.FilterViewModel
 import com.fin_group.aslzar.util.NoInternetDialogFragment
+import com.fin_group.aslzar.util.SearchGoodsByBarcode
 import com.fin_group.aslzar.util.SessionManager
 import com.fin_group.aslzar.viewmodel.SharedViewModel
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import org.w3c.dom.Text
 
 
 @Suppress("DEPRECATION")
 class MainFragment : Fragment(), ProductOnClickListener,
-    CategoryClickListener, FilterDialogListener, AddingProduct, FilialListener {
+    CategoryClickListener, FilterDialogListener, AddingProduct, FilialListener,
+    SearchGoodsByBarcode {
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
@@ -119,7 +119,6 @@ class MainFragment : Fragment(), ProductOnClickListener,
     lateinit var layoutManager: LinearLayoutManager
 
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -158,7 +157,8 @@ class MainFragment : Fragment(), ProductOnClickListener,
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         searchView = binding.searchViewMain
-        mainActivity = activity as? MainActivity ?: throw IllegalStateException("Activity is not MainActivity")
+        mainActivity =
+            activity as? MainActivity ?: throw IllegalStateException("Activity is not MainActivity")
 
         NoInternetDialogFragment.showIfNoInternet(requireContext())
         goToTop()
@@ -202,25 +202,40 @@ class MainFragment : Fragment(), ProductOnClickListener,
 
         when (item.itemId) {
             R.id.search_item -> {
-                if (allProducts.isNotEmpty()){
+                if (allProducts.isNotEmpty()) {
                     searchViewFun()
                 } else {
-                    Toast.makeText(requireContext(), "Невозможно искать из пустого списка", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Невозможно искать из пустого списка",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
+
             R.id.filter_item -> {
-                if (allProducts.isNotEmpty()){
+                if (allProducts.isNotEmpty()) {
                     setFilterViewModel()
                 } else {
-                    Toast.makeText(requireContext(), "Невозможно отфильтровать пустой список", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Невозможно отфильтровать пустой список",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
+
             R.id.barcode_item -> {
-                if (hasInternet) {
-                    val action = MainFragmentDirections.actionMainFragmentToBarCodeScannerFragment("MainBarcode")
-                    findNavController().navigate(action)
-                } else {
+                if (!hasInternet) {
                     NoInternetDialogFragment.showIfNoInternet(requireContext())
+                } else {
+                    val barcodeScanner = ScannerFragment()
+                    barcodeScanner.setBarcodeListener(this)
+                    barcodeScanner.show(
+                        activity?.supportFragmentManager!!,
+                        "search by barcode dialog"
+                    )
+                    true
                 }
             }
 
@@ -286,7 +301,7 @@ class MainFragment : Fragment(), ProductOnClickListener,
             1000,
             Category("all", "Все")
         )
-        if (filterModel != null){
+        if (filterModel != null) {
             showAddingToCartDialog(product, filterModel!!)
         } else {
             showAddingToCartDialog(product, newFilterModel)
@@ -322,14 +337,28 @@ class MainFragment : Fragment(), ProductOnClickListener,
     }
 
     override fun addProduct(product: ResultX, type: Type, count: Count) {
-        Toast.makeText(requireContext(), "Товар добавлен в корзину: ${product.full_name}", Toast.LENGTH_SHORT).show()
+        Toast.makeText(
+            requireContext(),
+            "Товар добавлен в корзину: ${product.full_name}",
+            Toast.LENGTH_SHORT
+        ).show()
         sharedViewModel.onProductAddedToCartV2(product, requireContext(), type, count)
         updateCartBadge()
     }
 
     override fun addFilial(product: ResultX, type: Type, filial: Count) {
-        Toast.makeText(requireContext(), "Товар добавлен в корзину: ${product.full_name}", Toast.LENGTH_SHORT).show()
+        Toast.makeText(
+            requireContext(),
+            "Товар добавлен в корзину: ${product.full_name}",
+            Toast.LENGTH_SHORT
+        ).show()
         sharedViewModel.onProductAddedToCartV2(product, requireContext(), type, filial)
         updateCartBadge()
+    }
+
+    override fun setGoods(product: ResultX) {
+        val action =
+            MainFragmentDirections.actionMainFragmentToDataProductFragment(product.id, product, "main")
+        findNavController().navigate(action)
     }
 }
