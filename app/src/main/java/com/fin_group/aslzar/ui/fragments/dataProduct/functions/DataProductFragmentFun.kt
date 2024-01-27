@@ -211,6 +211,7 @@ fun DataProductFragment.setDataProduct(product: ResultX, binding: FragmentDataPr
             binding.tvTable.visibility = GONE
             binding.printPercent.visibility = GONE
             binding.btnAddToCart.visibility = GONE
+            binding.similarProducts.visibility = GONE
         }
 
         tvStoneType.text = product.stone_type.ifEmpty { "Без камня" }

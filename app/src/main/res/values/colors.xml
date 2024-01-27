@@ -36,4 +36,7 @@
 
     <color name="isFilial">#4CAF50</color>
 
+    <color name="not_available">#F44336</color>
+
+
 </resources>

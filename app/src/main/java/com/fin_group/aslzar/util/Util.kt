@@ -1,5 +1,8 @@
+@file:Suppress("DEPRECATION")
+
 package com.fin_group.aslzar.util
 
+import android.animation.ObjectAnimator
 import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
@@ -22,6 +25,7 @@ import android.view.animation.AnimationUtils
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
@@ -33,6 +37,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.fin_group.aslzar.R
 import com.fin_group.aslzar.models.FilterModel
+import com.fin_group.aslzar.models.GetScannerQR
 import com.fin_group.aslzar.models.ProductInCart
 import com.fin_group.aslzar.response.Count
 import com.fin_group.aslzar.response.ResultX
@@ -42,6 +47,9 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.util.Locale
@@ -49,6 +57,10 @@ import java.util.Locale
 interface FunCallback {
     fun onSuccess(success: Boolean)
     fun onError(errorMessage: String)
+}
+
+interface SearchGoodsByBarcode{
+    fun setGoods(product: ResultX)
 }
 
 interface AddingProduct {
@@ -394,4 +406,59 @@ fun Fragment.handleErrorResponse(errorCode: Int, context: Context, sharedPrefere
             Log.e("TAG", "Unhandled error code: $errorCode")
         }
     }
+}
+
+fun animateProgressBarAppear(progressBar: ProgressBar, delayMillis: Long) {
+    val handler = Handler()
+    handler.postDelayed({
+        progressBar.visibility = View.VISIBLE
+
+        val fadeIn = ObjectAnimator.ofFloat(progressBar, "alpha", 0f, 1f)
+        fadeIn.duration = delayMillis
+        fadeIn.start()
+    }, delayMillis)
+}
+
+fun animateProgressBarDisappear(progressBar: ProgressBar, delayMillis: Long) {
+    val handler = Handler()
+    handler.postDelayed({
+        val fadeOut = ObjectAnimator.ofFloat(progressBar, "alpha", 1f, 0f)
+        fadeOut.duration = delayMillis
+        fadeOut.start()
+
+        fadeOut.addUpdateListener {
+            if ((it.animatedValue as Float) == 0f) {
+                progressBar.visibility = View.INVISIBLE
+            }
+        }
+    }, delayMillis)
+}
+
+fun <T> Call<T>.safeEnqueue(
+    fragment: Fragment,
+    onResponse: (Response<T>) -> Unit,
+    onFailure: (Throwable) -> Unit,
+    progressBar: ProgressBar
+) {
+    if (!fragment.isAdded || fragment.isDetached) {
+        return
+    }
+    animateProgressBarAppear(progressBar, 50)
+    this.enqueue(object : Callback<T> {
+        override fun onResponse(call: Call<T>, response: Response<T>) {
+            if (!fragment.isAdded || fragment.isDetached) {
+                return
+            }
+            onResponse(response)
+            animateProgressBarDisappear(progressBar, 420)
+        }
+
+        override fun onFailure(call: Call<T>, t: Throwable) {
+            if (!fragment.isAdded || fragment.isDetached) {
+                return
+            }
+            onFailure(t)
+            animateProgressBarDisappear(progressBar, 420)
+        }
+    })
 }
