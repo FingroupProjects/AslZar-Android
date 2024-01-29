@@ -35,6 +35,7 @@ import com.fin_group.aslzar.response.Count
 import com.fin_group.aslzar.response.ResultX
 import com.fin_group.aslzar.response.Type
 import com.fin_group.aslzar.ui.activities.MainActivity
+import com.fin_group.aslzar.ui.dialogs.ScannerFragment
 import com.fin_group.aslzar.ui.fragments.new_products.functions.addProductToCart
 import com.fin_group.aslzar.ui.fragments.new_products.functions.callInStockDialog
 import com.fin_group.aslzar.ui.fragments.new_products.functions.callOutStock
@@ -57,6 +58,7 @@ import com.fin_group.aslzar.util.FilterViewModel
 import com.fin_group.aslzar.util.FilterViewModelNewProducts
 import com.fin_group.aslzar.util.NoInternetDialogFragment
 import com.fin_group.aslzar.util.ProductOnClickListener
+import com.fin_group.aslzar.util.SearchGoodsByBarcode
 import com.fin_group.aslzar.util.SessionManager
 import com.fin_group.aslzar.viewmodel.SharedViewModel
 import com.google.android.material.appbar.MaterialToolbar
@@ -64,7 +66,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
 @Suppress("DEPRECATION")
-class NewProductsFragment : Fragment(), ProductOnClickListener, AddingProduct, FilialListener {
+class NewProductsFragment : Fragment(), ProductOnClickListener, AddingProduct, FilialListener,
+    SearchGoodsByBarcode {
 
     private var _binding: FragmentNewProductsBinding? = null
     private val binding get() = _binding!!
@@ -111,7 +114,8 @@ class NewProductsFragment : Fragment(), ProductOnClickListener, AddingProduct, F
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentNewProductsBinding.inflate(inflater, container, false)
-        filterViewModel = ViewModelProvider(requireActivity())[FilterViewModelNewProducts::class.java]
+        filterViewModel =
+            ViewModelProvider(requireActivity())[FilterViewModelNewProducts::class.java]
         defaultFilterModel = filterViewModel.defaultFilterModel
         checkedFiltersTv = binding.checkedFiltersTv
         errorTv = binding.textView47
@@ -141,7 +145,8 @@ class NewProductsFragment : Fragment(), ProductOnClickListener, AddingProduct, F
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         searchView = binding.searchViewMain
-        mainActivity = activity as? MainActivity ?: throw IllegalStateException("Activity is not MainActivity")
+        mainActivity =
+            activity as? MainActivity ?: throw IllegalStateException("Activity is not MainActivity")
 
         NoInternetDialogFragment.showIfNoInternet(requireContext())
 
@@ -154,6 +159,7 @@ class NewProductsFragment : Fragment(), ProductOnClickListener, AddingProduct, F
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return true
             }
+
             override fun onQueryTextChange(newText: String?): Boolean {
                 searchText = newText.toString()
                 filterProducts()
@@ -188,28 +194,43 @@ class NewProductsFragment : Fragment(), ProductOnClickListener, AddingProduct, F
 
         when (item.itemId) {
             R.id.search_item -> {
-                if (allProducts.isNotEmpty()){
+                if (allProducts.isNotEmpty()) {
                     searchViewFun()
                 } else {
-                    Toast.makeText(requireContext(), "Невозможно искать из пустого списка", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Невозможно искать из пустого списка",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
 
             R.id.filter_item -> {
-                if (allProducts.isNotEmpty()){
+                if (allProducts.isNotEmpty()) {
                     setFilterViewModel()
                 } else {
-                    Toast.makeText(requireContext(), "Невозможно отфильтровать пустой список", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Невозможно отфильтровать пустой список",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
+
             R.id.barcode_item -> {
-                if (hasInternet){
-                    val action = NewProductsFragmentDirections.actionNewProductsFragmentToBarCodeScannerFragment("NewProductsBarcode")
-                    findNavController().navigate(action)
-                } else {
+                if (!hasInternet) {
                     NoInternetDialogFragment.showIfNoInternet(requireContext())
+                } else {
+                    val barcodeScanner = ScannerFragment()
+                    barcodeScanner.setBarcodeListener(this)
+                    barcodeScanner.show(
+                        activity?.supportFragmentManager!!,
+                        "search by barcode dialog"
+                    )
+                    true
                 }
             }
+
             R.id.profile_item -> {
                 findNavController().navigate(R.id.action_newProductsFragment_to_profileFragment)
             }
@@ -243,6 +264,7 @@ class NewProductsFragment : Fragment(), ProductOnClickListener, AddingProduct, F
         super.onDestroy()
         preferences.edit()?.putBoolean("first_run", true)?.apply()
     }
+
     private fun fetchDataAndFilterProducts() {
         getAllProductsFromApi()
         getAllCategoriesFromApi()
@@ -256,7 +278,11 @@ class NewProductsFragment : Fragment(), ProductOnClickListener, AddingProduct, F
                     if (backPressedTime + 2000 > System.currentTimeMillis()) {
                         requireActivity().finish()
                     } else {
-                        Toast.makeText(requireContext(), "Нажмите еще раз чтобы выйти.", Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            requireContext(),
+                            "Нажмите еще раз чтобы выйти.",
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
                     backPressedTime = System.currentTimeMillis()
                 }
@@ -273,7 +299,7 @@ class NewProductsFragment : Fragment(), ProductOnClickListener, AddingProduct, F
             10000,
             Category("all", "Все")
         )
-        if (filterModel != null){
+        if (filterModel != null) {
             showAddingToCartDialog(product, filterModel!!)
         } else {
             showAddingToCartDialog(product, newFilterModel)
@@ -309,14 +335,32 @@ class NewProductsFragment : Fragment(), ProductOnClickListener, AddingProduct, F
     }
 
     override fun addProduct(product: ResultX, type: Type, count: Count) {
-        Toast.makeText(requireContext(), "Товар добавлен в корзину: ${product.full_name}", Toast.LENGTH_SHORT).show()
+        Toast.makeText(
+            requireContext(),
+            "Товар добавлен в корзину: ${product.full_name}",
+            Toast.LENGTH_SHORT
+        ).show()
         sharedViewModel.onProductAddedToCartV2(product, requireContext(), type, count)
         updateBadge()
     }
 
     override fun addFilial(product: ResultX, type: Type, filial: Count) {
-        Toast.makeText(requireContext(), "Товар добавлен в корзину: ${product.full_name}", Toast.LENGTH_SHORT).show()
+        Toast.makeText(
+            requireContext(),
+            "Товар добавлен в корзину: ${product.full_name}",
+            Toast.LENGTH_SHORT
+        ).show()
         sharedViewModel.onProductAddedToCartV2(product, requireContext(), type, filial)
         updateBadge()
+    }
+
+    override fun setGoods(product: ResultX) {
+        val action =
+            NewProductsFragmentDirections.actionNewProductsFragmentToDataProductFragment(
+                product.id,
+                product,
+                "main"
+            )
+        findNavController().navigate(action)
     }
 }
